@@ -458,11 +458,8 @@ class NginxImage(VoiceScene):
             self.play(Indicate(prod_bar, color=CONTAINER, scale_factor=1.05), run_time=0.6)
 
         # ========================================================== 6. LECTURE 42: only the outside changes
-        ref6 = lref("42 (APIs)")
-        # lecture_ref() reads '42 (APIs)' as a range ('slides 42'): one slide reads 'slide 42' (same tag, same place)
-        assert ref6.text.text == "Lecture18·slides42(APIs)", ref6.text.text
-        ref6 = tag("Lecture 18 · slide 42 (APIs)", S.GREY)
-        ref6.move_to([6.6 - ref6.width / 2, 3.6 - ref6.height / 2, 0])
+        ref6 = lref("42 (APIs)")             # common.lref: one slide reads 'slide 42' (top right)
+        assert ref6.text.text == "Lecture18·slide42(APIs)", ref6.text.text
         tr6 = RequestTrace("localhost:3000", rows=("front", "api"), front="react", courier="Vite", caption=False)
         tr6.shift(UP * 0.75)
         n6 = tr6.net
@@ -543,7 +540,7 @@ class NginxImage(VoiceScene):
             self.play(Indicate(n6.boxes["api"].name, color=S.GREY, scale_factor=1.1), run_time=0.7)
             tr6.heal(self)
         card7 = ponder(self, "The production frontend container\nwon't start while the API is down.\n"
-                             "Why would a page server care?", seconds=6)
+                             "Why would a page server care?", seconds=6, dim=0.85)   # on the set piece: veil
 
         # ========================================================== 8. host not found in upstream: start the API first
         p8 = code(TPL, 14, 14, font_size=20, dedent=True, shown="nginx.conf.template")

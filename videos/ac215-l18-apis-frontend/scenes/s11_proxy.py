@@ -2,7 +2,7 @@
 Setup" 4 → 4 · extra → 5 → 6 → 7. Lecture: 18 · 24–26 (Frontend), beat 0 only.
 
 Beats (script.md "## S11", one voiceover block each):
-0. Tracker [R] 4, lecture_ref 24–26 (Frontend). V1 RequestTrace (localhost:3000; frontend-react with
+0. Tracker [R] 3, lecture_ref 24–26 (Frontend). V1 RequestTrace (localhost:3000; frontend-react with
    the "?" courier, API, vector-db, the GREEN cable; illustration tag): the lecture's picture, the
    page's JavaScript fires a PINK arrow at the API's door. On "Here, every call in api dot js" the trace
    goes and CODE(src/lib/api.js: 33–44) comes in (line 35 cut after the timeout): line 44 `fetch(path,
@@ -30,19 +30,19 @@ Beats (script.md "## S11", one voiceover block each):
    scene" above it; on "the Vite proxy" the courier and the
    API entry light, on "nginx" the nginx chip, on "the API"
    the API box.
-6. Tracker [R] 4 · extra. The API is unplugged from the cable; the courier turns back with a RED 502
+6. Tracker [R] 3 · extra. The API is unplugged from the cable; the courier turns back with a RED 502
    and an empty envelope; the API plugs back in. V1 goes: a 5-row `second tab` (extra) types d09
    (folds) → d09:3 RED; above it the Vite terminal (`laptop · new terminal`) shows d02:85–86 with
    ENOTFOUND cheese-app-api-service RED; on "the README's troubleshooting row" RECORDED(04: 13),
    tag recorded · README:232.
-7. Tracker [R] 5. V1 again (illustration): Home, then /podcasts and /newsletters, each with the
+7. Tracker [R] 4. V1 again (illustration): Home, then /podcasts and /newsletters, each with the
    courier carrying its /api/… envelope; then /chat with a "Recent" list (text-free rows) that survives
    a GREY reload sweep. V1 goes: a browser at localhost:3000/chat with the three mode chips over a
    7-row `second tab` (extra): Identify → d07 (folds) → d07:3 GREEN; Ask → d06 → d06:2–3 RED with the
    GOLD cost tag; Cheese books with "How is Tolminc cheese made?" → b40 → b40:2–3 RED. ▶ your turn.
-8. Tracker [R] 6. A README card (README.md · lines 177–185, the separator row dropped); ticks lay onto
+8. Tracker [R] 5. A README card (README.md · lines 177–185, the separator row dropped); ticks lay onto
    the three files seen (vite.config.js, src/main.jsx, src/lib/api.js); ▶ your turn; it holds ~4 s.
-   Tracker [R] 7. A 10-row `laptop · new terminal` at …/src/frontend-react$ types ./docker-shell.sh →
+   Tracker [R] 6. A 10-row `laptop · new terminal` at …/src/frontend-react$ types ./docker-shell.sh →
    d12:2 (wrap); at d12:3's container prompt `npm run check` → d12:6 (YELLOW), 9, 11, 24–25 (cut after
    the size), 27; line 25's dist/assets/index-….js GREEN. Fade; empty frame.
 """
@@ -157,7 +157,7 @@ class OneOrigin(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S11"] == 9, len(SAY)
 
-        trk = tracker_r(4)
+        trk = tracker_r(3)
         tr = RequestTrace("localhost:3000", rows=("front", "api", "vdb"), front="react", courier="?",
                           caption=False, browser_w=4.1).shift(UP * SHIFT_UP)
         net = tr.net
@@ -353,8 +353,9 @@ class OneOrigin(VoiceScene):
             vo.wait_until("port 9000")
             self.play(Indicate(ev.text[1][-4:], color=ROUTE, scale_factor=1.25), run_time=0.6)
             self.add(ev)
-        pc = ponder(self, QUESTION, 8, center=(net.frame.get_x(), net.frame.get_y()), width=7.7)
-        assert pc.get_left()[0] > tr.divider.get_x() + 0.05 and pc.get_right()[0] < SAFE_X, pc.get_left()
+        # dim=0.85: the card sits ON the network map; the veil dims what its edges would slice
+        pc = ponder(self, QUESTION, 8, center=(net.frame.get_x(), net.frame.get_y()), width=7.7, dim=0.85)
+        assert pc.card.get_left()[0] > tr.divider.get_x() + 0.05 and pc.card.get_right()[0] < SAFE_X, pc.card.get_left()
 
         # ========================================================== 5. no: the laptop's DNS has no page for it
         desk = card(["your laptop's DNS"], S.GREY, size=20)
@@ -398,7 +399,7 @@ class OneOrigin(VoiceScene):
         rc.align_to([-6.5, 0, 0], LEFT)
         assert rc.get_top()[1] < PIC_TOP and rc.get_right()[0] < SAFE_X, (rc.get_top(), rc.get_right())
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(desk, nf, ev, ngx)), track(trk, 4, extra=True), run_time=0.5)
+            self.play(FadeOut(VGroup(desk, nf, ev, ngx)), track(trk, 3, extra=True), run_time=0.5)
             net.drop(self, bk, run_time=0.3)
             net.book = None
             vo.wait_until("unplug the API")
@@ -446,7 +447,7 @@ class OneOrigin(VoiceScene):
         assert idn.get_right()[0] < SAFE_X, idn.get_right()
         assert idn.get_bottom()[1] > bc.frame.get_bottom()[1] + 0.75, (idn.get_bottom(), bc.frame.get_bottom())
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(tT, tV, rc)), track(trk, 5), run_time=0.5)
+            self.play(FadeOut(VGroup(tT, tV, rc)), track(trk, 4), run_time=0.5)
             self.play(FadeIn(tr), FadeIn(ill), run_time=0.5)
             tr.browser.fill(self, ["Home"], run_time=0.3)
             vo.wait_until("home, podcasts")
@@ -508,7 +509,7 @@ class OneOrigin(VoiceScene):
         rows = rcard.body
         t8 = term(P_V2_REACT, rows=10, title=T_NEW, size=20)      # 20 pt: the prompt + ./docker-shell.sh fit one row
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(bc, illc, tC, cost, turn, qrow)), track(trk, 6), run_time=0.6)
+            self.play(FadeOut(VGroup(bc, illc, tC, cost, turn, qrow)), track(trk, 5), run_time=0.6)
             self.play(FadeIn(rcard, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("names the files we just saw")
             ticks = VGroup()
@@ -522,7 +523,7 @@ class OneOrigin(VoiceScene):
             self.play(FadeIn(t2, shift=DOWN * 0.1), run_time=0.4)
             flash_tag(self, t2, TURN)
             vo.wait_until("Then, in a second terminal")
-            self.play(FadeOut(VGroup(rcard, ticks, t2)), track(trk, 7), run_time=0.5)
+            self.play(FadeOut(VGroup(rcard, ticks, t2)), track(trk, 6), run_time=0.5)
             self.play(FadeIn(t8, shift=UP * 0.2), run_time=0.4)
             vo.wait_until("docker-shell.sh again")
             type_capture(self, t8, D12, type_time=0.4)

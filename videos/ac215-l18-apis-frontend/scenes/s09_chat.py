@@ -2,7 +2,7 @@
 Backend APIs" 9 → 10. Lecture: 18 · 27 (Frontend), beat 0 only.
 
 Beats (script.md "## S09", one voiceover block each):
-0. Tracker [B] 9, lecture_ref 27 (Frontend). A GREY card redraws slide 27's handler: route label /chat
+0. Tracker [B] 8, lecture_ref 27 (Frontend). A GREY card redraws slide 27's handler: route label /chat
    (PINK) and "use Gemini to generate text", with the tag "erratum · slide 27: /chat". Under it
    CODE(api/routers/chat.py: 58–67), line 58 @router.post("/chats") YELLOW; on "another continues it"
    the panel becomes 69–76 (line 70's middle elided), line 69 YELLOW. On "The real path" a PINK label
@@ -13,7 +13,7 @@ Beats (script.md "## S09", one voiceover block each):
    carries the key and a message to the API, the GREEN file chat-history/llm-cnn/<session>/<chat>.json
    opens, the bubble fills, two rows (user, assistant) append, the file flashes ("saves") and the
    bubble empties ("forgets").
-2. Tracker [B] 9 · extra. CODE(chat.py: 19–23) under V7 (line 20's regex cut, line 21's "str, "
+2. Tracker [B] 8 · extra. CODE(chat.py: 19–23) under V7 (line 20's regex cut, line 21's "str, "
    elided), line 21 YELLOW, X-Session-ID PINK. The panel gives way to a 6-row `second tab` strip (bar
    tag extra): b36 (folds with ' \', 5 rows, held whole) → b36:2 wrap, 3 (missing … X-Session-ID
    YELLOW, 422 RED); the envelope without a key bounces (outline RED, under the API's name), 422 chip
@@ -40,7 +40,7 @@ Beats (script.md "## S09", one voiceover block each):
    card goes and V7's second TEAL API copy opens the same file ("any copy can answer"); on "And routes
    written with plain def" three PURPLE lanes in the API box: a slow GOLD dot holds lane 1 while PINK
    dots pass on lanes 2 and 3, twice.
-8. Tracker [B] 10. V7 goes. A 10-row `laptop · new terminal` (…/cheese-app-v2/src/api-service$):
+8. Tracker [B] 9. V7 goes. A 10-row `laptop · new terminal` (…/cheese-app-v2/src/api-service$):
    ./docker-shell.sh → b44:2 (YELLOW, wrap), chip "already running · shelling in"; at the container
    prompt of b44:3 `pytest` → b44:5, 11, 13–14, 16 (wrap), line 16 GREEN; a GREEN "26 passed" badge
    grows out of it; ▶ your turn and "at the time of recording" on the bar.
@@ -241,7 +241,7 @@ class ChatIsAFile(VoiceScene):
         assert len(SAY) == SAY_COUNT["S09"] == 10, len(SAY)
 
         # ========================================================== 0. slide 27 vs the two real routes
-        trk = tracker_b(9)
+        trk = tracker_b(8)
         ref = one_slide("27 (Frontend)")
         route_row = VGroup(label("route", 20, S.GREY), mono("/chat", 22, ROUTE)).arrange(RIGHT, buff=0.18)
         slide = card([route_row, label("use Gemini to generate text", 22, INK)], head="the lecture's chat handler")
@@ -315,7 +315,7 @@ class ChatIsAFile(VoiceScene):
         p19.move_to([0, 0, 0]).align_to([0, BOTTOM + 0.05, 0], DOWN)
         t = strip(rows=TALL_ROWS)
         with self.voiceover(SAY[2]) as vo:
-            self.play(track(trk, 9, True), FadeOut(uuid), cf.animate.shift(CF_UP), ill.animate.shift(CF_UP),
+            self.play(track(trk, 8, True), FadeOut(uuid), cf.animate.shift(CF_UP), ill.animate.shift(CF_UP),
                       run_time=0.6)
             assert p19.get_top()[1] < cf.get_bottom()[1] - 0.1, (p19.get_top(), cf.get_bottom())
             assert t.box.get_top()[1] < cf.get_bottom()[1] - 0.05, (t.box.get_top(), cf.get_bottom())
@@ -453,19 +453,20 @@ class ChatIsAFile(VoiceScene):
             self.play(Indicate(exp.body[3], color=OWN, scale_factor=1.06), run_time=0.8)
 
         # ========================================================== 6. a small note: 403/404 -> 502, ours -> 500
-        tab = quote_card("04-troubleshooting", (11, 12), "recorded", "README:230–231", size=22, width_chars=50)
-        tab.move_to([-2.1, 0.75, 0])
+        # the README's two table rows, each its own symptom / '→ fix' pair (S07's card, common.trouble_card)
+        tab = trouble_card([11, 12], source="README:230–231", size=22, card_w=None, wrap=42)
+        tab.move_to([0, 0.6, 0]).align_to([-6.5, 0, 0], LEFT)
         n_rows = len(tab.body)
         ok502 = VGroup(ok_chip("API answers 502"), mono("llm_utils.py:85–86", 20, S.GREY)).arrange(DOWN, buff=0.12)
         ok502.next_to(tab, RIGHT, buff=0.9)
         br = arrow(tab.get_right() + RIGHT * 0.05, ok502[0].get_left(), OWN, stroke=3, buff=0.08)
-        notin = tag("not in the table", S.GREY).move_to([-4.4, -1.45, 0])
-        e500 = err_chip("500 + RefreshError in the API terminal", mono_font=False).move_to([1.7, -1.45, 0])
+        notin = tag("not in the table", S.GREY).move_to([-4.4, -1.9, 0])
+        e500 = err_chip("500 + RefreshError in the API terminal", mono_font=False).move_to([1.7, -1.9, 0])
         to500 = arrow(notin.get_right(), e500.get_left(), S.GREY, stroke=3)
         assert ok502.get_right()[0] < SAFE_X and e500.get_right()[0] < SAFE_X, (ok502.get_right(), e500.get_right())
-        assert notin.get_top()[1] < tab.get_bottom()[1] - 0.2
+        assert notin.get_top()[1] < tab.get_bottom()[1] - 0.2 and tab.get_top()[1] < PIC_TOP, (notin.get_top(), tab.get_top())
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(cf), FadeOut(ill), FadeOut(VGroup(cl, g_arrow, cross, cost, exp)), track(trk, 9, False),
+            self.play(FadeOut(cf), FadeOut(ill), FadeOut(VGroup(cl, g_arrow, cross, cost, exp)), track(trk, 8, False),
                       run_time=0.6)
             self.play(FadeIn(tab, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("Gemini 403 and 404")
@@ -509,12 +510,12 @@ class ChatIsAFile(VoiceScene):
                 self.remove(*fast)
                 cf.heal(self)
 
-        # ========================================================== 8. Tracker 10: pytest in a new terminal
+        # ========================================================== 8. Tracker 9: pytest in a new terminal
         nt = new_term(10, P_V2_API)
         already = grey_chip("already running · shelling in")
         under_term(nt, already)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(cf), FadeOut(ill), track(trk, 10), run_time=0.6)
+            self.play(FadeOut(cf), FadeOut(ill), track(trk, 9), run_time=0.6)
             vo.wait_until("in a second terminal")
             self.play(FadeIn(nt, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("in the same folder")

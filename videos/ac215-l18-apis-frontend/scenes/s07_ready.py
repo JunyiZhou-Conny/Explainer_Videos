@@ -4,7 +4,7 @@ APIs" 1 → 4 (4 · extra in beats 7–8). No lecture tag (script.md gives none 
 Beats (script.md "## S07", one voiceover block each):
 0. Tracker [B] 1. A README card (README.md · lines 85–86, the README's own words in two rows) over a
    6-row `laptop · new terminal` (prompt ~/cheese-app-v2). It types `cd src/api-service` (b20, no
-   output: the prompt changes); tracker [B] 2, `./docker-shell.sh`; ▶ your turn on the bar. On "The
+   output: the prompt changes); (the tracker stays on README step 1) `./docker-shell.sh`; ▶ your turn on the bar. On "The
    first build takes a while" b21:2 (PURPLE), 3 (cut, `136.2s` YELLOW), …, 24 (cut).
 1. The card goes, the terminal grows to 10 rows: b21:25–28 (row tag "at the time of recording" on
    the Python line), 31–35 with `api_server` and `pytest` GREEN; the GOLD-outlined disk chip "this
@@ -15,7 +15,7 @@ Beats (script.md "## S07", one voiceover block each):
    24–33, line 29 cut) on the left and a small V5 on the right (vector-db box on the GREEN cable
    cheese-app-network); lines 26, 27, 28, 33 light on their phrases; on "publishes 9000" the API box
    comes in behind its PINK door 9000, on "joins the network" its GREEN stub draws.
-3. Tracker [B] 3. At b21:37's container prompt the strip types `api_server`. CODE(api-service/
+3. Tracker [B] 2. At b21:37's container prompt the strip types `api_server`. CODE(api-service/
    docker-entrypoint.dev.sh: 12–16, line 13 cut after --reload): line 13 YELLOW, `api.service:app`
    PINK; under it a small V3 icon and the chip "same server, same app address". ▶ your turn on the bar.
 4. Panel and icon go; the terminal grows to 9 rows: b21:39 (cut), 40, 43 GREEN at once; then 44–46
@@ -25,12 +25,12 @@ Beats (script.md "## S07", one voiceover block each):
    line 22 YELLOW while the ring starts filling; on "healthz" CODE(service.py: 43–45) under the
    /healthz lamp; on "readyz" CODE(service.py: 48–53): lines 50–51 light with the ring's wire, 53
    with the Chroma wire.
-6. Tracker [B] 4. Under V6: a 1-row `laptop · new terminal` strip (the uvicorn log) and a 3-row
+6. Tracker [B] 3. Under V6: a 1-row `laptop · new terminal` strip (the uvicorn log) and a 3-row
    `laptop · second tab` strip. The tab types `curl -s -i http://localhost:9000/healthz` (extra) →
    b22:2, 8: the /healthz lamp GREEN, status 200, the log shows b21:48. Then `curl -s -i
    http://localhost:9000/readyz` (extra) → b23:2, 8 RED: the readiness lamp amber with "503 · CNN
    model is loading", the ring half full; the log scrolls b21:49–60 (503s RED).
-7. Tracker [B] 4 · extra. V6 and the log step aside; the tab grows to 7 rows and types b26 → b26:13–14
+7. Tracker [B] 3 · extra. V6 and the log step aside; the tab grows to 7 rows and types b26 → b26:13–14
    (owner columns elided), 18–20, `mobilenetv2_train_base_True.keras` GREEN. Above: a GREY laptop
    with the persistent-folder/ folder; the model file flies into it; chip "downloaded once · reused
    on every start".
@@ -38,7 +38,7 @@ Beats (script.md "## S07", one voiceover block each):
    route map from api/service.py:1–7: root `/` holding only the two probe lamps, a PINK `/api` branch
    holding everything else. In the tail the map and the tab leave, and RECORDED(expected/
    04-troubleshooting.txt: 9–10, 14), tag "recorded · README:228–229, 233", stands alone (no SAY).
-9. Tracker [B] 4. Everything else goes; V6 returns frozen: /healthz GREEN, /readyz amber, the ring
+9. Tracker [B] 3. Everything else goes; V6 returns frozen: /healthz GREEN, /readyz amber, the ring
    part-filled. PONDER(8 s) below it.
 10. The card leaves. The strips return; the tab types the readyz curl again → b24:2, 8 GREEN, row tag
    "about 9 s later, here"; the log adds b21:61 (GREEN); the ring fills, the readiness lamp turns
@@ -289,58 +289,6 @@ def route_map() -> VGroup:
     return g
 
 
-def _spans(s: str, size: float, color) -> VGroup:
-    """One row of a markdown cell: prose in the label font, `code` spans in mono, same baseline
-    strut (steady), a word gap only where the source has a space."""
-    parts = s.split("`")
-    pieces, gaps, between = [], [], ""
-    for i, p in enumerate(parts):
-        if not p.strip():
-            between += p
-            continue
-        if pieces:
-            spaced = " " in (between + p[:1])
-            gaps.append(0.13 if spaced else 0.03)
-        pieces.append(steady(p.strip(), size, color, mono_font=bool(i % 2)))
-        between = p[-1:]
-    g = VGroup(*pieces)
-    for k in range(1, len(pieces)):
-        pieces[k].next_to(pieces[k - 1], RIGHT, buff=gaps[k - 1])
-        pieces[k].align_to(pieces[k - 1], DOWN)
-    return g
-
-
-FIX_INK = interpolate_color(ManimColor(S.GREY), ManimColor(INK), 0.55)  # the fix line: lighter than GREY on the card fill
-
-
-def trouble_card(nums, source: str, size: float = 20, card_w: float = 12.4) -> VGroup:
-    """RECORDED(expected/04-troubleshooting.txt: nums) as table rows: each README row is the symptom
-    in WHITE, then an indented light-grey '→' and the fix (one sentence per line), code spans in mono, a gap
-    between rows. Same frame and tag as quote_card. .frame .body (one VGroup per README row) .tag"""
-    rows = []
-    for raw in recorded("04", *nums, plain=False):
-        cells = [c.strip() for c in raw.strip().strip("|").split("|")]
-        assert len(cells) == 2, raw
-        sym, fix = cells
-        sentences = [x for x in re.split(r"(?<=\.) (?=[A-Z])", fix) if x]
-        top = _spans(sym, size, INK)
-        fx = VGroup(*[_spans(x, size, FIX_INK) for x in sentences]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-        arr = label("→", size, FIX_INK)
-        arr.next_to(fx[0], LEFT, buff=0.15).set_y(fx[0].get_center()[1])
-        fix_g = VGroup(arr, fx)
-        fix_g.next_to(top, DOWN, buff=0.12).align_to(top, LEFT).shift(RIGHT * 0.45)
-        rows.append(VGroup(top, fix_g))
-    body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.34)
-    frame = box(card_w, body.height + 0.75, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
-    body.move_to(frame).align_to(frame, LEFT).shift(RIGHT * 0.35 + DOWN * 0.06)
-    assert body.width < card_w - 0.6, body.width
-    tg = tag("recorded" + f" · {source}", S.GREY)
-    tg.move_to(frame.get_corner(UR) + np.array([-tg.width / 2 - 0.2, 0, 0]))
-    g = VGroup(frame, body, tg)
-    g.frame, g.body, g.tag = frame, body, tg
-    return g
-
-
 class AliveAndReady(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S07"] == 11, len(SAY)
@@ -362,7 +310,7 @@ class AliveAndReady(VoiceScene):
             type_capture(self, t, B20, type_time=0.5)
             cd_prompt(self, t, P_V2_API)
             vo.wait_until("and run docker-shell.sh")
-            self.play(track(trk, 2), run_time=0.4)
+            self.wait(0.4)  # README step 1 is cd + docker-shell: the tracker stays on step 1
             type_capture(self, t, B21, type_time=0.4)
             vo.wait_until("The first build takes a while")
             self.play(Indicate(rows0[1], color=TURN, scale_factor=1.03), run_time=0.7)
@@ -447,7 +395,7 @@ class AliveAndReady(VoiceScene):
         icon = server_app_icon(0.9)
         same = grey_chip("same server, same app address")
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(p2, marks, mn, mn.api, mn.door, mn.tunnel, mn.stub_api)), track(trk, 3),
+            self.play(FadeOut(VGroup(p2, marks, mn, mn.api, mn.door, mn.tunnel, mn.stub_api)), track(trk, 2),
                       run_time=0.5)
             vo.wait_until("API server")
             type_at(self, t, B21, 37, type_time=0.5)
@@ -551,7 +499,7 @@ class AliveAndReady(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(q48, b50, b53)), pl.wire_cnn.animate.set_color(S.GREY),
                       pl.wire_vdb.animate.set_color(S.GREY), pl.lamps["readyz"].animate.set_stroke(S.GREY),
-                      track(trk, 4), run_time=0.5)
+                      track(trk, 3), run_time=0.5)
             pl.heal(self)
             self.play(FadeIn(log), FadeIn(tab), run_time=0.5)
             vo.wait_until("Step 3")
@@ -596,7 +544,7 @@ class AliveAndReady(VoiceScene):
         rows26 = [elide_mid(B26.line(13), "drwxr-sr-x", "4096"), elide_mid(B26.line(14), "-rw-r--r--", "9049515"),
                   B26.line(18), B26.line(19), (B26.line(20), OWN)]
         with self.voiceover(SAY[7]) as vo:
-            self.play(track(trk, 4, extra=True), FadeOut(pl), FadeOut(log), run_time=0.5)
+            self.play(track(trk, 3, extra=True), FadeOut(pl), FadeOut(log), run_time=0.5)
             clear_bar(self, tab)
             clear_lines(self, tab, run_time=0.3)
             resize(self, tab, 8, run_time=0.5)
@@ -658,7 +606,7 @@ class AliveAndReady(VoiceScene):
 
         # ========================================================== 9. PONDER: restart or wait?
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(rec), track(trk, 4), run_time=0.5)
+            self.play(FadeOut(rec), track(trk, 3), run_time=0.5)
             self.play(FadeIn(pl), run_time=0.6)
             vo.wait_until("Healthz says 200")
             self.play(Indicate(pl.statuses["healthz"], color=OWN), run_time=0.6)

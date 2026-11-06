@@ -32,7 +32,7 @@ Beats (script.md "## S01", one voiceover block each):
 5. Lecture tag off; the map fades. Four chips, one per phrase: "cheese-app-v1 + cheese-app-v2",
    "Docker running", the GOLD-outlined disk chip "about 10 GB free · more for branch 2025", and the
    GOLD-outlined "your Google key · chat answers only".
-6. The chips fade. The sample YELLOW tracker (Tutorial: Backend APIs · step 1 of 10) top-left; a small
+6. The chips fade. The sample YELLOW tracker (Tutorial: Backend APIs · step 1 of 9) top-left; a small
    code panel `api/service.py · lines 43–45` in the middle; a 3-row strip (tag `preview`) types the
    README's `cd src/api-service` and a YELLOW `▶ your turn` row tag pulses beside it. Everything fades;
    empty frame.

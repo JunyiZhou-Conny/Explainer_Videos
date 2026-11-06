@@ -626,7 +626,8 @@ class CorsPreflight(VoiceScene):
                 vo.wait_until(phrase)
                 self.play(*[Indicate(ic[part], color=TURN, scale_factor=1.2) for ic in icons], run_time=1.0)
         card10 = ponder(self, "Last year's page needed CORS.\nThis year's React app does not.\n"
-                              "What changed: the API,\nthe browser, or the origin it calls?", 8, center=(0, -1.35))
+                              "What changed: the API,\nthe browser, or the origin it calls?", 8, center=(0, -1.35),
+                      dim=0.85)   # the card sits on the two pictures: the veil dims what its edges would slice
 
         # ========================================================== 11. the origin: one origin, nothing to permit
         add_l = label("· ask permission", 22, SHARED).next_to(caps[0], DOWN, buff=0.15)

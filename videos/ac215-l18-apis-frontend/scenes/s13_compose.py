@@ -1,5 +1,6 @@
 """S13 · One command, then clean up (AC215 L18, part 2). Tracker [S] "README › Tutorial: Setup & Run
-Cheese App" 1 → 6, then [C2] "README › Docker Cleanup" 1 → 2 (· extra for e04). No lecture tag.
+Cheese App" 1 → 5 (README numbers; step 3 is cd src + compose up), then [C2] "README › Docker Cleanup"
+1 → 2 (· extra for e04). No lecture tag.
 
 Beats (script.md "## S13", one voiceover block each):
 0. TRACKER [S] 1. README card (README.md · line 193). A 10-row `laptop` terminal at ~/cheese-app-v2:
@@ -340,7 +341,7 @@ class ComposeUp(VoiceScene):
             clear_lines(self, t, run_time=0.3)
             resize(self, t, 12, run_time=0.5)
             vo.wait_until("and docker compose up with build")
-            self.play(track(trk, 4), run_time=0.4)
+            self.wait(0.4)  # README step 3 is cd src + compose up: the tracker stays on step 3
             self.add(trk)
             up = type_capture(self, t, F04, type_time=0.6)[0]
             tn = beside(turn_row(), up, buff=0.4)
@@ -460,7 +461,7 @@ class ComposeUp(VoiceScene):
         assert rc6.get_left()[0] > -SAFE_X and rc6.get_right()[0] < x_left - 0.1, (rc6.get_left(), rc6.get_right())
         assert er6.get_top()[1] < TRACK_BOTTOM - 0.05, er6.get_top()
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(nonginx), track(trk, 5), run_time=0.5)
+            self.play(FadeOut(nonginx), track(trk, 4), run_time=0.5)
             self.add(trk)
             clear_lines(self, tab, run_time=0.25)
             vo.wait_until("open localhost 3000")
@@ -491,7 +492,7 @@ class ComposeUp(VoiceScene):
         # ========================================================== 7. Step 5: Ctrl-C, docker compose down
         t.bar_tag = None
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(rc6, er6)), FadeOut(tab), FadeIn(t), track(trk, 6), run_time=0.5)
+            self.play(FadeOut(VGroup(rc6, er6)), FadeOut(tab), FadeIn(t), track(trk, 5), run_time=0.5)
             self.add(trk)
             vo.wait_until("Control C")
             out(self, t, F04.at(142, 143), run_time=0.25)

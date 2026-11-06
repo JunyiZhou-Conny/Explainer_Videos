@@ -189,6 +189,7 @@ from manim import (DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, TAU, UL, UP, UR, Anima
                    Rectangle, ReplacementTransform, RoundedRectangle, Rotate, ShowIncreasingSubsets,
                    Succession, Text, Transform, UpdateFromAlphaFunc, ValueTracker, VGroup, VMobject,
                    interpolate_color, linear, there_and_back)
+from manim import ManimColor
 
 from explainer import style as S
 from explainer.components import pause_and_ponder, person_icon, ponder_card  # noqa: F401 (re-export)
@@ -660,16 +661,19 @@ STEPS = {
           "Add params", "View docs"],
     "F": ["Go to folder", "Build & run", "http-server", "Test 8080", "Edit index", "Refresh page"],
     "C1": ["Container ls", "Stop containers", "System prune", "Image ls"],
-    "V": ["cd vector-db", "docker-shell", "Load database", "Try chat", "exit"],
-    "B": ["cd api-service", "docker-shell", "api_server", "Check probes", "Demo route", "Try route",
+    # V, B, R, S: step k is the README's own step k (the narration reads those numbers aloud), so
+    # the README's step 1 'cd + docker-shell' is one step; the unnumbered sub-sections follow it
+    "V": ["cd + docker-shell", "Load database", "Try chat", "exit"],
+    "B": ["cd + docker-shell", "api_server", "Check probes", "Demo route", "Try route",
           "API docs", "GET newsletters", "Review code", "pytest"],
-    "R": ["cd frontend", "docker-shell", "npm run dev", "Open 3000", "Review app", "Review code",
+    "R": ["cd + docker-shell", "npm run dev", "Open 3000", "Review app", "Review code",
           "npm run check"],
     "P": ["Stop dev", "docker build", "docker run", "Open 8080", "Compare sizes"],
-    "S": ["Project ID", "Stop containers", "cd src", "compose up", "Open app", "compose down"],
+    "S": ["Project ID", "Stop containers", "cd src + compose up", "Open app", "compose down"],
     "C2": ["compose down", "system prune"],
-    "T23": ["cd vector-db", "docker-shell", "Load database", "cd api-service", "docker-shell",
-            "uvicorn_server", "Verify 9000"],
+    # two sections of the branch-2025 README: each step names its section and README number
+    "T23": ["VDB 1: cd vector-db", "VDB 2: docker-shell", "VDB 3: load", "Backend 1: cd api-service",
+            "Backend 2: docker-shell", "Backend 4: uvicorn_server", "Verify 9000"],
     "T24": ["cd frontend", "docker-shell", "http-server", "Home page", "Newsletters", "Chat"],
 }
 # 'README @ <ref> ›' for the trackers that follow another commit's README
@@ -787,6 +791,9 @@ def lref(slides: str) -> VGroup:
     or idea is on screen: lref("27 (Frontend)"), lref("34–41 (APIs)"). Deck names: APIs, Frontend."""
     if not slides.rstrip().endswith(("(APIs)", "(Frontend)")):
         raise ValueError(f"lref({slides!r}): name the deck, e.g. '24–26 (Frontend)' or '19–21 (APIs)'")
+    if slides.split()[0].isdigit():      # ONE slide: lecture_ref() only sees a bare number as one slide
+        g = tag(f"Lecture 18 · slide {slides}", S.GREY)
+        return g.move_to([SAFE_X - g.width / 2, SAFE_Y - g.height / 2, 0])
     return lecture_ref(18, slides)
 
 
@@ -1321,19 +1328,108 @@ def quote_card(file: str, nums, kind: str = "expected", source: str | None = Non
     return g
 
 
-def ponder(scene, question: str, seconds: float = 8, center=None, width: float = 9.5) -> VGroup:
+def _spans(s: str, size: float, color) -> VGroup:
+    """One row of a markdown cell: prose in the label font, `code` spans in mono, same baseline
+    strut (steady), a word gap only where the source has a space."""
+    parts = s.split("`")
+    pieces, gaps, between = [], [], ""
+    for i, p in enumerate(parts):
+        if not p.strip():
+            between += p
+            continue
+        if pieces:
+            spaced = " " in (between + p[:1])
+            gaps.append(0.13 if spaced else 0.03)
+        pieces.append(steady(p.strip(), size, color, mono_font=bool(i % 2)))
+        between = p[-1:]
+    g = VGroup(*pieces)
+    for k in range(1, len(pieces)):
+        pieces[k].next_to(pieces[k - 1], RIGHT, buff=gaps[k - 1])
+        pieces[k].align_to(pieces[k - 1], DOWN)
+    return g
+
+
+FIX_INK = interpolate_color(ManimColor(S.GREY), ManimColor(INK), 0.55)  # the fix line: lighter than GREY on the card fill
+
+
+def _wrap_spans(s: str, n: int) -> list[str]:
+    """`s` broken at its last space that fits `n` characters, never inside a `code` span (the text is
+    unchanged, only the row break moves)."""
+    out_, cur = [], ""
+    for w in s.split(" "):
+        if cur and len(cur) + 1 + len(w) > n and cur.count("`") % 2 == 0:
+            out_.append(cur)
+            cur = w
+        else:
+            cur = f"{cur} {w}" if cur else w
+    return out_ + [cur]
+
+
+def trouble_card(nums, source: str, size: float = 20, card_w: float | None = 12.4,
+                 wrap: int | None = None) -> VGroup:
+    """RECORDED(expected/04-troubleshooting.txt: nums) as table rows: each README row is the symptom
+    in WHITE, then an indented light-grey '→' and the fix (one sentence per line), code spans in mono, a gap
+    between rows. Same frame and tag as quote_card (S07, S09). card_w=None: as wide as the rows + 0.7.
+    wrap=n: a fix sentence longer than n characters continues on the next line (at a space, outside code).
+    .frame .body (one VGroup per README row) .tag"""
+    rows = []
+    for raw in recorded("04", *nums, plain=False):
+        cells = [c.strip() for c in raw.strip().strip("|").split("|")]
+        assert len(cells) == 2, raw
+        sym, fix = cells
+        sentences = [x for x in re.split(r"(?<=\.) (?=[A-Z])", fix) if x]
+        if wrap:
+            sentences = [part for x in sentences for part in _wrap_spans(x, wrap)]
+        top = _spans(sym, size, INK)
+        fx = VGroup(*[_spans(x, size, FIX_INK) for x in sentences]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        arr = label("→", size, FIX_INK)
+        arr.next_to(fx[0], LEFT, buff=0.15).set_y(fx[0].get_center()[1])
+        fix_g = VGroup(arr, fx)
+        fix_g.next_to(top, DOWN, buff=0.12).align_to(top, LEFT).shift(RIGHT * 0.45)
+        rows.append(VGroup(top, fix_g))
+    body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.34)
+    card_w = card_w or body.width + 0.7
+    frame = box(card_w, body.height + 0.75, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+    body.move_to(frame).align_to(frame, LEFT).shift(RIGHT * 0.35 + DOWN * 0.06)
+    assert body.width < card_w - 0.6, body.width
+    tg = tag("recorded" + f" · {source}", S.GREY)
+    tg.move_to(frame.get_corner(UR) + np.array([-tg.width / 2 - 0.2, 0, 0]))
+    g = VGroup(frame, body, tg)
+    g.frame, g.body, g.tag = frame, body, tg
+    return g
+
+
+VEIL = "#0D1014"                 # ponder(dim=...)'s veil: S.BG #0D0F14 with green + 1 (see ponder)
+
+
+def ponder(scene, question: str, seconds: float = 8, center=None, width: float = 9.5,
+           dim: float = 0.0) -> VGroup:
     """PLAYS a PONDER card (YELLOW timer drains over `seconds`). center=(x, y) moves it (default:
-    the frame's centre). The frame is opaque, so the card may sit over a set piece. Returns the card
-    (still on screen): FadeOut it at the start of the next block."""
+    the frame's centre). The frame is opaque, so the card may sit over a set piece. dim > 0 (0.85
+    when the card sits ON a set piece): a full-frame BG veil at that opacity fades in with the card,
+    behind it and in front of everything else, so the words around its edges read as dimmed, not
+    sliced; the veil is part of the returned group (FadeOut(card) takes it too) and .card is the
+    card alone (measure placement on it). Returns the group (still on screen): FadeOut it at the
+    start of the next block."""
     c = ponder_card(question, width=width)
     c[0].set_fill(S.BG, 1)        # opaque: at 0.96 the words of a set piece behind it ghost through
     if center is not None:
         c.move_to([center[0], center[1], 0])
-    scene.play(FadeIn(c, scale=0.95), run_time=0.6)
     bar = c[3]
+    g = c
+    if dim:
+        # the safe area is the whole set (explainer.check keeps every visible mobject inside it), so a
+        # BG veil of exactly that size dims all of it and stays clear of the OUT lint itself
+        # VEIL, not S.BG: Cairo's premultiplied blend of BG over BG at 0.85 lands one level darker
+        # in green (13,14,20 vs 13,15,20), which shows as a faint box edge; VEIL blends back to BG exactly
+        veil = Rectangle(width=2 * SAFE_X, height=2 * SAFE_Y).set_stroke(width=0).set_fill(VEIL, dim)
+        g = VGroup(veil, c)
+        g.veil = veil
+    g.card = c
+    scene.play(FadeIn(g, scale=0.95), run_time=0.6)
     target = bar.copy().scale(0.001, about_point=bar.get_start())
     scene.play(bar.animate(rate_func=linear).become(target), run_time=seconds)
-    return c
+    return g
 
 
 # ------------------------------------------------------------------ small glyphs and motion
@@ -2248,8 +2344,11 @@ class TwoLocalhosts(_Anchored):
 
     def on_box(self, scene, row: str, mob, run_time: float = 0.5):
         """PLAYS: `mob` (a chip, '26 passed') settles on a box's top edge (right of centre, clear of the
-        name and the inner chip) and stays with the piece."""
+        name and the inner chip) and stays with the piece. A chip (.box) gets an opaque BG backing, so
+        the box's top edge does not strike its text through (S09's badge does the same)."""
         b = self.boxes[row].frame
+        if hasattr(mob, "box"):
+            mob.add_to_back(mob.box.copy().set_stroke(width=0).set_fill(S.BG, 1))
         mob.move_to(b.get_top() + RIGHT * 0.45)
         return self.show(scene, mob, run_time=run_time)
 

@@ -1,5 +1,5 @@
 """S10 · Why a framework: React with Vite (AC215 L18, part 2 opens). No tracker until
-`cd src/frontend-react`; then tracker [R] "README › Tutorial: React Frontend Setup" 1 → 4
+`cd src/frontend-react`; then tracker [R] "README › Tutorial: React Frontend Setup" 1 → 3
 (4 · extra in beat 10). Lecture tags: Frontend slides 30–31, 32–33, 35–37 (beats 1–5).
 
 Beats (script.md "## S10", one voiceover block each):
@@ -24,7 +24,7 @@ Beats (script.md "## S10", one voiceover block each):
    shell's header (the pin pulses once), line 55 `<Outlet />` → the middle block (tag "<Outlet />"),
    line 59 `<footer` → the footer. LECTURE off at the end.
 6. Tracker [R] 1. A 3-row `laptop · new terminal` strip at ~/cheese-app-v2 types `cd
-   src/frontend-react` (d01, the prompt changes); tracker [R] 2, `./docker-shell.sh` (d02:1).
+   src/frontend-react` (d01, the prompt changes); (the tracker stays on README step 1) `./docker-shell.sh` (d02:1).
    CODE(frontend-react/docker-shell.sh: 14–23) on the left, a small V5 on the right (the laptop frame,
    the API box and a dimmed vector-db box on the GREEN cable, as in beat 0 and S11): line 19 GREEN, line 20 ORANGE (an ORANGE chip "named volume" under the frontend
    box), line 21 PINK (the frontend box comes in behind door 3000, ':5173'), line 22 GREEN (its stub
@@ -32,15 +32,15 @@ Beats (script.md "## S10", one voiceover block each):
 7. The panel and the drawing go; the terminal grows to 10 rows: d02:2–3 (cut), …, 21–25, 27
    (YELLOW), 29–33 (31 wrapped); row tag "at the time of recording" on the Node line; the GREY chip
    "your first run: a full install into the volume · docker-entrypoint.dev.sh:8" above the terminal.
-8. Tracker [R] 3. At d02:35's container prompt it types `npm run dev` → d02:37–38, 80 (PURPLE),
+8. Tracker [R] 2. At d02:35's container prompt it types `npm run dev` → d02:37–38, 80 (PURPLE),
    82–83 with a GREY brace "inside the container"; V5's frontend row (door 3000 → :5173) returns
    above the terminal and its door pulses PINK on "use 3000". ▶ your turn.
-9. Tracker [R] 4. The terminal goes; a GREY browser (illustration) at localhost:3000. A 5-row
+9. Tracker [R] 3. The terminal goes; a GREY browser (illustration) at localhost:3000. A 5-row
    `laptop · second tab` strip types d03:1 (extra) → d03:2, 23, 26–27; `<div id="root"></div>` and
    `/src/main.jsx` YELLOW. In the browser: an empty dashed `root` box; the `/src/main.jsx` card
    beside it; on "The whole app is one page" an arrow from the script fills the root box with a
    header / page / footer.
-10. Tracker [R] 4 · extra. The browser goes; the tab (8 rows) types d08:1 (folds, extra) → d08:2–6,
+10. Tracker [R] 3 · extra. The browser goes; the tab (8 rows) types d08:1 (folds, extra) → d08:2–6,
    every `200 text/html` YELLOW, `/nope` flashes. On "The browser picks the page" the tab shrinks to
    2 rows and the V8 shell returns: its PINK address bar cycles /podcasts, /newsletters,
    /chat?model=llm, /nope, the middle block swaps to the matching page and, for /nope, "Not found".
@@ -419,7 +419,7 @@ class ReactShell(VoiceScene):
             self.play(sh.middle.animate.set_stroke(S.GREY), FadeOut(ref3), run_time=0.5)
             sh.heal(self)
 
-        # ========================================================== 6. tracker R 1–2: cd; docker-shell.sh
+        # ========================================================== 6. tracker R 1 (README step 1): cd; docker-shell.sh
         trk = tracker_r(1)
         t = term(P_V2, rows=3, title=T_NEW, size=20)
         pd = code(DSH, 14, 23, font_size=20, dedent=True, shown="frontend-react/docker-shell.sh",
@@ -447,7 +447,7 @@ class ReactShell(VoiceScene):
             type_capture(self, t, D01, type_time=0.6)
             cd_prompt(self, t, P_V2_REACT)
             vo.wait_until("and run docker-shell.sh")
-            self.play(track(trk, 2), run_time=0.4)
+            self.wait(0.4)  # README step 1 is cd + docker-shell: the tracker stays on step 1
             type_capture(self, t, D02, type_time=0.5)
             vo.wait_until("It mounts your code")
             self.play(FadeIn(pd, shift=UP * 0.15), FadeIn(mn.front, shift=LEFT * 0.2), run_time=0.5)
@@ -502,7 +502,7 @@ class ReactShell(VoiceScene):
         # ========================================================== 8. step 2: npm run dev; two addresses inside; use 3000
         fr8 = VGroup(mn.door.copy(), mn.tunnel.copy(), mn.front.copy(), mn.port.copy())
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(first), track(trk, 3), run_time=0.5)
+            self.play(FadeOut(first), track(trk, 2), run_time=0.5)
             vo.wait_until("npm run dev")
             type_at(self, t, D02, 35, type_time=0.5)
             vo.wait_until("Vite is ready")
@@ -547,7 +547,7 @@ class ReactShell(VoiceScene):
         assert fill9.get_top()[1] < rlab.get_bottom()[1] - 0.04, (fill9.get_top(), rlab.get_bottom())
         with self.voiceover(SAY[9]) as vo:
             clear_bar(self, t, FadeOut(VGroup(br8, bt8, fr8)))
-            self.play(FadeOut(t), track(trk, 4), run_time=0.5)
+            self.play(FadeOut(t), track(trk, 3), run_time=0.5)
             self.play(FadeIn(br9, shift=RIGHT * 0.2), FadeIn(ill9), FadeIn(tab, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("open localhost 3000")
             self.play(br9.flash(ROUTE), Indicate(br9.address, color=ROUTE, scale_factor=1.1), run_time=0.6)
@@ -576,7 +576,7 @@ class ReactShell(VoiceScene):
 
         # ========================================================== 10. extra: every address, the same HTML
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(br9, ill9, rb, rlab, scr, arr9, fill9)), track(trk, 4, extra=True), run_time=0.5)
+            self.play(FadeOut(VGroup(br9, ill9, rb, rlab, scr, arr9, fill9)), track(trk, 3, extra=True), run_time=0.5)
             clear_bar(self, tab)
             clear_lines(self, tab, run_time=0.3)
             resize(self, tab, 8, run_time=0.5)

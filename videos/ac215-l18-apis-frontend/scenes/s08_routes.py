@@ -2,7 +2,7 @@
 4 → 9. Lecture: 18 · 29 (beat 0), 44 (beat 1), 30–33 (beat 2), 39–41 (beat 3), 41 (beat 8) (APIs).
 
 Beats (script.md "## S08", one voiceover block each):
-0. Tracker [B] 4, lecture_ref 29. Slide 29 redrawn: three GREY phone outlines "Newsletters" (a card),
+0. Tracker [B] 3, lecture_ref 29. Slide 29 redrawn: three GREY phone outlines "Newsletters" (a card),
    "Podcasts" (an episode with a play button), "Chat" (a photo and the bubble "What type of cheese is
    this?"). On "Each screen needs data" a PINK thread grows up from each phone to a data chip:
    "newsletters", "podcasts", "chat + photo"; on "each kind of data" the chips pulse.
@@ -24,7 +24,7 @@ Beats (script.md "## S08", one voiceover block each):
 3. lecture_ref 39–41. The diagram goes, the tree returns. A GREY card "slide 39 · the idea" with the
    slide's one-file form @app.get("/newsletters") and the erratum tag; on "The repository puts" /api,
    its edge and newsletters light PINK in turn and the PINK label /api/newsletters writes on the row.
-4. Lecture off. Tracker [B] 5. The groups, Agent Chat, label and card go; the tree fades. A README card
+4. Lecture off. Tracker [B] 4. The groups, Agent Chat, label and card go; the tree fades. A README card
    (README.md · lines 106–112) with the demo route; the GREY chip "your editor"; on "and save" the
    card gives way to a `laptop · second tab` terminal (…/src/api-service) that types `git diff
    api/service.py` (bar tag extra) → b27:20–21, 24–29 (the blank context rows dropped), + lines GREEN.
@@ -33,19 +33,19 @@ Beats (script.md "## S08", one voiceover block each):
    under /api.
 5. The tree's '/' root with healthz and readyz appears; V6's readiness lamp (small, by readyz) drops to
    amber. The strip becomes the `second tab`: extra b30 → b30:2–3 (GREEN); the lamp turns GREEN.
-6. Tracker [B] 6. The strip types b28 (extra) → b28:2; a GREY browser drawing (illustration) at
+6. Tracker [B] 5. The strip types b28 (extra) → b28:2; a GREY browser drawing (illustration) at
    localhost:9000/api/square_root shows the same number; then b29 → b29:2 `5.0` GREEN, the browser goes
    to ?x=3&y=4 and shows 5.0. ▶ your turn on the bar.
-7. Tracker [B] 7. Browser and lamp go. The strip types b31 (extra) → b31:2–4, `/api/openapi.json`
-   YELLOW. Tracker [B] 7 · extra: b32 (folds) → b32:2–27 scroll through the strip; on "the leaves of
+7. Tracker [B] 6. Browser and lamp go. The strip types b31 (extra) → b31:2–4, `/api/openapi.json`
+   YELLOW. Tracker [B] 6 · extra: b32 (folds) → b32:2–27 scroll through the strip; on "the leaves of
    this tree" V4's 25 leaf dots fill the tree and the GREY counter "25 operations" writes.
-8. Tracker [B] 8. Tree and strip go. A GREY browser drawing of localhost:9000/api/docs (illustration)
+8. Tracker [B] 7. Tree and strip go. A GREY browser drawing of localhost:9000/api/docs (illustration)
    with GET /api/newsletters, limit = 2 and an Execute button; ▶ your turn beside it. An 8-row
    `second tab` types b33 → b33:5–9, 15–19, 25–26 (the progress meter, lines 2–4, dropped); the two
    "title" lines YELLOW; on "newest first" the two "dts" lines flash. On "the lecture's example"
    lecture_ref 41 and a small GREY card "slide 41: a JSON list of newsletters". On "An unknown ID" b34
    (extra) → b34:2–3 RED.
-9. Lecture off. Tracker [B] 9. A README card (README.md · lines 123–132: File and What it does, long
+9. Lecture off. Tracker [B] 8. A README card (README.md · lines 123–132: File and What it does, long
    descriptions cut with '…') gives way to the tree with V4's file map: service.py, settings.py, the
    routers on their branches, chat.py under the stamp, the three utils files on the three chat rows, and
    chat_utils.py GREEN "saves chats"; each lights on its phrase. Fade; empty frame.
@@ -271,7 +271,7 @@ class ScreensToRoutes(VoiceScene):
         quiet = _Quiet()
 
         # ========================================================== 0. slide 29: the screens need data
-        trk = tracker_b(4)
+        trk = tracker_b(3)
         ref = lref("29 (APIs)")
         phones = VGroup(phone("Newsletters", "news"), phone("Podcasts", "pod"), phone("Chat", "chat"))
         for ph, x in zip(phones, (-4.0, 0.0, 4.0)):
@@ -435,7 +435,7 @@ class ScreensToRoutes(VoiceScene):
         ut = term(container_prompt(B21, 37), rows=4, title=T_LAPTOP, size=20)
         with self.voiceover(SAY[4]) as vo:
             rt.drop(self, *gc.values(), plabel, run_time=0.3,
-                    extra=[FadeOut(idea), FadeOut(err39), FadeOut(ref39), track(trk, 5)])
+                    extra=[FadeOut(idea), FadeOut(err39), FadeOut(ref39), track(trk, 4)])
             rt.group_chips = {}
             for k in ("api", "newsletters"):
                 rt.nodes[k].box.set_stroke(ROUTE)
@@ -493,7 +493,7 @@ class ScreensToRoutes(VoiceScene):
         assert br.get_top()[1] < TRACK_BOTTOM - 0.1 and br.get_left()[0] > rt.nodes["square_root"].get_right()[0] + 0.1
         assert ill.get_left()[0] > max(m.get_right()[0] for m in rt.mode_labels.values()) + 0.1
         with self.voiceover(SAY[6]) as vo:
-            self.play(track(trk, 6), run_time=0.5)
+            self.play(track(trk, 5), run_time=0.5)
             clear_lines(self, tab)
             vo.wait_until("Then open slash api, square root")
             ln = type_capture(self, tab, B28, type_time=0.8)[0]
@@ -513,7 +513,7 @@ class ScreensToRoutes(VoiceScene):
 
         # ========================================================== 7. step 7: API docs, the 25 leaves
         with self.voiceover(SAY[7]) as vo:
-            rt.drop(self, lp, run_time=0.4, extra=[FadeOut(br), FadeOut(ill), track(trk, 7)])
+            rt.drop(self, lp, run_time=0.4, extra=[FadeOut(br), FadeOut(ill), track(trk, 6)])
             tab.remove(turn6)
             # the docs check and the extra listing fold onto 2 and 5 rows: the strip grows over the tree
             # for them, then shrinks back under it for the leaves
@@ -528,7 +528,7 @@ class ScreensToRoutes(VoiceScene):
             self.play(substring(oa, "/api/openapi.json").animate.set_color(TURN), run_time=0.4)
             self.add(tab)
             vo.wait_until("An extra listing")
-            self.play(track(trk, 7, extra=True), run_time=0.4)
+            self.play(track(trk, 6, extra=True), run_time=0.4)
             clear_lines(self, tab)
             type_capture(self, tab, B32, type_time=0.4)
             out(self, tab, B32.at((2, 27)), run_time=0.9, chunk=10)
@@ -551,7 +551,7 @@ class ScreensToRoutes(VoiceScene):
         c41.move_to([SAFE_X - 0.15 - c41.width / 2, 2.0, 0])
         assert c41.get_top()[1] < ref41.get_bottom()[1] - 0.05 and c41.get_left()[0] > dbr.get_right()[0] + 0.1
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(rt), FadeOut(tab), track(trk, 8), run_time=0.5)
+            self.play(FadeOut(rt), FadeOut(tab), track(trk, 7), run_time=0.5)
             self.play(FadeIn(dbr), FadeIn(t8), run_time=0.5)
             dbr.fill(self, [get_row, VGroup(lim_row, exe).arrange(RIGHT, buff=0.6)], run_time=0.5)
             ill8 = illustration_tag().next_to(dbr, RIGHT, buff=0.2).align_to(dbr, UP)
@@ -594,7 +594,7 @@ class ScreensToRoutes(VoiceScene):
         with self.voiceover(SAY[9]) as vo:
             keep = set(trk.get_family())
             gone = [m for m in self.mobjects if m not in keep]
-            self.play(*[FadeOut(m) for m in gone], track(trk, 9), run_time=0.6)
+            self.play(*[FadeOut(m) for m in gone], track(trk, 8), run_time=0.6)
             self.remove(*gone)
             self.play(FadeIn(card9, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("Service dot py builds the app")

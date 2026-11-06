@@ -106,6 +106,26 @@ assert C12.at(2, 4) == ["HTTP/1.1 200 OK", "server: uvicorn"]
 assert C13.line(2) == '30:@app.get("/square_root/")' and C13.line(7) == "10.198039027185569"
 assert C14.line(3) == "# Additional routers here"
 assert C14.line(8).startswith("# app.include_router(llm_rag_chat") and C14.line(9).startswith("# app.include_router(llm_agent")
+# c14's one command line, folded by hand: Terminal.fold (explainer/devops.py) drops a character when
+# it must hard-break a token (here inside the quoted python: "json.lo \\ / d(sys.stdin)"), and a soft
+# wrap at the row edge splits words. These four pieces join with single spaces into the exact command;
+# rows 1-2 end in ' \\' (outside any quote), row 3 breaks INSIDE the single-quoted python between
+# list-comprehension clauses, where a pasted newline is still the same shell string and valid python.
+C14_PIECES = ["sed -n '35,42p'", "api/service.py; curl -s http://localhost:9000/openapi.json |",
+              "python3 -c 'import json,sys; [print(m.upper().ljust(6), p)",
+              """for p,v in json.load(sys.stdin)["paths"].items() for m in v]'"""]
+assert len(C14.cmd_lines) == 1 and " ".join(C14_PIECES) == C14.cmd_lines[0], C14.cmd_lines
+
+
+def c14_rows(p: str) -> list[str]:
+    """The rows c14 is typed as, after the prompt part `p`: ' \\' continuations outside the quotes,
+    4-space indents; asserts they rejoin to exactly p + the captured command."""
+    rows = [p + C14_PIECES[0] + " \\", "    " + C14_PIECES[1] + " \\", "    " + C14_PIECES[2],
+            "    " + C14_PIECES[3]]
+    back = rows[0].removesuffix(" \\") + "".join(
+        " " + r[4:].removesuffix(" \\") for r in rows[1:])
+    assert back == p + C14.cmd_lines[0], back
+    return rows
 
 DS_2025 = f"{V2_2025}/src/vector-db/docker-shell.sh"
 assert excerpt(DS_2025, 10, 10) == 'export GOOGLE_APPLICATION_CREDENTIALS="/secrets/llm-service-account.json"'
@@ -544,11 +564,22 @@ class Branch2025(VoiceScene):
             dont.next_to(err6b, DOWN, buff=0.2).align_to(err6b, LEFT)
             self.play(FadeTransform(cA, cB), Transform(err6, err6b), run_time=0.6)
             self.bring_to_front(err6)
-            # one long line whose quoted python is longer than a row: soft-wrap at the row edge like a
-            # real terminal (the rows join back to the exact command; no ' \\' inside the quotes)
-            assert len(C14.cmd_lines) == 1
-            ln = type_cmd(self, tab, C14.cmd_lines[0], type_time=0.9, soft=True)
+            # one long line whose quoted python is longer than a row: typed as c14_rows() (see C14_PIECES)
+            p14 = tab.prompt + " "
+            rows14 = c14_rows(p14)
+            assert all(len(r) <= tab.max_chars for r in rows14), [len(r) for r in rows14]
+
+            def fold14(text, first_prefix=0):
+                assert text == p14 + C14.cmd_lines[0], text
+                return rows14
+            tab.fold = fold14
+            try:
+                ln = type_cmd(self, tab, C14.cmd_lines[0], type_time=0.9, soft=False)
+            finally:
+                del tab.fold
+            assert [r.text for r in ln.rows] == rows14, [r.text for r in ln.rows]
             mark_extra(self, tab, ln)
+            self.wait(0.8)      # the whole command holds before its output scrolls the first rows up
             o14 = out(self, tab, C14.at((3, 9)), run_time=0.5)
             self.play(*[r.animate.set_color(TURN) for r in o14[1:5]], run_time=0.4)
             self.add(tab)

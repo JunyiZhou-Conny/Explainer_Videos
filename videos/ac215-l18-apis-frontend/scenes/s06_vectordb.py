@@ -22,7 +22,7 @@ Beats (script.md "## S06", one voiceover block each):
    placeholder" `your-gcp-project` GREEN on the + lines.
 4. Tracker [SE] → [V] 1, lecture_ref 45 (APIs). The terminal clears and shrinks to a 3-row strip;
    a small GREY card "slide 45 (APIs) · step 1: make sure the vector database is running". It types
-   `cd src/vector-db` (b05, no output: the prompt changes); tracker [V] 2, `./docker-shell.sh`;
+   `cd src/vector-db` (b05, no output: the prompt changes); (the tracker stays on README step 1) `./docker-shell.sh`;
    ▶ your turn on the bar.
 5. Lecture tag and card off; the empty V5 laptop above the strip. "creates the network": b06:2 with
    the bar tag "docker network create · cheese-app-network" while the GREEN cable draws; "builds the
@@ -31,7 +31,7 @@ Beats (script.md "## S06", one voiceover block each):
    lights. "publishing 8000": door 8000 pulses, then V5 gives way to CODE(vector-db/docker-compose.yml:
    19–25) (no room for both side by side) with `8000:8000` PINK; "a folder on your laptop":
    `./docker-volumes/chromadb:/data` GREEN.
-6. Tracker [V] 3. The panel goes, the terminal grows to 10 rows: b06:31–34, 36–42 (wrapped); at
+6. Tracker [V] 2. The panel goes, the terminal grows to 10 rows: b06:31–34, 36–42 (wrapped); at
    b06:44's prompt it types the --download --load line → b06:50, 52 ("11" YELLOW), 53 (wrap), 65
    (wrap), …, 197 (wrap), 208 (wrap). A YELLOW counter above the terminal sums the eleven "Finished
    inserting" numbers (b06:65 … 208) book by book and lands on 14,356 GREEN. ▶ your turn on the bar.
@@ -41,15 +41,15 @@ Beats (script.md "## S06", one voiceover block each):
    "chunks and embeddings"), then b09:25–27; a GREY
    dashed card "Lecture 5 · chunk → embed" slides in beside the counter, and a dashed arrow from it
    up to the row tag "downloaded, not recomputed" beside `78.8M outputs` (which flashes).
-8. Tracker [V] 4. Tab, card and counter go; the terminal grows to 10 rows and types the --chat line
+8. Tracker [V] 3. Tab, card and counter go; the terminal grows to 10 rows and types the --chat line
    at b06:209's prompt → b06:211, 212, 219–222 (220 YELLOW: the embedding call), …, 297 (wrap, RED). A
    small inset above: the GREY laptop chip → PINK arrow with the GOLD cost tag → BLUE Vertex AI cloud;
    on "fails here" a RED cross at the arrow's tip; on "With your key" the GREY chip "with your key:
    an answer from the books".
 9. The inset goes; the terminal shrinks to a strip (297 stays). CODE(vector-db/cli.py: 370–378,
    line 374 cut), line 377 YELLOW, the GREY chip "fixed question · edit this line" beside it.
-10. Tracker [V] 5. The panel goes; at b06:298's prompt it types `exit` → b06:299. V5 (the vector-db
-   row with the CLI and the cable) returns above the strip. Tracker [V] 5 · extra: the strip types b07
+10. Tracker [V] 4. The panel goes; at b06:298's prompt it types `exit` → b06:299. V5 (the vector-db
+   row with the CLI and the cable) returns above the strip. Tracker [V] 4 · extra: the strip types b07
    → b07:2–3 (wrapped), `0.0.0.0:8000->8000/tcp` PINK while door 8000 pulses; then b10 → b10:2. On
    "the network's phone book" a GREEN card opens on the cable; on "turns its name into an address"
    its first entry writes on: the name, an arrow, then the address 172.19.0.2. Fade; empty frame.
@@ -387,7 +387,7 @@ class VectorDb(VoiceScene):
             type_capture(self, t, B05, type_time=0.5)
             cd_prompt(self, t, P_V2_VDB)
             vo.wait_until("and run docker-shell.sh")
-            self.play(track(trk, 2), run_time=0.4)
+            self.wait(0.4)  # README step 1 is cd + docker-shell: the tracker stays on step 1
             type_capture(self, t, B06, type_time=0.4)
             vo.wait_until("Pause and run them")
             turn = bar_tag(self, t, turn_row())
@@ -438,7 +438,7 @@ class VectorDb(VoiceScene):
         cnt = chunk_counter(0).move_to([5.0, 2.05, 0])
         cnt.shift(RIGHT * (6.45 - cnt.get_right()[0]))
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(panel), FadeOut(u), track(trk, 3), run_time=0.5)
+            self.play(FadeOut(panel), FadeOut(u), track(trk, 2), run_time=0.5)
             resize(self, t, 10, run_time=0.5)
             assert cnt.get_bottom()[1] > t.box.get_top()[1] + 0.1, (cnt.get_bottom(), t.box.get_top())
             out(self, t, B06.at((31, 34), (36, 42)), wrap=True, run_time=0.8)
@@ -516,7 +516,7 @@ class VectorDb(VoiceScene):
         ix = cross_glyph(0.28).move_to(icall.get_end() + LEFT * 0.2 + DOWN * 0.0)
         ans = grey_chip("with your key: an answer from the books")
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(tab, l5, arr, cnt)), track(trk, 4), run_time=0.5)
+            self.play(FadeOut(VGroup(tab, l5, arr, cnt)), track(trk, 3), run_time=0.5)
             resize(self, t, 10, run_time=0.5)
             assert inset_vx.get_bottom()[1] > t.box.get_top()[1] + 0.05, (inset_vx.get_bottom(), t.box.get_top())
             assert icost.get_top()[1] < PIC_TOP + 0.1 and inset_vx.get_top()[1] < PIC_TOP + 0.1, inset_vx.get_top()
@@ -602,7 +602,7 @@ class VectorDb(VoiceScene):
             (book.get_corner(UL), net10.title.get_bottom())
         assert book.get_right()[0] < net10.frame.get_right()[0] - 0.05, (book.get_right(), net10.frame.get_right())
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(p9, bar, fixed)), track(trk, 5), run_time=0.5)
+            self.play(FadeOut(VGroup(p9, bar, fixed)), track(trk, 4), run_time=0.5)
             vo.wait_until("Step 4")
             type_at(self, t, B06, 298, type_time=0.3)
             out(self, t, [B06.line(299)], run_time=0.3)
@@ -613,7 +613,7 @@ class VectorDb(VoiceScene):
             self.play(FadeIn(net10), run_time=0.5)
             self.play(net10.light("vdb", OWN), run_time=0.4)
             vo.wait_until("as an extra docker ps shows")
-            self.play(track(trk, 5, extra=True), run_time=0.4)
+            self.play(track(trk, 4, extra=True), run_time=0.4)
             type_capture(self, t, B07, type_time=0.6)
             o7 = out(self, t, B07.at(2, 3), wrap=True, run_time=0.4)
             recolor(self, o7[-1], "0.0.0.0:8000->8000/tcp", ROUTE)
