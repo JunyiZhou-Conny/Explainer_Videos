@@ -316,14 +316,13 @@ class Terminal(VGroup):
             lo = len(indent) + (room - len(indent)) * 0.5
             if opt and opt[-1] >= lo:
                 ok = opt
-            cut = ok[-1] if ok else (breaks[0] if breaks and breaks[0] < len(cur) - 1 else room)
-            if cut > room:                        # no space early enough: hard break
-                cut = room
-                rows.append(cur[:cut] + " \\")
-                cur = "    " + cur[cut:]
-            else:
+            if ok:                                # break at a space: the space is dropped
+                cut = ok[-1]
                 rows.append(cur[:cut] + " \\")
                 cur = "    " + cur[cut + 1:]
+            else:                                 # no usable space early enough: hard break,
+                rows.append(cur[:room] + " \\")  # keeping every character
+                cur = "    " + cur[room:]
             indent = "    "
         rows.append(cur)
         return rows
