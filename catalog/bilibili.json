@@ -156,6 +156,11 @@
       "bvid": "BV1cu4Y68ETq",
       "title": "AC215 第15讲跟练 · ML 工作流：在 AWS SageMaker 上部署模型，再用 SageMaker Pipelines 自动化整条流程",
       "pubdate": 1793907758
+    },
+    "ac215-l18-apis-frontend": {
+      "bvid": "BV1U94V6oECP",
+      "title": "AC215 第18讲跟练 · API 与前端：FastAPI 服务、简单网页和 React 应用，一步一步在本地跑起奶酪 App",
+      "pubdate": 1793993416
     }
   },
   "unmatched": [
