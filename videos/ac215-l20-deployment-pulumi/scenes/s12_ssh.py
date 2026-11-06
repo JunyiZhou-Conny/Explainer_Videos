@@ -328,7 +328,7 @@ class SshKeys(VoiceScene):
             self.play(Indicate(val, color=TURN, scale_factor=1.06), Indicate(sk.name_tag, color=TURN, scale_factor=1.1),
                       run_time=0.7)
             sk.heal(self)
-            self.add(panel)
+            self.add(panel, ringu)         # re-seat the panel, then the ring ON TOP (its filled frame hid it)
             vo.wait_until("Copy it")
             yt = your_turn().next_to(sk.name_tag, DOWN, buff=0.3)
             assert yt.get_bottom()[1] > t.box.get_top()[1] + 0.1 and yt.get_right()[0] < panel.frame.get_left()[0] - 0.1

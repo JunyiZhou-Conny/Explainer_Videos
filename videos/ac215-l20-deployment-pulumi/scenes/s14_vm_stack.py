@@ -25,7 +25,7 @@ Beats (script.md "## S14", one voiceover block each):
    '50 · line 36' beside line 95), 100-103 YELLOW. Then V7a returns: the VM, its two tags,
    the disk on its cable, the sealed PINK envelope '<instance_ip>' and the caption 'Output: opens when
    the VM exists'.
-6. TRACKER [P] 12 · extra. V7a's picture gives way to its plan list; a 3-row strip types `pulumi
+6. TRACKER [P] 12 · extra. V7a's picture gives way to its plan list (two columns); a 7-row terminal types `pulumi
    preview --stack dev --refresh` (extra) -> TERM(b43: 6-10, …, 21-22, …, 41 wrap, …, 44-45): the five
    create lines GREEN as the plan ticks Disk, Network and three Firewalls; line 21 YELLOW; 41 RED and
    the plan's get_image row RED; '+ 6 to create' GREEN, '1 errored' RED; a GREY chip 'yours: about 30
@@ -58,7 +58,8 @@ Deviations from SHOW:
   so the VPC steps aside for the first sentence and returns for the second; a GREY chip names where
   the 50 comes from (line 36, outside the range).
 - Beat 6: a terminal and the full VPC cannot share the frame either: the VPC picture fades and V7a's
-  plan list carries the ticks above a 3-row strip.
+  plan list (two columns of three, so the RED Response line stays visible in a 7-row terminal)
+  carries the ticks; beat 7's ghost gets a fresh 3-row strip.
 - Beat 7: the GOLD cost line is split into two tags (one line would be 13 units wide).
 - Beat 10: the panel and caption fade out instead of dimming (the ponder card and the tile need the
   middle of the frame); the dominoes dim.
@@ -117,6 +118,20 @@ def span_bar(code_, k0: int, k1: int, color, opacity: float = 0.2) -> Rectangle:
     h = top.get_top()[1] - bot.get_bottom()[1]
     return Rectangle(width=top.width, height=h, stroke_width=0).set_fill(color, opacity).move_to(
         [top.get_center()[0], (top.get_top()[1] + bot.get_bottom()[1]) / 2, 0])
+
+
+def plan_grid(vf, scene, run_time: float = 0.5):
+    """VmFences.plan_rows laid out as two columns of three (Disk, Network, allow-http | allow-https,
+    allow-ssh, get_image) at the top, so a 7-row terminal fits under it and the RED Response line
+    stays on screen. Same parts as plan_rows (vf.plan, vf.plan_glyphs), so tick()/fail() work."""
+    g = VGroup()
+    for i, r in enumerate(vf.PLAN_ROWS):
+        col, k = divmod(i, 3)
+        g.add(label(r, 20, S.GREY).move_to([-4.3 + 4.9 * col, 1.9 - 0.5 * k, 0], aligned_edge=LEFT))
+    hd = label("plan", 20, S.GREY).move_to([-4.75, 2.4, 0], aligned_edge=LEFT)
+    vf.plan, vf.plan_glyphs = g, {}
+    vf.show(scene, hd, g, run_time=run_time)
+    return g
 
 
 def same_err(c):
@@ -292,7 +307,7 @@ class VmStack(VoiceScene):
             vf.vpc(self)
             self.play(FadeIn(refl), run_time=0.3)
             vo.wait_until("There is a cloud network")
-            self.play(Indicate(vf.submobjects[-1], color=CLOUD, scale_factor=1.1), run_time=0.7)
+            self.play(Indicate(vf.submobjects[-1], color=TURN, scale_factor=1.1), run_time=0.7)
             vf.heal(self)
             vo.wait_until("also called cheese app network")
             self.play(FadeIn(same, shift=LEFT * 0.2), run_time=0.5)
@@ -339,17 +354,17 @@ class VmStack(VoiceScene):
             vf.heal(self)
 
         # ========================================================== 6. b43: the real preview
-        t = toolbox_term(3, "/app/deploy_single_vm")
+        t = toolbox_term(7, "/app/deploy_single_vm")
         yours = grey_chip("yours: about 30 resources")
         with self.voiceover(SAY[6]) as vo:
             parts = [m for m in vf.submobjects if m is not vf.ref]
             vf.drop(self, *parts, run_time=0.4)
-            vf.shift(LEFT * 4.6 + UP * 0.25)
             self.play(FadeIn(t, shift=UP * 0.3), track(trk, 12, True), run_time=0.5)
-            vf.plan_rows(self, run_time=0.5)
-            assert vf.plan.get_bottom()[1] > t.box.get_top()[1] + 0.1, vf.plan.get_bottom()
-            yours.move_to([3.9, vf.plan[5].get_center()[1], 0])
-            assert yours.get_left()[0] > vf.plan.get_right()[0] + 0.3
+            plan_grid(vf, self, run_time=0.5)
+            assert vf.plan.get_bottom()[1] > t.box.get_top()[1] + 0.3, (vf.plan.get_bottom(), t.box.get_top())
+            assert vf.plan.get_top()[1] < trk.get_bottom()[1] - 0.2
+            yours.move_to([6.3, vf.plan[5].get_center()[1], 0], aligned_edge=RIGHT)
+            assert yours.get_left()[0] > vf.plan[5].get_right()[0] + 0.4
             ln = type_capture(self, t, B43, type_time=0.5)[-1]
             pin(self, ln, beside(extra_row(), ln), run_time=0.3)
             vo.wait_until("The real preview plans a disk")
@@ -381,12 +396,13 @@ class VmStack(VoiceScene):
         cost1 = cost_tag("VM n2d-standard-2 ≈ $2/day, roughly")
         cost2 = cost_tag("+ boot and data disks · external IP · check the pricing calculator")
         costs = VGroup(cost1, cost2).arrange(DOWN, buff=0.15).move_to([0, -0.55, 0])
-        assert plan_card.get_bottom()[1] > costs.get_top()[1] + 0.15 and costs.get_bottom()[1] > t.box.get_top()[1] + 0.1
+        assert plan_card.get_bottom()[1] > costs.get_top()[1] + 0.15 and costs.get_bottom()[1] > strip_top(3) + 0.1
         assert plan_card.get_top()[1] < 2.85
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(vf), FadeOut(yours), track(trk, 12), run_time=0.4)
-            self.remove(vf, yours)
-            t.clear(self)
+            self.play(FadeOut(vf), FadeOut(yours), FadeOut(t), track(trk, 12), run_time=0.4)
+            self.remove(vf, yours, t)
+            t = toolbox_term(3, "/app/deploy_single_vm")       # the ghost's strip, shown when it is typed
+            assert costs.get_bottom()[1] > t.box.get_top()[1] + 0.1
             self.play(FadeIn(frame), FadeIn(head, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("a newer Ubuntu image")
             self.play(FadeIn(ex, shift=UP * 0.1), FadeIn(exn), run_time=0.5)
@@ -394,6 +410,7 @@ class VmStack(VoiceScene):
             self.play(Indicate(ex, color=TURN, scale_factor=1.06), run_time=0.7)
             self.add(plan_card)
             vo.wait_until("Then pause and run up")
+            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.3)
             g = type_cmd(self, t, B21.cmd, type_time=0.5)
             ghost_rows = rows_of(g)
             glyphs = VGroup(*[gl for r in ghost_rows for gl in glyph_range(r, 0)])
@@ -467,7 +484,7 @@ class VmStack(VoiceScene):
             pp.move_to([0, 0, 0]).align_to([0, 2.99, 0], UP)
             assert pp.get_bottom()[1] > d.get_top()[1] + 0.05, (pp.get_bottom(), d.get_top())
             assert pp.get_top()[1] < cap9.get_bottom()[1] - 0.05
-            self.play(FadeIn(pp, shift=UP * 0.2), Indicate(d.tiles[0].frame, color=TURN, scale_factor=1.1), run_time=0.6)
+            self.play(FadeIn(pp, shift=UP * 0.2), Circumscribe(d.tiles[0], color=TURN, buff=0.06), run_time=0.6)
             self.add(d)
             k29 = 29 - 24
             code_span(pp.code, k29, "…", occurrence=1).set_color(S.GREY)
@@ -494,7 +511,7 @@ class VmStack(VoiceScene):
             self.play(FadeIn(solo, scale=1.1), run_time=0.4)
             self.play(solo.animate.move_to([0, 2.75, 0]), run_time=0.8)
             vo.wait_until("Why check with block ID first")
-            self.play(Indicate(solo.tiles[0].frame, color=TURN, scale_factor=1.1), run_time=0.7)
+            self.play(Circumscribe(solo.tiles[0], color=TURN, buff=0.08), run_time=0.7)
             solo.heal(self)
         pc_ = ponder(self, "Why blkid … || mkfs.ext4\ninstead of just mkfs.ext4?", 8, center=(0, 0.72))
         assert pc_.get_top()[1] < solo.get_bottom()[1] - 0.1 and pc_.get_bottom()[1] > d.get_top()[1] + 0.1, \
@@ -512,13 +529,16 @@ class VmStack(VoiceScene):
             d.disk(self, run_time=0.5)
             vo.wait_until("If this step ever ran again")
             d.refuse(self, 0)
+            vo.wait_until("after a new trigger or a replaced resource")
+            self.play(Wiggle(d.tiles[0], scale_value=1.08, rotation_angle=0.04 * TAU), run_time=0.8)
+            d.heal(self)
             vo.wait_until("plain formatting would wipe the data disk")
             self.play(Indicate(d.disk_m[0], color=ERR, scale_factor=1.15), run_time=0.7)
             d.heal(self)
             vo.wait_until("the chat history and the model")
             d.wipe(self, run_time=1.4)
             vo.wait_until("Scripts Pulumi cannot inspect")
-            self.play(Indicate(d.tiles[0].frame, color=OWN, scale_factor=1.1), run_time=0.5)
+            self.play(Circumscribe(d.tiles[0], color=OWN, buff=0.08), run_time=0.6)
             d.heal(self)
             d.restore(self)
             self.play(FadeIn(cap11, shift=UP * 0.1), run_time=0.5)

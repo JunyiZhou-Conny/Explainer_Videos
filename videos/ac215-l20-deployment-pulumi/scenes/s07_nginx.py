@@ -17,7 +17,7 @@ Beats (script.md "## S07", one voiceover block each):
    signpost, line 48 lights and the tile reaches 'frontend:3000'. A small GREEN phone book (V2) under
    the panel: 'names on cheese-app-network' with api-service and frontend glowing.
 4. TRACKER [M] 13. A tall `cheese-app-vm` terminal types the README's echo block (vm/44: 1–58) as a
-   fast scroll → (no output). The terminal shrinks to a 3-row strip; a README card (README.md ·
+   fast scroll (ten rows per play, _Batch) → (no output). The terminal shrinks to a 3-row strip; a README card (README.md ·
    lines 165–167, mono, verbatim) and a small card for README:156's `echo '`. A PINK arc joins the
    outer quote to the first inner quote ('the quote closes here'); the unquoted stretch turns GREY
    ('outside quotes'), its variables shrink to nothing ('empty variables'). TRACKER [M] 13 · extra:
@@ -28,7 +28,8 @@ Beats (script.md "## S07", one voiceover block each):
    the README's text between the quotes" · `EOF`, each row lit on its word.
 6. TRACKER [M] 14. V2 (cable, phone book, vector DB, API, frontend) over a 4-row strip that types the
    nginx `docker run` (folds) → TERM(vm/46: 2, …, 36–38); the nginx box plugs in with door 80. TRACKER
-   [M] 14 · extra: V2 leaves, the strip grows, `sudo docker container ls` (extra) → TERM(vm/47: 2–6,
+   [M] 14 · extra: V2 leaves, the strip grows (the run's output stays above), `sudo docker container
+   ls` (extra) → TERM(vm/47: 2–6,
    PORTS and NAMES columns), the four PORTS cells PINK one by one.
 7. TRACKER [M] 15. A GREY illustration browser at `http://<Your VM IP Address>/` with a schematic
    home page ('Formaggio' title bar, hero block, footer row); a GREY dashed chip 'VM instances ·
@@ -44,10 +45,10 @@ Beats (script.md "## S07", one voiceover block each):
    (RED); the VM's 9000 door pulses ('open on the VM'); GREY caption 'open on the VM · shut at the
    fence'; a knock on 80 glows GREEN and walks on to nginx.
 11. The fence leaves; V2 moves up over a 4-row strip; S01's puzzle sticky returns small (top right).
-   nginx's lookup arrow to the book, frontend and api-service lines glow; the frontend stops (GREY,
-   its line erased, its route goes); TERM(vm/58: 5–6) (frontend YELLOW, nginx RED; GREY 'from the
+   nginx's lookup arrow to the book, YELLOW boxes on the frontend and api-service lines; the frontend
+   stops (GREY, its line and box erased, its route goes); TERM(vm/58: 5–6) (frontend YELLOW, nginx RED; GREY 'from the
    opening' chip, not typed); the lookup comes back with a RED '?', nginx RED, its door barred, the
-   strip prints vm/58:10 RED (wrapped) and the route to api-service fades.
+   strip prints vm/58:10 RED (wrapped) and the route to api-service (and its line's box) fades RED.
 12. TRACKER [M] 15 · extra: the strip types vm/59 (folds) → TERM(vm/59: 4–6, 9) with 'Up 3 seconds'
    and '-> 200' GREEN; frontend and nginx turn TEAL again and the routes reconnect. A GREY 'no restart
    policy' tag under api-service, frontend and nginx; a GREEN '--restart always · README:96' chip by
@@ -184,6 +185,28 @@ def mini_book():
     return g
 
 
+class _Batch:
+    """Stands in for the scene while a chunk of rows is typed: collects each row's typing play (and
+    the adds that follow it) so the whole chunk types in ONE play. The fast vm/44 scroll then takes
+    the same time at every frame rate (a 0.035 s play per row stretched to one frame, 0.067 s, in the
+    15 fps preview and pushed the beat 2.7 s past its narration)."""
+
+    def __init__(self, scene):
+        self._s, self.anims, self.adds = scene, [], []
+
+    def play(self, *anims, **kw):
+        self.anims.extend(anims)
+
+    def add(self, *mobs):
+        self.adds.extend(mobs)
+
+    def remove(self, *mobs):
+        self._s.remove(*mobs)
+
+    def __getattr__(self, k):
+        return getattr(self._s, k)
+
+
 def url_tile(prefix: str, rest: str):
     """A small PINK URL tile whose prefix can be snipped off. .bg .pre .rest"""
     full = mono(prefix + rest, 20, INK)
@@ -309,6 +332,9 @@ class OnePublicDoor(VoiceScene):
             pr.arrive(self)
             self.play(Indicate(slash, color=ROUTE, scale_factor=1.8), run_time=0.6)
             self.add(p1, bar37, one, pointer)
+            vo.wait_until("as just slash status")
+            self.play(Indicate(pr.tile, color=ROUTE, scale_factor=1.15), pr.light_target("api"), run_time=0.8)
+            pr.heal(self)
 
         # ========================================================== 3. location /: the frontend
         p2 = conf_panel(46, 55, {49: "proxy_set_header", 50: "proxy_set_header", 51: "proxy_set_header",
@@ -343,17 +369,21 @@ class OnePublicDoor(VoiceScene):
         t = vm_term(13)
         assert t.box.get_top()[1] < TRACK_BOTTOM - 0.05, t.box.get_top()
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(p2, bar48, book, pr)), run_time=0.4)
+            self.play(FadeOut(VGroup(p2, bar48, book, pr)), FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t, shift=UP * 0.2),
+                      run_time=0.5)
             self.remove(p2, bar48, book, pr)
-            self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t, shift=UP * 0.2), run_time=0.5)
             type_cmd(self, t, V44.cmd_lines[0], type_time=0.5)
             rows = V44.cmd_lines[1:]
             per_chunk = 10
             for i in range(0, len(rows), per_chunk):
                 ch = rows[i:i + per_chunk]
-                room(self, t, sum(max(1, -(-len(r) // t.max_chars)) for r in ch), run_time=0.2)
+                room(self, t, sum(max(1, -(-len(r) // t.max_chars)) for r in ch), run_time=0.17)
+                b = _Batch(self)
                 for r in ch:
-                    type_cmd(self, t, r, type_time=0.035, prompt=False, soft=True)
+                    type_cmd(b, t, r, type_time=0.03, prompt=False, soft=True)
+                assert len(b.anims) == sum(1 for r in ch if r.strip()), len(b.anims)   # blank rows: no play
+                self.play(LaggedStart(*b.anims, lag_ratio=1.0), run_time=0.3)
+                self.add(*b.adds)
             bare_prompt(self, t)
             vo.wait_until("But the file holds single quotes too")
             resize(self, t, 3, run_time=0.5)
@@ -394,12 +424,12 @@ class OnePublicDoor(VoiceScene):
                 for m in g:
                     m.set_opacity(0)
             self.add(rc, oq, arc)
-            vo.wait_until("and leaves a dash and two brackets")
             self.play(track(trk, 13, True), run_time=0.3)
             wc = type_capture(self, t, V45, type_time=0.35)[-1]
             rm_x = xtag(t, wc)
             o45 = out(self, t, V45.at(2, 6, 7, 8), run_time=0.4)
             row6 = [r for r in o45 if "log_format" in r.text][0]
+            vo.wait_until("and leaves a dash and two brackets")
             remains = VGroup(*substring(r0, "log_format  main  "), *substring(r0, "-"), *substring(r0, "[$time_local]")[:1],
                              *substring(r0, "[$time_local]")[-1:])
             target = substring(row6, "log_format  main   - []").copy().set_color(ERR)
@@ -446,17 +476,16 @@ class OnePublicDoor(VoiceScene):
             t.clear(self, run_time=0.3)
             resize(self, t, 4, run_time=0.5)
             assert nb.vm.get_bottom()[1] > t.box.get_top()[1] + 0.05, (nb.vm.get_bottom(), t.box.get_top())
-            self.play(FadeIn(nb), run_time=0.5)
-            run = type_capture(self, t, V46, type_time=0.35)
+            self.play(FadeIn(nb), run_time=0.4)
+            run = type_capture(self, t, V46, type_time=0.6)
+            out(self, t, [V46.line(2), "…"], run_time=0.3)
             vo.wait_until("publishing port 80")
             nb.plug(self, "nginx")
-            out(self, t, [V46.line(2), "…"], run_time=0.3)
             out(self, t, [(V46.crop(36, "sha256:42c68eab", "…"), S.GREY), V46.line(37), (V46.line(38), S.GREY)],
                 run_time=0.4)
             vo.wait_until("The container list shows four")
             self.play(track(trk, 14, True), FadeOut(nb), run_time=0.4)
             self.remove(nb)
-            t.clear(self, run_time=0.2)
             resize(self, t, 7, run_time=0.4)
             ls = type_capture(self, t, V47, type_time=0.4)[0]
             rm_x = xtag(t, ls)
@@ -606,13 +635,14 @@ class OnePublicDoor(VoiceScene):
             vo.wait_until("The web server looks up frontend and api service once")
             nf = nb.boxes["nginx"].frame
             look = route(nf.get_right(), nb.book[0].get_left() + UP * 0.1)
+            hl = {k: SurroundingRectangle(nb.entries[k], color=TURN, buff=0.06, stroke_width=3)
+                  for k in ("front", "api")}
             nb.show(self, look, anims=[GrowArrow(look)], run_time=0.4)
-            self.play(nb.light_entry("front"), run_time=0.5)
-            self.play(nb.light_entry("api"), run_time=0.5)
-            nb.heal(self)
+            nb.show(self, hl["front"], anims=[Create(hl["front"])], extra=[nb.light_entry("front")], run_time=0.5)
+            nb.show(self, hl["api"], anims=[Create(hl["api"])], extra=[nb.light_entry("api")], run_time=0.5)
             vo.wait_until("With the frontend stopped")
             r_front, r_api = nb.routes_g[0], nb.routes_g[1]
-            nb.drop(self, r_front, run_time=0.3)
+            nb.drop(self, r_front, hl["front"], run_time=0.3)
             nb.stop(self, "front")
             out(self, s, [(V58.line(5), OUTPUT), (V58.line(6), TURN)], run_time=0.4)
             vo.wait_until("the restart fails that lookup and exits")
@@ -625,8 +655,9 @@ class OnePublicDoor(VoiceScene):
             self.play(r5.animate.set_color(ERR), run_time=0.3)
             out(self, s, [(V58.line(10), ERR)], wrap=True, run_time=0.4)
             vo.wait_until("taking the API route with it")
-            self.play(r_api.animate.set_color(ERR), run_time=0.3)
-            nb.drop(self, r_api, run_time=0.6)
+            self.play(r_api.animate.set_color(ERR), hl["api"].animate.set_color(ERR), run_time=0.3)
+            nb.heal(self)
+            nb.drop(self, r_api, hl["api"], run_time=0.6)
             nb.routes_g = None
 
         # ========================================================== 12. start order; restart policy

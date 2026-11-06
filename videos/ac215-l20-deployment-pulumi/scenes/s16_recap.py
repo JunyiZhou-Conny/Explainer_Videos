@@ -30,8 +30,9 @@ Beats (script.md "## S16", one voiceover block each):
    L23.
 9. Clear. 'Test yourself · 1/5': card 1.
 10. Card 1 -> 2 -> 3 on the sentence starts.
-11. Card 3 -> 4 -> 5; card 5 fades; GREY pointer card 'answers: exercises.md · study guide'. Fade;
-    empty frame.
+11. Card 3 -> 4 -> 5; at 'Answers are in' the progress dots become the GREY pointer card 'answers:
+    exercises.md · study guide' under card 5 (card 5 stays readable ~4 s), then card 5 fades and the
+    pointer moves to the centre. Fade; empty frame.
 
 Deviations from SHOW:
 - Beat 0: the meters are V1's GOLD cost dials (text-free needles) with one-word captions.
@@ -40,6 +41,8 @@ Deviations from SHOW:
   registry and browser are left out (the registry is beat 3's subject). All '-' glyphs pop together
   first (V4's diff), then the parts fade one per phrase (V4's backwards()).
 - Beat 3: V6's shelf is drawn already filled (two runs of crates), not replayed through the conveyor.
+  The GOLD padlocks are drawn here (on each crate's top edge, right end) instead of TimestampPipe.retain(),
+  whose padlocks sit on the crate's bottom-left corner over the name.
 - Beat 6: the full V1 (6 units tall) cannot sit above the strip, so a compact V1 of the same parts and
   colours grows there (text-free provisioning tiles, short names).
 - Beat 7: the principles sit in a hub around a 'Pulumi' chip (slide 12's layout; no logo).
@@ -251,7 +254,7 @@ class Recap(VoiceScene):
 
         # ========================================================== 1. b22, then b45 on the local backend
         trk = tracker_p(14)
-        t = toolbox_term(12, "/app/deploy_single_vm")
+        t = toolbox_term(13, "/app/deploy_single_vm")      # 13 rows: b22 (4) + b45 (9) without a scroll
         assert t.box.get_top()[1] < TRACK_BOTTOM - 0.1, t.box.get_top()
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(dcard, dials, r29)), run_time=0.4)
@@ -360,6 +363,14 @@ class Recap(VoiceScene):
         assert ca.get_right()[0] < tp.shelf.frame.get_left()[0] - 0.3, (ca.get_right(), tp.shelf.frame.get_left())
         assert tp.shelf.get_top()[1] < PIC_TOP and tp.shelf.get_right()[0] < 6.55, tp.shelf.get_corner(UR)
         assert ca.get_top()[1] < PIC_TOP and err.get_bottom()[1] > -3.5 and keep.get_bottom()[1] > -3.5
+        # GOLD padlocks straddling each crate's top edge at its right end (clear of the crate's name;
+        # TimestampPipe.retain() puts them on the bottom-left corner, over the name's first letter)
+        locks = []
+        for run in (1, 2):
+            for c in tp.crates[run]:
+                lk = padlock(0.3, COST).move_to(c.box.get_corner(UR) + np.array([-0.2, 0.02, 0]))
+                assert lk.get_bottom()[1] > c.text.get_top()[1] + 0.03 or lk.get_left()[0] > c.text.get_right()[0] + 0.03
+                locks.append(lk)
         assert tick_a.get_left()[0] > ca.note.get_right()[0] + 0.2 and tick_a.get_left()[0] > ca[1][0].get_right()[0] + 0.2
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(md), run_time=0.4)
@@ -372,7 +383,7 @@ class Recap(VoiceScene):
             vo.wait_until("which stay in the registry")
             self.play(FadeIn(tp), Create(link), run_time=0.7)
             vo.wait_until("retained on delete")
-            tp.retain(self, run_time=0.7)
+            self.play(LaggedStart(*[FadeIn(lk, scale=1.4) for lk in locks], lag_ratio=0.1), run_time=0.7)
             self.play(FadeIn(keep, shift=UP * 0.1), run_time=0.4)
 
         # ========================================================== 4-5. the teardown checklist
@@ -387,8 +398,8 @@ class Recap(VoiceScene):
         rows = list(cl.rows)
         cl.rows.remove(*rows)
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(ca, tick_a, cb, err, tp, keep, link)), FadeOut(trk), run_time=0.5)
-            self.remove(ca, tick_a, cb, err, tp, keep, link, trk)
+            self.play(FadeOut(VGroup(ca, tick_a, cb, err, tp, keep, link, *locks)), FadeOut(trk), run_time=0.5)
+            self.remove(ca, tick_a, cb, err, tp, keep, link, trk, *locks)
             self.play(FadeIn(cl, shift=DOWN * 0.1), run_time=0.6)
             for i, (a, b) in enumerate((("One:", "and check the VM list"), ("Two:", "delete the registry"),
                                         ("Three:", "last, once no stack"))):
@@ -586,7 +597,7 @@ class Recap(VoiceScene):
             vo.wait_until("and what each may do")
             self.play(mark(2, 2))
 
-        ans = card(["answers: exercises.md · study guide"], S.GREY, size=24).move_to([0, 0.15, 0])
+        ans = card(["answers: exercises.md · study guide"], S.GREY, size=24).move_to(dots)
         with self.voiceover(SAY[11]) as vo:
             vo.wait_until("Which of the six steps")
             self.play(to_card(3))
@@ -595,9 +606,11 @@ class Recap(VoiceScene):
             vo.wait_until("What survives destroy")
             self.play(to_card(4))
             vo.wait_until("Answers are in")
-            self.play(FadeOut(cur[0], shift=UP * 0.2), FadeOut(cur[1]), FadeOut(head), FadeOut(dots), run_time=0.5)
-            self.play(FadeIn(ans, shift=UP * 0.15), run_time=0.5)
-        self.wait(1.0)
+            self.play(ReplacementTransform(dots, ans), run_time=0.6)     # the progress dots become the pointer
+        self.wait(2.0)                                                   # card 5 stays readable
+        self.play(FadeOut(cur[0], shift=UP * 0.2), FadeOut(cur[1]), FadeOut(head), run_time=0.6)
+        self.play(ans.animate.move_to([0, 0.15, 0]), run_time=0.5)
+        self.wait(0.8)
         self.play(FadeOut(ans), run_time=0.8)
         self.remove(*self.mobjects)
         self.wait(0.3)

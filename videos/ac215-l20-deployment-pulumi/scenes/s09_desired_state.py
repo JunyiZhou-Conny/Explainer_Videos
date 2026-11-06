@@ -172,7 +172,7 @@ class DesiredState(VoiceScene):
             p.move_to(ORIGIN)
             p.shift(np.array([-6.4 - p.code.get_left()[0], 2.75 - p.get_top()[1], 0]))
             vo.wait_until("One firewall rule")
-            self.play(ReplacementTransform(want, p), run_time=1.1)
+            self.play(FadeTransform(want, p), run_time=1.1)
 
             cx = p.code.get_right()[0] + 0.45
 
@@ -278,8 +278,10 @@ class DesiredState(VoiceScene):
             self.play(Indicate(e.file, color=OWN, scale_factor=1.08), run_time=0.5)
             e.run(self)
             vo.wait_until("a tree of resources")
-            self.play(each(e.cards["desired"], OWN), Indicate(e.heads["desired"], color=OWN), run_time=0.9)
+            tr = ring(VGroup(e.heads["desired"], *e.cards["desired"]), OWN, buff=0.15, stroke=4)
+            self.play(Create(tr), Indicate(e.heads["desired"], color=OWN), run_time=0.9)
             e.heal(self)
+            self.play(FadeOut(tr), run_time=0.4)
 
         # ------------------------------------------------------------ 3 · state and reality, --refresh
         with self.voiceover(SAY[3]) as vo:
@@ -290,16 +292,17 @@ class DesiredState(VoiceScene):
             e.heal(self)
             vo.wait_until("The refresh flag")
             e.refresh(self, run_time=1.2)
-            self.play(Indicate(e.cards["state"][1], color=OWN, scale_factor=1.08), run_time=0.6)
-            e.heal(self)
+            sr = ring(VGroup(e.cards["state"][1], e.cards["reality"][1]), OWN, buff=0.1, stroke=4)
+            self.play(Create(sr), run_time=0.5)
+            self.play(FadeOut(sr), run_time=0.4)
 
         # ------------------------------------------------------------ 4 · diff -> plan
         with self.voiceover(SAY[4]) as vo:
             vo.wait_until("Then it compares")
-            self.play(Indicate(VGroup(e.heads["desired"], *e.cards["desired"]), color=OWN, scale_factor=1.05),
-                      Indicate(VGroup(e.heads["state"], *e.cards["state"]), color=OWN, scale_factor=1.05),
-                      run_time=0.9)
-            e.heal(self)
+            cmp_r = VGroup(*[ring(VGroup(e.heads[k], *e.cards[k]), OWN, buff=0.15, stroke=4)
+                             for k in ("desired", "state")])
+            self.play(LaggedStart(*[Create(r_) for r_ in cmp_r], lag_ratio=0.3), run_time=0.9)
+            self.play(FadeOut(cmp_r), run_time=0.4)
             vo.wait_until("each difference")
             gl = e.diff(self, ("+", "~", "-", "+-"), run_time=0.9)
             plan_row = e.plan.row
@@ -432,7 +435,8 @@ class DesiredState(VoiceScene):
             self.play(FadeIn(dialog, scale=0.95), run_time=0.6)
             ptr = pointer().move_to(g_y.get_center() + DOWN * 0.45 + RIGHT * 0.15, aligned_edge=UL)
             self.play(FadeIn(ptr), run_time=0.3)
-            self.play(ptr.animate.move_to(yes.get_center() + DOWN * 0.05, aligned_edge=UL), run_time=0.9)
+            self.play(ptr.animate.move_to(yes.get_center() + RIGHT * 0.3 + DOWN * 0.05, aligned_edge=UL),
+                      run_time=0.9)
             self.play(yes.box.animate.set_fill(tint(TURN, 0.5), 1).set_stroke(TURN), run_time=0.3)
             chance = chip("your chance to check the plan", ERR, size=22, fill_opacity=0.12)
             chance.next_to(dlg, UP, buff=0.25).align_to(dlg, RIGHT)

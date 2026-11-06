@@ -174,13 +174,14 @@ class ByHand(VoiceScene):
                 else:
                     y = COL_TOP - (ROWS - 1) * PITCH
                     old = visible.pop(0)
-                    anims += [FadeOut(old, shift=UP * PITCH), VGroup(*visible).animate.shift(UP * PITCH)]
+                    anims += [FadeOut(old, shift=UP * 0.08), VGroup(*visible).animate.shift(UP * PITCH)]
                 ch.move_to([COL_X + ch.width / 2, y, 0])
                 b = make_block(col).move_to(block_at(i))
                 new_count = label(str(i + 1), 44, TURN)
                 new_count.move_to([COL_X + new_count.width / 2, counter.get_center()[1], 0])
-                anims += [FadeIn(ch, shift=UP * 0.15), FadeIn(b, target_position=ch.get_right()),
-                          FadeOut(counter, run_time=0.1), FadeIn(new_count)]
+                self.remove(counter)
+                self.add(new_count)
+                anims += [FadeIn(ch, shift=UP * 0.15), FadeIn(b, target_position=ch.get_right())]
                 self.play(*anims, *extras, run_time=max(per, 0.5) if extras else per)
                 visible.append(ch)
                 blocks.add(b)
@@ -254,10 +255,11 @@ class ByHand(VoiceScene):
                 vo.wait_until(ph)
                 self.play(FadeIn(w, shift=UP * 0.15), GrowArrow(f), run_time=0.4)
             vo.wait_until("Python here")
-            self.play(lang.animate.set_color(TURN), Indicate(lang, color=TURN, scale_factor=1.12), run_time=0.6)
+            self.play(lang.animate.set_color(TURN).scale(1.12), run_time=0.35)
+            self.play(lang.animate.scale(1 / 1.12), run_time=0.35)
             vo.wait_until("keep it in Git")
             self.play(FadeIn(gitr, scale=0.6), run_time=0.5)
-            self.play(Indicate(gitr, color=TURN, scale_factor=1.15), run_time=0.5)
+            self.play(Circumscribe(gitr, color=TURN, buff=0.06), run_time=0.6)
             yaml_c = dashed_chip("YAML / DSL", PAST, 22)
             yaml_c.move_to([fname.get_right()[0] + 0.7 + yaml_c.width / 2, page.get_center()[1], 0])
             vo.wait_until("No YAML file")
@@ -291,7 +293,11 @@ class ByHand(VoiceScene):
                       FadeOut(yaml_c), FadeOut(yaml_x), run_time=0.5)
             self.play(FadeIn(fr_a), FadeIn(head_a), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(r, shift=DOWN * 0.1) for r in rows_a], lag_ratio=0.25), run_time=1.2)
+            vo.wait_until("written in YAML")
+            self.play(head_a[2].animate.set_color(TURN), run_time=0.4)
+            self.play(Circumscribe(head_a[2], color=TURN, buff=0.05), run_time=0.7)
             vo.wait_until("This version")
+            self.play(head_a[2].animate.set_color(S.GREY), run_time=0.3)
             self.play(FadeIn(head_p), run_time=0.4)
             self.play(LaggedStart(*[AnimationGroup(GrowArrow(a), FadeIn(c, shift=RIGHT * 0.2))
                                     for a, c in zip(maps, chips_p)], lag_ratio=0.35), run_time=vo.until("one to one", 1.2))
@@ -310,13 +316,14 @@ class ByHand(VoiceScene):
             self.play(FadeOut(ansible), FadeOut(head_p), FadeOut(chips_p), FadeOut(maps), FadeIn(tr), run_time=0.5)
             self.play(FadeIn(gold, shift=DOWN * 0.15), FadeIn(dial), run_time=0.5)
             ticking(vo.until("delete this VM now", 0.4))
-            ticking(0.6, Indicate(gold, color=COST, scale_factor=1.08))
+            ticking(0.6, Circumscribe(gold, color=COST, buff=0.06))
 
             # the schematic console list (illustration)
             fr = box(6.7, 5.1, S.GREY, fill=S.GREY_DARKER, fill_opacity=1).move_to([-3.05, -0.55, 0])
             title = label("VM instances", 24, INK).move_to(fr.get_corner(UL) + np.array([0.3, -0.45, 0]),
                                                          aligned_edge=LEFT)
-            ill = illustration_tag().move_to(fr.get_corner(UR) + np.array([-0.95, 0, 0]))
+            ill = illustration_tag()
+            ill.move_to(fr.get_corner(UR) + np.array([-ill.width / 2, ill.height / 2 + 0.08, 0]))
             ext = extra_tag().next_to(ill, LEFT, buff=0.15)
             del_btn = button("Delete").next_to(title, RIGHT, buff=0.9)
             box1 = checkbox().move_to(fr.get_corner(UL) + np.array([0.45, -1.25, 0]))

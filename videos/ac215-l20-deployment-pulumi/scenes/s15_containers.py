@@ -190,6 +190,10 @@ class ContainersOverSsh(VoiceScene):
         assert p0.get_right()[0] < tp.p(4.95, 0)[0] - 1.55, p0.get_right()     # the ticket's left edge
         assert p0.get_bottom()[1] > tp.p(0, -1.6)[1] + 0.1, p0.get_bottom()
         assert tp.p(4.95, -1.95)[1] - 0.28 > -3.55
+        # the pipe starts at the images stack: TimestampPipe's tube begins at y 0.55 (under its
+        # ticket slot), so a short upper run joins it to the 'deploy-images' card
+        ext = VGroup(*[Line([tp.p(x, 0)[0], src.get_bottom()[1], 0], tp.p(x, 0.55), color=ROUTE, stroke_width=4)
+                       for x in (4.8, 5.1)])
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref0), FadeIn(ss, shift=DOWN * 0.15), run_time=0.6)
             self.play(ss.light(5), run_time=0.7)
@@ -202,15 +206,18 @@ class ContainersOverSsh(VoiceScene):
             vo.wait_until("through a stack reference")
             self.play(name27.animate.set_color(ROUTE), run_time=0.4)
             self.add(p0, b29)
+            self.play(Create(ext), run_time=0.3)
             tp.pipe(self, run_time=0.6)
             tp.ticket(self, run_time=0.6)
+            vo.wait_until("to organization")
+            self.play(Indicate(tp.pipe_m[1], color=ROUTE, scale_factor=1.06), run_time=0.6)
             vo.wait_until("So run up in deploy images first")
             self.play(Indicate(src, color=OWN, scale_factor=1.1), run_time=0.6)
             self.play(tp.ticket_m.animate.move_to(tp.p(4.95, -1.05)), run_time=1.0)
             self.play(Indicate(tp.card, color=OWN, scale_factor=1.06), run_time=0.5)
             tp.heal(self)
-        self.play(FadeOut(VGroup(p0, b29, tp, src, ref0)), run_time=0.5)
-        self.remove(p0, b29, tp, src, ref0)
+        self.play(FadeOut(VGroup(p0, b29, tp, src, ext, ref0)), run_time=0.5)
+        self.remove(p0, b29, tp, src, ext, ref0)
 
         # ========================================================== 1. a Docker provider over SSH
         p1 = code(SC, 79, 90, dedent=True, font_size=20, shown=SC_SHOWN, elide={81: "instance_ip.apply(lambda ip: "},
@@ -277,10 +284,14 @@ class ContainersOverSsh(VoiceScene):
         ref2 = lref("23")
         md = MasterDiagram(built=("laptop", "gcp", "registry", "push", "models", "vm", "disk"))
         er_front = erratum_tag().move_to(md.p(1.95, 0.3))
+        # the drop runs down the frontend box's left edge: front_port_fix() puts its 'HTTP 80' ghost
+        # centred under the box, and the 'appnetwork' label needs a gap from the drop
+        x_drop = md.p(1.2, 0)[0]                     # frontend box: x 1.0 .. 2.9 in md's frame
         net = VGroup(Line(md.p(2.9, -0.62), md.p(4.0, -0.62)),
-                     Line(md.p(1.95, -0.98), md.p(1.95, -1.85)),
-                     Line(md.p(1.95, -1.85), md.p(4.0, -1.85))).set_stroke(OWN, 5)
+                     Line([x_drop, md.p(0, -0.98)[1], 0], [x_drop, md.p(0, -1.85)[1], 0]),
+                     Line([x_drop, md.p(0, -1.85)[1], 0], md.p(4.0, -1.85))).set_stroke(OWN, 5)
         net_l = mono(APPNET, 20, OWN).move_to(md.p(2.8, -1.6))
+        assert net_l.get_left()[0] > x_drop + 0.15, (net_l.get_left(), x_drop)
         slip = grey_chip("same mount slip as part 1: data in /data, not on the disk")
         er_slip = erratum_tag()
         slip_g = VGroup(er_slip, slip).arrange(RIGHT, buff=0.2).move_to([0, 2.15, 0]).align_to([6.4, 0, 0], RIGHT)
@@ -486,10 +497,13 @@ class ContainersOverSsh(VoiceScene):
             vo.wait_until("Which would you hand the VM")
             self.play(Indicate(md.parts["vm"].frame, color=TURN, scale_factor=1.02), run_time=0.7)
             md.heal(self)
+        # the card covers the left half (registry, bubbles 1-2): the VM and the two keys the
+        # question is about stay in view
         pc = ponder(self, "The running app needs one key.\nWhich would you hand the VM,\nand why not the other?", 8,
-                    center=(1.4, -0.95), width=9.0)
-        assert pc.get_left()[0] > b1.get_right()[0] + 0.1, (pc.get_left(), b1.get_right())
-        assert pc.get_top()[1] < kd.get_bottom()[1] - 0.05, (pc.get_top(), kd.get_bottom())
+                    center=(-3.35, -1.6), width=6.2)
+        assert pc.get_right()[0] < md.parts["vm"].frame.get_left()[0] - 0.1, (pc.get_right(), md.parts["vm"].frame.get_left())
+        assert pc.get_top()[1] < md.parts["laptop"].frame.get_bottom()[1] - 0.05, pc.get_top()
+        assert pc.get_left()[0] > -6.6 and pc.get_bottom()[1] > -3.55, (pc.get_left(), pc.get_bottom())
 
         # ========================================================== 9. the narrow key goes on the VM
         on_vm = md.p(1.95, 0.4)
@@ -509,6 +523,13 @@ class ContainersOverSsh(VoiceScene):
             self.play(Indicate(ks.glyph, color=OWN, scale_factor=1.2), run_time=0.6)
             assert ks.get_bottom()[1] > md.parts["front"].frame.get_top()[1] + 0.02, ks.get_bottom()
             assert ks.get_top()[1] < md.parts["vm"].title.get_bottom()[1] + 0.02, ks.get_top()
+            vo.wait_until("it reads images")
+            self.play(Indicate(circles[1], color=OWN, scale_factor=1.25), Indicate(b2.body, color=OWN, scale_factor=1.06),
+                      run_time=0.6)
+            vo.wait_until("and stored objects")
+            self.play(Indicate(circles[2], color=OWN, scale_factor=1.25), Indicate(b3.body, color=OWN, scale_factor=1.06),
+                      run_time=0.6)
+            md.heal(self)
             vo.wait_until("it cannot create VMs")
             self.play(kd.animate.set_opacity(1), run_time=0.3)
             red.next_to(kd, RIGHT, buff=0.3)
@@ -547,7 +568,11 @@ class ContainersOverSsh(VoiceScene):
         vx.move_to([5.3, 2.15, 0])
         api_fr = md.parts["api"].frame
         a_vx = route(np.array([5.72, api_fr.get_top()[1], 0]), np.array([5.72, vx.get_bottom()[1], 0]))
-        gk = key_icon("service", name=False, key_w=0.55).move_to([6.15, 1.0, 0])
+        # between the GCP outline's top edge and Vertex AI, beside the arrow (not on the outlines)
+        gk = key_icon("service", name=False, key_w=0.55)
+        gk.move_to([a_vx.get_left()[0] - 0.12 - gk.width / 2, (vx.get_bottom()[1] + md.parts["gcp"].frame.get_top()[1]) / 2, 0])
+        assert gk.get_left()[0] > fence.get_right()[0] + 0.2 and gk.get_top()[1] < vx.get_bottom()[1] - 0.02, (gk.get_right(), gk.get_top())
+        assert gk.get_bottom()[1] > md.parts["gcp"].frame.get_top()[1] + 0.02, gk.get_bottom()
         repo = grey_chip("this repo: the VM runs as deployment · try the narrow one → exercises")
         repo.move_to([-6.4, 3.15, 0], aligned_edge=LEFT)
         assert repo.get_right()[0] < ref7.get_left()[0] - 0.15, repo.get_right()
@@ -562,6 +587,8 @@ class ContainersOverSsh(VoiceScene):
             self.play(Indicate(c2, color=ROUTE, scale_factor=1.25), Indicate(b2.frame.frame, color=ROUTE, scale_factor=1.0),
                       run_time=0.6)
             md.heal(self)
+            vo.wait_until("with your deployment credentials")
+            self.play(Indicate(kd.glyph, color=CLOUD, scale_factor=1.2), run_time=0.6)
             vo.wait_until("and runs the VM itself as deployment")
             self.play(FadeIn(badge, shift=DOWN * 0.15), Create(tie), run_time=0.6)
             vo.wait_until("capped only by scopes")
@@ -623,6 +650,9 @@ class ContainersOverSsh(VoiceScene):
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t, shift=UP * 0.3), run_time=0.6)
             self.play(FadeIn(stand, shift=DOWN * 0.1), run_time=0.4)
+            vo.wait_until("the README checks")
+            self.play(Indicate(trk.caption, color=TURN, scale_factor=1.08), run_time=0.6)
+            vo.wait_until("list the containers")
             type_capture(self, t, V52, type_time=0.8)
             rows = out(self, t, PS_ROWS, run_time=0.5)
             for r in rows:
@@ -635,12 +665,17 @@ class ContainersOverSsh(VoiceScene):
             vo.wait_until("follow each log")
             type_capture(self, t, V53, type_time=0.3)
             out(self, t, V53.at(2, "…", 26, "…", 53), wrap=True, run_time=0.4)
-            r54 = [r for r in out(self, t, V53.at((54, 56)), wrap=True, run_time=0.35) if "/api-service" in r.text]
-            assert len(r54) == 3
+            rows56 = out(self, t, V53.at((54, 56)), wrap=True, run_time=0.35)
+            r54 = [r for r in rows56 if "/api-service" in r.text]
+            r404 = [r for r in rows56 if r.text.strip() == "404 Not Found"]
+            assert len(r54) == 3 and len(r404) == 1, [r.text for r in rows56]
             self.play(FadeOut(stand), FadeIn(root, shift=DOWN * 0.1), run_time=0.4)
             self.remove(stand)
             self.play(*[substring(r, "/api-service").animate.set_color(ROUTE) for r in r54], run_time=0.3)
             self.add(t)
+            # vm/34 and vm/49: the public image predates v3's /status (said in S06), so its 404 here
+            # is the stand-in's, not the deployed code's
+            pin(self, r404[0], beside(row_tag("public image: no /status yet", S.GREY), r404[0], buff=0.3), run_time=0.3)
             vo.wait_until("Control C to stop")
             cc = out(self, t, [(V53.line(59), TURN)], run_time=0.25)[0]
             pin(self, cc, beside(row_tag("Control C stops following", TURN), cc, buff=0.3), run_time=0.3)

@@ -85,6 +85,9 @@ Deviations from SHOW:
   ('nothing applied'). The default tag sits above the terminal (line 42 wraps over two rows).
 - Beats 8-9: the terminal is 20 pt (72 characters a row) so that b34's and b35b's 67-68 character
   rows stay whole; the strip has 4 rows (line 260 wraps over four).
+- V6 is the scene-local `Pipe` (TimestampPipe with tighter 'tag' badges inside each crate's width, so
+  they clear shelf column 2 and the shelf edge). Beat 9 brings the registry shelf in on "then the
+  push", so the 403 padlock sits on the registry; beat 10 pulses the shelf's outline GOLD (no fill flash).
 - Beat 10: V6 slides down a little (the strip is gone) to centre the picture. The chip of SHOW ('with your key + the repository from S11 → the tag lands') is a
   three-row GREY card without '(S11)'. The README's command reappears as a dashed ghost card under
   V6, not as a terminal row (it was not run here).
@@ -222,6 +225,30 @@ def move_v6(tp, dy: float) -> None:
         tp.shelf.shift(UP * dy)
 
 
+class Pipe(TimestampPipe):
+    """V6 with tighter 'tag' badges: TimestampPipe.stamp centres a 0.52-high chip on the crate's
+    top-right corner, so it overhangs the next shelf column (gap 0.3) and the shelf's right edge.
+    Here the badge (0.34 high, opaque backing) straddles the crate's top edge, right-aligned inside
+    the crate: clear of the crate's label, of the row above and of column 2 / the shelf edge."""
+
+    def stamp(self, scene, stamp: str = STAMP_1, run: int | None = None, run_time: float = 0.6):
+        run = run or self.run_n
+        self.stamp_text = stamp
+        bs = []
+        for c in self.crates[run]:
+            ch = chip("tag", TURN, size=20, pad_x=0.12, pad_y=0.03)
+            back = ch.box.copy().set_fill(S.BG, 1).set_stroke(width=0)
+            b = VGroup(back, ch)
+            b.move_to(c.get_top()).align_to(c, RIGHT).shift(LEFT * 0.1)
+            b.set_z_index(2)
+            b.crate = c
+            bs.append(b)
+            c.badge = b
+        self.show(scene, *bs, anims=[LaggedStart(*[FadeIn(b, scale=1.6) for b in bs], lag_ratio=0.2)],
+                  run_time=run_time, into=self.badges)
+        return bs
+
+
 def bars(panel, spec) -> VGroup:
     """Translucent bars over file lines: spec = [(k, colour), …] with k = file line - first."""
     return VGroup(*[line_bar(panel.code, k, c, 0.22) for k, c in spec])
@@ -303,7 +330,7 @@ class ImagesStack(VoiceScene):
         g_str = code_span(ghost.code, 0, FULL_NAME)
         dot_line = DashedLine(full.get_corner(DR) + np.array([-0.3, -0.06, 0]),
                               g_str.get_corner(UL) + np.array([2.4, 0.08, 0]), color=ROUTE,
-                              stroke_width=3, dash_length=0.08)
+                              stroke_width=3, dash_length=0.08).set_z_index(2)   # over the re-seated ghost panel
         used = label("used by name", 20, S.GREY).next_to(dot_line.get_center(), UR, buff=0.08)
         assert used.get_left()[0] > ghost.header.get_right()[0] + 0.1 or used.get_bottom()[1] > ghost.get_top()[1] + 0.05
         nope = chip("don't rename", ERR, size=20, text_color=INK, fill_opacity=0.08).next_to(full, RIGHT, buff=0.3)
@@ -426,7 +453,7 @@ class ImagesStack(VoiceScene):
         p1.move_to([0, 0, 0]).align_to([0, 2.75, 0], UP)
         b13 = bars(p1, [(4, TURN)])
         b1415 = bars(p1, [(5, ROUTE), (6, ROUTE)])
-        tp = TimestampPipe()
+        tp = Pipe()
         move_v6(tp, V6_LOW)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(t), FadeOut(fgrp), track(trk, 10), run_time=0.5)
@@ -590,6 +617,7 @@ class ImagesStack(VoiceScene):
             tp.heal(self)
             self.add(t2)
             vo.wait_until("then the push")
+            tp.shelf_on(self, run_time=0.4)           # the registry the push goes to (the 403's padlock sits on it)
             r223 = out(self, t2, ["…", B35.line(223)], wrap=True, run_time=0.4)
             self.play(substring(r223[-1], "pushing layers").animate.set_color(TURN), run_time=0.3)
             self.add(t2)
@@ -641,8 +669,8 @@ class ImagesStack(VoiceScene):
             self.play(Indicate(tp.ticket_m.stamp, color=TURN, scale_factor=1.12), run_time=0.6)
             tp.heal(self)
             vo.wait_until("Each run can add image layers")
-            self.play(Indicate(tp.shelf.frame, color=COST, scale_factor=1.04), FadeIn(cost, shift=UP * 0.15),
-                      run_time=0.7)
+            self.play(tp.shelf.frame.animate(rate_func=there_and_back).set_stroke(COST, 7),
+                      FadeIn(cost, shift=UP * 0.15), run_time=0.8)
             tp.heal(self)
             vo.wait_until("and storage costs money")
             flash_tag(self, cost)

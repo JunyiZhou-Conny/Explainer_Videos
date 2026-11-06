@@ -111,6 +111,13 @@ def iam_form(name: str, roles) -> VGroup:
     return g
 
 
+def light(scene, c, col) -> None:
+    """A named role chip lights up in its row's colour and stays lit until it flies."""
+    scene.play(c.box.animate.set_stroke(col).set_fill(col, 0.25), Indicate(c.text, color=col, scale_factor=1.08),
+               run_time=0.5)
+    c.text.set_color(INK)
+
+
 def json_file() -> VGroup:
     """The downloaded key, unnamed: a dashed GREY file card '….json'."""
     return file_card("….json", S.GREY, dashed=True)
@@ -153,7 +160,7 @@ def folder_tree() -> VGroup:
     frame, over the 9-row terminal). .home .clone .src .dep .secrets .lines"""
     home = folder_node("~/", 1.0, 2.58, S.GREY)
     clone = folder_node("cheese-app-v3/", 1.6, 2.15)
-    secrets = folder_node("secrets/", 4.6, 2.15, LAPTOP)
+    secrets = folder_node("secrets/", 4.68, 2.15, LAPTOP)
     src = folder_node("src/", 2.2, 1.72)
     dep = folder_node("deployment/", 2.8, 1.29)
     lines = VGroup()
@@ -244,7 +251,7 @@ class TwoKeys(VoiceScene):
         assert f1.get_right()[0] < kr.frame.get_left()[0] - 0.2, (f1.get_right(), kr.frame.get_left())
         assert kr.frame.get_right()[0] < 6.5 and kr.frame.get_top()[1] < TRACK_BOTTOM
         named = [0, 1, 2, 5]                         # the four roles the narration names
-        jf1 = json_file().next_to(f1.button, RIGHT, buff=0.3)
+        jf1 = json_file().next_to(f1.button, UP, buff=0.35).align_to(f1.button, LEFT)
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(md, gcp, ck, ref20)), track(trk, 2), run_time=0.6)
             self.remove(md, gcp, ck, ref20)
@@ -257,13 +264,14 @@ class TwoKeys(VoiceScene):
             vo.wait_until("Deployment gets six roles")
             self.play(Indicate(f1.name, color=TURN, scale_factor=1.12), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.15) for c in f1.chips], lag_ratio=0.12), run_time=0.8)
-            vo.wait_until("among them Compute Admin")
-            for i in named:
-                self.play(Indicate(f1.chips[i].text, color=CLOUD, scale_factor=1.06), run_time=0.45)
+            for i, ph in zip(named, ("Compute Admin", "Compute OS Login", "Artifact Registry Administrator",
+                                     "and Storage Admin")):
+                vo.wait_until(ph)
+                light(self, f1.chips[i], CLOUD)
             fly(self, kr, 0, f1.chips)
             vo.wait_until("Create a JSON key")
             flash_tag(self, f1.button, INK)
-            self.play(FadeIn(jf1, shift=RIGHT * 0.2), run_time=0.5)
+            self.play(FadeIn(jf1, shift=UP * 0.2), run_time=0.5)
             vo.wait_until("and rename it")
             hang_key(self, kr, 0, jf1)
 
@@ -271,7 +279,8 @@ class TwoKeys(VoiceScene):
         f2 = iam_form("gcp-service", ROLES_SERVICE)
         f2.move_to([FORM_X + FORM_W / 2, 0, 0]).shift(UP * (kr.frame.get_bottom()[1] + 0.05 - f2.frame.get_bottom()[1]))
         assert f2.tag.get_top()[1] < TRACK_BOTTOM - 0.05
-        jf2 = json_file().next_to(f2.button, RIGHT, buff=0.3)
+        jf2 = json_file().next_to(f2.button, UP, buff=0.35).align_to(f2.button, LEFT)
+        assert jf2.get_top()[1] < f2.roles_label.get_bottom()[1] - 0.1 and jf2.get_right()[0] < f2.frame.get_right()[0] - 0.2
         with self.voiceover(SAY[3]) as vo:
             self.play(ReplacementTransform(f1.frame, f2.frame), ReplacementTransform(f1.title, f2.title),
                       ReplacementTransform(f1[2], f2[2]), ReplacementTransform(f1.roles_label, f2.roles_label),
@@ -282,12 +291,14 @@ class TwoKeys(VoiceScene):
             self.play(Indicate(f2.name, color=TURN, scale_factor=1.12), run_time=0.5)
             vo.wait_until("gets three roles")
             self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.15) for c in f2.chips], lag_ratio=0.15), run_time=0.6)
-            for c in f2.chips:
-                self.play(Indicate(c.text, color=OWN, scale_factor=1.06), run_time=0.5)
+            for c, ph in zip(f2.chips, ("Storage Object Viewer", "Vertex AI Administrator",
+                                        "and Artifact Registry Reader")):
+                vo.wait_until(ph)
+                light(self, c, OWN)
             fly(self, kr, 1, f2.chips)
             vo.wait_until("Its key becomes")
             flash_tag(self, f2.button, INK, 1.12, 0.5)
-            self.play(FadeIn(jf2, shift=RIGHT * 0.2), run_time=0.4)
+            self.play(FadeIn(jf2, shift=UP * 0.2), run_time=0.4)
             hang_key(self, kr, 1, jf2)
 
         # ========================================================== 4. slide 25: why two?
@@ -297,24 +308,37 @@ class TwoKeys(VoiceScene):
             self.remove(f2)
             self.play(kr.animate.shift(-KR_SHIFT + UP * 0.35), FadeIn(ref25), run_time=0.8)
             vo.wait_until("Deployment builds things")
-            self.play(Indicate(kr.heads[0], color=TURN, scale_factor=1.15), Indicate(kr.keys[0].glyph, color=CLOUD),
-                      run_time=0.7)
+            def row_box(r):
+                return SurroundingRectangle(VGroup(kr.heads[r], *[d.frame for d in kr.doors[r]], kr.keys[r]),
+                                            color=TURN, buff=0.07, corner_radius=0.08, stroke_width=3)
+            focus = row_box(0)
+            self.play(Create(focus), Indicate(kr.heads[0], color=TURN, scale_factor=1.15),
+                      Indicate(kr.keys[0].glyph, color=CLOUD), run_time=0.7)
             kr.heal(self)
+            self.add(focus)                 # heal() re-seats the card on top
             vo.wait_until("It needs admin rights")
             yp = kr.your_project(self)
+            self.add(focus)
             your = yp[0][1]
             your.set_opacity(1)             # your_project()'s Indicate leaves 'your' invisible (common.py)
             self.play(Indicate(your, color=TURN, scale_factor=1.3), run_time=0.6)
             kr.heal(self)
-            self.play(*[Indicate(d.frame, color=CLOUD, scale_factor=1.04) for d in kr.doors[0]], run_time=0.6)
-            kr.heal(self)
+            self.add(focus)                 # heal() re-seats the card on top
             vo.wait_until("not the README's default")
             self.play(Indicate(yp[1], color=S.GREY, scale_factor=1.12), run_time=0.6)
             kr.heal(self)
-            vo.wait_until("The narrow account only runs things")
-            self.play(Indicate(kr.heads[1], color=TURN, scale_factor=1.15), Indicate(kr.keys[1].glyph, color=OWN),
-                      run_time=0.7)
+            self.add(focus)                 # heal() re-seats the card on top
+            vo.wait_until("to create the VM")
+            self.play(Indicate(kr.doors[0][0].text, color=CLOUD, scale_factor=1.15), run_time=0.6)
+            vo.wait_until("and log in")
+            self.play(Indicate(kr.doors[0][1].text, color=CLOUD, scale_factor=1.15), run_time=0.6)
             kr.heal(self)
+            self.add(focus)                 # heal() re-seats the card on top
+            vo.wait_until("The narrow account only runs things")
+            self.play(Transform(focus, row_box(1)), Indicate(kr.heads[1], color=TURN, scale_factor=1.15),
+                      Indicate(kr.keys[1].glyph, color=OWN), run_time=0.7)
+            kr.heal(self)
+            self.add(focus)                 # heal() re-seats the card on top
             vo.wait_until("it reads images")
             self.play(Indicate(kr.doors[1][0].text, color=OWN, scale_factor=1.1), run_time=0.5)
             vo.wait_until("and stored files")
@@ -322,6 +346,9 @@ class TwoKeys(VoiceScene):
             vo.wait_until("and uses Vertex AI")
             self.play(Indicate(kr.doors[1][2].text, color=OWN, scale_factor=1.1), run_time=0.5)
             kr.heal(self)
+            self.add(focus)                 # heal() re-seats the card on top
+            self.play(FadeOut(focus), run_time=0.3)
+            self.remove(focus)
 
         # ========================================================== 5. secrets/ next to the clone
         tree = folder_tree()
@@ -409,6 +436,8 @@ class TwoKeys(VoiceScene):
             self.play(FadeIn(err, shift=DOWN * 0.15), FadeIn(et), run_time=0.6)
             vo.wait_until("nothing creates")
             self.play(Indicate(err.body[0], color=INK, scale_factor=1.05), run_time=0.6)
+            vo.wait_until("the Artifact Registry repository")
+            flash_tag(self, et, S.GREY, 1.12, 0.6)
             vo.wait_until("We create it with one extra gcloud line")
             self.play(FadeIn(gc, shift=UP * 0.15), FadeIn(xt), track(trk, 2, "extra · not in the README"), run_time=0.6)
             self.play(Indicate(cmd[0], color=TOOL, scale_factor=1.03), run_time=0.6)

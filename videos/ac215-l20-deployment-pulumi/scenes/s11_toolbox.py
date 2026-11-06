@@ -347,8 +347,9 @@ class Toolbox(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             cr.clear(self, "env", run_time=0.4)
-            self.play(FadeOut(p1, shift=UP * 0.5), FadeIn(p2, shift=UP * 0.5), run_time=0.7)
+            self.play(FadeOut(p1, shift=UP * 0.5), run_time=0.35)     # scroll: out, then in (no overlap)
             self.remove(p1)
+            self.play(FadeIn(p2, shift=UP * 0.5), run_time=0.4)
             vo.wait_until("They mount the Docker socket")
             w0 = wire(0)
             vo.wait_until("so it builds on your Docker")
@@ -617,6 +618,8 @@ class Toolbox(VoiceScene):
             ar9 = CurvedArrow(a0, a1, angle=-0.5, color=TOOL, stroke_width=3, tip_length=0.2)
             self.play(FadeIn(note9, shift=DOWN * 0.1), run_time=0.5)
             self.play(Create(ar9), run_time=0.6)
+            vo.wait_until("with a higher version")
+            flash_tag(self, note9, TOOL, 1.04)
             vo.wait_until("and apt picks it")
             k9 = substring(g3[2], "kubectl 1.35.9")
             self.play(k9.animate.set_color(TOOL), run_time=0.3)
