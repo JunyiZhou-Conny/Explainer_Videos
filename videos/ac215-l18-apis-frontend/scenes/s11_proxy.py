@@ -134,14 +134,6 @@ def envelope2(rows, color=ROUTE, size: float = 20) -> VGroup:
     return g
 
 
-def bar_tag(scene, t: Terminal, tg):
-    """PLAYS: a row-sized tag on the terminal's title bar."""
-    on_bar(t, tg)
-    scene.play(FadeIn(tg, shift=LEFT * 0.1), run_time=0.4)
-    t.add(tg)
-    return tg
-
-
 def strip_at(rows: int, title: str, prompt: str = P_LAPTOP, size: float = 20, bottom: float = BOTTOM):
     t = term(prompt, rows=rows, title=title, size=size)
     t.shift(UP * (bottom - t.box.get_bottom()[1]))
@@ -204,12 +196,14 @@ class OneOrigin(VoiceScene):
             rel.next_to(pa, DOWN, buff=0.15).align_to(code_span(pa.code, 11, "fetch(path"), LEFT)
             assert rel.get_bottom()[1] > -SAFE_Y and rel.get_right()[0] < SAFE_X, rel.get_bottom()
             self.play(FadeIn(rel, shift=LEFT * 0.15), run_time=0.5)
-            vo.wait_until("with the session ID")
+            # verify 20:03: line 34 lights just before "with the session ID" so it holds ~0.9 s before the swap
+            self.wait(max(0.0, vo.time_until("with the session ID") - 0.5))
             b34 = line_bar(pa.code, 1, ROUTE)
             self.play(FadeIn(b34), code_span(pa.code, 1, "'X-Session-ID'").animate.set_color(ROUTE),
                       run_time=0.35)
             self.add(pa, b44, b34)
-            self.wait(0.15)
+            vo.wait_until("with the session ID")
+            self.wait(0.25)
             # QA 20:03: lines 17-24 come in on "with the session ID" (not "from local storage"), so the
             # localStorage panel holds ~3.5 s instead of ~1.5 s
             self.play(FadeOut(VGroup(pa, b44, b34, rel)), FadeIn(pb, shift=UP * 0.15), run_time=0.5)
@@ -411,15 +405,16 @@ class OneOrigin(VoiceScene):
             net.unplug(self, "api", run_time=0.5)
             self.play(net.light("api", ERR), run_time=0.3)
             net.heal(self)
-            vo.wait_until("for one request")
-            net.courier_walk(self, fail="502", run_time=1.2)
+            # verify 21:00: the courier sets off straight after the unplug (it was on "for one request"),
+            # so the 502 strip lands on "The browser gets 502"
+            net.courier_walk(self, fail="502", run_time=1.0)
             net.plug(self, "api", run_time=0.4)
-            self.play(net.light("api", CONTAINER), run_time=0.3)
+            self.play(net.light("api", CONTAINER), run_time=0.2)
             net.heal(self)
             vo.wait_until("The browser gets 502")
-            self.play(FadeOut(tr), FadeOut(ill), run_time=0.4)
-            self.play(FadeIn(tT, shift=UP * 0.2), FadeIn(tV, shift=UP * 0.2), run_time=0.4)
-            bar_tag(self, tT, extra_row())
+            tT.add(on_bar(tT, extra_row()))              # verify: one crossfade, the tag already on its bar
+            self.play(FadeOut(tr), FadeOut(ill), FadeIn(tT, shift=UP * 0.2), FadeIn(tV, shift=UP * 0.2),
+                      run_time=0.5)
             type_capture(self, tT, D09, type_time=0.3)
             o6 = out(self, tT, [(D09.line(3), ERR)], run_time=0.3)
             self.play(Indicate(o6[0], color=ERR, scale_factor=1.15), run_time=0.5)
@@ -455,15 +450,13 @@ class OneOrigin(VoiceScene):
             self.play(FadeIn(tr), FadeIn(ill), run_time=0.5)
             tr.browser.fill(self, ["Home"], run_time=0.3)
             vo.wait_until("home, podcasts")
-            self.play(tr.browser.flash(ROUTE), run_time=0.4)
-            tr.heal(self)
-            call7 = tr.page_call(self, "front", run_time=0.4)
+            call7 = tr.page_call(self, "front", run_time=0.4)   # verify: no separate flash; walks 0.6 s
             for path in ("podcasts", "newsletters"):
                 if path == "newsletters":
                     vo.wait_until("and newsletters")
-                tr.browser.goto(self, f"localhost:3000/{path}", run_time=0.3)
-                tr.browser.fill(self, [path.capitalize()], run_time=0.3)
-                net.courier_walk(self, text=f"/api/{path}", run_time=0.8)
+                tr.browser.goto(self, f"localhost:3000/{path}", run_time=0.25)
+                tr.browser.fill(self, [path.capitalize()], run_time=0.25)
+                net.courier_walk(self, text=f"/api/{path}", run_time=0.6)
             vo.wait_until("and the Recent tab")
             tr.browser.goto(self, "localhost:3000/chat", run_time=0.3)
             tr.browser.fill(self, list(recent), run_time=0.4)
