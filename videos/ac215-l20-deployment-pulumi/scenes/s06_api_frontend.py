@@ -310,10 +310,10 @@ class ApiAndFrontend(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(dk), run_time=0.3)
             self.remove(dk)
-            c1 = type_capture(self, t, V33, type_time=0.6)[0]
-            pin(self, c1, beside(extra_row(), c1))
+            type_capture(self, t, V33, type_time=0.6)
             vo.wait_until("the root says welcome to AC215")
-            out(self, t, [(V33.line(2), OWN), (ROOT_BODY, OWN)], run_time=0.4)
+            o1 = out(self, t, [(V33.line(2), OWN), (ROOT_BODY, OWN)], run_time=0.4)
+            pin(self, o1[0], beside(extra_row(), o1[0]))
             vo.wait_until("and slash docs shows the docs page")
             c2 = type_capture(self, t, V35, type_time=0.8)[0]
             pin(self, c2, beside(extra_row(), c2))
@@ -321,9 +321,9 @@ class ApiAndFrontend(VoiceScene):
             self.play(Indicate(substring(dr[0], "Swagger UI"), color=TURN, scale_factor=1.15), run_time=0.5)
             self.add(t)
             vo.wait_until("Slash status says 404")
-            c3 = type_capture(self, t, V34, type_time=0.6)[0]
-            pin(self, c3, beside(extra_row(), c3))
-            out(self, t, [(V34.line(2), ERR), (STATUS_BODY, ERR)], run_time=0.4)
+            type_capture(self, t, V34, type_time=0.6)
+            o3 = out(self, t, [(V34.line(2), ERR), (STATUS_BODY, ERR)], run_time=0.4)
+            pin(self, o3[0], beside(extra_row(), o3[0]))
             vo.wait_until("the public image is older than your clone")
             self.play(FadeIn(er, shift=RIGHT * 0.2), FadeIn(e1, shift=RIGHT * 0.2), run_time=0.5)
             self.play(FadeIn(e2, shift=RIGHT * 0.2), run_time=0.4)
@@ -382,7 +382,7 @@ class ApiAndFrontend(VoiceScene):
             self.play(FadeOut(opt), track(trk, 12), run_time=0.4)
             self.remove(opt)
             type_capture(self, t, V42, type_time=0.8)
-            out(self, t, [V42.line(2), "…"], run_time=0.3)
+            out(self, t, [V42.line(2), "…"], wrap=True, run_time=0.3)
             mv.plug(self, "front")
             out(self, t, [(V42.line(55), S.GREY), V42.line(56), (V42.line(57), S.GREY)], wrap=True, run_time=0.4)
             vo.wait_until("The extra check shows the title")
