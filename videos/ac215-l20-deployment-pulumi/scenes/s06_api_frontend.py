@@ -41,6 +41,8 @@ Deviations from SHOW:
   block is typed and comes back (with the API plug) after the flags have glowed; the pull's last
   lines (vm/30: 55–57) print at the end of beat 1, so the block stays whole while its flags glow.
   The lecture tag goes with the picture.
+- Beats 1 and 7: the 'Digest: sha256:…' lines (vm/30:55, vm/42:55) are cropped after 8 hex digits
+  (never read; a wrapped digest left 'Digest:' alone on a row).
 - Beat 3: vm/32 lines 5 and 7 are 86 characters; they are cropped after 'DISK USAGE' / '5.07GB'.
 - Beat 4: one 8-row terminal instead of three separate strips (the corner V2 keeps its place).
 - Beat 5: the terminal clears before the 12-row interactive block so the error lands on time.
@@ -95,15 +97,15 @@ assert V43.line(6) == "<title>Formaggio</title>" and "Next.js 15.0.2" in V43.lin
 assert V43.line(12).strip() == "✓ Ready in 67ms" and V43.line(13) == "BASE_API_URL: /api-service"
 
 # ------------------------------------------------------------------ the small V2 (top right)
-MV_X0, MV_X1, MV_Y0, MV_Y1 = 1.6, 6.4, 0.78, 2.84       # the VM frame
-MV_SLOT = {"vdb": 2.44, "api": 4.0, "front": 5.56}       # box centres (x)
+MV_X0, MV_X1, MV_Y0, MV_Y1 = 1.7, 6.4, 0.78, 2.84       # the VM frame
+MV_SLOT = {"vdb": 2.51, "api": 4.05, "front": 5.59}       # box centres (x)
 MV_BOX_Y, MV_BOX_W, MV_BOX_H = 2.0, 1.46, 0.86
 MV_CABLE_Y = 1.3
 MV_NAMES = {"vdb": ("cheese-app-", "vector-db"), "api": ("api-service",), "front": ("frontend",)}
 
 
 class MiniVm(Piece):
-    """The VM from the inside, small (x 1.46 .. 6.54, y 0.65 .. 3.07 with its fence and doors): BLUE
+    """The VM from the inside, small (x 1.56 .. 6.54, y 0.65 .. 3.07 with its fence and doors): BLUE
     frame, dotted PINK fence, GREEN cable, title bottom left; slots for the vector DB, the API and the
     frontend. PLAYS plug(key) · stop(key) · start(key). .boxes{key} .doors{key} .plugs{key}"""
 
@@ -195,6 +197,7 @@ class ApiAndFrontend(VoiceScene):
         t = vm_term(8)
         assert mv.fence.get_bottom()[1] > t.box.get_top()[1] + 0.03, (mv.fence.get_bottom(), t.box.get_top())
         assert mv.doors["vdb"].get_top()[1] < ref.get_bottom()[1], mv.doors["vdb"].get_top()
+        assert mv.fence.get_left()[0] > tracker_m(11, True).get_right()[0] + 0.15, mv.fence.get_left()
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(ref), FadeIn(mv), FadeIn(t, shift=UP * 0.2),
                       run_time=0.6)
@@ -240,13 +243,14 @@ class ApiAndFrontend(VoiceScene):
             dt = beside(default_row(), rows[6])
             pin(self, rows[6], dt)
             vo.wait_until("and the bucket name is passed but never used")
-            self.play(substring(rows[5], "GCS_BUCKET_NAME=cheese-app-models").animate.set_color(S.GREY_DARK),
+            self.play(substring(rows[5], "GCS_BUCKET_NAME=cheese-app-models").animate.set_color(S.GREY),
                       run_time=0.4)
             self.add(t)
             nu = beside(row_tag("passed, never used"), rows[5])
             pin(self, rows[5], nu)
         # the pull ends; the picture comes back with the API plugged in
-        out(self, t, ["…", (V30.line(55), S.GREY), V30.line(56), (V30.line(57), S.GREY)], wrap=True,
+        out(self, t, ["…", (V30.crop(55, "sha256:3412a226", "…"), S.GREY), V30.line(56), (V30.line(57), S.GREY)],
+            wrap=True,
             run_time=0.5)
         resize(self, t, 8, run_time=0.5)
         self.play(FadeIn(mv), run_time=0.4)
@@ -254,8 +258,8 @@ class ApiAndFrontend(VoiceScene):
         mv.plug(self, "api")
 
         # ========================================================== 2. logs: CNN model, uvicorn; no bucket
-        models = VGroup(pail(0.7, S.GREY, dashed=True), label("Models", 20, S.GREY)).arrange(RIGHT, buff=0.2)
-        at_left(models, 2.2)
+        models = VGroup(pail(1.0, S.GREY, dashed=True), label("Models", 24, INK)).arrange(RIGHT, buff=0.25)
+        at_left(models, 2.15)
         gh = grey_chip("GitHub release → /persistent/experiments")
         at_left(gh, 1.2)
         assert gh.get_right()[0] < mv.fence.get_left()[0] - 0.1, gh.get_right()
@@ -362,7 +366,7 @@ class ApiAndFrontend(VoiceScene):
             out(self, t, V39.at(2), run_time=0.3)
             mv.stop(self, "api")
             vo.wait_until("and the variant opens a shell")
-            type_capture(self, t, V40, type_time=0.06)
+            type_capture(self, t, V40, type_time=0.08)
             out(self, t, V40.at(13, 16, "…"), run_time=0.4)
             ex = type_at(self, t, V40, 24, type_time=0.3)
             cid = at_prompt(V40, 24)[0].split("@")[1].split(":")[0]
@@ -373,7 +377,7 @@ class ApiAndFrontend(VoiceScene):
             vo.wait_until("It is optional")
             self.play(FadeIn(opt, shift=RIGHT * 0.2), run_time=0.4)
             vo.wait_until("we exit and start the detached one again")
-            type_capture(self, t, V41, type_time=0.06)
+            type_capture(self, t, V41, type_time=0.08)
             out(self, t, [(V41.line(11), S.GREY)], run_time=0.3)
             mv.start(self, "api")
 
@@ -384,7 +388,8 @@ class ApiAndFrontend(VoiceScene):
             type_capture(self, t, V42, type_time=0.8)
             out(self, t, [V42.line(2), "…"], wrap=True, run_time=0.3)
             mv.plug(self, "front")
-            out(self, t, [(V42.line(55), S.GREY), V42.line(56), (V42.line(57), S.GREY)], wrap=True, run_time=0.4)
+            out(self, t, [(V42.crop(55, "sha256:255a23b2", "…"), S.GREY), V42.line(56), (V42.line(57), S.GREY)], wrap=True,
+                run_time=0.4)
             vo.wait_until("The extra check shows the title")
             self.play(track(trk, 12, True), run_time=0.4)
             fc = type_capture(self, t, V43, type_time=0.8)[0]

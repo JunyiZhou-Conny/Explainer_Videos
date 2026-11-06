@@ -254,9 +254,9 @@ class VectorDb(VoiceScene):
         # ========================================================== 3. the loader's command
         card = mini_book()
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(nb), track(trk, 10), run_time=0.5)
+            self.play(track(trk, 10), run_time=0.4)
+            resize(self, t, 10, extra=[FadeOut(nb)], run_time=0.6)
             self.remove(nb)
-            resize(self, t, 10, run_time=0.6)
             card.move_to([6.45 - card.width / 2, 0, 0])
             card.set_y((t.box.get_top()[1] + PIC_TOP) / 2 + 0.05)
             assert card.get_bottom()[1] > t.box.get_top()[1] + 0.05 and card.get_top()[1] < 2.95, card.get_top()
@@ -287,9 +287,9 @@ class VectorDb(VoiceScene):
         ctr = counter_text(0)
         VGroup(ctr_l, ctr).arrange(DOWN, buff=0.2).move_to([-5.15, 0.55, 0])
         with self.voiceover(SAY[4]) as vo:
-            resize(self, t, 3, run_time=0.5)
-            self.play(FadeOut(card), FadeIn(nb), run_time=0.5)
+            resize(self, t, 3, extra=[FadeOut(card)], run_time=0.5)
             self.remove(card)
+            self.play(FadeIn(nb), run_time=0.5)
             nb.heal(self)
             assert ctr_l.get_right()[0] < nb.vm.get_left()[0] - 0.2, (ctr_l.get_right(), nb.vm.get_left())
             out(self, t, V27.at(13, 18), run_time=0.4)
@@ -339,7 +339,7 @@ class VectorDb(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(ctr, ctr_l, yt)), run_time=0.4)
             self.remove(ctr, ctr_l, yt)
-            self.play(FadeOut(t), nb.animate.shift(DOWN * 0.36), run_time=0.7)
+            self.play(FadeOut(t), nb.animate.shift(-NB_SHIFT), run_time=0.7)
             self.remove(t)
             nb.heal(self)
             spot.move_to(nb.p(nb.SLOT_X["loader"], 0.15))
@@ -413,14 +413,16 @@ class VectorDb(VoiceScene):
             grp.move_to([0, (t2.box.get_top()[1] + PIC_TOP) / 2, 0])
             fix.align_to(ghost, LEFT)
             rerun.align_to(ghost, LEFT)
-            down = Arrow(ghost.get_bottom() + LEFT * 1.2, fix.get_top() + LEFT * 1.2, buff=0.08, color=OWN,
+            g_old, g_new = substring_text(ghost, "/chroma/chroma"), substring_text(fix.text, "/data")
+            down = Arrow(g_old.get_bottom(), g_new.get_top() + UP * 0.12, buff=0.08, color=OWN,
                          stroke_width=4, max_tip_length_to_length_ratio=0.3)
             assert grp.get_left()[0] > -6.5 and grp.get_right()[0] < 6.5, (grp.get_left(), grp.get_right())
             assert grp.get_bottom()[1] > t2.box.get_top()[1] + 0.1 and grp.get_top()[1] < PIC_TOP, grp.get_top()
             self.play(FadeIn(ghost, shift=DOWN * 0.15), FadeIn(et), run_time=0.5)
+            self.play(Indicate(g_old, color=ERR, scale_factor=1.15), run_time=0.5)
             vo.wait_until("mount slash data instead")
             self.play(GrowArrow(down), FadeIn(fix, shift=DOWN * 0.15), run_time=0.6)
-            self.play(Indicate(substring_text(fix.text, "/data"), color=OWN, scale_factor=1.25), run_time=0.5)
+            self.play(Indicate(g_new, color=OWN, scale_factor=1.25), run_time=0.5)
             vo.wait_until("rerun the stop, remove and run lines")
             self.play(FadeIn(rerun, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("then the loader")
