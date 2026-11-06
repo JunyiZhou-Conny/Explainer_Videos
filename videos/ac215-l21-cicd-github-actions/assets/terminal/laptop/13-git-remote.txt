@@ -1,0 +1,4 @@
+$ git remote -v
+origin	https://github.com/dlops-io/cheese-app-ci-cd.git (fetch)
+origin	https://github.com/dlops-io/cheese-app-ci-cd.git (push)
+[exit 0]

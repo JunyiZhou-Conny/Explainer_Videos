@@ -1,0 +1,5 @@
+$ docker images
+IMAGE                                                     ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e   2d5b75e53ebd        722MB          176MB        
+python:3.11-slim-bookworm                                 51e0b227b51e        196MB           48MB        
+[exit 0]

@@ -1,0 +1,8 @@
+00:00 Pulumi: desired state, not steps
+02:15 Setup: four APIs, two keys
+03:53 The deployment toolbox, fixed twice
+06:13 SSH keys and OS Login
+07:32 Step 2: images with timestamps
+09:49 Steps 3–4: the VM, its fences, provisioning
+12:23 Steps 5–6: containers over SSH, then test
+15:16 Destroy, recap, and what's next

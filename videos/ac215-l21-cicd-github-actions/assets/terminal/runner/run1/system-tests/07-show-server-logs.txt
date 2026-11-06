@@ -1,0 +1,11 @@
+$ docker logs api-server
+Container is running!!!
+Running in DEV mode
+INFO:     Will watch for changes in these directories: ['/app']
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [7] using StatReload
+INFO:     Started server process [9]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     172.18.0.1:34316 - "GET / HTTP/1.1" 200 OK
+[exit 0]

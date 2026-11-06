@@ -1,0 +1,3 @@
+$ git init --bare -b main /home/student/github-standin/student/cheese-app-ci-cd.git
+Initialized empty Git repository in /home/student/github-standin/student/cheese-app-ci-cd.git/
+[exit 0]

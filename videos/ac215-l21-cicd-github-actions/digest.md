@@ -1,17 +1,17 @@
 # L21 · Automating Software Development: CI/CD with GitHub Actions II — tutorial digest
 
-- **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166046/ (I could not open Ed itself. The lecture-to-tutorial mapping comes from the course-site source, `tutorials_demo.md:270-275`, which titles the lecture "Automating Software Development: CI/CD with GitHub Actions and other tools II" and links only README Part 5.)
-- **Primary repo:** `dlops-io/cheese-app-ci-cd`, branch `main`, commit `b8458ff0cc1898700b32a873b4665f43f50df71e`, committed 2025-11-13 13:59:04 -0500 (message "demo class 1"). It has a single branch.
+- **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166046/ (I could not open Ed itself. The lecture-to-tutorial mapping comes from the course map, `MLOps_Learning/course/lectures.yaml` entry 21, which links only README Part 5; the research agent cites the course-site source `tutorials_demo.md:270-275` for the same mapping and for the title "… CI/CD with GitHub Actions and other tools II", which the lecture deck also uses. The verifier could not open that course-site file.)
+- **Primary repo:** `dlops-io/cheese-app-ci-cd`, branch `main`, commit `b8458ff0cc1898700b32a873b4665f43f50df71e`, committed 2025-11-13 13:59:04 -0500 (message "demo class 1"). It has a single branch. `git ls-remote` on 2026-11-06 still shows `refs/heads/main` = `b8458ff0…` (the upstream also has three pull-request refs, `refs/pull/1-3`, which are not branches and not part of the tutorial).
 - **Context-only repos (used in §7):**
   - `dlops-io/cheese-app-v3`, branch `main`, commit `3ecef56fea879ac480d260c0906cd95baf05179a`, 2025-11-28 16:00:06 -0500 (the API you deployed in L20)
   - `dlops-io/cheese-app-v4`, branch `main`, commit `033f18713b9e1e7985a3080e85edab3ff01cefef`, 2025-12-02 14:13:03 -0500 (the CD workflows used in L23)
 - **README sections this lecture covers:**
-  - Primary: [`#part-5-github-actions-remote-ci`](https://github.com/dlops-io/cheese-app-ci-cd/blob/main/README.md#part-5-github-actions-remote-ci) (README.md:277-365)
-  - Context (L9 covered Parts 3-4): `#part-1-understanding-the-codebase` (51-92), `#part-2-identifying-code-quality-issues` (95-128), `#part-3-testing-with-pytest` (132-228), `#part-4-automating-with-pre-commit-hooks` (232-273)
+  - Primary: [`#part-5-github-actions-remote-ci`](https://github.com/dlops-io/cheese-app-ci-cd/blob/main/README.md#part-5-github-actions-remote-ci) (README.md:277-365). The heading reads "Part 5: GitHub Actions (Remote CI)" (with parentheses); the course map writes it without them.
+  - Context (the L09 video, `videos/ac215-l09-ci-testing/`, followed Parts 1-4 with live captures; refer back, do not redo): `#part-1-understanding-the-codebase` (51-92), `#part-2-identifying-code-quality-issues` (95-128), `#part-3-testing-with-pytest` (132-228), `#part-4-automating-with-pre-commit-hooks` (232-273)
   - Natural follow-ons that need a working Part 5: `#part-6-branch-protection-optional` (369-397), `#part-7-student-exercise---add-a-new-endpoint-with-full-ci` (401-453)
 - **Colab notebooks:** none for this lecture.
 - **Files read in full:** all 17 tracked files: `.github/workflows/ci.yml`, `.gitignore`, `.pre-commit-config.yaml`, `Dockerfile`, `README.md`, `assets/pipline.png`, `docker-entrypoint.sh`, `docker-shell.sh`, `pyproject.toml`, `pytest.ini`, `src/api-service/api/{__init__,service,utils}.py`, `tests/__init__.py`, `tests/{unit/test_utils,integration/test_api,system/test_system_api}.py`. I also read the full git history (14 commits), which includes a deleted second workflow (`docker-build.yml`) and the instructor's in-class demo commits.
-- **How claims were checked:** every `path:line` below was checked with `sed -n`/`grep -n`. I ran Black 26.5.1 and Flake8 7.3.0 on a *copy* of `src/api-service/api/` to get real linter output. I did **not** run the repo's Dockerfile, scripts or tests. Claims I reasoned out but could not run are marked *(reasoned, not run)*.
+- **How claims were checked:** every `path:line` below was checked with `sed -n`/`grep -n`. The research agent ran Black and Flake8 on a copy of `src/api-service/api/`. The verifier (2026-11-06) then built the repo's own `Dockerfile` unchanged from a `git archive` of `b8458ff` (on a capture-only base that adds the sandbox proxy's CA, as in L09) and ran, in disposable containers, every CI command of `ci.yml` (Black, Flake8, unit tests, the coverage step with a fresh bind mount, integration tests, the server + `sleep 10` + `curl -f` + system tests, `docker logs`), the README Part 7 auto-format command, the Step 14 Option B mount, `--entrypoint pytest`, a syntax-error variant of the server, and the coverage threshold of E6. Versions in the image at that date: Python 3.11.18, black 26.10.1, flake8 7.5.0, pytest 9.2.0, pytest-cov 7.1.0, fastapi 0.162.0, uvicorn 0.54.0 (all unpinned, so they drift). L09's captures (`videos/ac215-l09-ci-testing/assets/terminal/laptop/`) cover Parts 1-4 at the same commit. Claims still not run are marked *(reasoned, not run)*; claims run by the verifier are marked *(verified 2026-11-06)*. Nothing ran on GitHub's hosted runners: this sandbox cannot push to a GitHub repo.
 
 ---
 
@@ -73,6 +73,7 @@ You start with a tiny FastAPI service: three endpoints (`/`, `/health`, `/euclid
 
 **A repo where Actions will run.** The README only says "Clone or download from your repository" (README.md:19-20). GitHub runs workflows **only** from `.github/workflows/` at the **root** of a repository. Your options:
 - **Fork** `dlops-io/cheese-app-ci-cd` on GitHub. On forks, Actions is disabled until you click the "enable workflows" button on the Actions tab.
+- If you `git clone`d `dlops-io/cheese-app-ci-cd` directly, `origin` points at the course's repo, which you cannot push to: `git push` is refused (permission denied / 403). Point `origin` at your own fork or repo first.
 - Create a new empty repo such as `<you>/cheese-app-ci-cd`, point your clone's `origin` at it, and push `main`.
 - If you keep everything in one monorepo (for example `JunyiZhou-Conny/MLOps_Learning` with this project in a subfolder), `ci.yml` inside the subfolder will **never run**. You must move it to the monorepo's root `.github/workflows/` and adapt it (see §6, G2). Also, copying a `git clone` (with its own `.git/`) into another repo makes Git record an *embedded repository* (a gitlink), not the files.
 
@@ -91,10 +92,10 @@ You start with a tiny FastAPI service: three endpoints (`/`, `/health`, `/euclid
   - GitHub bills each *job* separately and rounds it **up** to a whole minute. A full run has 6 jobs, so it costs about **6 billed minutes** even though it finishes in about 2 minutes of wall-clock time (the README screenshot shows 54 s + 22/18/20/39 s + 4 s).
 - **Artifact storage:**
   - Each run uploads the image tar `docker-image`, which is large because the image includes `build-essential` (Dockerfile:15-16). It is kept for 1 day (`ci.yml:38`).
-  - Each run also uploads `coverage-report-unit` with the repo's default retention.
+  - Each run also *tries* to upload `coverage-report-unit` with the repo's default retention; at this commit the folder is empty, so nothing is uploaded (Step 8, G7).
   - On private repos these count toward your plan's storage quota. You can delete old artifacts on each run page.
 - **To stop CI:** Actions tab → "CI Pipeline" → "⋯" → *Disable workflow*, or delete the file.
-- **Local cleanup** (README.md:568-574): `docker container ls`, stop leftovers (in particular `docker stop api-server && docker rm api-server`, README.md:199), `docker system prune`, `docker image ls`.
+- **Local cleanup** (README.md:568-574): `docker container ls`, "Stop any container that is running" (the README gives no command; for the Part 3 server it is `docker stop api-server && docker rm api-server`, README.md:199), `docker system prune`, `docker image ls`.
 - **No billable cloud resources** are created.
 
 ---
@@ -119,7 +120,7 @@ You start with a tiny FastAPI service: three endpoints (`/`, `/health`, `/euclid
 - **Explanation:** The `build` job runs `docker build -t cheese-app-api:${{ github.sha }} .`, then `docker save` writes the image to a tar file, and `actions/upload-artifact@v4` stores it in GitHub (`ci.yml:25-38`). Each test job downloads the tar, runs `docker load`, and then runs the *same* image by the same tag. Tagging with the commit SHA makes the tag unique to that commit.
 - **Mental model:** The image is a sealed, labelled suitcase. Every inspector opens an identical copy, so a pass in one job and a pass in another are statements about the *same* thing.
 - **Analogy:** A factory makes a single prototype and ships identical copies of that finished prototype (not the blueprint) to four independent QA labs, so no lab rebuilds it. The blueprint is the Dockerfile; the prototype is the built image.
-- **Misconception:** "CI checks the files I checked out." Here, lint and tests run **inside the image** against `/app/api` and `/app/tests`, which were copied in at build time (Dockerfile:38-41). The `actions/checkout` steps in the lint, integration and system jobs are not used by the checks themselves.
+- **Misconception:** "CI checks the files I checked out." Here, lint and tests run **inside the image** against `/app/api` and `/app/tests`, which were copied in at build time (Dockerfile:38-41). The `actions/checkout` steps in the four check jobs are not used by the checks themselves (in `unit-tests` the workspace only hosts the `coverage/` bind mount, which Docker would create anyway).
 - **Second misconception:** "Docker Buildx gives us caching." Nothing caches between runs: there are no `cache-from`/`cache-to` settings, and each run rebuilds from scratch, including `apt-get upgrade` (Dockerfile:12-20).
 - **Animation:** Image layers stack into a cube. The cube shrinks into a tar suitcase stamped with a SHA, flies to an "artifact shelf", and four copies fly into four rooms, where each one unpacks back into a cube.
 
@@ -150,7 +151,7 @@ You start with a tiny FastAPI service: three endpoints (`/`, `/health`, `/euclid
   - *Unit* tests (`tests/unit/test_utils.py`) call `power()` directly.
   - *Integration* tests (`tests/integration/test_api.py:9-11`) call the FastAPI app in-process through `TestClient`, with no server and no network.
   - *System* tests (`tests/system/test_system_api.py`) make real HTTP calls to `http://localhost:9000`. CI starts the server container with `-p 9000:9000`, waits `sleep 10`, checks it with `curl -f`, and then runs the tests from a *second* container that shares the runner's network via `--network host` (`ci.yml:146-158`).
-  - The system test class is decorated with `skipif(not is_api_running())` (`test_system_api.py:24`). If the server is unreachable, the four HTTP tests are **skipped**, and pytest still exits 0.
+  - The system test class is decorated with `skipif(not is_api_running())` (`test_system_api.py:24`). If the server is unreachable, the four HTTP tests are **skipped**, and pytest still exits 0 (`1 passed, 4 skipped`, captured in L09 `part3-opt2-07-system-no-server.txt`).
 - **Mental model:** Each level up the pyramid swaps a fake for something real: a function call, then an in-process ASGI call, then a TCP connection to a separate process.
 - **Analogy:** Testing a car's spark plug on a bench (unit), the engine on a stand (integration), and driving the car around the block (system).
 - **Misconception:** "Green means the system tests ran." Without the `curl -f … || exit 1` guard (`ci.yml:154`), a server that never started would produce "1 passed, 4 skipped" and a green job.
@@ -217,7 +218,7 @@ docker run --rm cheese-app-api:local black --check --diff api/
   - The Dockerfile copies `pyproject.toml` first and runs `pip install --user .`. This installs every dependency, including black, flake8, pytest and pre-commit, into the image (Dockerfile:32-35; pyproject.toml:7-19).
   - It then copies `src/api-service/api/` to `/app/api` and `tests/` to `/app/tests` (Dockerfile:38-41).
   - Any arguments after the image name replace the default server command (`docker-entrypoint.sh:10-13`).
-- **Checkpoint:** after the entrypoint banner lines `Container is running!!!` and `Executing command: …`, Flake8 prints (I verified this with flake8 7.3.0 on a copy of the code):
+- **Checkpoint:** after the entrypoint banner lines `Container is running!!!` and `Executing command: …`, Flake8 prints (verified in the image, flake8 7.5.0, and in L09's capture `part2-02-flake8.txt`):
   ```
   api/utils.py:7:15: E231 missing whitespace after ','
   api/utils.py:13:1: E303 too many blank lines (3)
@@ -236,7 +237,7 @@ docker run --rm cheese-app-api:local pytest tests/unit/ -v
 docker run --rm cheese-app-api:local pytest tests/integration/ -v
 ```
 - **Under the hood:** `pytest.ini:9` sets `pythonpath = .`, which is `/app` in the image, so `from api.utils import power` works. `addopts` adds `-v --tb=short --strict-markers --disable-warnings -ra` (pytest.ini:12-17).
-- **Checkpoint:** 11 unit tests (`tests/unit/test_utils.py`) and 10 integration tests (`tests/integration/test_api.py`) collected and passing. I counted these from source and did not run them.
+- **Checkpoint:** `11 passed` (unit, `tests/unit/test_utils.py`) and `10 passed, 1 warning` (integration, `tests/integration/test_api.py`) *(verified 2026-11-06; same counts in L09's captures)*. The one warning is a pytest-asyncio deprecation about `asyncio_default_fixture_loop_scope`; `--disable-warnings` hides its text.
 - The same README block also runs both folders together (README.md:178) and a terminal coverage report (README.md:181):
 ```bash
 # Run both unit and integration tests
@@ -245,7 +246,7 @@ docker run --rm cheese-app-api:local pytest tests/unit/ tests/integration/ -v
 # Run with coverage
 docker run --rm cheese-app-api:local pytest tests/unit/ --cov=api --cov-report=term
 ```
-  The coverage table lists `service.py` at 0%, because `--cov=api` covers the whole package and unit tests never import `service.py` (see E6).
+  The coverage table lists `api/service.py` at 0% and `api/utils.py` at 75% (3 of 4 statements; line 14, `pass` in `unused_function`, never runs), because `--cov=api` covers the whole package and unit tests never import `service.py` (see E6).
 - System tests need a live server:
 ```bash
 # Start the API server
@@ -258,6 +259,7 @@ docker run --rm --network host cheese-app-api:local pytest tests/system/ -v
 docker stop api-server && docker rm api-server
 ```
 - **Checkpoint:** 5 passed. If you instead see `1 passed, 4 skipped` with the reason `API not running at localhost:9000`, the test container could not reach the server (test_system_api.py:15-24).
+- **Race in the README's order:** `docker run -d` returns as soon as the container starts, and the README runs the tests at once. If uvicorn is not listening yet when `is_api_running()` probes `/health` (once, at collection), the four tests are skipped. Wait a few seconds, or poll `curl -sf http://localhost:9000/health` **(not in README)**, as CI's `sleep 10` + `curl -f` does and as L09's capture did (`part3-opt2-03-wait.txt`).
 - **If it fails:**
   - On Docker Desktop, host networking behaves differently from Linux. A robust local alternative **(not in README)**: `docker run --rm --network container:api-server cheese-app-api:local pytest tests/system/ -v`, which joins the server container's own network namespace, so `localhost:9000` *is* the server.
   - "Conflict. The container name "/api-server" is already in use" means a previous run never cleaned up. Run `docker rm -f api-server` **(not in README)**.
@@ -282,10 +284,12 @@ pre-commit run --all-files
   - Flake8 `7.0.0` with `--max-line-length=120 --extend-ignore=E203,W503` (lines 38-44)
 
   These are the same flags CI uses (`ci.yml:61, 66`).
-- **Checkpoint:** the Black hook reports *Failed* with "files were modified by this hook" and rewrites `src/api-service/api/utils.py`. Run the hooks again and everything passes.
+- **Checkpoint:** the first run prints `[INFO] Initializing environment for …` while it downloads the hook repos, and pre-commit 4.x warns that the `v4.5.0` hooks use deprecated stage names. The 7 hygiene hooks pass (`Check JSON syntax` is skipped: no JSON files), the Black hook reports *Failed* with "files were modified by this hook" and `reformatted src/api-service/api/utils.py`, and Flake8, which runs after Black on the already-fixed file, passes; exit 1. Run the hooks again and everything passes (L09 captures `part4-03`, `part4-04`).
 - **Decision for the video:** **don't commit that fix yet** if you want to watch CI catch the problem in Step 9. Run `git stash` or `git checkout -- src/api-service/api/utils.py` **(not in README)** to undo the rewrite.
 
-### Step 5 — Part 5: read the trigger block (README.md:281-283)
+### Step 5 — Part 5: read the trigger block (README.md:277-283)
+- **README.md:279:** "All CI tests run inside Docker containers using Python 3.11 (same as production)". True for the image (`python:3.11-slim-bookworm`, Dockerfile:2); this repo has no production deployment, so "same as production" means "same image you would deploy".
+- **README.md:287:** "6 jobs that run in parallel (except for dependencies)".
 - **File:** `.github/workflows/ci.yml:5-11`. The run is called "CI Pipeline". It fires on `push` to `main` or `develop`, and on `pull_request` whose *base* is `main` or `develop`.
 - **Under the hood:**
   - A push to `feature/x` triggers nothing until you open a PR into `main`.
@@ -307,17 +311,18 @@ pre-commit run --all-files
 - **What it does:** `needs: build`, downloads and loads the tar (`49-57`), then runs:
   - `black --check --line-length 120 api/`, blocking (`59-62`)
   - `flake8 --max-line-length=120 --extend-ignore=E203,W503 api/`, advisory (`64-67`)
-- **Checkpoint at the current commit:** **this job fails.** `src/api-service/api/utils.py:7` (`def power(base,exponent):`) and the triple blank line at `utils.py:10-12` make Black print `would reformat …/api/utils.py` and `1 file would be reformatted, 2 files would be left unchanged.`, then exit 1. I reproduced this on a copy with Black 26.5.1. The Flake8 step is then **skipped**.
+- **Checkpoint at the current commit:** **this job fails.** `src/api-service/api/utils.py:7` (`def power(base,exponent):`) and the triple blank line at `utils.py:10-12` make Black print `would reformat /app/api/utils.py`, `Oh no! 💥 💔 💥` and `1 file would be reformatted, 2 files would be left unchanged.`, then exit 1 *(verified 2026-11-06 in the built image, black 26.10.1)*. The Flake8 step is then **skipped**. Had it run, it would print `api/utils.py:7:15: E231 missing whitespace after ','` and `api/utils.py:13:1: E303 too many blank lines (3)` and exit 1 (verified), which `continue-on-error: true` would tolerate.
 
 ### Step 8 — The `unit-tests` job (README.md:303-308; ci.yml:70-102)
 - **What it does:**
   - `pytest tests/unit/ -v --tb=short` (`88-90`). This is the gate.
   - A second, advisory pytest run with coverage, which mounts `${{ github.workspace }}/coverage` onto `/app/coverage` and writes the HTML report there (`92-95`).
   - Uploads `coverage/` as artifact `coverage-report-unit`, even after failures (`97-102`).
-- **Checkpoint:** 11 passed, and a coverage table in the log.
+- **Checkpoint:** "Run unit tests" shows `11 passed`. Then "Generate coverage report" shows the 11 tests passing again, followed by an `INTERNALERROR> … PermissionError: [Errno 13] Permission denied: 'coverage/style_cb_….css'` traceback and **no coverage table** (pytest exit 3). The step is marked failed but `continue-on-error: true` keeps the job green. "Upload coverage report" then finds nothing in `coverage/` (upload-artifact's default `if-no-files-found: warn` prints a warning), so no `coverage-report-unit` artifact appears. *(Verified 2026-11-06 with the exact CI command on Linux Docker 29.8.2, which, like a hosted runner, runs as root and creates the missing bind-mount source `coverage/` as `root:root 755`; the hosted-runner log itself is not captured.)*
 - **README vs code:** README.md:307-308 promises terminal, XML and HTML reports, all uploaded.
-  - The XML report is written to `/app/coverage.xml` *inside* the container, which `--rm` deletes, so it never reaches the runner.
-  - *(Reasoned, not run.)* Docker creates the missing host directory `coverage/` as root, while the container runs as uid 1000 (Dockerfile:23-28). The HTML write is therefore likely to hit a permission error, which `continue-on-error` hides, and the upload then warns that no files were found. Check your own run's log. Exercise 6 has a fix.
+  - The HTML write fails as above, because the container user is uid 1000 (Dockerfile:23-28) and the mounted folder belongs to root.
+  - pytest-cov aborts at the HTML report, so the terminal table never prints; and even when it works, the XML report goes to `/app/coverage.xml` *inside* the container, which `--rm` deletes, so it never reaches the runner.
+  - Exercise 6 / G7 have the fix.
 
 ### Step 9 — The `integration-tests` job (README.md:310-314; ci.yml:105-125)
 - **What it does:** `pytest tests/integration/ -v --tb=short` (`123-125`) runs inside the image. `TestClient(app)` (test_api.py:11) calls the ASGI app in-process, so no port is involved.
@@ -329,8 +334,11 @@ pre-commit run --all-files
   - `sleep 10`, then `curl -f http://localhost:9000/ || exit 1` (`150-154`).
   - Runs the tests from a second container with `--network host` (`156-158`).
   - Always prints the server logs and always stops and removes the server (`160-169`).
-- **Checkpoint:** 5 passed. The "Show server logs" step shows `Running in DEV mode` and uvicorn access lines for `/health`, `/` and `/euclidean_distance/`.
-- **If it fails:** a `curl: (7) Failed to connect` in the wait step means the server needed more than 10 s or crashed. Read the logs step, which runs because of `if: always()`.
+- **Checkpoint:** 5 passed. The "Show server logs" step shows `Container is running!!!`, `Running in DEV mode`, uvicorn's `Will watch for changes in these directories: ['/app']` and `Application startup complete.`, then access lines: `GET /` (the `curl -f`), `GET /health` (the `skipif` probe), and the tests' `/`, `/health`, `/euclidean_distance/` and `/euclidean_distance/?x=3&y=4`, all `200 OK` *(verified 2026-11-06 locally)*.
+- **If it fails:**
+  - `curl: (7) Failed to connect` in the wait step means nothing was listening yet after 10 s.
+  - If the app cannot even be imported (say a syntax error in `service.py`), uvicorn's `--reload` supervisor still holds port 9000 and the container stays *Up*, but the connection is reset: `curl: (56) Recv failure: Connection reset by peer` *(verified 2026-11-06 with a syntax-error variant)*. `docker logs` shows the `SyntaxError` traceback.
+  - Either way, read the "Show server logs" step, which runs because of `if: always()`.
 
 ### Step 11 — The `test-summary` job (README.md:325-330; ci.yml:172-257)
 - **What it does:**
@@ -340,6 +348,14 @@ pre-commit run --all-files
 - **Checkpoint at the current commit:** the log shows the three results as `success`, then `✅ All tests passed!`. The Slack step is skipped unless you added the secret.
 - **README vs code:** the README (325-330) does not mention Slack at all, and "Checks the results of all test jobs" omits that lint is not checked.
 
+### Step 11b — "Key CI/CD Concepts" (README.md:332-342)
+The README closes its description with five short paragraphs; each maps onto the file:
+- **Artifact Sharing** (334): build once, share the image tar (C3; `ci.yml:33-38`, `49-57`).
+- **Parallel Execution** (336): "Jobs 2-5 run in parallel after the build completes" (C4; `needs: build` at `ci.yml:44, 73, 108, 131`).
+- **Conditional Execution** (338): "`if: always()` ensures cleanup steps run even if tests fail". That is `ci.yml:161, 166`; the same condition also keeps the coverage upload (`102`), the whole `test-summary` job (`176`) and the Slack step (`204`) alive.
+- **Unique Image Tags** (340): `github.sha` (`ci.yml:27`). Each job's VM is fresh anyway, so the SHA tag mainly makes logs and the tar self-describing.
+- **Network Modes** (342): `--network host` for the system tests (C6; `ci.yml:158`).
+
 ### Step 12 — Push (README.md:344-349)
 ```bash
 git add .
@@ -347,7 +363,8 @@ git commit -m "Add CI pipeline"
 git push
 ```
 - **Checkpoint:** within seconds, a yellow dot appears next to the commit on GitHub, and the Actions tab shows a run named after the commit message.
-- **If nothing starts:** you pushed a branch other than `main`/`develop`, or the workflow is not at the repo root.
+- **Nothing to commit:** in a fresh clone or fork, `ci.yml` is already committed, so `git commit -m "Add CI pipeline"` prints `nothing to commit, working tree clean` (exit 1) and `git push` says `Everything up-to-date`, and no run starts. Something has to change first: copy the project into your own repo (then the commit really adds the pipeline), make a real change, or use `git commit --allow-empty -m "Trigger CI"` **(not in README)**. If you installed the Part 4 hooks, they run on this commit too.
+- **If nothing starts:** you pushed a branch other than `main`/`develop`, the workflow is not at the repo root, Actions is still disabled on your fork, or `origin` still points at `dlops-io` (push refused).
 - **Gotcha:** `git add .` also stages anything you generated locally that `.gitignore` misses. For example, a `coverage/` folder is not ignored; for coverage output, `.gitignore:29-35` covers only `.coverage`, `htmlcov/`, `*.cover` and `coverage.xml`.
 
 ### Step 13 — Watch the run (README.md:351-365)
@@ -360,7 +377,8 @@ git push
   - **Overall run ✗**
 
   This does **not** match the all-green screenshot `assets/pipline.png`. That screenshot was committed in `3dea317`, when both `utils.py` and `service.py` were in their messy state (since `91eb786`), so it comes from another code state. It is consistent with the clean code before `91eb786`: Black 120 and Flake8 both pass on the `140f138` versions of `src/api-service/api/` (I checked copies), while the `3dea317` versions fail both.
-- **Checkpoint:** you can click into each job and read every step's log. The artifacts are listed at the bottom of the run summary page.
+- **Checkpoint:** you can click into each job and read every step's log. The artifacts are listed at the bottom of the run summary page: `docker-image` only (the coverage artifact is empty, Step 8).
+- **Hosted runs cannot be captured from this sandbox** (no push access to any GitHub repo, no GitHub login). The video shows every local equivalent live and draws the run graph as a labelled illustration built from `ci.yml`, next to the README's own screenshot. `act` (nektos/act) can run workflow jobs locally in Docker **(not in README)**; whether it handles this workflow's artifact passing without a GitHub token was not tested.
 
 ### Step 14 — Turn it green (not spelled out in the README)
 - **Option A:** run `pre-commit run --all-files` (README.md:262), then commit the rewritten `utils.py` and push.
@@ -368,7 +386,7 @@ git push
   ```bash
   docker run --rm -v "$(pwd)/src/api-service/api":/app/api cheese-app-api:local black --line-length 120 api/
   ```
-  This needs the `cheese-app-api:local` image from Step 2. Black runs as uid 1000 inside the container and writes to your host files. On Docker Desktop (macOS) that works; on a Linux host whose user is not uid 1000 the write fails with a permission error *(reasoned, not run)*, so use Option A or C there.
+  This needs the `cheese-app-api:local` image from Step 2. Black runs as uid 1000 inside the container and writes to your host files. On Docker Desktop (macOS) file sharing maps ownership, so that should work *(reasoned, not run)*; on a Linux host where the files do not belong to uid 1000 it fails: `error: cannot format /app/api/utils.py: [Errno 13] Permission denied: '/app/api/utils.py'`, `2 files left unchanged, 1 file failed to reformat.`, exit 123 *(verified 2026-11-06 with root-owned files)*. Use Option A or C there.
 - **Option C:** edit by hand. Change the signature to `def power(base, exponent):` and delete one of the three blank lines.
 - **Checkpoint:** after the push, all six jobs are green, which now matches the screenshot.
 
@@ -389,7 +407,7 @@ git push
   - `Integration Tests` (`106`)
   - `System Tests` (`129`)
 
-  Checks appear in the picker only after they have run at least once.
+  Checks appear in the picker only after they have reported on the repo recently (GitHub lists checks seen in the past week). `Build Docker Image` and `Test Summary` are checks too; `Test Summary` turns red whenever a test job fails.
 - **Do Step 14 first.** If `Lint and Format Check` is required while `utils.py` is still messy, every PR is blocked by Black regardless of what the PR changes.
 - **Plan limits:** protected branches on **private** repos need a paid plan (Pro, Team, …). On GitHub Free they are available for public repos.
 - **The README's "break the tests" command doesn't break anything:**
@@ -408,13 +426,14 @@ docker build -t cheese-app-api:local .
 # Run all tests
 docker run --rm cheese-app-api:local pytest tests/ -v
 ```
+- The README's step 3 also lists "Run specific test types" (`pytest tests/unit/ -v` and `pytest tests/integration/ -v` in the image, README.md:431-433) and a formatting check, `docker run --rm cheese-app-api:local black --check --line-length 120 api/` (README.md:439), which fails on the messy `utils.py` until Step 14 is done.
 - **Checkpoint:** all unit and integration tests pass, now including `test_add_endpoint`. The system tests show 1 passed and 4 skipped, because no server is running.
 - **Then (README.md:445-453):** `git add .`, `git commit -m "Add addition endpoint with tests"`, `git push`, and watch the run.
 - **README auto-format command is broken:**
 ```bash
 docker run --rm -v $(pwd)/src/api-service:/app cheese-app-api:local black --line-length 120 api/
 ```
-  It mounts `src/api-service` (which contains only `api/`) **over `/app`**. That hides `/app/docker-entrypoint.sh`, which the relative `ENTRYPOINT ["/bin/bash", "docker-entrypoint.sh"]` (Dockerfile:52) needs, so bash fails with "docker-entrypoint.sh: No such file or directory" *(reasoned, not run)*. Use the Step 14 Option B command instead.
+  It mounts `src/api-service` (which contains only `api/`) **over `/app`**. That hides `/app/docker-entrypoint.sh`, which the relative `ENTRYPOINT ["/bin/bash", "docker-entrypoint.sh"]` (Dockerfile:52) needs, so the container prints `/bin/bash: docker-entrypoint.sh: No such file or directory` and exits 127 *(verified 2026-11-06)*. Use the Step 14 Option B command (macOS) or `pre-commit run --all-files` instead.
 
 ### Step 18 — Clean up (README.md:568-574)
 - **Action:** `docker container ls`, stop leftovers (`api-server`, `cheese-app-api-service`), `docker system prune`, `docker image ls`.
@@ -538,10 +557,10 @@ on:
 - The first step is the real gate.
 - The second step runs the unit tests **again**, now measuring `api` with pytest-cov:
   - `term` prints a table.
-  - `xml` writes `/app/coverage.xml`, which is not mounted and therefore lost.
-  - `html:coverage` writes into the bind-mounted folder.
+  - `xml` would write `/app/coverage.xml`, which is not mounted and therefore lost.
+  - `html:coverage` tries to write into the bind-mounted folder, which Docker created as root, so the uid-1000 user gets `PermissionError` and pytest-cov aborts (exit 3) before any report prints *(verified 2026-11-06)*.
 - Because `--cov=api` points at the package directory, coverage also lists files the unit tests never import (`service.py` at 0%).
-- `if: always()` uploads even after a failure, which is good practice for diagnostics.
+- `if: always()` uploads even after a failure, which is good practice for diagnostics; here there is nothing to upload.
 
 **`.github/workflows/ci.yml:146-158`**
 ```yaml
@@ -652,7 +671,8 @@ fi
 - This one script makes the same image serve every role in CI:
   - with arguments, it is a tool runner (`pytest …`, `black …`, `flake8 …`)
   - with no arguments, it is a server
-- `exec` replaces bash, so the tool's exit code becomes the container's exit code, which becomes the step's exit code. That chain is exactly what CI needs.
+- `exec` replaces bash, so the tool's exit code becomes the container's exit code, which becomes the step's exit code (Black's 1, pytest's 1/2/3). That chain is exactly what CI needs.
+- `ENTRYPOINT ["/bin/bash", "docker-entrypoint.sh"]` (Dockerfile:52) uses a *relative* path, so it only works with the working directory `/app` intact (G4).
 - Note the different meaning of `DEV` compared with `cheese-app-v3`, where `DEV=1` drops you into a shell (§7).
 
 **`tests/system/test_system_api.py:12-24`**
@@ -702,10 +722,10 @@ def unused_function():
 | G2 | You pushed and **no run appears**. | One of three things: (a) the workflow is not at the repo root, e.g. it sits in `MLOps_Learning/<subfolder>/.github/workflows/`; (b) you pushed a branch other than `main`/`develop` (`ci.yml:7-11`); (c) Actions is disabled on a fork. | (a) Move it to the root `.github/workflows/`. Add `defaults: run: working-directory: <subfolder>` so `docker build … .` uses the right context, and optionally `on.push.paths: ['<subfolder>/**']`. The `-v ${{ github.workspace }}/coverage` mount and the `path: coverage/` upload both resolve to the workspace root, so they stay consistent. (b) Push to `main` or open a PR. (c) Enable workflows on the Actions tab. |
 | G2b | In the monorepo, `pre-commit` never reformats `utils.py`, or the commit hook says no config was found *(reasoned, not run)*. | pre-commit works from the **git root**: the installed hook looks for `.pre-commit-config.yaml` there, and the `files: ^src/.*\.py$` patterns (`.pre-commit-config.yaml:35, 44`) are matched against paths relative to the root, so `<subfolder>/src/...` never matches. | Put one `.pre-commit-config.yaml` at the monorepo root with patterns like `^<subfolder>/src/.*\.py$`, or keep this project in its own repo. |
 | G3 | `git add` warns "adding embedded git repository" and the files never reach GitHub. | You copied a `git clone` (with its `.git/`) into another repo, such as the monorepo. | Remove the inner `.git`, or use `git subtree`/a separate repo. A submodule's own workflows will not run in the parent. |
-| G4 | README Part 7 auto-format fails: `bash: docker-entrypoint.sh: No such file or directory` *(reasoned, not run)*. | `-v $(pwd)/src/api-service:/app` (README.md:442) hides `/app/docker-entrypoint.sh`, which the relative ENTRYPOINT (Dockerfile:52) needs. | Mount only the package: `docker run --rm -v "$(pwd)/src/api-service/api":/app/api cheese-app-api:local black --line-length 120 api/`. |
+| G4 | README Part 7 auto-format fails: `/bin/bash: docker-entrypoint.sh: No such file or directory`, exit 127 *(verified 2026-11-06)*. | `-v $(pwd)/src/api-service:/app` (README.md:442) hides `/app/docker-entrypoint.sh`, which the relative ENTRYPOINT (Dockerfile:52) needs. | Mount only the package: `docker run --rm -v "$(pwd)/src/api-service/api":/app/api cheese-app-api:local black --line-length 120 api/`. |
 | G5 | Part 6's "break the tests" PR is still green. | `def broken()` is never collected because `python_functions = test_*` (pytest.ini:8). | Append `def test_broken(): assert False` instead. |
 | G6 | You can't find `lint-and-format`/`unit-tests` in the required-checks picker. | The checks are listed under the jobs' `name:` (`ci.yml:42, 71, 106, 129`), and only after they have run at least once. Private repos on GitHub Free cannot use protected branches. | Search for "Unit Tests", "Integration Tests", "System Tests", "Lint and Format Check". Make the repo public or use GitHub Pro (free via the Student Developer Pack). |
-| G7 | The `coverage-report-unit` artifact is missing or empty ("No files were found with the provided path: coverage/") *(reasoned, not run)*. | Docker creates the missing host dir `coverage/` as root, while the container user is uid 1000 (Dockerfile:23-28), so the HTML write fails, hidden by `continue-on-error: true` (`ci.yml:95`). `coverage.xml` is written to `/app` inside the container and discarded. On Docker Desktop for Mac, bind-mount ownership is relaxed, so the same command may work locally. | Add a step `mkdir -p coverage && chmod 777 coverage` before the run, and write XML into the mount: `--cov-report=xml:coverage/coverage.xml`. Optionally drop `continue-on-error` so problems are visible. |
+| G7 | "Generate coverage report" ends in `INTERNALERROR> … PermissionError: [Errno 13] Permission denied: 'coverage/style_cb_….css'` with no coverage table, the job stays green, and the `coverage-report-unit` artifact is missing ("No files were found with the provided path: coverage/") *(reproduced locally 2026-11-06 with the exact command; hosted log not captured)*. | Docker creates the missing host dir `coverage/` as `root:root 755`, while the container user is uid 1000 (Dockerfile:23-28), so the HTML write fails and pytest-cov aborts (exit 3), hidden by `continue-on-error: true` (`ci.yml:95`). `coverage.xml` would go to `/app` inside the container and be discarded. On Docker Desktop for Mac, bind-mount ownership is relaxed, so the same command may work locally *(reasoned, not run)*. | Add a step `mkdir -p coverage && chmod 777 coverage` before the run, and write XML into the mount: `--cov-report=xml:coverage/coverage.xml`. Optionally drop `continue-on-error` so problems are visible. |
 | G8 | Slack only ever says "✅ Passed"; failures are silent. | "Check test results" exits 1 (`ci.yml:188`), so "Check if Slack webhook is configured" (`194-201`), which has no `if:`, is skipped. `steps.slack-check.outputs.enabled` is then empty and the Slack condition (`204`) is false. | Add `if: always()` to the `slack-check` step. Better still, pass the secret via `env:` and test `"$SLACK_WEBHOOK_URL"` in shell. |
 | G9 | Slack step is skipped on PRs from forks, or the "View Commit" link is broken. | Secrets are not provided to workflows triggered from forks. `github.event.head_commit` exists only on `push` events (`ci.yml:231, 250`). | Expected behaviour. For links, use `${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}`. |
 | G10 | The run is red but the summary job (and Slack) say "All tests passed". | `test-summary` `needs` only the three test jobs (`ci.yml:175`); lint is not included. | Add `lint-and-format` to `needs` and to the check (Exercise 4). |
@@ -714,26 +734,28 @@ def unused_function():
 | G13 | "Re-run failed jobs" the next day fails at "Download Docker image". | The image artifact expires after 1 day (`ci.yml:38`). | Use "Re-run all jobs", or raise the retention. |
 | G14 | `Bind for 0.0.0.0:9000 failed: port is already allocated`, or the container name `cheese-app-api-service` is already in use. | `docker-shell.sh:7, 15-18` uses the **same image name, container name and port** as `cheese-app-v2`/`v3`'s `src/api-service/docker-shell.sh` (lines 7, 20, 23, 27 there). A leftover `api-server` from README.md:193 also holds 9000. | `docker ps`, then stop or remove the other container. Building here also overwrites the `cheese-app-api-service:latest` tag used by v2/v3, so rebuild that one before going back to it. |
 | G15 | You edit `service.py`, but the server started with `--reload` in `docker-shell.sh` doesn't change. | No volume is mounted (`docker-shell.sh:15-18`); the code is baked into the image (Dockerfile:38). | Rerun `sh docker-shell.sh`, which rebuilds the image, or add `-v "$(pwd)/src/api-service/api":/app/api` yourself. |
-| G16 | System tests show "1 passed, 4 skipped" and the job is green. | The server is unreachable from the test container, and `skipif` (test_system_api.py:24) hides it. In CI the `curl -f` gate (`ci.yml:154`) protects you; locally nothing does. | Read the `-ra` summary (pytest.ini:17). Locally, use `--network container:api-server`. |
-| G17 | `docker run --entrypoint pytest …` → `executable file not found`. | Tools live in `/home/app/.local/bin`, which only the entrypoint adds to PATH (docker-entrypoint.sh:5). | Keep the default entrypoint and pass the command as arguments, as CI does. |
-| G18 | Running the tests without Docker fails with `ModuleNotFoundError: No module named 'api'`, including the README's own Troubleshooting command `pytest tests/ -v` (README.md:537). | `pythonpath = .` (pytest.ini:9) is the repo root locally, but the package lives in `src/api-service/`. The `sys.path` insert in `test_system_api.py:70` points to `tests/src/api-service`, which does not exist. | Use `PYTHONPATH=src/api-service pytest …` (README.md:512-513). |
+| G16 | System tests show "1 passed, 4 skipped" and the job is green. | The server is unreachable from the test container, or not listening *yet* (the README runs the tests right after `docker run -d`, README.md:193-196), and `skipif` (test_system_api.py:24) hides it. In CI the `sleep 10` + `curl -f` gate (`ci.yml:153-154`) protects you; locally nothing does. | Read the `-ra` summary (pytest.ini:17). Wait for `curl -sf http://localhost:9000/health` first. On Docker Desktop, use `--network container:api-server`. |
+| G17 | `docker run --entrypoint pytest …` → `exec: "pytest": executable file not found in $PATH`, exit 127 *(verified 2026-11-06)*. | Tools live in `/home/app/.local/bin`, which only the entrypoint adds to PATH (docker-entrypoint.sh:5). | Keep the default entrypoint and pass the command as arguments, as CI does. |
+| G18 | Running the tests without Docker fails with `ModuleNotFoundError: No module named 'api'` (`Interrupted: 2 errors during collection`), including the README's own Troubleshooting command `pytest tests/ -v` (README.md:537) *(verified 2026-11-06 from the repo root)*. | `pythonpath = .` (pytest.ini:9) is the repo root locally, but the package lives in `src/api-service/`. The `sys.path` insert in `test_system_api.py:70` points to `tests/src/api-service`, which does not exist. | Use `PYTHONPATH=src/api-service pytest …` (README.md:512-513). |
 | G19 | Deprecation annotations on the run page. | The workflow pins `actions/*@v4` and `slackapi/slack-github-action@v1.26.0`. GitHub periodically retires the Node.js runtimes that action majors were built on. | If you see warnings, bump to the current major versions and read their changelogs. Slack v2 renamed its inputs. |
+| G20 | `git commit -m "Add CI pipeline"` (README.md:347) prints `nothing to commit, working tree clean`, `git push` says `Everything up-to-date`, and no run appears. | In a clone or fork the workflow is already committed; there is nothing new to push. | Make a real change (the Black fix of Step 14), or `git commit --allow-empty -m "Trigger CI"`. |
+| G21 | `git push` is refused (permission denied / HTTP 403). | `origin` still points at `dlops-io/cheese-app-ci-cd`. | `git remote set-url origin <your fork or repo URL>`. |
 
 ---
 
 ## 7. Where this sits in the course
 
 **Before (what you already have)**
-- **L9 (CI, unit testing; guest lecture):** the *same repo's* Parts 3-4: the pytest pyramid and pre-commit hooks (`tutorials_demo.md:122-135`). Everything there ran **on your laptop**.
+- **L9 (CI, unit testing; guest lecture):** the *same repo's* Parts 1-4: the API, the lint problems, the pytest pyramid and pre-commit hooks. The L09 video (`videos/ac215-l09-ci-testing/`) followed all four parts with live captures at `b8458ff`. Everything there ran **on your laptop**.
 - **L18 (APIs + Frontend):** FastAPI services (`cheese-app-v2`). The CI repo's `service.py` is a stripped-down FastAPI app built the same way, with CORS middleware and async route handlers.
 - **L20 (Pulumi deployment):** `cheese-app-v3` taught you to build and push images and stand up a VM automatically.
 
-**What L21 adds:** the same checks, run **remotely and automatically** on every push or PR, on clean machines, with a visible pass/fail signal per commit. It also covers the plumbing of Actions: runners, artifacts, `needs`, conditions, outputs and secrets. This is the CI half that Milestone 4 asks for: "Implement CI using GitHub Actions … Automate building, linting, and testing on every commit or pull request" (`milestone4.md:55-58`), with "code coverage must be at least 50%" (`milestone4.md:104`).
+**What L21 adds:** the same checks, run **remotely and automatically** on every push or PR, on clean machines, with a visible pass/fail signal per commit. It also covers the plumbing of Actions: runners, artifacts, `needs`, conditions, outputs and secrets. This is the CI half that Milestone 4 asks for: "Implement CI using GitHub Actions … Automate building, linting, and testing on every commit or pull request" (`milestone4.md:55-58`), with "code coverage must be at least 50%" (`milestone4.md:104`). (Course-site quotes from the research agent; the verifier could not open the course-site files.)
 
 **After**
 - **L22 (Kubernetes in the cloud)** deploys `cheese-app-v3` to GKE.
 - **L23 (Final deployment):** `cheese-app-v4` adds **CD**:
-  - `.github/workflows/app-ci-cd-gcp.yml` triggers on push to `main` only if the commit message contains `/deploy-app` (`app-ci-cd-gcp.yml:9`).
+  - `.github/workflows/app-ci-cd-gcp.yml` triggers on every push to `main`; its job runs only if the commit message contains `/deploy-app` (job-level `if: contains(github.event.head_commit.message, '/deploy-app')`, `app-ci-cd-gcp.yml:9`).
   - It authenticates to GCP with a **secret** `GOOGLE_APPLICATION_CREDENTIALS` (`app-ci-cd-gcp.yml:21`), the same secrets mechanism you meet here with Slack.
   - It builds a deployment container and runs Pulumi/kubectl updates.
 
@@ -777,14 +799,14 @@ The meaningful changes:
 
 **Hook question:** "During class on November 13, 2025, the instructor's demo commit (`c3b227f`) slipped a bug into the API: `math.sqrt(z)` became `math.sqrt(2 * z)`. Push that commit to your own repo, and within a couple of minutes six brand-new Linux machines are born, test it, and are destroyed. Which of them catches the bug, and which one is *already* red for a completely different reason?"
 
-**Target length:** ~24 minutes (about 3,700 spoken words at ~155 wpm).
+**Target length:** 25-35 minutes in two parts, about 3,900-4,300 spoken words at the house voice's ~174 wpm (docs/AC215_SERIES.md rule 7). The chapter minutes below are the research agent's first sketch (~24 min) and must grow into the slide-by-slide, README-step-by-step plan of the BRIEF; ponders become 3-5 quiz-style questions with a timer.
 
 **Chapters**
 
 1. **One push, six machines** (2 min)
    - *Idea:* CI is a robot that reacts to repo events by running a YAML recipe on fresh machines.
    - *Visual:* A commit dot on a branch line pulses. `ci.yml` unfolds into a tree (`on` → 6 jobs → steps), and the six job nodes become six small server icons.
-   - *On screen:* `.github/workflows/ci.yml:5-17`, and the Actions tab of your own repo.
+   - *On screen:* `.github/workflows/ci.yml:5-17`, and a schematic Actions tab tagged `illustration` (no hosted run can be captured here).
 
 2. **When does the robot wake up?** (2 min)
    - *Idea:* triggers and filters. A push to `main`/`develop` triggers; a feature-branch push does not; a PR into `main` does, and it tests a *merge commit*.
@@ -835,7 +857,7 @@ The meaningful changes:
 
 10. **Do it yourself: red → green → protected** (3 min)
     - *Idea:* set up the repo, push, read the red run, fix Black, go green, then protect `main` correctly.
-    - *Visual:* A screen recording of the Actions graph. One red node flips green after the push (it now matches `pipline.png`). Then the branch-protection page, with the correct check names highlighted, and a PR blocked by a *real* failing test.
+    - *Visual:* The run graph re-drawn from `ci.yml` and tagged `illustration` (never presented as a real run), with the README's own screenshot `assets/pipline.png` beside it. One red node flips green after the fix; the live local equivalents (Black red → fixed → green, the 26 tests) are real captures. Then a schematic branch-protection page tagged `illustration`, with the correct check names highlighted, and a PR blocked by a *real* failing test (`test_broken`, captured failing locally).
     - *On screen:* README.md:344-349; §4 Step 14 commands; `echo "def test_broken(): assert False" >> tests/unit/test_utils.py`.
 
 **Recap questions (end card)**
@@ -902,13 +924,13 @@ The meaningful changes:
 - *Answer:*
   - **Unit tests only:**
     - `--cov=api` reports all files in the package.
-    - By my AST count, `utils.py` has 4 statements (3 executed: the two `def` lines and `return`). `service.py` has 14 statements, never imported by unit tests, so 0%.
-    - Total ≈ 3/18 ≈ 17% → **fails** with pytest-cov's "Required test coverage of 50% not reached".
+    - coverage.py counts `utils.py` as 4 statements (3 executed; line 14, `pass`, missed) and `service.py` as 17 statements, never imported by unit tests, so 0%.
+    - Total 3/21 = 14.29% → **fails**: `FAIL Required test coverage of 50% not reached. Total coverage: 14.29%` *(verified 2026-11-06, without the bind mount)*.
   - **Unit + integration:**
-    - `service.py` executes everything except `/health`'s `return` (no integration test calls `/health`), so 13/14. `utils.py` stays at 3/4.
-    - Total ≈ 16/18 ≈ 89% → the coverage threshold **passes**. (Counts are from my AST statement count, not a coverage run; expect small differences.)
+    - `service.py` executes everything except `/health`'s `return` (line 35; no integration test calls `/health`), so 16/17 = 94%. `utils.py` stays at 3/4.
+    - Total 19/21 = 90.48% → `Required test coverage of 50% reached. Total coverage: 90.48%`, **passes** *(verified 2026-11-06)*.
     - System tests add nothing, because the server runs in another process.
-    - Caveat: once `continue-on-error` is gone, the step can still go red for a different reason: the HTML write into the root-owned `coverage/` mount (G7) *(reasoned, not run)*. Apply the artifact fix below at the same time.
+    - Caveat: once `continue-on-error` is gone, the step goes red for a different reason first: the HTML write into the root-owned `coverage/` mount aborts pytest-cov with exit 3 (G7, verified locally). Apply the artifact fix below at the same time.
   - **Artifact fix:** before the `docker run`, add `mkdir -p coverage && chmod 777 coverage`, and use `--cov-report=xml:coverage/coverage.xml --cov-report=html:coverage/html`.
 
 **E7 — Hands-on: replace `sleep 10` with a readiness loop.**
@@ -925,7 +947,7 @@ The meaningful changes:
 - *Answer:*
   - (a) and (b): **no**. Those are pre-commit hooks (`.pre-commit-config.yaml:12-26`). CI never runs pre-commit, and pre-commit only runs where you ran `pre-commit install`.
   - (c): **no**. CI lints only `api/` (`ci.yml:61, 66`), and the pre-commit linters are restricted to `^src/` (`.pre-commit-config.yaml:35, 44`).
-  - (d): **yes**, in three jobs. Black fails to parse it (lint job), the integration tests fail on import (`test_api.py:9`), and the server container cannot import `api.service`, so the system-tests job should fail at the `curl -f` gate (`ci.yml:154`) *(reasoned, not run)*. Unit tests stay green, because `test_utils.py` imports only `api.utils`.
+  - (d): **yes**, in three jobs. Black fails to parse it (lint job), the integration tests fail on import (`test_api.py:9`), and the server container cannot import `api.service`, so the system-tests job fails at the `curl -f` gate (`ci.yml:154`) with `curl: (56) Recv failure: Connection reset by peer` (the `--reload` supervisor holds the port; verified locally 2026-11-06). Unit tests stay green, because `test_utils.py` imports only `api.utils`.
   - Lesson: local hooks and remote CI are *different* safety nets. Add `pre-commit run --all-files` as a CI step if you want them aligned.
 
 ---
@@ -936,9 +958,9 @@ The meaningful changes:
 1. **The README's all-green screenshot does not match the code.** At HEAD `b8458ff`, Black fails on `src/api-service/api/utils.py:7` and `:10-12` (I reproduced this on a copy). `assets/pipline.png` was added in `3dea317` (2025-11-13 10:08 +0530), when `utils.py` and `service.py` were already messy (since `91eb786`), so the screenshot comes from another code state, most likely the clean code before `91eb786` (Black and Flake8 at 120 columns pass on the `140f138` copies and fail on the `3dea317` copies; I checked both). README Part 5 never warns that the first run will be red.
 2. **Part 6's break-test command doesn't break tests.** `echo "def broken(): assert False"` (README.md:388) adds a function that pytest won't collect (`pytest.ini:8`, `python_functions = test_*`).
 3. **Part 6 lists job IDs as status checks.** README.md:378 lists `lint-and-format`, `unit-tests`, … but the checks are named after the jobs' `name:` values (`ci.yml:42, 71, 106, 129`). The "Settings → Branches → Add rule" path (README.md:373) also predates GitHub's current "classic rule / ruleset" UI.
-4. **Part 7's auto-format command hides the entrypoint.** README.md:442 mounts over `/app` and hides `docker-entrypoint.sh` (Dockerfile:52). *(Reasoned, not run.)*
+4. **Part 7's auto-format command hides the entrypoint.** README.md:442 mounts over `/app` and hides `docker-entrypoint.sh` (Dockerfile:52): `/bin/bash: docker-entrypoint.sh: No such file or directory`, exit 127 *(verified 2026-11-06)*.
 5. **"Uses Docker Buildx for efficient caching"** (README.md:291). No cache import/export is configured (`ci.yml:22-27`), and every run rebuilds from scratch.
-6. **Coverage claims.** README.md:307-308 says XML and HTML reports are generated and uploaded. XML goes to `/app/coverage.xml` inside a `--rm` container and is lost (`ci.yml:94`). The HTML report probably fails to write because of root-owned bind-mount vs uid 1000 permissions (`Dockerfile:23-28`), which `continue-on-error` masks. *(Reasoned, not run.)*
+6. **Coverage claims.** README.md:307-308 says terminal, XML and HTML reports are generated and uploaded. The HTML write fails on the root-owned bind mount (uid 1000 user, `Dockerfile:23-28`) with `PermissionError`, pytest-cov aborts with exit 3 before any table prints, `continue-on-error` masks it, and the artifact upload finds no files. XML would go to `/app/coverage.xml` inside a `--rm` container and be lost anyway (`ci.yml:94`). *(Reproduced locally with the exact command, 2026-11-06; hosted log not captured.)*
 7. **Slack failure notifications are unreachable.** `slack-check` (`ci.yml:194-201`) lacks `if: always()`, so the "❌ CI Pipeline Failed" branch (`ci.yml:209, 215`) can never be sent.
 8. **The test summary ignores lint.** `needs` (`ci.yml:175`) omits `lint-and-format`, so the summary and Slack can say "passed" while the run is red. README.md:325-330 calls it a summary of all tests, which is literally true but misleading.
 9. **The README never documents the Slack step or the `SLACK_WEBHOOK_URL` secret** (a grep for "slack|secret" in README.md finds nothing).
@@ -950,14 +972,17 @@ The meaningful changes:
 15. **`pytest.ini:22`** describes the `integration` marker as "(require running services)", which contradicts README.md:147 ("No real HTTP server needed"). The markers are unused anyway.
 16. **Outdated lecture references in comments:** `pytest.ini:2` ("from L18"), `tests/integration/test_api.py:4` ("Based on L18, Slide 11-12") and `.pre-commit-config.yaml:2, 28, 37` ("L17, Slide …") refer to an older numbering. In 2026 this material is L9.
 17. **`--reload` has no effect in the README's Part 1 flow** (README.md:82): `docker-shell.sh:15-18` mounts no source.
-18. **The course site's lecture numbering is inconsistent.** `tutorials_demo.md` has L19 = K8s (local), L20 = Pulumi, L22 = K8s (cloud), L23 = Final. `_modules/week-11.md`/`week-12.md`/`week-14.md` have L19 = Pulumi, L20 = K8s (cloud), L22 = Final. L21 is consistent in both (Nov 19 in `week-12.md:9-11`).
+18. **The course site's lecture numbering is inconsistent** (research agent's reading of the course-site source; not re-checked by the verifier, who could not open it; this series follows `MLOps_Learning/course/lectures.yaml`: L19 K8s local, L20 Pulumi, L22 K8s cloud, L23 final). `tutorials_demo.md` has L19 = K8s (local), L20 = Pulumi, L22 = K8s (cloud), L23 = Final. `_modules/week-11.md`/`week-12.md`/`week-14.md` have L19 = Pulumi, L20 = K8s (cloud), L22 = Final. L21 is consistent in both (Nov 19 in `week-12.md:9-11`).
 19. **README Troubleshooting "Tests fail locally"** (README.md:534-544) runs `pytest tests/ -v` from the project root without `PYTHONPATH`. Outside Docker that fails with `ModuleNotFoundError: No module named 'api'` (G18); the README's own working form is `PYTHONPATH=src/api-service pytest …` (README.md:512-513).
+20. **Part 5 never says that the first push has nothing to commit** in a clone or fork (README.md:344-349; G20), nor that `origin` must be your own repo (README.md:19-20 only says "Clone or download from your repository").
+21. **README Part 3 Option 2 has a start-up race:** the system tests run right after `docker run -d` (README.md:193-196) with no wait, so they can skip instead of pass (G16). CI waits (`ci.yml:150-154`).
 
 **Open questions / could not determine**
 - **The Ed lesson itself** (slides, recording, any extra steps): I could not access it. The in-class demo is inferred from commits `c3b227f`/`b8458ff` ("demo class 1").
 - **Whether the Buildx builder is actually used.** Docker's documentation says plain `docker build` keeps using the default builder unless `--builder`, `BUILDX_BUILDER` or `docker buildx install` is used, and the version of `setup-buildx-action@v3` the runner resolves may export `BUILDX_BUILDER`. Either way no caching is configured, and the screenshot shows the build, save and load chain working. Not run.
-- **The exact behaviour of the coverage step on a hosted runner** (permission error vs success), and therefore whether `coverage-report-unit` ever contains files. Check the log of your own run.
+- **The coverage step on a hosted runner.** Reproduced locally (root dockerd, as on hosted runners); the hosted log itself was not captured. Check the log of your own run.
+- **Docker Hub rate limit in this sandbox (for capture agents):** on 2026-11-06 `python:3.11-slim-bookworm` pulls from Docker Hub returned `429 Too Many Requests`; `mirror.gcr.io/library/python:3.11-slim-bookworm` (digest `sha256:a83ba18a…`), re-tagged, worked. Students on GitHub-hosted runners or their own laptops are not affected.
 - **Local `--network host` behaviour on your Docker Desktop version** (host networking is a newer, opt-in Docker Desktop feature). If system tests skip locally, use `--network container:api-server`.
-- **Whether `pip install --user .` emits a warning about `readme = "README.md"`** (pyproject.toml:5). `README.md` is not copied before that layer (Dockerfile:32-35). Setuptools normally only warns about a missing readme file, and the screenshot's successful build suggests it is non-fatal. Not run.
+- ~~Whether the missing `README.md` breaks `pip install --user .`~~ Resolved: the build succeeds (verified 2026-11-06); pip only warns that the console scripts are installed in `/home/app/.local/bin`, "which is not on PATH" (the entrypoint fixes that). The install also leaves `build/` and `cheese_app_api.egg-info/` in `/app` (harmless).
 - **Size of the `docker-image` artifact.** It is large because of `build-essential`, which the pure-Python dependencies probably don't need. Not measured.
 - **Current Actions deprecations** (Node runtime of `actions/*@v4`, Slack action v1 vs v2) at the time you run this. Check the run annotations.
