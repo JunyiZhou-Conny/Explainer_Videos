@@ -42,11 +42,12 @@ Beats (script.md "## S05", one voiceover block each):
    (YELLOW, then WHITE). The strip types a24 (extra) → a24:2–4, line 3 YELLOW; then a25 (extra) →
    a25:2–3, `max-age=3600` YELLOW with the row tag "hard refresh · or http-server -c-1".
 7. Tracker [C1] 1 · extra. The browser goes; the `second tab` (7 rows) types a26 (extra) → a26:2–4
-   (wrapped at spaces), chip "check: both still running". Tracker [C1] 2: a 3-row `laptop` strip
-   above prints a03:62 (^C), types exit at a03:69's prompt, prints a03:70; then the `laptop · new
-   terminal` strip does the same with a20b:57–58, 60, 61. The strips go; the tab types
-   `docker container ls` → a30:2; a26's table (its two running rows) slides into that empty header
-   and vanishes, and the rows close up; the chip becomes "--rm: they removed themselves".
+   (wrapped at spaces), chip "check: both still running". Tracker [C1] 2: two half-width 3-row
+   strips side by side above it: `laptop` prints a03:62 (^C), types exit at a03:69's prompt, prints
+   a03:70; then `laptop · new terminal` does the same with a20b:57–58, 60, 61. On "The container
+   list" the tab types `docker container ls` → a30:2 (the strips stay up); a26's table (its two
+   running rows) slides into that empty header and vanishes, and the rows close up; the chip becomes
+   "--rm: they removed themselves" as the strips go.
 8. Tracker [C1] 3: the tab grows to 10 rows and types `docker system prune` → a31:2–8 (`[y/N] y`
    YELLOW), …, 17. Tracker [C1] 4: `docker image ls` → a32:2–8 (cut after DISK USAGE). Fade; empty
    frame.
@@ -479,25 +480,26 @@ class StaticPages(VoiceScene):
             o26 = out(self, tab, A26.at((2, 4)), wrap=True, run_time=0.3)
             under_term(tab, check)
             self.play(FadeIn(check, shift=DOWN * 0.1), run_time=0.3)
-            # the two servers' own terminals, one after the other, above the tab, each held ~2 s
+            # the two servers' own terminals side by side above the tab (half width: their lines are
+            # short), kept up while the tab lists the empty containers, gone when the chip turns
             vo.wait_until("press Control C")
             self.play(track(trk, 2), run_time=0.4)
-            prev = None          # two stacked 3-row strips do not fit above the tab: one after the other,
-            for k, (title, cap, lines_a, n_exit, last) in enumerate(((T_LAPTOP, A03, [62], 69, 70),
-                                                                     (T_NEW, A20B, [57, 58], 60, 61))):
-                s = term(container_prompt(cap, n_exit), rows=3, title=title, size=20, place=False)
-                s.shift(np.array([0, check.get_top()[1] + 0.12 - s.box.get_bottom()[1], 0]))
+            strips = []
+            for k, (title, cap, n_exit) in enumerate(((T_LAPTOP, A03, 69), (T_NEW, A20B, 60))):
+                s = term(container_prompt(cap, n_exit), rows=3, title=title, size=20, width=6.2, place=False)
+                s.shift(np.array([(-3.15 if k == 0 else 3.15) - s.box.get_center()[0],
+                                  check.get_top()[1] + 0.12 - s.box.get_bottom()[1], 0]))
                 assert s.box.get_bottom()[1] > check.get_top()[1] + 0.05 and s.box.get_top()[1] < TRACK_BOTTOM - 0.05
-                gone = [FadeOut(prev, shift=UP * 0.15)] if prev is not None else []
-                self.play(FadeIn(s, shift=DOWN * 0.15), *gone, run_time=0.3)
+                assert abs(s.box.get_left()[0]) < SAFE_X and s.box.get_right()[0] < SAFE_X
+                strips.append(s)
+            self.play(*[FadeIn(s, shift=DOWN * 0.15) for s in strips], run_time=0.3)
+            for s, (cap, lines_a, n_exit, last) in zip(strips, ((A03, [62], 69, 70), (A20B, [57, 58], 60, 61))):
                 out(self, s, [(cap.line(n), ERR if cap.line(n) == "^C" else OUTPUT) for n in lines_a],
                     run_time=0.25)
+                self.wait(0.3)
                 type_at(self, s, cap, n_exit, type_time=0.25)
                 out(self, s, [cap.line(last)], run_time=0.25)
-                self.wait(1.0 if k == 0 else 0.8)      # each held ~2 s: the follow-along action is readable
-                prev = s
             vo.wait_until("The container list is then empty")
-            self.play(FadeOut(prev, shift=UP * 0.15), run_time=0.3)
             clear_bar(self, tab)
             type_capture(self, tab, A30, type_time=0.6)
             hdr = out(self, tab, A30.at(2), run_time=0.4)[0]
@@ -509,7 +511,8 @@ class StaticPages(VoiceScene):
             self.play(*[ln.animate.shift(tab._slot(i) - ln.strut.get_corner(UL))
                         for i, ln in enumerate(tab.lines)], run_time=0.4)
             self.add(tab)
-            self.play(ReplacementTransform(check, rm_chip.move_to(check).align_to(check, RIGHT)), run_time=0.5)
+            self.play(ReplacementTransform(check, rm_chip.move_to(check).align_to(check, RIGHT)),
+                      *[FadeOut(x, shift=UP * 0.15) for x in strips], run_time=0.5)
             self.add(tab)
             flash_tag(self, rm_chip, S.GREY)
             self.wait(0.6)

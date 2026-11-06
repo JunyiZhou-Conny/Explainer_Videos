@@ -482,8 +482,8 @@ class ScreensToRoutes(VoiceScene):
             out(self, tab, [(s, OWN) for s in B30.at(2, 3)], run_time=0.5)
             lp = rt.swap(self, lp, lamp("green", 0.17).move_to(lp), run_time=0.5,
                          extra=[ry.box.animate.set_stroke(OWN)])
-            self.play(Indicate(ry, color=OWN, scale_factor=1.15), Indicate(lp, color=OWN, scale_factor=1.3),
-                      run_time=0.6)
+            # flash_tag, not Indicate(ry): Indicate fills the chip's box green over its word
+            flash_tag(self, ry, OWN, 1.12, 0.6, Indicate(lp, color=OWN, scale_factor=1.3))
 
         # ========================================================== 6. step 6: try the route
         br = Browser("localhost:9000/api/square_root", win_w=6.3, win_h=1.55)

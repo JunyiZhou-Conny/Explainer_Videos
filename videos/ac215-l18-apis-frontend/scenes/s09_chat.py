@@ -543,14 +543,19 @@ class ChatIsAFile(VoiceScene):
         keep.move_to([0, -2.7, 0])
         assert keep.get_top()[1] < tr.get_bottom()[1] - 0.1, (keep.get_top(), tr.get_bottom())
         api_box = tr.net.boxes["api"].frame
-        b_target = api_box.get_top() + RIGHT * 0.45
+        # most of the badge rides ABOVE the box's top edge (only 0.12 overlaps it): clear of the name and uvicorn
+        b_target = api_box.get_top() + UP * (badge.height / 2 - 0.12) + RIGHT * 0.45
         start = tr.browser.at(-0.35, 0.0)
         start[1] = tr.net.row_y("api")
-        stop = np.array([tr.divider.get_x() - 0.7, start[1], 0])   # clearly short of the laptop: the way is open
+        # the call stops inside the browser, the '?' in front of it (clear of the frame's edge and the
+        # dashed divider): the way to the 9000 door is open, not drawn
+        b_right = tr.browser.frame.get_right()[0]
+        stop = np.array([b_right - 0.65, start[1], 0])
         call = DashedVMobject(Arrow(start, stop, buff=0.02, color=ROUTE, stroke_width=4, tip_length=0.18,
                                     max_tip_length_to_length_ratio=0.35), num_dashes=7).set_stroke(ROUTE, 4)
-        q = label("?", 36, TURN).move_to([(stop[0] + tr.divider.get_x()) / 2, start[1], 0])
-        assert q.get_right()[0] < tr.net.door_point("api")[0] - 0.05, (q.get_right(), tr.net.door_point("api"))
+        q = label("?", 36, TURN).move_to([b_right - 0.3, start[1], 0])
+        assert q.get_right()[0] < b_right - 0.08 and q.get_left()[0] > stop[0] + 0.05, (q.get_left(), q.get_right())
+        assert stop[0] - start[0] > 1.2, (start, stop)
         btag = illustration_tag().next_to(tr.browser.frame, UP, buff=0.12).align_to(tr.browser.frame, LEFT)
         # the badge sits ON the box's top edge: an opaque backing keeps the edge from striking it through
         backing = badge.box.copy().set_stroke(width=0).set_fill(S.BG, 1)

@@ -207,12 +207,12 @@ class OneOrigin(VoiceScene):
             vo.wait_until("with the session ID")
             b34 = line_bar(pa.code, 1, ROUTE)
             self.play(FadeIn(b34), code_span(pa.code, 1, "'X-Session-ID'").animate.set_color(ROUTE),
-                      run_time=0.4)
+                      run_time=0.35)
             self.add(pa, b44, b34)
-            self.wait(0.3)
+            self.wait(0.15)
             # QA 20:03: lines 17-24 come in on "with the session ID" (not "from local storage"), so the
             # localStorage panel holds ~3.5 s instead of ~1.5 s
-            self.play(FadeOut(VGroup(pa, b44, b34, rel)), FadeIn(pb, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeOut(VGroup(pa, b44, b34, rel)), FadeIn(pb, shift=UP * 0.15), run_time=0.5)
             ls = VGroup(*[code_span(pb.code, k, "localStorage") for k in (2, 5)])
             vo.wait_until("from local storage")
             self.play(ls.animate.set_color(TURN), run_time=0.4)
@@ -230,6 +230,7 @@ class OneOrigin(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             code_span(pv.code, 5, "host: true").set_color(ROUTE)
             code_span(pv.code, 6, "5173").set_color(ROUTE)
+            self.wait(0.3)                                   # QA 20:03: api.js 17-24 holds ~2.7 s
             self.play(FadeOut(ref), FadeOut(pb), FadeIn(pv, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("holds the courier")
             b13 = line_bar(pv.code, 8, TURN)
@@ -315,7 +316,6 @@ class OneOrigin(VoiceScene):
         assert cc.get_top()[1] < oc.get_bottom()[1] - 0.08, (cc.get_top(), oc.get_bottom())
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(tS), run_time=0.4)
-            tr.clear_hops(self, run_time=0.3)
             door3 = net.door_point("front") + LEFT * 0.03
             t_page = label("the page", 20, ROUTE).move_to(tr.browser.at(-0.35, 0.3))
             t_api = mono("/api/… calls", 20, ROUTE).move_to(tr.browser.at(-0.25, -0.45))
@@ -323,15 +323,15 @@ class OneOrigin(VoiceScene):
                            tip_length=0.18)
             a_api = Arrow(t_api.get_right() + RIGHT * 0.05, door3, buff=0.06, color=ROUTE, stroke_width=4,
                           tip_length=0.18)
-            self.play(FadeIn(t_page), GrowArrow(a_page), run_time=0.6)
-            vo.wait_until("An origin is")
-            self.play(FadeIn(url0, shift=UP * 0.1), run_time=0.4)
-            self.play(ReplacementTransform(url0, oc), run_time=0.6)
+            self.play(FadeIn(url0, shift=UP * 0.1), run_time=0.3)
+            self.play(ReplacementTransform(url0, oc), run_time=0.4)
             for i, cue in enumerate(("the scheme", "the host", "and the port")):
                 vo.wait_until(cue)
                 self.play(Indicate(oc.parts[i], color=TURN, scale_factor=1.15), run_time=0.45)
             vo.wait_until("The page and its API calls")
-            self.play(FadeIn(t_api), GrowArrow(a_api), run_time=0.6)
+            tr.clear_hops(self, run_time=0.3)
+            self.play(FadeIn(t_page), GrowArrow(a_page), run_time=0.5)
+            self.play(FadeIn(t_api), GrowArrow(a_api), run_time=0.5)
             vo.wait_until("share one origin")
             self.play(a_page.animate(rate_func=there_and_back).set_color(TURN),
                       a_api.animate(rate_func=there_and_back).set_color(TURN),
@@ -479,12 +479,12 @@ class OneOrigin(VoiceScene):
             self.play(modes[1].animate.set_color(TURN), run_time=0.3)
             type_capture(self, tC, D07, type_time=0.2)
             # QA 21:35: the viewer cannot copy -d @/tmp/identify.json; say what it is and the app's route
-            self.play(FadeIn(idn, shift=LEFT * 0.1), run_time=0.4)
             o7 = out(self, tC, [(D07.line(3), OWN)], run_time=0.3)
-            self.play(Indicate(o7[0], color=OWN), modes[1].box.animate.set_stroke(OWN), run_time=0.5)
+            self.play(Indicate(o7[0], color=OWN), modes[1].box.animate.set_stroke(OWN),
+                      FadeIn(idn, shift=LEFT * 0.1), run_time=0.5)
             self.add(tC)
             bc.heal(self)
-            self.wait(1.0)                                   # QA 21:38: [HTTP 200] holds before d06 scrolls it
+            self.wait(0.6)                                   # QA 21:38: [HTTP 200] holds before d06 scrolls it
             vo.wait_until("Ask, and Cheese books")
             cost.next_to(bc.frame, RIGHT, buff=0.2).align_to(bc.frame, DOWN).shift(UP * 0.1)
             assert cost.get_right()[0] < SAFE_X, cost.get_right()
@@ -531,8 +531,13 @@ class OneOrigin(VoiceScene):
             vo.wait_until("Then, in a second terminal")
             self.play(FadeOut(VGroup(rcard, ticks, t2)), track(trk, 7), run_time=0.5)
             self.play(FadeIn(t8, shift=UP * 0.2), run_time=0.4)
+            vo.wait_until("docker-shell.sh again")
             type_capture(self, t8, D12, type_time=0.4)
-            out(self, t8, [D12.line(2)], wrap=True, run_time=0.3)
+            vo.wait_until("opens a shell")
+            o2 = out(self, t8, [D12.line(2)], wrap=True, run_time=0.3)
+            vo.wait_until("in the running container")
+            self.play(Indicate(VGroup(*o2), color=TURN, scale_factor=1.04), run_time=0.7)
+            self.add(t8)
             vo.wait_until("npm run check")
             type_at(self, t8, D12, 3, type_time=0.4)
             o8 = out(self, t8, [D12.line(6)], run_time=0.3)

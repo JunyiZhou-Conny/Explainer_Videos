@@ -33,8 +33,8 @@ Beats (script.md "## S04", one voiceover block each):
    307" a PINK U-turn over the path "307 → /square_root/", a09:2 (307 PINK); on "points to the slash
    version" the slash comes back and a09:6 `location: …/square_root/` (PINK).
 7. V4 and the tab go; the uvicorn terminal (`laptop`, 8 rows) prints a03:55–59 (wrapped at spaces);
-   on "with its status" the status words write in colour one by one: 200 ×3 GREEN, 422 RED,
-   307 PINK; IPs and ports stay GREY.
+   on "with its status" the status words flash; on "200, 200, 200" they write in colour one by one
+   as each is read: 200 ×3 GREEN, 422 RED, 307 PINK; IPs and ports stay GREY.
 8. Tracker A 8. The log goes; a 4-row `second tab` strip types the a10 grep (extra) → a10:3, 6
    (`<title>API Server - Swagger UI</title>` and `url: '/openapi.json'` YELLOW); a small GREY
    route-table card (V3's two routes) sits above it. On "FastAPI built this page" the strip goes and
@@ -365,8 +365,12 @@ class FunctionToUrl(VoiceScene):
                 i += 1
             assert codes == ["200", "200", "200", "422", "307"], codes
             vo.wait_until("with its status")
+            self.play(Indicate(VGroup(*[g for g, _ in spans]), color=S.GREY, scale_factor=1.05), run_time=0.8)
+            self.add(lt)
+            vo.wait_until("200, 200, 200")      # the codes are their own sentence: colour each as it is read
             for g, col in spans:
                 self.play(g.animate.set_color(col), run_time=0.35)
+                self.wait(0.5)
             self.add(lt)
             self.play(LaggedStart(*[Indicate(g, color=col, scale_factor=1.12) for g, col in spans], lag_ratio=0.25),
                       run_time=1.2)
