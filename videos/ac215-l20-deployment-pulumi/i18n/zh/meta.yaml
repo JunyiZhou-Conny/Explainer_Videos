@@ -1,0 +1,49 @@
+# Chinese (zh-CN) metadata for ac215-l20-deployment-pulumi (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 端口, 虚拟机, 镜像仓库, 堆栈（stack）,
+# 置备（provisioning）; A4), the English colon structure kept (nginx：唯一的公共入口; Pulumi：期望状态，而不是步骤;
+# 第 2 步：带时间戳的镜像), commands, tools and names as they are (Docker Hub, nginx, Pulumi, SSH, OS Login), the
+# core-concept chapters with their English short name once for search (期望状态（desired state）, 置备（provisioning）),
+# questions keep their question mark, and S16 in the series' 收尾 pattern. 跟练 = follow-along; Deployment → 部署.
+# The title agrees in substance with video.yaml's publish.title_zh ("AC215 第20讲跟练 · 部署：先手动把奶酪 App 部署到一台
+# GCP VM，再用 Pulumi 把同样的部署写成代码"), in the series pattern of the other meta.yaml titles; the Bilibili upload
+# itself uses publish.title_zh.
+# SERIES RULE (A16): no title, chapter or description names the instructor, and none names the unmerged staff branch.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 20 讲：部署——先手动把奶酪应用部署到一台虚拟机，再用 Pulumi 写成代码（跟练：cheese-app-v3）"
+
+parts:
+  part1: "AC215 · 第 20 讲（上）：手动部署——Docker Hub、一台虚拟机、五个容器和 nginx"
+  part2: "AC215 · 第 20 讲（下）：同样的部署写成代码——Pulumi、两个堆栈（stack）、一次 destroy"
+
+chapters:
+  s01_hook: "停掉一个容器，整个网站就黑了？"
+  s02_goal: "从你的笔记本到一台虚拟机"
+  s03_docker_hub: "把镜像推到 Docker Hub"
+  s04_vm: "一台装好 Docker 的虚拟机：目录、密钥和网络"
+  s05_vector_db: "向量数据库和它的加载器"
+  s06_api_frontend: "API 和前端"
+  s07_nginx: "nginx：唯一的公共入口"
+  s08_by_hand: "21 条命令：能重复、能审查、能撤销吗？"
+  s09_desired_state: "Pulumi：期望状态（desired state），而不是步骤"
+  s10_setup: "准备工作：四个 API、两个服务账号密钥"
+  s11_toolbox: "部署工具箱，修了两次"
+  s12_ssh: "SSH 密钥和 OS Login"
+  s13_images: "第 2 步：带时间戳的镜像"
+  s14_vm_stack: "第 3、4 步：虚拟机、它的防火墙和置备（provisioning）"
+  s15_containers: "第 5、6 步：通过 SSH 部署容器，然后测试"
+  s16_recap: "destroy、回顾和下节预告"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but
+# without the course-credit line's names (A16). Facts: script.md v2 (S01-S16, two parts at the README's own seam
+# between "Deployment to GCP (Manual)" and "Deployment to GCP (Single VM Instance)"); README @ 3ecef56 (main, unchanged
+# on the recording day, 2026-11-05); the manual part captured on a fresh Debian 12 stand-in VM, the Docker Hub and
+# Pulumi parts on a laptop without a Google account or Docker Hub login, so every cloud step stops at its first real
+# error and the successful outcome is described, never shown as output; the toolbox's Dockerfile needed two one-line
+# fixes on the recording day; five pause-and-ponder cards and a closing test-yourself set. Paste the chapter
+# timestamps from output/chapters.txt under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 20 讲“部署”的跟练视频，对照课件逐页讲解，并照着 dlops-io/cheese-app-v3 的 README 一步一步做：上半场手动部署，把镜像推到 Docker Hub，在 Google Cloud 上开一台虚拟机并装好 Docker，建好目录、密钥文件和 Docker 网络，依次启动向量数据库、一次性的加载器（载入 14,356 个 chunk）、API 和前端，最后让 nginx 作为唯一的公共入口；讲清 location 块怎样用一个结尾斜杠去掉 /api-service 前缀，防火墙为什么只开放 80 和 443，以及为什么停掉前端整个网站都会挂掉。
+  下半场把同样的部署写成代码：基础设施即代码和 Pulumi 的工作方式（期望状态、state 与实际情况的对比、preview / up / --refresh / -y / destroy），启用四个 API、两个权限不同的服务账号、部署工具箱容器（录制当天它的 Dockerfile 需要两处一行修改才能构建）、OS Login 和 SSH 密钥，再用两个 Pulumi 项目完成课上的六个步骤：带时间戳的镜像、虚拟机与防火墙、置备（provisioning）、通过 SSH 部署容器和 nginx，最后 destroy 并逐项清理。
+  英文旁白，配中文和中英双语字幕；录制环境没有 Google 账号，每个云端步骤都展示到它真实的第一个报错为止，并说明你自己的输出应该是什么；虚拟机、磁盘、外部 IP 和镜像存储都会产生费用（视频用金色标签标出），每个部分结尾都有删除步骤和清理清单。

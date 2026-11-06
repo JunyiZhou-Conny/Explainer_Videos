@@ -1,0 +1,542 @@
+# zh narration for S09-S16 (part 2, group g2: desired state, the setup with two keys, the toolbox fixed twice,
+# SSH and OS Login, the images stack, the VM stack and provisioning, containers over SSH and the test, destroy
+# and the recap), sentence-aligned to script.md v2 (2026-11-06): one zh sentence per English sentence
+# (explainer.voice.split_sentences; 85 SAY lines, 199 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (D9).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (A6, B3):
+# deploy_images -> deploy images; deploy_single_vm -> deploy single VM; retain_on_delete -> retain on delete;
+# docker_build.Image -> docker build Image; instance_ip -> instance IP; GCP_PROJECT -> GCP project 变量;
+# PULUMI_ACCESS_TOKEN must be set -> Pulumi access token must be set; the plan symbols -> 加号、波浪号、减号、加减号;
+# Ctrl+C -> Ctrl-C; the five .py files of S16[6] -> their names in words.
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4); null = the SAY text.
+# Sentences never open with a lower-case command or tool (A5): 命令 new / 命令 up / 命令 preview / 一次 preview /
+# 命令 pulumi up / 最上面出现了 nginx 的 container / 用 exec 进到 / pulumi destroy 把.
+# The instructor rule (A16): the narration of S09-S16 names no instructor (the lecture -> 课上, the slides -> 课件).
+S09:
+- en: "Part 2. Each Pulumi program says what should exist, not what to do. One firewall rule from this repository: a constructor, compute Firewall; a logical name, allow http; and arguments: port 80, from anywhere, for VMs tagged http server."
+  zh:
+  - "第 2 部分。"
+  - "每个 Pulumi 程序说的是应该存在什么，而不是要做什么。"
+  - "这个 repo 里的一条防火墙规则：一个构造函数，compute.Firewall；一个逻辑名，allow-http；还有参数：port 80，来自任何地方，给带 http-server 标记的 VM。"
+  en_display:
+  - null
+  - null
+  - "One firewall rule from this repository: a constructor, compute.Firewall; a logical name, allow-http; and arguments: port 80, from anywhere, for VMs tagged http-server."
+- en: "The lecture's bucket example has the same shape. Running this line creates nothing: the constructor only registers the resource."
+  zh:
+  - "课上那个 bucket 的例子也是同样的形状。"
+  - "运行这一行什么都不会创建：构造函数只是注册这个资源。"
+- en: "This is the lecture's picture of Pulumi: the command line tool runs your program, which produces the desired state, a tree of resources."
+  zh:
+  - "这是课上讲 Pulumi 的那张图：命令行工具运行你的程序，程序产出期望状态，也就是一棵资源树。"
+- en: "Pulumi also loads its state, what it created last time, from your bucket. The refresh flag first checks that state against what really exists."
+  zh:
+  - "Pulumi 还会从你的 bucket 里加载它的 state，也就是它上次创建了什么。"
+  - "--refresh 参数会先拿这个 state 和实际存在的东西核对一遍。"
+  en_display:
+  - null
+  - "The --refresh flag first checks that state against what really exists."
+- en: "Then it compares desired with current, and each difference becomes a plan line: plus to create, tilde to update, minus to delete, plus minus to replace."
+  zh:
+  - "然后它比较期望状态和当前状态，每一处差异都变成计划里的一行：加号表示创建，波浪号表示更新，减号表示删除，加减号表示替换。"
+  en_display:
+  - "Then it compares desired with current, and each difference becomes a plan line: + to create, ~ to update, - to delete, +- to replace."
+- en: "Finally it calls the providers, plugins for Google Cloud, Docker and more, which make the API calls. The banner on the slide: Pulumi manages infrastructure through cloud APIs."
+  zh:
+  - "最后它调用 provider，也就是 Google Cloud、Docker 等等的插件，由它们去调 API。"
+  - "课件上的横幅：Pulumi 通过云 API 管理基础设施。"
+- en: "The lecture lists seven commands. The tutorial uses five: stack, config, preview, up and destroy, with refresh only as a flag. The command new stays gray, because both projects already exist."
+  zh:
+  - "课上列了七个命令。"
+  - "教程用了五个：stack、config、preview、up 和 destroy，refresh 只作为参数出现。"
+  - "命令 new 是灰色的，因为两个项目都已经存在了。"
+- en: "Now the README's command: pulumi up, stack dev, refresh, dash y. Up previews, asks, then applies. Stack dev picks the environment. Refresh syncs the state with reality first."
+  zh:
+  - "现在是 README 的命令：pulumi up --stack dev --refresh -y。"
+  - "命令 up 先预览，再询问，然后执行。"
+  - "--stack dev 选定环境。"
+  - "--refresh 先让 state 和实际情况同步。"
+  en_display:
+  - "Now the README's command: pulumi up --stack dev --refresh -y."
+  - null
+  - null
+  - null
+- en: "Dash y answers yes to the question, do you want to perform this update, and skips your chance to check the plan. Step 3 shows when that matters. Preview stops before anything changes."
+  zh:
+  - "-y 替你回答 do you want to perform this update 这个问题，也跳过了你检查计划的机会。"
+  - "第 3 步会告诉你这什么时候要紧。"
+  - "命令 preview 在任何改动之前就停下。"
+  en_display:
+  - "-y answers yes to the question, do you want to perform this update, and skips your chance to check the plan."
+  - null
+  - null
+- en: "A question. You run pulumi up again and changed nothing. What should the plan show?"
+  zh:
+  - "想一想。"
+  - "你又跑了一次 pulumi up，什么都没改。"
+  - "计划应该显示什么？"
+- en: "Nothing to do. Desired equals state equals reality, so there is no difference, and nothing is created, changed or deleted. Hold that thought: one stack in this repository breaks the rule."
+  zh:
+  - "什么都不用做。"
+  - "期望状态等于 state，也等于实际情况，所以没有差异，什么都不会创建、修改或删除。"
+  - "先记住这一点：这个 repo 里有一个 stack 会打破这条规则。"
+S10:
+- en: "The lecture splits the automated deployment into six steps: setup, images, VM, provisioning, containers and web server. Each maps to a file; we start with step 1."
+  zh:
+  - "课上把自动化部署分成六步：设置、image、VM、provisioning、container 和 Web 服务器。"
+  - "每一步对应一个文件；我们从第 1 步开始。"
+- en: "First, enable four APIs: Compute Engine, Service Usage, Cloud Resource Manager and Artifact Registry. The app's chat also needs Vertex AI, from earlier lectures."
+  zh:
+  - "首先，启用四个 API：Compute Engine、Service Usage、Cloud Resource Manager 和 Artifact Registry。"
+  - "应用的聊天还需要前几讲用过的 Vertex AI。"
+- en: "Then create two service accounts. Deployment gets six roles, among them Compute Admin, Compute OS Login, Artifact Registry Administrator and Storage Admin. Create a JSON key, and rename it deployment dot json."
+  zh:
+  - "然后创建两个服务账号。"
+  - "deployment 拿到六个角色，其中有 Compute Admin、Compute OS Login、Artifact Registry Administrator 和 Storage Admin。"
+  - "创建一个 JSON 密钥，改名为 deployment.json。"
+  en_display:
+  - null
+  - null
+  - "Create a JSON key, and rename it deployment.json."
+- en: "The second, gcp service, gets three roles: Storage Object Viewer, Vertex AI Administrator and Artifact Registry Reader. Its key becomes gcp service dot json."
+  zh:
+  - "第二个是 gcp-service，拿到三个角色：Storage Object Viewer、Vertex AI Administrator 和 Artifact Registry Reader。"
+  - "它的密钥改名为 gcp-service.json。"
+  en_display:
+  - "The second, gcp-service, gets three roles: Storage Object Viewer, Vertex AI Administrator and Artifact Registry Reader."
+  - "Its key becomes gcp-service.json."
+- en: "Why two? Deployment builds things. It needs admin rights on your group's project, not the README's default, to create the VM and log in. The narrow account only runs things: it reads images and stored files and uses Vertex AI."
+  zh:
+  - "为什么要两个？"
+  - "deployment 负责建东西。"
+  - "它需要在你们组的项目上有管理员权限，而不是 README 的默认项目，才能创建 VM 并登录进去。"
+  - "窄权限的账号只负责运行：它读取 image 和存储的文件，并使用 Vertex AI。"
+- en: "Both keys go into a secrets folder next to your clone, not inside it. The deployment script of the next step looks three folders up from src deployment to find it. Pause and place your keys."
+  zh:
+  - "两个密钥都放进 clone 旁边的 secrets 目录，而不是 clone 里面。"
+  - "下一步的部署脚本从 src/deployment 往上找三层目录，来找到它。"
+  - "暂停一下，把你的密钥放好。"
+  en_display:
+  - null
+  - "The deployment script of the next step looks three folders up from src/deployment to find it."
+  - null
+- en: "One step is missing from the README: nothing creates the Artifact Registry repository. We create it with one extra gcloud line in the next step, once the deployment container runs; skip it, and the push fails."
+  zh:
+  - "README 漏了一步：没有任何东西创建 Artifact Registry 仓库。"
+  - "我们在下一步用一行额外的 gcloud 命令创建它，等部署 container 跑起来以后；跳过这一步，push 就会失败。"
+S11:
+- en: "Rather than each of you installing different tools, the README packs them into one container, the deployment toolbox. Lines 9 to 17 of docker-shell.sh set its environment."
+  zh:
+  - "README 没让你们每人各装一套不同的工具，而是把它们打包进一个 container，也就是部署工具箱。"
+  - "在 docker-shell.sh 里，第 9 到 17 行设置它的环境。"
+- en: "Lines 34 to 43 wire it to your laptop. They mount the Docker socket, so it builds on your Docker, then deployment as slash app, the secrets, a Docker config and the three service folders."
+  zh:
+  - "第 34 到 43 行把它接到你的笔记本上。"
+  - "它们挂载 Docker socket，让它用你的 Docker 来构建，然后把 deployment 挂成 /app，再挂上 secrets、一份 Docker 配置和三个服务目录。"
+  en_display:
+  - null
+  - "They mount the Docker socket, so it builds on your Docker, then deployment as /app, the secrets, a Docker config and the three service folders."
+- en: "Change into src deployment. In docker-shell.sh, set GCP project to your project ID; ours is a placeholder."
+  zh:
+  - "进到 src/deployment。"
+  - "在 docker-shell.sh 里，把 GCP project 变量设成你的项目 ID；我们的是一个占位符。"
+  en_display:
+  - "Change into src/deployment."
+  - "In docker-shell.sh, set GCP_PROJECT to your project ID; ours is a placeholder."
+- en: "Now run docker-shell.sh, as committed. Downloads answer 404 not found, the build stops, and the script runs the container anyway: pull access denied."
+  zh:
+  - "现在按 repo 里的原样运行 docker-shell.sh。"
+  - "下载返回 404 Not Found，构建停下，脚本却照样运行 container：pull access denied。"
+  en_display:
+  - null
+  - "Downloads answer 404 Not Found, the build stops, and the script runs the container anyway: pull access denied."
+- en: "The cause is line 4: the base image is Debian 11, bullseye, whose security updates moved to an archive. Fix 1: change bullseye to bookworm, Debian 12."
+  zh:
+  - "原因在第 4 行：基础 image 是 Debian 11，也就是 bullseye，它的安全更新已经挪到了归档里。"
+  - "修复 1：把 bullseye 改成 bookworm，也就是 Debian 12。"
+- en: "Run it again. Now it stops at line 29: google cloud SDK has no installation candidate. Google renamed it, and apt even names the replacement, google cloud CLI."
+  zh:
+  - "再跑一次。"
+  - "这次停在第 29 行：google-cloud-sdk has no installation candidate。"
+  - "Google 给它改了名，apt 甚至直接说出了替代品：google-cloud-cli。"
+  en_display:
+  - null
+  - "Now it stops at line 29: google-cloud-sdk has no installation candidate."
+  - "Google renamed it, and apt even names the replacement, google-cloud-cli."
+- en: "Fix 2: rename both packages. Here is the real diff of the two fixes, one line each. Pause and make both edits."
+  zh:
+  - "修复 2：把两个包都改名。"
+  - "这是两处修复的真实 diff，各改一行。"
+  - "暂停一下，把两处都改好。"
+- en: "The third run builds in about 92 seconds, and the entrypoint starts. First error: invalid grant, account not found. Our key belongs to no account; yours activates the deployment account."
+  zh:
+  - "第三次运行大约 92 秒就构建好了，entrypoint 开始运行。"
+  - "第一个报错：Invalid grant: account not found。"
+  - "我们的密钥不属于任何账号；你的会激活 deployment 账号。"
+  en_display:
+  - null
+  - "First error: invalid_grant: Invalid grant: account not found."
+  - null
+- en: "The project and registry helper pass. Then the state bucket: ours could not be created, and Pulumi could not log in. Yours creates the bucket the first time, logs in, and leaves you here."
+  zh:
+  - "项目和 registry 辅助工具都通过了。"
+  - "然后是 state bucket：我们的没能创建，Pulumi 也没能登录。"
+  - "你的会在第一次运行时创建这个 bucket，登录，然后停在这里等你。"
+- en: "Check the tools: gcloud, Pulumi and kubectl. One surprise: kubectl is newer than the Dockerfile pins, because Google's apt repository has its own kubectl package with a higher version, and apt picks it."
+  zh:
+  - "检查一下工具：gcloud、Pulumi 和 kubectl。"
+  - "有个意外：kubectl 比 Dockerfile 固定的版本新，因为 Google 的 apt 软件源有它自己的 kubectl 包，版本更高，apt 就选了它。"
+- en: "Last check: gcloud auth list. Ours says no credentialed accounts. Yours lists the deployment account as active; if not, check the file name in secrets. Then create the registry repository with the extra line from earlier. Pause and run both."
+  zh:
+  - "最后一个检查：gcloud auth list。"
+  - "我们的显示 No credentialed accounts。"
+  - "你的会把 deployment 账号列为 active；如果没有，就检查 secrets 里的文件名。"
+  - "然后用前面说的那行额外命令创建 registry 仓库。"
+  - "暂停一下，两个都跑一遍。"
+  en_display:
+  - null
+  - "Ours says No credentialed accounts."
+  - null
+  - null
+  - null
+S12:
+- en: "This is the one setup the slides skip. Pulumi will log in to the VM over SSH to run scripts and drive Docker. Who logs in? The deployment service account, through OS Login."
+  zh:
+  - "这是课件唯一跳过的设置。"
+  - "Pulumi 会通过 SSH 登录 VM，去运行脚本、驱动 Docker。"
+  - "谁来登录？"
+  - "deployment 服务账号，通过 OS Login。"
+- en: "First, turn OS Login on for the project. Typed as printed, the template fails with no such file. It is the angle bracket lesson again: replace the whole placeholder."
+  zh:
+  - "首先，为项目打开 OS Login。"
+  - "照印的原样敲，这个模板会因为 no such file 而失败。"
+  - "又是尖括号那一课：把整个占位符换掉。"
+- en: "The README example uses its own project, which you change to yours. Ours says no active account; yours prints updated."
+  zh:
+  - "README 的例子用的是它自己的项目，你要改成你的。"
+  - "我们的显示 no active account；你的会输出 Updated。"
+- en: "Next, the key: in slash secrets, run ssh keygen with the name ssh key deployment, press Enter twice, and go back to slash app. No passphrase: Pulumi cannot type one."
+  zh:
+  - "接下来是密钥：在 /secrets 里运行 ssh-keygen，名字叫 ssh-key-deployment，按两次回车，再回到 /app。"
+  - "不设 passphrase：Pulumi 没法替你输入。"
+  en_display:
+  - "Next, the key: in /secrets, run ssh-keygen with the name ssh-key-deployment, press Enter twice, and go back to /app."
+  - null
+- en: "The two files now sit in the secrets folder on your laptop: the private key, readable only by you, and the public half."
+  zh:
+  - "现在这两个文件就在你笔记本的 secrets 目录里：私钥只有你能读，另一半是公钥。"
+- en: "Then upload the public half to the OS Login profile. Ours stops at the same error; the README shows yours, ending in a username that starts with S A. Copy it: step 3 needs it."
+  zh:
+  - "然后把公钥上传到 OS Login 的个人资料里。"
+  - "我们的停在同一个报错；README 给出了你的输出，最后是一个以 sa_ 开头的用户名。"
+  - "复制下来：第 3 步要用。"
+  en_display:
+  - null
+  - "Ours stops at the same error; the README shows yours, ending in a username that starts with sa_."
+  - null
+- en: "A small slip: the next heading asks you to edit inventory dot yml. No such file exists; it belongs to an earlier, Ansible version of the course. The Pulumi config replaces it."
+  zh:
+  - "有一个小疏漏：下一个小节让你编辑 inventory.yml。"
+  - "这个文件根本不存在；它属于课程早先用 Ansible 的版本。"
+  - "Pulumi 的 config 取代了它。"
+  en_display:
+  - "A small slip: the next heading asks you to edit inventory.yml."
+  - null
+  - null
+S13:
+- en: "Step 2: build and push the images. Your laptop's arrow lands on the registry; slide 21 still calls it GCR, its retired name: today it is Artifact Registry."
+  zh:
+  - "第 2 步：构建并 push image。"
+  - "你笔记本的箭头落在 registry 上；课件第 21 页还叫它 GCR，这是它退役的旧名字：现在它叫 Artifact Registry。"
+- en: "Pulumi keeps environments apart as stacks of one program, dev, staging and production, each with its own state and config. The tutorial has one stack, dev, per project."
+  zh:
+  - "Pulumi 用同一个程序的不同 stack 把环境隔开，dev、staging 和 production，每个都有自己的 state 和 config。"
+  - "教程每个项目只有一个 stack，就是 dev。"
+- en: "Its full name, organization, deploy images, dev, is used by the VM project, so do not rename it. Every stack state sits in your bucket."
+  zh:
+  - "它的全名 organization/deploy-images/dev 会被 VM 那个项目用到，所以别改名。"
+  - "每个 stack 的 state 都放在你的 bucket 里。"
+  en_display:
+  - "Its full name, organization/deploy-images/dev, is used by the VM project, so do not rename it."
+  - null
+- en: "Change into deploy images and run pulumi stack init dev. Without a bucket login, Pulumi offers its own cloud and waits for a browser. If yours says the stack already exists, use pulumi stack select dev."
+  zh:
+  - "进到 deploy images，运行 pulumi stack init dev。"
+  - "没有登录 bucket 时，Pulumi 会推荐它自己的云服务，并等着浏览器。"
+  - "如果你的提示 stack 已经存在，就用 pulumi stack select dev。"
+  en_display:
+  - "Change into deploy_images and run pulumi stack init dev."
+  - null
+  - null
+- en: "Config set, preview and up all print: Pulumi access token must be set. To show them anyway, we use a local folder, pulumi login local: extra, and not for you."
+  zh:
+  - "config set、preview 和 up 都会打印：Pulumi access token must be set。"
+  - "为了还是能展示它们，我们用一个本地目录，pulumi login --local：额外的，不是给你用的。"
+  en_display:
+  - "Config set, preview and up all print: PULUMI_ACCESS_TOKEN must be set."
+  - "To show them anyway, we use a local folder, pulumi login --local: extra, and not for you."
+- en: "Stack init answers created stack dev, and config set writes your project into Pulumi dot dev dot yaml."
+  zh:
+  - "stack init 回答 Created stack dev，config set 把你的项目写进 Pulumi.dev.yaml。"
+  en_display:
+  - "Stack init answers Created stack 'dev', and config set writes your project into Pulumi.dev.yaml."
+- en: "Now the program. Line 13 makes a timestamp, down to the second, and lines 14 and 15 build the registry address."
+  zh:
+  - "现在看程序。"
+  - "第 13 行生成一个精确到秒的时间戳，第 14、15 行拼出 registry 的地址。"
+- en: "Each image is one docker build Image resource: a timestamped tag, push true, retain on delete, and one platform, A M D 64. An Apple silicon Mac emulates that slowly. Lines 34 and 35 export the tag for the other project."
+  zh:
+  - "每个 image 是一个 docker build Image 资源：一个带时间戳的 tag，push 设为 true，retain on delete，还有一个平台，AMD64。"
+  - "Apple 芯片的 Mac 模拟它会很慢。"
+  - "第 34、35 行把 tag 导出给另一个项目。"
+  en_display:
+  - "Each image is one docker_build.Image resource: a timestamped tag, push true, retain_on_delete, and one platform, AMD64."
+  - null
+  - null
+- en: "The extra preview, frontend only: five provider plugins, one image to create with its timestamped tag, and a warning: skipping preview build. A preview never builds."
+  zh:
+  - "额外的 preview，只有前端：五个 provider 插件，一个要创建的 image 和它带时间戳的 tag，还有一条警告：Skipping preview build。"
+  - "一次 preview 从来不会构建。"
+  en_display:
+  - "The extra preview, frontend only: five provider plugins, one image to create with its timestamped tag, and a warning: Skipping preview build because some inputs are unknown."
+  - null
+- en: "Up does build: the npm install, the Next.js build, then the push, which fails here with 403 forbidden. Yours builds all three images, slowly, and ends with each tag in the outputs. Pause and run it."
+  zh:
+  - "命令 up 才会真的构建：npm install，Next.js 构建，然后 push，在这里失败了，403 Forbidden。"
+  - "你的会把三个 image 都构建出来，很慢，最后在输出里列出每个 tag。"
+  - "暂停一下，跑一遍。"
+  en_display:
+  - "Up does build: the npm install, the Next.js build, then the push, which fails here with 403 Forbidden."
+  - null
+  - null
+- en: "Remember the earlier question? This stack breaks the rule: each up rebuilds the images, because the timestamp is new every run. Each run can add image layers to the registry, and storage costs money."
+  zh:
+  - "还记得前面那个问题吗？"
+  - "这个 stack 打破了那条规则：每次 up 都会重新构建 image，因为时间戳每次都是新的。"
+  - "每次运行都可能往 registry 里加 image 层，而存储是要花钱的。"
+S14:
+- en: "Step 3: create the VM. The slide draws a network share beside it; in this code that is a second disk, mounted at mnt disk 1."
+  zh:
+  - "第 3 步：创建 VM。"
+  - "课件在它旁边画了一个网络共享；在这份代码里，那是第二块磁盘，挂载在 /mnt/disk-1。"
+  en_display:
+  - null
+  - "The slide draws a network share beside it; in this code that is a second disk, mounted at /mnt/disk-1."
+- en: "Change into deploy single VM, then stack init, three config sets, preview and up: without the bucket login, each prints the same error."
+  zh:
+  - "进到 deploy single VM，然后 stack init、三次 config set、preview 和 up：没有登录 bucket，每一个都打印同样的报错。"
+  en_display:
+  - "Change into deploy_single_vm, then stack init, three config sets, preview and up: without the bucket login, each prints the same error."
+- en: "On the local backend, the config shows the project, your masked username, and the account the VM runs as: deployment at your own project, not the README's. Pause, set all three, and check them with pulumi config."
+  zh:
+  - "在本地 backend 上，config 显示项目、你被遮住的用户名，以及 VM 运行时用的账号：你自己项目里的 deployment，不是 README 的。"
+  - "暂停一下，三个都设好，再用 pulumi config 检查。"
+- en: "The main file makes four calls, in the lecture's order: create the instance, provision it, set up the containers, set up the web server."
+  zh:
+  - "主文件按课上的顺序做四次调用：创建实例、provision 实例、设置 container、设置 Web 服务器。"
+- en: "Create instance builds the fences first. There is a cloud network, also called cheese app network, and three firewall gates: 80 and 443 for the tagged VMs, 22 for every VM."
+  zh:
+  - "在 create instance 里，先把围栏建好。"
+  - "有一个云网络，也叫 cheese-app-network，还有三道防火墙门：给带标记的 VM 开 80 和 443，给所有 VM 开 22。"
+  en_display:
+  - null
+  - "There is a cloud network, also called cheese-app-network, and three firewall gates: 80 and 443 for the tagged VMs, 22 for every VM."
+- en: "Then a 50 gigabyte data disk, and a lookup of the newest Ubuntu image. The VM address is an output, a sealed envelope that opens once the VM exists."
+  zh:
+  - "然后是一块 50 GB 的数据磁盘，以及查找最新的 Ubuntu image。"
+  - "VM 的地址是一个输出，一个密封的信封，等 VM 存在了才会打开。"
+  en_display:
+  - "Then a 50 GB data disk, and a lookup of the newest Ubuntu image."
+  - null
+- en: "The real preview plans a disk, a network and three firewalls, then stops at line 100, invalid grant: the image lookup is the first call needing Google. Yours goes on to about thirty resources."
+  zh:
+  - "真正的 preview 计划了一块磁盘、一个网络和三条防火墙规则，然后停在第 100 行，Invalid grant：image 查找是第一个需要 Google 的调用。"
+  - "你的会继续，一共大约三十个资源。"
+  en_display:
+  - "The real preview plans a disk, a network and three firewalls, then stops at line 100, invalid_grant: the image lookup is the first call needing Google."
+  - null
+- en: "Check the plan before dash y: a newer Ubuntu image can turn the next up into a VM replacement. Then pause and run up. From here it costs roughly two dollars a day, plus disks and an address."
+  zh:
+  - "在 -y 之前先检查计划：更新的 Ubuntu image 可能让下一次 up 变成替换 VM。"
+  - "然后暂停一下，运行 up。"
+  - "从这里开始，大约每天两美元，外加磁盘和地址。"
+  en_display:
+  - "Check the plan before -y: a newer Ubuntu image can turn the next up into a VM replacement."
+  - null
+  - null
+- en: "Step 4, provisioning, has no slide picture: it happens inside the VM, over SSH. Nine remote commands run in a chain: format and mount the disk, update, install Docker."
+  zh:
+  - "第 4 步 provisioning 在课件上没有图：它发生在 VM 内部，通过 SSH。"
+  - "九条远程命令串成一条链：格式化并挂载磁盘、更新、安装 Docker。"
+- en: "Pulumi remembers that a command ran, not what it changed. Look at the first one: block ID checks for a filesystem, and only if there is none, make file system formats the disk."
+  zh:
+  - "Pulumi 记得一条命令跑过，但不记得它改了什么。"
+  - "看第一条：blkid 检查有没有文件系统，只有没有的时候，mkfs 才格式化磁盘。"
+  en_display:
+  - null
+  - "Look at the first one: blkid checks for a filesystem, and only if there is none, mkfs formats the disk."
+- en: "A question. Why check with block ID first, instead of just formatting the disk?"
+  zh:
+  - "想一想。"
+  - "为什么先用 blkid 检查，而不是直接格式化磁盘？"
+  en_display:
+  - null
+  - "Why check with blkid first, instead of just formatting the disk?"
+- en: "Because formatting erases. If this step ever ran again, after a new trigger or a replaced resource, plain formatting would wipe the data disk: the chat history and the model. Scripts Pulumi cannot inspect must be safe to run twice."
+  zh:
+  - "因为格式化会清空数据。"
+  - "如果这一步哪天又跑了一次，比如换了 trigger 或者资源被替换，直接格式化就会把数据磁盘清空：聊天记录和模型都没了。"
+  - "Pulumi 没法检查的脚本，必须跑两次也安全。"
+S15:
+- en: "Step 5: the containers. The VM program asks the images stack for its tags, through a stack reference to organization, deploy images, dev. So run up in deploy images first."
+  zh:
+  - "第 5 步：container。"
+  - "VM 的程序通过一个指向 organization/deploy-images/dev 的 stack reference，向 image 的 stack 要它的 tag。"
+  - "所以先在 deploy images 里运行 up。"
+  en_display:
+  - null
+  - "The VM program asks the images stack for its tags, through a stack reference to organization/deploy-images/dev."
+  - "So run up in deploy_images first."
+- en: "Then a Docker provider whose host is SSH, with your key, so each container on the VM is a resource Pulumi can compare and replace."
+  zh:
+  - "然后是一个 host 是 SSH 的 Docker provider，用你的密钥，这样 VM 上的每个 container 都是一个 Pulumi 能比较和替换的资源。"
+- en: "Three containers appear: the frontend, the vector database on 8000, the API on 9000. The slide puts the frontend on 80; the code, on 3000."
+  zh:
+  - "出现了三个 container：前端，8000 上的向量数据库，9000 上的 API。"
+  - "课件把前端放在 80；代码里是 3000。"
+- en: "Step 6: the web server. The nginx container appears on top, and port 80 moves onto it."
+  zh:
+  - "第 6 步：Web 服务器。"
+  - "最上面出现了 nginx 的 container，port 80 移到了它身上。"
+- en: "Its config file is uploaded with a checksum as a trigger. Change nginx dot conf, and only these steps run again."
+  zh:
+  - "它的配置文件上传时带着一个校验和，作为 trigger。"
+  - "改了 nginx.conf，就只有这几步会重新运行。"
+  en_display:
+  - null
+  - "Change nginx.conf, and only these steps run again."
+- en: "No successful pulumi up was captured. So here is what it builds, drawn from the code. It ends on six outputs, among them the instance IP."
+  zh:
+  - "我们没有录到成功的 pulumi up。"
+  - "所以这里是它会建出来的东西，照着代码画的。"
+  - "最后是六个输出，其中有 instance IP。"
+  en_display:
+  - null
+  - null
+  - "It ends on six outputs, among them the instance_ip."
+- en: "A small slip: the exported SSH command leaves out the key. Add dash i slash secrets slash ssh key deployment."
+  zh:
+  - "有一个小疏漏：导出的 SSH 命令漏了密钥。"
+  - "加上 -i /secrets/ssh-key-deployment。"
+  en_display:
+  - null
+  - "Add -i /secrets/ssh-key-deployment."
+- en: "The lecture marks the job of each key: deployment creates the VM and logs in, the narrow key reads images and models."
+  zh:
+  - "课上标出了每把密钥的职责：deployment 创建 VM 并登录，窄权限的密钥读取 image 和模型。"
+- en: "A question. The running app needs one key. Which would you hand the VM, and why not the other?"
+  zh:
+  - "想一想。"
+  - "运行中的应用需要一把密钥。"
+  - "你会把哪一把交给 VM，为什么不给另一把？"
+- en: "The gcp service key: it reads images and stored objects and uses Vertex AI; it cannot create VMs, disks or buckets. Deployment can, which a compromised VM should never hold."
+  zh:
+  - "gcp-service 的密钥：它能读 image 和存储的对象，能用 Vertex AI；它不能创建 VM、磁盘或 bucket。"
+  - "deployment 能，而一台被攻破的 VM 绝不该拿着它。"
+  en_display:
+  - "The gcp-service key: it reads images and stored objects and uses Vertex AI; it cannot create VMs, disks or buckets."
+  - null
+- en: "Two footnotes. This repository pulls the images with your deployment credentials and runs the VM itself as deployment, capped only by scopes, a list of what the VM may call. And the API calls Vertex AI with the narrow key. Try the narrow one as an exercise."
+  zh:
+  - "两个补充说明。"
+  - "这个 repo 用你的 deployment 凭据 pull image，VM 本身也以 deployment 的身份运行，只受 scopes 限制，也就是 VM 可以调用哪些服务的清单。"
+  - "而 API 用窄权限的密钥调用 Vertex AI。"
+  - "把窄权限的那把换上去，当作练习试试。"
+- en: "The lecture's last step: test the app. Open your instance IP; the footer shows the API version from slash status."
+  zh:
+  - "课上的最后一步：测试应用。"
+  - "打开你的 instance IP；页脚显示来自 /status 的 API 版本。"
+  en_display:
+  - null
+  - "Open your instance_ip; the footer shows the API version from /status."
+- en: "On the VM, through the console's SSH button or the fixed SSH command, the README checks: list the containers, follow each log, Control C to stop. Our stand-in names the database cheese app vector db."
+  zh:
+  - "在 VM 上，通过控制台的 SSH 按钮或修好的 SSH 命令，README 会检查：列出 container，跟踪每个日志，按 Ctrl-C 停止。"
+  - "我们的替身把数据库叫作 cheese-app-vector-db。"
+  en_display:
+  - "On the VM, through the console's SSH button or the fixed SSH command, the README checks: list the containers, follow each log, Ctrl+C to stop."
+  - "Our stand-in names the database cheese-app-vector-db."
+- en: "Exec into api service and into nginx. One note: chat needs a Gemini model Vertex AI still serves; change it in the API's helper files, then run up in both projects."
+  zh:
+  - "用 exec 进到 api-service 和 nginx 里。"
+  - "说明一点：聊天需要一个 Vertex AI 仍在提供的 Gemini 模型；在 API 的辅助文件里改掉它，然后在两个项目里都运行 up。"
+  en_display:
+  - "Exec into api-service and into nginx."
+  - null
+S16:
+- en: "The lecture ends with a slide of its own: don't forget to delete."
+  zh:
+  - "课上最后有专门的一页：别忘了删除。"
+- en: "In deploy single VM, run pulumi destroy, stack dev, refresh, dash y. Pause and run yours. Ours shows the login error; on the local backend, with nothing to delete, it finishes in a second."
+  zh:
+  - "在 deploy single VM 里，运行 pulumi destroy --stack dev --refresh -y。"
+  - "暂停一下，跑你的。"
+  - "我们的显示登录报错；在本地 backend 上，没有东西可删，一秒钟就结束了。"
+  en_display:
+  - "In deploy_single_vm, run pulumi destroy --stack dev --refresh -y."
+  - null
+  - null
+- en: "Destroy plays the graph backwards: the containers over SSH, then the VM, the disk, the firewalls and the network."
+  zh:
+  - "pulumi destroy 把这张图倒着走一遍：先是通过 SSH 部署的 container，然后是 VM、磁盘、防火墙和网络。"
+- en: "Run it in deploy single VM; in deploy images it only forgets the images, which stay in the registry, retained on delete."
+  zh:
+  - "在 deploy single VM 里运行它；在 deploy images 里它只会忘掉这些 image，它们因为 retain on delete 还留在 registry 里。"
+  en_display:
+  - "Run it in deploy_single_vm; in deploy_images it only forgets the images, which stay in the registry, retain_on_delete."
+- en: "Your teardown checklist. One: destroy the VM stack, and check the VM list is empty. Two: delete the registry repository with gcloud. Three: the state bucket, last, once no stack holds anything."
+  zh:
+  - "你的清理清单。"
+  - "第一：destroy VM 的 stack，并确认 VM 列表是空的。"
+  - "第二：用 gcloud 删除 registry 仓库。"
+  - "第三：state bucket，最后删，等没有任何 stack 还占着东西的时候。"
+- en: "Four: the part 1 VM, if it still runs. Five: your Docker Hub images, free and optional. Six: when the course ends, both service account keys."
+  zh:
+  - "第四：第 1 部分的 VM，如果它还在运行。"
+  - "第五：你的 Docker Hub image，免费，可删可不删。"
+  - "第六：课程结束时，两个服务账号的密钥。"
+- en: "The recap is the lecture's six steps, each with its file: docker-shell.sh, deploy images, create instance, provision instance, setup containers and setup webserver."
+  zh:
+  - "回顾就是课上的六步，每一步都有它的文件：docker-shell.sh、deploy images、create instance、provision instance、setup containers 和 setup webserver。"
+  en_display:
+  - "The recap is the lecture's six steps, each with its file: docker-shell.sh, deploy_images, create_instance.py, provision_instance.py, setup_containers.py and setup_webserver.py."
+- en: "The lecture also names six principles. Real language, declarative, state with previews: yes. Components and tests: not here. Many providers, but one cloud."
+  zh:
+  - "课上还列了六条原则。"
+  - "真正的编程语言、声明式、带预览的 state：有。"
+  - "组件和测试：这里没有。"
+  - "支持很多 provider，但只用了一朵云。"
+- en: "One VM is a single point of failure. Lecture 21 automates builds and tests, lecture 22 moves to Kubernetes with this toolbox, and lecture 23 runs pulumi up from GitHub Actions."
+  zh:
+  - "一台 VM 就是单点故障。"
+  - "第 21 讲把构建和测试自动化，第 22 讲带着这个工具箱转到 Kubernetes，第 23 讲在 GitHub Actions 里运行 pulumi up。"
+- en: "Test yourself. Trace your instance IP slash api service slash status: which gate, which container, which location block, and which character makes the API see slash status?"
+  zh:
+  - "自测一下。"
+  - "跟着你的 instance IP/api-service/status 走一遍：经过哪道门、哪个 container、哪个 location 块，又是哪个字符让 API 看到的是 /status？"
+  en_display:
+  - null
+  - "Trace your instance_ip/api-service/status: which gate, which container, which location block, and which character makes the API see /status?"
+- en: "What three things does pulumi up compare, what does refresh change, and what does dash y skip? Name the two service accounts, where each key sits, and what each may do."
+  zh:
+  - "命令 pulumi up 比较哪三样东西，refresh 改变什么，-y 又跳过了什么？"
+  - "说出两个服务账号的名字、每把密钥放在哪儿、各自能做什么。"
+  en_display:
+  - "What three things does pulumi up compare, what does refresh change, and what does -y skip?"
+  - null
+- en: "Which of the six steps can Pulumi inspect afterwards, and which does it only remember? What survives destroy? Answers are in the exercises and the study guide."
+  zh:
+  - "六步里哪几步 Pulumi 之后能检查，哪几步它只是记得？"
+  - "跑完 destroy，什么还留着？"
+  - "答案在练习和学习笔记里。"

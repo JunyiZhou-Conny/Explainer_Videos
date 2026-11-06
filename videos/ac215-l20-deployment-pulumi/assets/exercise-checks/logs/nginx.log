@@ -1,0 +1,182 @@
+## setup: network, two stand-ins, nginx with the repo nginx.conf
+$ docker network create l20ex-net >/dev/null && echo network l20ex-net
+network l20ex-net
+[exit 0]
+
+$ docker run -d --name l20ex-api --network l20ex-net --network-alias api-service -v <logs>/echo_stub.py:/stub.py:ro python:3.13-slim-bookworm python /stub.py api-service 9000 >/dev/null && echo l20ex-api started, alias api-service
+l20ex-api started, alias api-service
+[exit 0]
+
+$ docker run -d --name l20ex-frontend --network l20ex-net --network-alias frontend -v <logs>/echo_stub.py:/stub.py:ro python:3.13-slim-bookworm python /stub.py frontend 3000 >/dev/null && echo l20ex-frontend started, alias frontend
+l20ex-frontend started, alias frontend
+[exit 0]
+
+$ docker run -d --name l20ex-nginx --network l20ex-net -p 18080:80 -v <assets/source>/src/deployment/nginx-conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro nginx:stable >/dev/null && echo nginx started
+nginx started
+[exit 0]
+
+## B1: what path does each container see?
+$ curl -s http://localhost:18080/
+{"container": "frontend", "path_seen": "/"}
+[exit 0]
+
+$ curl -s http://localhost:18080/status
+{"container": "frontend", "path_seen": "/status"}
+[exit 0]
+
+$ curl -s http://localhost:18080/api-service/
+{"container": "api-service", "path_seen": "/"}
+[exit 0]
+
+$ curl -s http://localhost:18080/api-service/status
+{"container": "api-service", "path_seen": "/status"}
+[exit 0]
+
+$ curl -s http://localhost:18080/api-service/podcasts/?limit=3
+{"container": "api-service", "path_seen": "/podcasts/?limit=3"}
+[exit 0]
+
+$ curl -s http://localhost:18080/api-servicex/status
+{"container": "frontend", "path_seen": "/api-servicex/status"}
+[exit 0]
+
+$ curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\n' http://localhost:18080/api-service
+301 -> http://localhost/api-service/
+[exit 0]
+
+## B1: the same, with the trailing slash of proxy_pass removed (line 37)
+$ sed -n 37p <assets/source>/src/deployment/nginx-conf/nginx/nginx.conf
+			proxy_pass http://api-service:9000/;
+[exit 0]
+
+$ diff <assets/source>/src/deployment/nginx-conf/nginx/nginx.conf $WORK/nginx-noslash.conf
+37c37
+< 			proxy_pass http://api-service:9000/;
+---
+> 			proxy_pass http://api-service:9000;
+[exit 1]
+
+$ docker rm -f l20ex-nginx >/dev/null; docker run -d --name l20ex-nginx --network l20ex-net -p 18080:80 -v $WORK/nginx-noslash.conf:/etc/nginx/nginx.conf:ro nginx:stable >/dev/null && echo nginx started with the variant
+nginx started with the variant
+[exit 0]
+
+$ curl -s http://localhost:18080/api-service/status
+{"container": "api-service", "path_seen": "/api-service/status"}
+[exit 0]
+
+$ curl -s http://localhost:18080/api-service/
+{"container": "api-service", "path_seen": "/api-service/"}
+[exit 0]
+
+$ docker rm -f l20ex-nginx >/dev/null; docker run -d --name l20ex-nginx --network l20ex-net -p 18080:80 -v <assets/source>/src/deployment/nginx-conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro nginx:stable >/dev/null && echo nginx started with the repo file again
+nginx started with the repo file again
+[exit 0]
+
+## B3: stop the frontend while nginx keeps running (no restart)
+$ docker stop l20ex-frontend >/dev/null && echo l20ex-frontend stopped
+l20ex-frontend stopped
+[exit 0]
+
+$ curl -s -o /dev/null -w '/ -> %{http_code}\n' http://localhost:18080/
+/ -> 504
+[exit 0]
+
+$ curl -s http://localhost:18080/api-service/status
+{"container": "api-service", "path_seen": "/status"}
+[exit 0]
+
+## B3 / C6: now restart nginx, as the opening of the video did
+$ docker restart l20ex-nginx >/dev/null; sleep 2; docker ps -a --filter name=l20ex-nginx --format '{{.Names}}  {{.Status}}'
+l20ex-nginx  Exited (1) 2 seconds ago
+[exit 0]
+
+$ docker logs l20ex-nginx 2>&1 | grep emerg
+2026/11/06 00:59:52 [emerg] 1#1: host not found in upstream "frontend" in /etc/nginx/nginx.conf:48
+nginx: [emerg] host not found in upstream "frontend" in /etc/nginx/nginx.conf:48
+[exit 0]
+
+$ curl -s -o /dev/null -w '/api-service/status -> %{http_code}\n' http://localhost:18080/api-service/status
+/api-service/status -> 000
+[exit 7]
+
+$ docker start l20ex-frontend >/dev/null && docker start l20ex-nginx >/dev/null; sleep 2; docker ps --filter name=l20ex-nginx --format '{{.Names}}  {{.Status}}'
+l20ex-nginx  Up 2 seconds
+[exit 0]
+
+$ curl -s -o /dev/null -w '/ -> %{http_code}\n' http://localhost:18080/
+/ -> 200
+[exit 0]
+
+## C6: the API stand-in missing instead
+$ docker stop l20ex-api >/dev/null; docker restart l20ex-nginx >/dev/null; sleep 2; docker logs l20ex-nginx 2>&1 | grep emerg | tail -1
+nginx: [emerg] host not found in upstream "api-service" in /etc/nginx/nginx.conf:37
+[exit 0]
+
+$ docker start l20ex-api >/dev/null; docker start l20ex-nginx >/dev/null; sleep 2; curl -s http://localhost:18080/api-service/status
+{"container": "api-service", "path_seen": "/status"}
+[exit 0]
+
+## B2: the README echo (README:156-213) vs a quoted heredoc with the same text
+$ head -2 $WORK/heredoc-block.sh; echo ...; tail -3 $WORK/heredoc-block.sh
+cat > conf/nginx/nginx.conf <<'EOF'
+user  nginx;
+...
+	}
+}
+EOF
+[exit 0]
+
+$ docker run --rm --network none -v $WORK:/w debian:12 bash -c 'mkdir -p /e/conf/nginx /h/conf/nginx; cd /e && bash /w/echo-block.sh; cd /h && bash /w/heredoc-block.sh; cp /e/conf/nginx/nginx.conf /w/echo.conf; cp /h/conf/nginx/nginx.conf /w/heredoc.conf; wc -l /w/echo.conf /w/heredoc.conf'
+  58 /w/echo.conf
+  57 /w/heredoc.conf
+ 115 total
+[exit 0]
+
+$ diff $WORK/echo.conf $WORK/heredoc.conf
+10,12c10,12
+<     log_format  main   - []  
+<                         
+<                        ;
+---
+>     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+>                       '$status $body_bytes_sent "$http_referer" '
+>                       '"$http_user_agent" "$http_x_forwarded_for"';
+58d57
+< 
+[exit 1]
+
+$ diff $WORK/heredoc.conf <assets/source>/src/deployment/nginx-conf/nginx/nginx.conf && echo 'heredoc file = repo nginx.conf'
+27d26
+< 
+34c33,34
+< 		# API 
+---
+> 
+> 		# API - Make this location block handle all /api paths
+[exit 1]
+
+$ sed -n 9,11p $WORK/heredoc.conf
+    default_type  application/octet-stream;
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+[exit 0]
+
+$ for f in echo heredoc; do docker run --rm --network none -v $WORK/$f.conf:/etc/nginx/nginx.conf:ro --add-host api-service:127.0.0.1 --add-host frontend:127.0.0.1 nginx:stable nginx -t 2>&1 | tail -1; done
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[exit 0]
+
+## B2: one access-log line from each file
+$ docker rm -f l20ex-nginx >/dev/null; docker run -d --name l20ex-nginx --network l20ex-net -p 18080:80 -v $WORK/echo.conf:/etc/nginx/nginx.conf:ro nginx:stable >/dev/null; sleep 2; curl -s -o /dev/null http://localhost:18080/api-service/status; sleep 1; docker logs l20ex-nginx 2>/dev/null | tail -1 | sed -E 's/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/<client ip>/g'
+-[]
+[exit 0]
+
+$ docker rm -f l20ex-nginx >/dev/null; docker run -d --name l20ex-nginx --network l20ex-net -p 18080:80 -v $WORK/heredoc.conf:/etc/nginx/nginx.conf:ro nginx:stable >/dev/null; sleep 2; curl -s -o /dev/null http://localhost:18080/api-service/status; sleep 1; docker logs l20ex-nginx 2>/dev/null | tail -1 | sed -E 's/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/<client ip>/g'
+<client ip> - - [06/Nov/2026:01:00:21 +0000] "GET /api-service/status HTTP/1.1" 200 64 "-" "curl/8.5.0" "-"
+[exit 0]
+
+## cleanup
+$ docker rm -f l20ex-nginx l20ex-api l20ex-frontend >/dev/null; docker network rm l20ex-net >/dev/null; docker ps -a --filter name=l20ex- --format '{{.Names}}' | wc -l
+0
+[exit 0]
+

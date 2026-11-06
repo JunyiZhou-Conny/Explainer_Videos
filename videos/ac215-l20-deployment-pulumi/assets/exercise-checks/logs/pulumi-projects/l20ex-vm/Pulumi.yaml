@@ -1,0 +1,3 @@
+name: l20ex-vm
+description: Exercise stand-in for deploy_single_vm (a local Docker daemon and an SSH container, no cloud)
+runtime: python

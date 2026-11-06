@@ -1,0 +1,1038 @@
+## login and stacks
+$ pulumi login --local
+Logged in to vm as root (file://~)
+[exit 0]
+
+$ pulumi stack init dev
+Created stack 'dev'
+[exit 0]
+
+## C8: the VM stack before the images stack exists
+$ pulumi preview --stack dev
+Previewing update (dev):
+Downloading plugin command-1.1.3: starting
+Downloading plugin docker-4.9.0: starting
+@ previewing update....
+Downloading plugin command-1.1.3: done
+Installing plugin command-1.1.3: starting
+Installing plugin command-1.1.3: done
+Downloading plugin docker-4.9.0: done
+Installing plugin docker-4.9.0: starting
+@ previewing update....
+Installing plugin docker-4.9.0: done
+
+@ previewing update....
+ +  pulumi:pulumi:Stack l20ex-vm-dev create 
+ +  pulumi:pulumi:Stack l20ex-vm-dev create read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:StackReference organization/l20ex-images/dev  error: Preview failed: unknown stack "organization/l20ex-images/dev"
+ +  pulumi:pulumi:Stack l20ex-vm-dev create error: preview failed
+ +  pulumi:pulumi:Stack l20ex-vm-dev create Traceback (most recent call last):
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 900, in do_rpc_call
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     return monitor.ReadResource(req)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create            ~~~~~~~~~~~~~~~~~~~~^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/grpc/_channel.py", line 1168, in __call__
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     return _end_unary_response_blocking(state, call, False, None)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/grpc/_channel.py", line 999, in _end_unary_response_blocking
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+ +  pulumi:pulumi:Stack l20ex-vm-dev create 	status = StatusCode.UNAVAILABLE
+ +  pulumi:pulumi:Stack l20ex-vm-dev create 	details = "resource monitor shut down while waiting on step's done channel"
+ +  pulumi:pulumi:Stack l20ex-vm-dev create 	debug_error_string = "UNAVAILABLE:resource monitor shut down while waiting on step's done channel"
+ +  pulumi:pulumi:Stack l20ex-vm-dev create >
+ +  pulumi:pulumi:Stack l20ex-vm-dev create During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack l20ex-vm-dev create Traceback (most recent call last):
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 904, in do_read
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     resp = await asyncio.get_running_loop().run_in_executor(
+ +  pulumi:pulumi:Stack l20ex-vm-dev create            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create         None, wrap_with_context(do_rpc_call)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     )
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     result = self.fn(*self.args, **self.kwargs)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/_context.py", line 39, in wrapper
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     return python_ctx.run(run, *args, **kwargs)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/_context.py", line 34, in run
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     return fn(*args, **kwargs)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 902, in do_rpc_call
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     handle_grpc_error(exn)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~~~~~~~~~~~~^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/settings.py", line 352, in handle_grpc_error
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     raise grpc_error_to_exception(exn)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create pulumi.errors.RunError: Resource monitor has terminated, shutting down
+ +  pulumi:pulumi:Stack l20ex-vm-dev create During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack l20ex-vm-dev create Traceback (most recent call last):
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/opt/pulumi/pulumi-language-python-exec", line 232, in <module>
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     loop.run_until_complete(coro)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 713, in run_until_complete
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     self.run_forever()
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 684, in run_forever
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     self._run_once()
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 2061, in _run_once
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     handle._run()
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/asyncio/events.py", line 89, in _run
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     self._context.run(self._callback, *self._args)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 910, in do_read
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     f"exception when preparing or executing rpc: {traceback.format_exc()}"
+ +  pulumi:pulumi:Stack l20ex-vm-dev create                                                   ~~~~~~~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/traceback.py", line 212, in format_exc
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     return "".join(format_exception(sys.exception(), limit=limit, chain=chain))
+ +  pulumi:pulumi:Stack l20ex-vm-dev create                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/traceback.py", line 154, in format_exception
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     te = TracebackException(type(value), value, tb, limit=limit, compact=True)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/traceback.py", line 1051, in __init__
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     self.stack = StackSummary._extract_from_extended_frame_gen(
+ +  pulumi:pulumi:Stack l20ex-vm-dev create                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create         _walk_tb_with_full_positions(exc_traceback),
+ +  pulumi:pulumi:Stack l20ex-vm-dev create         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create         limit=limit, lookup_lines=lookup_lines,
+ +  pulumi:pulumi:Stack l20ex-vm-dev create         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create         capture_locals=capture_locals)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/traceback.py", line 475, in _extract_from_extended_frame_gen
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     for f, (lineno, end_lineno, colno, end_colno) in frame_gen:
+ +  pulumi:pulumi:Stack l20ex-vm-dev create                                                      ^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/traceback.py", line 407, in _walk_tb_with_full_positions
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     positions = _get_code_position(tb.tb_frame.f_code, tb.tb_lasti)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/traceback.py", line 421, in _get_code_position
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     return next(itertools.islice(positions_gen, instruction_index // 2, None))
+ +  pulumi:pulumi:Stack l20ex-vm-dev create KeyboardInterrupt
+ +  pulumi:pulumi:Stack l20ex-vm-dev create During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack l20ex-vm-dev create Traceback (most recent call last):
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/opt/pulumi/pulumi-language-python-exec", line 244, in <module>
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     executor.shutdown(wait=True)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     t.join()
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create   File "/usr/local/lib/python3.13/threading.py", line 1095, in join
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     self._handle.join(timeout)
+ +  pulumi:pulumi:Stack l20ex-vm-dev create     ~~~~~~~~~~~~~~~~~^^^^^^^^^
+ +  pulumi:pulumi:Stack l20ex-vm-dev create KeyboardInterrupt
+    pulumi:pulumi:StackReference organization/l20ex-images/dev  1 error
+ +  pulumi:pulumi:Stack l20ex-vm-dev create 1 error; 90 messages
+Diagnostics:
+  pulumi:pulumi:StackReference (organization/l20ex-images/dev):
+    error: Preview failed: unknown stack "organization/l20ex-images/dev"
+
+  pulumi:pulumi:Stack (l20ex-vm-dev):
+    error: preview failed
+
+    Traceback (most recent call last):
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 900, in do_rpc_call
+        return monitor.ReadResource(req)
+               ~~~~~~~~~~~~~~~~~~~~^^^^^
+      File "/usr/local/lib/python3.13/site-packages/grpc/_channel.py", line 1168, in __call__
+        return _end_unary_response_blocking(state, call, False, None)
+      File "/usr/local/lib/python3.13/site-packages/grpc/_channel.py", line 999, in _end_unary_response_blocking
+        raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+    	status = StatusCode.UNAVAILABLE
+    	details = "resource monitor shut down while waiting on step's done channel"
+    	debug_error_string = "UNAVAILABLE:resource monitor shut down while waiting on step's done channel"
+    >
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 904, in do_read
+        resp = await asyncio.get_running_loop().run_in_executor(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            None, wrap_with_context(do_rpc_call)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        )
+        ^
+      File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+        result = self.fn(*self.args, **self.kwargs)
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/_context.py", line 39, in wrapper
+        return python_ctx.run(run, *args, **kwargs)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/_context.py", line 34, in run
+        return fn(*args, **kwargs)
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 902, in do_rpc_call
+        handle_grpc_error(exn)
+        ~~~~~~~~~~~~~~~~~^^^^^
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/settings.py", line 352, in handle_grpc_error
+        raise grpc_error_to_exception(exn)
+    pulumi.errors.RunError: Resource monitor has terminated, shutting down
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/opt/pulumi/pulumi-language-python-exec", line 232, in <module>
+        loop.run_until_complete(coro)
+        ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 713, in run_until_complete
+        self.run_forever()
+        ~~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 684, in run_forever
+        self._run_once()
+        ~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 2061, in _run_once
+        handle._run()
+        ~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/events.py", line 89, in _run
+        self._context.run(self._callback, *self._args)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 910, in do_read
+        f"exception when preparing or executing rpc: {traceback.format_exc()}"
+                                                      ~~~~~~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/traceback.py", line 212, in format_exc
+        return "".join(format_exception(sys.exception(), limit=limit, chain=chain))
+                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 154, in format_exception
+        te = TracebackException(type(value), value, tb, limit=limit, compact=True)
+      File "/usr/local/lib/python3.13/traceback.py", line 1051, in __init__
+        self.stack = StackSummary._extract_from_extended_frame_gen(
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+            _walk_tb_with_full_positions(exc_traceback),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            limit=limit, lookup_lines=lookup_lines,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            capture_locals=capture_locals)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 475, in _extract_from_extended_frame_gen
+        for f, (lineno, end_lineno, colno, end_colno) in frame_gen:
+                                                         ^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 407, in _walk_tb_with_full_positions
+        positions = _get_code_position(tb.tb_frame.f_code, tb.tb_lasti)
+      File "/usr/local/lib/python3.13/traceback.py", line 421, in _get_code_position
+        return next(itertools.islice(positions_gen, instruction_index // 2, None))
+    KeyboardInterrupt
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/opt/pulumi/pulumi-language-python-exec", line 244, in <module>
+        executor.shutdown(wait=True)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+        t.join()
+        ~~~~~~^^
+      File "/usr/local/lib/python3.13/threading.py", line 1095, in join
+        self._handle.join(timeout)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^
+    KeyboardInterrupt
+
+Resources:
+    + 1 to create
+    2 errored
+
+[exit 1]
+
+$ pulumi stack init dev
+Created stack 'dev'
+[exit 0]
+
+$ pulumi stack init dev
+error: stack 'organization/l20ex-images/dev' already exists
+[exit 1]
+
+$ pulumi stack select dev && pulumi stack ls
+NAME  LAST UPDATE  RESOURCE COUNT
+dev*  now          0
+[exit 0]
+
+## B5: up without -y in a non-interactive session, then with -y
+$ pulumi up --stack dev
+error: --yes or --skip-preview or --preview-only must be passed in to proceed when running in non-interactive mode
+[exit 2]
+
+$ pulumi up --stack dev -y
+Previewing update (dev):
+
+ +  pulumi:pulumi:Stack l20ex-images-dev create 
+ +  command:local:Command build-cheese-app-frontend-react create 
+ +  pulumi:pulumi:Stack l20ex-images-dev create 
+Outputs:
+    cheese-app-frontend-react-tags: [
+        [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010642"
+    ]
+
+Resources:
+    + 2 to create
+
+Updating (dev):
+
+ +  pulumi:pulumi:Stack l20ex-images-dev creating (0s) 
+ +  command:local:Command build-cheese-app-frontend-react creating (0s) 
+ +  command:local:Command build-cheese-app-frontend-react creating (0s) would build and push us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010643
+ +  command:local:Command build-cheese-app-frontend-react created (0.01s) would build and push us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010643
+ +  pulumi:pulumi:Stack l20ex-images-dev created (0.08s) 
+Outputs:
+    cheese-app-frontend-react-tags: [
+        [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010643"
+    ]
+
+Resources:
+    + 2 created
+
+Duration: 1s
+
+[exit 0]
+
+## B5 / Q2: the same up again, nothing changed in the code
+$ pulumi preview --stack dev --refresh
+Previewing update (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-images-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-images-dev refreshing 
+ ~  command:local:Command build-cheese-app-frontend-react refreshing 
+ ~  command:local:Command build-cheese-app-frontend-react refresh 
+    pulumi:pulumi:Stack l20ex-images-dev running 
+ ++ command:local:Command build-cheese-app-frontend-react create replacement [diff: ~create]
+ +- command:local:Command build-cheese-app-frontend-react replace [diff: ~create]
+ -- command:local:Command build-cheese-app-frontend-react delete original [diff: ~create]
+    pulumi:pulumi:Stack l20ex-images-dev  
+Outputs:
+  ~ cheese-app-frontend-react-tags: [
+      ~ [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010643" => "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010644"
+    ]
+
+Resources:
+    +-1 to replace
+    1 unchanged
+
+[exit 0]
+
+$ pulumi up --stack dev --refresh -y
+Previewing update (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-images-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-images-dev refreshing 
+ ~  command:local:Command build-cheese-app-frontend-react refreshing 
+ ~  command:local:Command build-cheese-app-frontend-react refresh 
+    pulumi:pulumi:Stack l20ex-images-dev running 
+ ++ command:local:Command build-cheese-app-frontend-react create replacement [diff: ~create]
+ +- command:local:Command build-cheese-app-frontend-react replace [diff: ~create]
+ -- command:local:Command build-cheese-app-frontend-react delete original [diff: ~create]
+    pulumi:pulumi:Stack l20ex-images-dev  
+Outputs:
+  ~ cheese-app-frontend-react-tags: [
+      ~ [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010643" => "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010645"
+    ]
+
+Resources:
+    +-1 to replace
+    1 unchanged
+
+Updating (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-images-dev refreshing (0s) 
+ ~  pulumi:pulumi:Stack l20ex-images-dev refreshing (0s) 
+ ~  command:local:Command build-cheese-app-frontend-react refreshing (0s) 
+ ~  command:local:Command build-cheese-app-frontend-react refresh (0.00s) 
+    pulumi:pulumi:Stack l20ex-images-dev running 
+ ++ command:local:Command build-cheese-app-frontend-react creating replacement (0s) [diff: ~create]
+ ++ command:local:Command build-cheese-app-frontend-react creating replacement (0s) [diff: ~create]; would build and push us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010646
+ ++ command:local:Command build-cheese-app-frontend-react created replacement (0.01s) [diff: ~create]; would build and push us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010646
+ +- command:local:Command build-cheese-app-frontend-react replacing (0s) [diff: ~create]; would build and push us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010646
+ +- command:local:Command build-cheese-app-frontend-react replaced (0.00s) [diff: ~create]; would build and push us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010646
+ -- command:local:Command build-cheese-app-frontend-react deleting original (0s) [diff: ~create]; would build and push us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010646
+ -- command:local:Command build-cheese-app-frontend-react deleted original (0.00s) [diff: ~create]; would build and push us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010646
+    pulumi:pulumi:Stack l20ex-images-dev  
+Outputs:
+  ~ cheese-app-frontend-react-tags: [
+      ~ [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010643" => "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010646"
+    ]
+
+Resources:
+    +-1 replaced
+    1 unchanged
+
+Duration: 1s
+
+[exit 0]
+
+## D2: a tag that only changes with the code
+$ pulumi config set fixed_tag 3ecef56 && pulumi up --stack dev -y >/dev/null && pulumi preview --stack dev --refresh
+Previewing update (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-images-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-images-dev refreshing 
+ ~  command:local:Command build-cheese-app-frontend-react refreshing 
+ ~  command:local:Command build-cheese-app-frontend-react refresh 
+    pulumi:pulumi:Stack l20ex-images-dev running 
+    command:local:Command build-cheese-app-frontend-react  
+    pulumi:pulumi:Stack l20ex-images-dev  
+Resources:
+    2 unchanged
+
+[exit 0]
+
+$ pulumi config rm fixed_tag && pulumi up --stack dev -y >/dev/null && pulumi stack output --stack dev
+Current stack outputs (1):
+    OUTPUT                          VALUE
+    cheese-app-frontend-react-tags  ["us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010651"]
+[exit 0]
+
+## B6: the VM stand-in: the container through the Docker provider, a remote.Command over SSH
+$ pulumi up --stack dev --refresh -y
+Previewing update (dev):
+
+ +  pulumi:pulumi:Stack l20ex-vm-dev create 
+ +  pulumi:pulumi:Stack l20ex-vm-dev create read pulumi:pulumi:StackReference organization/l20ex-images/dev
+ +  command:remote:Command format-persistent-disk create 
+@ previewing update....
+ +  pulumi:pulumi:Stack l20ex-vm-dev create read pulumi:pulumi:StackReference organization/l20ex-images/dev
+ +  docker:index:Container deploy-frontend-container create 
+ +  pulumi:pulumi:Stack l20ex-vm-dev create 
+Outputs:
+    container_name: "l20ex-web"
+
+Resources:
+    + 3 to create
+
+Updating (dev):
+
+ +  pulumi:pulumi:Stack l20ex-vm-dev creating (0s) 
+ +  pulumi:pulumi:Stack l20ex-vm-dev creating (0s) read pulumi:pulumi:StackReference organization/l20ex-images/dev
+ +  pulumi:pulumi:Stack l20ex-vm-dev creating (0s) read pulumi:pulumi:StackReference organization/l20ex-images/dev
+ +  command:remote:Command format-persistent-disk creating (0s) 
+ +  docker:index:Container deploy-frontend-container creating (0s) 
+ +  command:remote:Command format-persistent-disk creating (0s) created marker
+ +  command:remote:Command format-persistent-disk created (0.13s) created marker
+@ updating....
+ +  docker:index:Container deploy-frontend-container created (0.90s) 
+ +  pulumi:pulumi:Stack l20ex-vm-dev created (1s) 
+Outputs:
+    container_name: "l20ex-web"
+
+Resources:
+    + 3 created
+
+Duration: 2s
+
+[exit 0]
+
+$ host: docker ps --filter name=l20ex-web --format '{{.Names}}  {{.Image}}  {{.Status}}  {{.Ports}}'; docker inspect -f '{{index .Config.Labels "image-tag"}}' l20ex-web
+l20ex-web  nginx:stable  Up Less than a second  0.0.0.0:18081->80/tcp
+us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010651
+[exit 0]
+
+$ host: docker exec l20ex-sshd ls /home/student
+created-by-pulumi
+[exit 0]
+
+$ pulumi up --stack dev --refresh -y
+Previewing update (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing 
+ ~  command:remote:Command format-persistent-disk refreshing 
+ ~  docker:index:Container deploy-frontend-container refreshing 
+ ~  command:remote:Command format-persistent-disk refresh 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh 
+ ~  docker:index:Container deploy-frontend-container refresh 
+@ previewing update....
+    pulumi:pulumi:Stack l20ex-vm-dev running 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    command:remote:Command format-persistent-disk  
+    docker:index:Container deploy-frontend-container  
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Resources:
+    3 unchanged
+
+Updating (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing (0s) 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing (0s) 
+ ~  command:remote:Command format-persistent-disk refreshing (0s) 
+ ~  docker:index:Container deploy-frontend-container refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh (0.00s) 
+ ~  command:remote:Command format-persistent-disk refresh (0.01s) 
+ ~  docker:index:Container deploy-frontend-container refresh (0.30s) 
+@ updating....
+    pulumi:pulumi:Stack l20ex-vm-dev running 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    command:remote:Command format-persistent-disk  
+    docker:index:Container deploy-frontend-container  
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Outputs:
+    container_name: "l20ex-web"
+
+Resources:
+    3 unchanged
+
+Duration: 2s
+
+[exit 0]
+
+## B6: a new images up (new timestamp), then the VM stack
+$ pulumi up --stack dev -y >/dev/null; pulumi stack output --stack dev
+Current stack outputs (1):
+    OUTPUT                          VALUE
+    cheese-app-frontend-react-tags  ["us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010701"]
+[exit 0]
+
+$ pulumi preview --stack dev --refresh --diff 2>&1 | grep -E '^ *[-+~]|replace|image-tag|Resources|to (create|update|replace|delete)|unchanged'
+~ pulumi:pulumi:Stack: (refresh)
+    ~ pulumi:pulumi:StackReference: (refresh)
+        --outputs:--
+      ~ outputs          : {
+          ~ cheese-app-frontend-react-tags: [
+              ~ [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010651" => "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010701"
+    +-docker:index/container:Container: (replace)
+      ~ labels: [
+          ~ [0]: {
+                  ~ value: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010651" => "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:20261106010701"
+Resources:
+    +-1 to replace
+    2 unchanged
+[exit 0]
+
+$ pulumi up --stack dev --refresh -y
+Previewing update (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  command:remote:Command format-persistent-disk refreshing 
+ ~  docker:index:Container deploy-frontend-container refreshing 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing 
+ ~  command:remote:Command format-persistent-disk refresh 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh 
+ ~  docker:index:Container deploy-frontend-container refresh 
+@ previewing update....
+    pulumi:pulumi:Stack l20ex-vm-dev running 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    command:remote:Command format-persistent-disk  
+ -- docker:index:Container deploy-frontend-container delete original 
+ +- docker:index:Container deploy-frontend-container replace [diff: ~labels]
+ ++ docker:index:Container deploy-frontend-container create replacement [diff: ~labels]
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Resources:
+    +-1 to replace
+    2 unchanged
+
+Updating (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing (0s) 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh (0.00s) 
+ ~  command:remote:Command format-persistent-disk refreshing (0s) 
+ ~  docker:index:Container deploy-frontend-container refreshing (0s) 
+ ~  command:remote:Command format-persistent-disk refresh (0.02s) 
+ ~  docker:index:Container deploy-frontend-container refresh (0.33s) 
+@ updating....
+    pulumi:pulumi:Stack l20ex-vm-dev running 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    command:remote:Command format-persistent-disk  
+ -- docker:index:Container deploy-frontend-container deleting original (0s) 
+ -- docker:index:Container deploy-frontend-container deleted original (0.25s) 
+ +- docker:index:Container deploy-frontend-container replacing (0s) [diff: ~labels]
+ +- docker:index:Container deploy-frontend-container replaced (0.00s) [diff: ~labels]
+ ++ docker:index:Container deploy-frontend-container creating replacement (0s) [diff: ~labels]
+@ updating....
+ ++ docker:index:Container deploy-frontend-container created replacement (0.61s) [diff: ~labels]
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Outputs:
+    container_name: "l20ex-web"
+
+Resources:
+    +-1 replaced
+    2 unchanged
+
+Duration: 2s
+
+[exit 0]
+
+## B7: drift: someone removes the container by hand
+$ host: docker rm -f l20ex-web
+l20ex-web
+[exit 0]
+
+$ pulumi preview --stack dev
+Previewing update (dev):
+
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+@ previewing update....
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Resources:
+    3 unchanged
+
+[exit 0]
+
+$ pulumi preview --stack dev --refresh
+Previewing update (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing 
+ ~  command:remote:Command format-persistent-disk refreshing 
+ ~  docker:index:Container deploy-frontend-container refreshing 
+ ~  command:remote:Command format-persistent-disk refresh 
+ ~  docker:index:Container deploy-frontend-container refresh 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh 
+@ previewing update....
+    pulumi:pulumi:Stack l20ex-vm-dev running 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    command:remote:Command format-persistent-disk  
+ +  docker:index:Container deploy-frontend-container create 
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Resources:
+    + 1 to create
+    2 unchanged
+
+[exit 0]
+
+$ pulumi up --stack dev --refresh -y
+Previewing update (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing 
+ ~  command:remote:Command format-persistent-disk refreshing 
+ ~  docker:index:Container deploy-frontend-container refreshing 
+ ~  command:remote:Command format-persistent-disk refresh 
+ ~  docker:index:Container deploy-frontend-container refresh 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh 
+@ previewing update....
+    pulumi:pulumi:Stack l20ex-vm-dev running 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    command:remote:Command format-persistent-disk  
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+ +  docker:index:Container deploy-frontend-container create 
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Resources:
+    + 1 to create
+    2 unchanged
+
+Updating (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing (0s) 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh (0.00s) 
+ ~  command:remote:Command format-persistent-disk refreshing (0s) 
+ ~  docker:index:Container deploy-frontend-container refreshing (0s) 
+ ~  command:remote:Command format-persistent-disk refresh (0.00s) 
+ ~  docker:index:Container deploy-frontend-container refresh (0.03s) 
+    pulumi:pulumi:Stack l20ex-vm-dev running 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+@ updating....
+    command:remote:Command format-persistent-disk  
+ +  docker:index:Container deploy-frontend-container creating (0s) 
+ +  docker:index:Container deploy-frontend-container created (0.70s) 
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Outputs:
+    container_name: "l20ex-web"
+
+Resources:
+    + 1 created
+    2 unchanged
+
+Duration: 2s
+
+[exit 0]
+
+## B7 / Q4: drift a command cannot see
+$ host: docker exec l20ex-sshd rm /home/student/created-by-pulumi && docker exec l20ex-sshd ls -A /home/student | grep -c created || true
+0
+[exit 0]
+
+$ pulumi preview --stack dev --refresh
+Previewing update (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing 
+ ~  docker:index:Container deploy-frontend-container refreshing 
+ ~  command:remote:Command format-persistent-disk refreshing 
+ ~  command:remote:Command format-persistent-disk refresh 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh 
+ ~  docker:index:Container deploy-frontend-container refresh 
+@ previewing update....
+    pulumi:pulumi:Stack l20ex-vm-dev running 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    command:remote:Command format-persistent-disk  
+    docker:index:Container deploy-frontend-container  
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Resources:
+    3 unchanged
+
+[exit 0]
+
+## C9: a key with a passphrase
+$ pulumi config set try_passphrase_key true && pulumi up --stack dev -y
+Previewing update (dev):
+
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+ +  command:remote:Command with-passphrase-key create 
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+@ previewing update....
+    pulumi:pulumi:Stack l20ex-vm-dev  
+Resources:
+    + 1 to create
+    3 unchanged
+
+Updating (dev):
+
+ +  command:remote:Command with-passphrase-key creating (0s) 
+ +  command:remote:Command with-passphrase-key creating (0s) error: ssh: this private key is passphrase protected
+ +  command:remote:Command with-passphrase-key **creating failed** error: ssh: this private key is passphrase protected
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running read pulumi:pulumi:StackReference organization/l20ex-images/dev
+    pulumi:pulumi:Stack l20ex-vm-dev running error: update failed
+    pulumi:pulumi:Stack l20ex-vm-dev running Traceback (most recent call last):
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1346, in do_rpc_call
+    pulumi:pulumi:Stack l20ex-vm-dev running     return monitor.RegisterResource(req)
+    pulumi:pulumi:Stack l20ex-vm-dev running            ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/grpc/_channel.py", line 1168, in __call__
+    pulumi:pulumi:Stack l20ex-vm-dev running     return _end_unary_response_blocking(state, call, False, None)
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/grpc/_channel.py", line 999, in _end_unary_response_blocking
+    pulumi:pulumi:Stack l20ex-vm-dev running     raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+    pulumi:pulumi:Stack l20ex-vm-dev running     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+    pulumi:pulumi:Stack l20ex-vm-dev running 	status = StatusCode.UNAVAILABLE
+    pulumi:pulumi:Stack l20ex-vm-dev running 	details = "resource monitor shut down while waiting on step's done channel"
+    pulumi:pulumi:Stack l20ex-vm-dev running 	debug_error_string = "UNAVAILABLE:resource monitor shut down while waiting on step's done channel"
+    pulumi:pulumi:Stack l20ex-vm-dev running >
+    pulumi:pulumi:Stack l20ex-vm-dev running During handling of the above exception, another exception occurred:
+    pulumi:pulumi:Stack l20ex-vm-dev running Traceback (most recent call last):
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1350, in do_register
+    pulumi:pulumi:Stack l20ex-vm-dev running     resp = await asyncio.get_running_loop().run_in_executor(
+    pulumi:pulumi:Stack l20ex-vm-dev running            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running         None, wrap_with_context(do_rpc_call)
+    pulumi:pulumi:Stack l20ex-vm-dev running         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running     )
+    pulumi:pulumi:Stack l20ex-vm-dev running     ^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    pulumi:pulumi:Stack l20ex-vm-dev running     result = self.fn(*self.args, **self.kwargs)
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/_context.py", line 39, in wrapper
+    pulumi:pulumi:Stack l20ex-vm-dev running     return python_ctx.run(run, *args, **kwargs)
+    pulumi:pulumi:Stack l20ex-vm-dev running            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/_context.py", line 34, in run
+    pulumi:pulumi:Stack l20ex-vm-dev running     return fn(*args, **kwargs)
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1348, in do_rpc_call
+    pulumi:pulumi:Stack l20ex-vm-dev running     handle_grpc_error(exn)
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~~~~~~~^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/settings.py", line 352, in handle_grpc_error
+    pulumi:pulumi:Stack l20ex-vm-dev running     raise grpc_error_to_exception(exn)
+    pulumi:pulumi:Stack l20ex-vm-dev running pulumi.errors.RunError: Resource monitor has terminated, shutting down
+    pulumi:pulumi:Stack l20ex-vm-dev running During handling of the above exception, another exception occurred:
+    pulumi:pulumi:Stack l20ex-vm-dev running Traceback (most recent call last):
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/opt/pulumi/pulumi-language-python-exec", line 232, in <module>
+    pulumi:pulumi:Stack l20ex-vm-dev running     loop.run_until_complete(coro)
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 713, in run_until_complete
+    pulumi:pulumi:Stack l20ex-vm-dev running     self.run_forever()
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~~~~~~^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 684, in run_forever
+    pulumi:pulumi:Stack l20ex-vm-dev running     self._run_once()
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~~~~^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 2061, in _run_once
+    pulumi:pulumi:Stack l20ex-vm-dev running     handle._run()
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/asyncio/events.py", line 89, in _run
+    pulumi:pulumi:Stack l20ex-vm-dev running     self._context.run(self._callback, *self._args)
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1355, in do_register
+    pulumi:pulumi:Stack l20ex-vm-dev running     f"exception when preparing or executing rpc for {ty=} {name=}: {traceback.format_exc()}"
+    pulumi:pulumi:Stack l20ex-vm-dev running                                                                     ~~~~~~~~~~~~~~~~~~~~^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/traceback.py", line 212, in format_exc
+    pulumi:pulumi:Stack l20ex-vm-dev running     return "".join(format_exception(sys.exception(), limit=limit, chain=chain))
+    pulumi:pulumi:Stack l20ex-vm-dev running                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/traceback.py", line 154, in format_exception
+    pulumi:pulumi:Stack l20ex-vm-dev running     te = TracebackException(type(value), value, tb, limit=limit, compact=True)
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/traceback.py", line 1141, in __init__
+    pulumi:pulumi:Stack l20ex-vm-dev running     context = TracebackException(
+    pulumi:pulumi:Stack l20ex-vm-dev running         type(e.__context__),
+    pulumi:pulumi:Stack l20ex-vm-dev running     ...<6 lines>...
+    pulumi:pulumi:Stack l20ex-vm-dev running         max_group_depth=max_group_depth,
+    pulumi:pulumi:Stack l20ex-vm-dev running         _seen=_seen)
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/traceback.py", line 1051, in __init__
+    pulumi:pulumi:Stack l20ex-vm-dev running     self.stack = StackSummary._extract_from_extended_frame_gen(
+    pulumi:pulumi:Stack l20ex-vm-dev running                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+    pulumi:pulumi:Stack l20ex-vm-dev running         _walk_tb_with_full_positions(exc_traceback),
+    pulumi:pulumi:Stack l20ex-vm-dev running         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running         limit=limit, lookup_lines=lookup_lines,
+    pulumi:pulumi:Stack l20ex-vm-dev running         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running         capture_locals=capture_locals)
+    pulumi:pulumi:Stack l20ex-vm-dev running         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/traceback.py", line 499, in _extract_from_extended_frame_gen
+    pulumi:pulumi:Stack l20ex-vm-dev running     f.line
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/traceback.py", line 372, in line
+    pulumi:pulumi:Stack l20ex-vm-dev running     self._set_lines()
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~~~~~^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/traceback.py", line 350, in _set_lines
+    pulumi:pulumi:Stack l20ex-vm-dev running     line = linecache.getline(self.filename, lineno).rstrip()
+    pulumi:pulumi:Stack l20ex-vm-dev running            ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/linecache.py", line 26, in getline
+    pulumi:pulumi:Stack l20ex-vm-dev running     lines = getlines(filename, module_globals)
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/linecache.py", line 41, in getlines
+    pulumi:pulumi:Stack l20ex-vm-dev running     return updatecache(filename, module_globals)
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/linecache.py", line 168, in updatecache
+    pulumi:pulumi:Stack l20ex-vm-dev running     lines = fp.readlines()
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "<frozen codecs>", line 322, in decode
+    pulumi:pulumi:Stack l20ex-vm-dev running KeyboardInterrupt
+    pulumi:pulumi:Stack l20ex-vm-dev running During handling of the above exception, another exception occurred:
+    pulumi:pulumi:Stack l20ex-vm-dev running Traceback (most recent call last):
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/opt/pulumi/pulumi-language-python-exec", line 244, in <module>
+    pulumi:pulumi:Stack l20ex-vm-dev running     executor.shutdown(wait=True)
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+    pulumi:pulumi:Stack l20ex-vm-dev running     t.join()
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~^^
+    pulumi:pulumi:Stack l20ex-vm-dev running   File "/usr/local/lib/python3.13/threading.py", line 1095, in join
+    pulumi:pulumi:Stack l20ex-vm-dev running     self._handle.join(timeout)
+    pulumi:pulumi:Stack l20ex-vm-dev running     ~~~~~~~~~~~~~~~~~^^^^^^^^^
+    pulumi:pulumi:Stack l20ex-vm-dev running KeyboardInterrupt
+    pulumi:pulumi:Stack l20ex-vm-dev **failed** 1 error; 104 messages
+Diagnostics:
+  command:remote:Command (with-passphrase-key):
+    error: ssh: this private key is passphrase protected
+
+  pulumi:pulumi:Stack (l20ex-vm-dev):
+    error: update failed
+
+    Traceback (most recent call last):
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1346, in do_rpc_call
+        return monitor.RegisterResource(req)
+               ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+      File "/usr/local/lib/python3.13/site-packages/grpc/_channel.py", line 1168, in __call__
+        return _end_unary_response_blocking(state, call, False, None)
+      File "/usr/local/lib/python3.13/site-packages/grpc/_channel.py", line 999, in _end_unary_response_blocking
+        raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+    	status = StatusCode.UNAVAILABLE
+    	details = "resource monitor shut down while waiting on step's done channel"
+    	debug_error_string = "UNAVAILABLE:resource monitor shut down while waiting on step's done channel"
+    >
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1350, in do_register
+        resp = await asyncio.get_running_loop().run_in_executor(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            None, wrap_with_context(do_rpc_call)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        )
+        ^
+      File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+        result = self.fn(*self.args, **self.kwargs)
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/_context.py", line 39, in wrapper
+        return python_ctx.run(run, *args, **kwargs)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/_context.py", line 34, in run
+        return fn(*args, **kwargs)
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1348, in do_rpc_call
+        handle_grpc_error(exn)
+        ~~~~~~~~~~~~~~~~~^^^^^
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/settings.py", line 352, in handle_grpc_error
+        raise grpc_error_to_exception(exn)
+    pulumi.errors.RunError: Resource monitor has terminated, shutting down
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/opt/pulumi/pulumi-language-python-exec", line 232, in <module>
+        loop.run_until_complete(coro)
+        ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 713, in run_until_complete
+        self.run_forever()
+        ~~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 684, in run_forever
+        self._run_once()
+        ~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 2061, in _run_once
+        handle._run()
+        ~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/events.py", line 89, in _run
+        self._context.run(self._callback, *self._args)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1355, in do_register
+        f"exception when preparing or executing rpc for {ty=} {name=}: {traceback.format_exc()}"
+                                                                        ~~~~~~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/traceback.py", line 212, in format_exc
+        return "".join(format_exception(sys.exception(), limit=limit, chain=chain))
+                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 154, in format_exception
+        te = TracebackException(type(value), value, tb, limit=limit, compact=True)
+      File "/usr/local/lib/python3.13/traceback.py", line 1141, in __init__
+        context = TracebackException(
+            type(e.__context__),
+        ...<6 lines>...
+            max_group_depth=max_group_depth,
+            _seen=_seen)
+      File "/usr/local/lib/python3.13/traceback.py", line 1051, in __init__
+        self.stack = StackSummary._extract_from_extended_frame_gen(
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+            _walk_tb_with_full_positions(exc_traceback),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            limit=limit, lookup_lines=lookup_lines,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            capture_locals=capture_locals)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 499, in _extract_from_extended_frame_gen
+        f.line
+      File "/usr/local/lib/python3.13/traceback.py", line 372, in line
+        self._set_lines()
+        ~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/traceback.py", line 350, in _set_lines
+        line = linecache.getline(self.filename, lineno).rstrip()
+               ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/linecache.py", line 26, in getline
+        lines = getlines(filename, module_globals)
+      File "/usr/local/lib/python3.13/linecache.py", line 41, in getlines
+        return updatecache(filename, module_globals)
+      File "/usr/local/lib/python3.13/linecache.py", line 168, in updatecache
+        lines = fp.readlines()
+      File "<frozen codecs>", line 322, in decode
+    KeyboardInterrupt
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/opt/pulumi/pulumi-language-python-exec", line 244, in <module>
+        executor.shutdown(wait=True)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+        t.join()
+        ~~~~~~^^
+      File "/usr/local/lib/python3.13/threading.py", line 1095, in join
+        self._handle.join(timeout)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^
+    KeyboardInterrupt
+
+Outputs:
+  - container_name: "l20ex-web"
+
+Resources:
+    2 unchanged
+    2 errored
+
+Duration: 1s
+
+[exit 1]
+
+$ pulumi config rm try_passphrase_key && pulumi up --stack dev -y >/dev/null; echo removed the flag
+removed the flag
+[exit 0]
+
+## C7: the exported ssh command without -i
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 12222 student@127.0.0.1 echo logged in
+Warning: Permanently added '[127.0.0.1]:12222' (ED25519) to the list of known hosts.
+student@127.0.0.1: Permission denied (publickey).
+[exit 255]
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 12222 -i /work/keys/ssh-key-deployment student@127.0.0.1 echo logged in
+Warning: Permanently added '[127.0.0.1]:12222' (ED25519) to the list of known hosts.
+logged in
+[exit 0]
+
+## Q5: destroy, and what is left
+$ host: docker exec l20ex-sshd touch /home/student/created-by-pulumi && docker exec l20ex-sshd ls /home/student
+created-by-pulumi
+[exit 0]
+
+$ pulumi destroy --stack dev --refresh -y
+Previewing destroy (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing 
+ ~  command:remote:Command format-persistent-disk refreshing 
+ ~  docker:index:Container deploy-frontend-container refreshing 
+ ~  command:remote:Command format-persistent-disk refresh 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh 
+ ~  docker:index:Container deploy-frontend-container refresh 
+ -  docker:index:Container deploy-frontend-container delete 
+ -  command:remote:Command format-persistent-disk delete 
+ -  pulumi:pulumi:Stack l20ex-vm-dev delete 
+ -  pulumi:pulumi:Stack l20ex-vm-dev delete 
+Outputs:
+  - container_name: "l20ex-web"
+
+Resources:
+    - 3 to delete
+
+Destroying (dev):
+
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing (0s) 
+ ~  pulumi:pulumi:Stack l20ex-vm-dev refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refreshing (0s) 
+ ~  command:remote:Command format-persistent-disk refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/l20ex-images/dev refresh (0.00s) 
+ ~  docker:index:Container deploy-frontend-container refreshing (0s) 
+ ~  command:remote:Command format-persistent-disk refresh (0.00s) 
+ ~  docker:index:Container deploy-frontend-container refresh (0.28s) 
+ -  docker:index:Container deploy-frontend-container deleting (0s) 
+ -  docker:index:Container deploy-frontend-container deleted (0.27s) 
+ -  command:remote:Command format-persistent-disk deleting (0s) 
+ -  command:remote:Command format-persistent-disk deleted (0.00s) 
+ -  pulumi:pulumi:Stack l20ex-vm-dev deleting (0s) 
+ -  pulumi:pulumi:Stack l20ex-vm-dev deleted (0.00s) 
+Outputs:
+  - container_name: "l20ex-web"
+
+Resources:
+    - 3 deleted
+
+Duration: 1s
+
+The resources in the stack have been deleted, but the history and configuration associated with the stack are still maintained. 
+If you want to remove the stack completely, run `pulumi stack rm dev`.
+[exit 0]
+
+$ host: docker ps -a --filter name=l20ex-web --format '{{.Names}}' | wc -l; docker exec l20ex-sshd ls /home/student
+0
+created-by-pulumi
+[exit 0]
+
+$ pulumi stack ls; pulumi stack output --stack dev
+NAME  LAST UPDATE  RESOURCE COUNT
+dev*  now          0
+Current stack outputs (0):
+    No output values currently in this stack
+[exit 0]
+
+$ pulumi destroy --stack dev -y
+Previewing destroy (dev):
+
+ -  command:local:Command build-cheese-app-frontend-react delete 
+ -  pulumi:pulumi:Stack l20ex-images-dev delete 
+ -  pulumi:pulumi:Stack l20ex-images-dev delete 
+    pulumi:pulumi:Stack l20ex-images-dev  
+Resources:
+    - 2 to delete
+
+Destroying (dev):
+
+ -  command:local:Command build-cheese-app-frontend-react deleting (0s) 
+ -  command:local:Command build-cheese-app-frontend-react deleted (0.00s) 
+ -  pulumi:pulumi:Stack l20ex-images-dev deleting (0s) 
+ -  pulumi:pulumi:Stack l20ex-images-dev deleted (0.00s) 
+    pulumi:pulumi:Stack l20ex-images-dev  
+Resources:
+    - 2 deleted
+
+Duration: 1s
+
+The resources in the stack have been deleted, but the history and configuration associated with the stack are still maintained. 
+If you want to remove the stack completely, run `pulumi stack rm dev`.
+[exit 0]
+
+$ pulumi stack ls --all
+NAME                       LAST UPDATE   RESOURCE COUNT
+dev*                       now           0
+organization/l20ex-vm/dev  1 second ago  0
+[exit 0]
+
+$ pulumi stack rm dev -y
+Stack 'dev' has been removed!
+[exit 0]
+
+$ pulumi stack ls --all
+NAME  LAST UPDATE  RESOURCE COUNT
+dev*  now          0
+[exit 0]
+
