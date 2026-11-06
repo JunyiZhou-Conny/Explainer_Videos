@@ -445,3 +445,15 @@ upsert: {ipa: "ˈʌpsɜːt", say: "UP-sert"}
 Upsert: {ipa: "ˈʌpsɜːt", say: "UP-sert"}
 upserts: {ipa: "ˈʌpsɜːts", say: "UP-serts"}
 or updates: {ipa: "ɔːɹ ʌpdˈeɪts", say: "or up-DATES"}
+# AC215 L18 (spoken review of videos/ac215-l18-apis-frontend). Vite is "veet", not "vight"; the probe
+# paths are "health zee" / "ready zee" (espeak: "healths", "reddiz"); 5173 as the series says ports;
+# "cli dot py" is a phrase key (the existing cli.py key does not match the spoken form). None of these
+# words is in another video's SAY (grep -w videos/*/script.md, 2026-11-05).
+Vite: {ipa: "vˈiːt", say: "veet"}
+vite: {ipa: "vˈiːt", say: "veet"}
+healthz: {ipa: "hˈɛlθ zˈiː", say: "health zee"}
+Healthz: {ipa: "hˈɛlθ zˈiː", say: "health zee"}
+readyz: {ipa: "ɹˈɛdi zˈiː", say: "ready zee"}
+Readyz: {ipa: "ɹˈɛdi zˈiː", say: "ready zee"}
+"5173": {ipa: "fˈɪfti wˈʌn sˈɛvənti θɹˈiː", say: "fifty-one seventy-three"}
+"cli dot py": {ipa: "sˌiːˌɛlˈaɪ dˈɑːt pˈaɪ", say: "C-L-I dot pie"}
