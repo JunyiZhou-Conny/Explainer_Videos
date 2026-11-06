@@ -66,6 +66,17 @@ Deviations from SHOW:
   badge sit just above the VM's edge, joined to it by a short GREY line; Vertex AI is a BLUE box above
   the VM.
 - Beat 11: the V3 picture has no VM outline around it (gates = the VM's firewall doors).
+- Beat 0: a short PINK upper run joins the 'deploy-images' card to TimestampPipe's tube, so the pipe
+  runs from the images stack to the VM stack (the ticket sits over it until it slides down).
+- Beat 2: the appnetwork drop runs down the frontend box's left edge, clear of front_port_fix()'s
+  'HTTP 80' ghost (centred under the box) and of the 'appnetwork' label.
+- Beat 8: the ponder card covers the left half (laptop's arrow, registry, bubbles 1-2), so the VM and
+  the two keys the question is about stay in view.
+- Beat 10: the small GREEN key labelling the Vertex AI arrow sits between GCP's top edge and Vertex AI.
+- Beat 12: the ps list is typed at the start of the line (it stays up ~6 s); the tracker caption flashes
+  at 'the README checks' and the NAMES cells at 'list the containers'. A GREY row tag 'public image: no
+  /status yet' sits beside vm/53's '404 Not Found' (vm/34, vm/49: the public image predates v3's
+  /status, said in S06), so the 404 does not contradict beat 11.
 - Beat 12: vm/52's rows are 148 characters wide: printed from the PORTS column on with a GREY '…'
   (as S07 does with vm/47); vm/53:53 and vm/55:9 are wrapped.
 """
@@ -497,10 +508,11 @@ class ContainersOverSsh(VoiceScene):
             vo.wait_until("Which would you hand the VM")
             self.play(Indicate(md.parts["vm"].frame, color=TURN, scale_factor=1.02), run_time=0.7)
             md.heal(self)
-        # the card covers the left half (registry, bubbles 1-2): the VM and the two keys the
+        # the card covers the left half (registry, bubbles 1-2, all of them): the VM and the two keys the
         # question is about stay in view
+        pc_r = md.parts["registry"].frame.get_right()[0] + 0.05      # hides the registry whole
         pc = ponder(self, "The running app needs one key.\nWhich would you hand the VM,\nand why not the other?", 8,
-                    center=(-3.35, -1.6), width=6.2)
+                    center=((pc_r - 6.58) / 2, -1.8), width=pc_r + 6.58)
         assert pc.get_right()[0] < md.parts["vm"].frame.get_left()[0] - 0.1, (pc.get_right(), md.parts["vm"].frame.get_left())
         assert pc.get_top()[1] < md.parts["laptop"].frame.get_bottom()[1] - 0.05, pc.get_top()
         assert pc.get_left()[0] > -6.6 and pc.get_bottom()[1] > -3.55, (pc.get_left(), pc.get_bottom())
@@ -650,9 +662,6 @@ class ContainersOverSsh(VoiceScene):
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t, shift=UP * 0.3), run_time=0.6)
             self.play(FadeIn(stand, shift=DOWN * 0.1), run_time=0.4)
-            vo.wait_until("the README checks")
-            self.play(Indicate(trk.caption, color=TURN, scale_factor=1.08), run_time=0.6)
-            vo.wait_until("list the containers")
             type_capture(self, t, V52, type_time=0.8)
             rows = out(self, t, PS_ROWS, run_time=0.5)
             for r in rows:
@@ -662,6 +671,12 @@ class ContainersOverSsh(VoiceScene):
             self.add(t)
             gh = row_tag("Pulumi: vector-db", S.GREY)
             pin(self, rows[-1], beside(gh, rows[-1], buff=0.3), run_time=0.3)
+            vo.wait_until("the README checks")
+            self.play(Indicate(trk.caption, color=TURN, scale_factor=1.08), run_time=0.6)
+            vo.wait_until("list the containers")
+            self.play(Indicate(VGroup(*[substring(r, r.text.split()[-1]) for r in rows[1:]]), color=CONTAINER,
+                               scale_factor=1.06), run_time=0.6)
+            self.add(t)
             vo.wait_until("follow each log")
             type_capture(self, t, V53, type_time=0.3)
             out(self, t, V53.at(2, "…", 26, "…", 53), wrap=True, run_time=0.4)
