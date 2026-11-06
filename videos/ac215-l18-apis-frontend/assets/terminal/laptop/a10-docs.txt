@@ -1,0 +1,8 @@
+$ curl -s http://localhost:9000/docs | grep -E '<title>|openapi.json|swagger'
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+    <title>API Server - Swagger UI</title>
+    <div id="swagger-ui">
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+        url: '/openapi.json',
+    "dom_id": "#swagger-ui",
+[exit 0]

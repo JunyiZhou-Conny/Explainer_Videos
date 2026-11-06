@@ -1,0 +1,22 @@
+# illustration source, NOT a capture: cheese-app-v2 @ 447b5c3 README.md:13-18 (Prerequisites), verbatim.
+# The Google Cloud project, the Vertex AI API and the key cannot be made here (no GCP account).
+## Prerequisites
+* Docker, with ports 3000, 8000 and 9000 free
+* A Google Cloud project with the Vertex AI API enabled
+* The `ml-workflow.json` service account key from the `ml-workflow` tutorial. The account needs the
+  **Vertex AI User** role.
+* About 10 GB of free disk space. The API's image holds TensorFlow.
+
+# ...and where the key comes from: dlops-io/ml-workflow @ 3730009 README.md:100-112 (L15), verbatim.
+| | |
+|---|---|
+| **Name** | `ml-workflow` |
+| **Key file** | `secrets/ml-workflow.json` |
+
+**Roles**
+
+| Role | ID | Why |
+|---|---|---|
+| Storage Admin | `roles/storage.admin` | Read and write the bucket |
+| Vertex AI Administrator | `roles/aiplatform.admin` | Upload models, create endpoints, run jobs |
+| Service Account User | `roles/iam.serviceAccountUser` | Lets pipeline steps run as this account |

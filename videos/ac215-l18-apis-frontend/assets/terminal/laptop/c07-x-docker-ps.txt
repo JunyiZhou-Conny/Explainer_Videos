@@ -1,0 +1,5 @@
+$ docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'; docker image inspect chromadb/chroma:latest --format '{{.Id}} {{.Created}}' 2>&1 | cut -c1-90
+NAMES                  IMAGE                    STATUS          PORTS
+cheese-app-vector-db   chromadb/chroma:latest   Up 32 seconds   0.0.0.0:8000->8000/tcp
+sha256:a221f3391b5eabc5b0b293b65958a28f10d7015be67e4d8cc33a5e4e60e6f3ca 2026-05-05T01:49:4
+[exit 0]

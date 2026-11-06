@@ -1,0 +1,423 @@
+# zh narration for S10-S16 (part 2, group g2, the frontend half: React with Vite, one origin and the Vite proxy,
+# production with nginx, Compose and cleanup, Tutorial 24 on branch 2025, CORS and the preflight, the recap),
+# sentence-aligned to script.md: one zh sentence per English sentence (explainer.voice.split_sentences;
+# 70 SAY lines, 152 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (A9, D9): S10[6], S13[2],
+# S15[0] open as the English does, and S13[9].1 keeps its condition last.
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A6):
+# node_modules -> node modules; uvicorn_server -> uvicorn server; square_root -> square root; Ctrl+C -> Ctrl-C;
+# access-control-allow-origin: * -> access-control-allow-origin，星号; max-age=600 -> 600 秒.
+# Log text the SAY quotes is copied in its screen form (A13): host not found in upstream, Welcome to AC215,
+# application startup complete, OPTIONS 200. Lowercase artifacts never open a sentence (A5): Nginx does. -> 是 nginx。;
+# Main dropped it -> 录制当天 main 分支……; Git switch 2025 -> 命令 git switch 2025……; Prune keeps -> 命令 prune……
+# The instructor rule (A16): the narration of S10-S16 names no instructor (the lecture -> 课上, the slide -> 课件 /
+# 课上的生产环境那页).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: file names, paths,
+# cd lines, localhost:3000 / localhost:8080 / localhost:9000, /api, node_modules, :prod, Ctrl+C, git switch 2025,
+# docker compose up --build, frontend-simple, vector-db, uvicorn_server, access-control-allow-origin: *,
+# api.service:app, --host / --reload, square_root, /healthz, /readyz); null = the SAY text.
+S10:
+- en: "Part 2: the frontend. The API is up on port 9000; now a page that uses it."
+  zh:
+  - "第 2 部分：前端。"
+  - "API 已经在 port 9000 上跑起来了；现在来做一个用它的页面。"
+- en: "The lecture starts with one HTML page per feature. Each carries its own header, script and style; nothing is shared, and every click loads a whole page: slow."
+  zh:
+  - "课上从每个功能一个 HTML 页面讲起。"
+  - "每个页面都带着自己的页头、脚本和样式；什么都不共享，每次点击都要加载整个页面：很慢。"
+- en: "The fix is a single-page app built from components, with a framework. The lecture names the common ones and picks React."
+  zh:
+  - "解决办法是一个用组件搭起来的单页应用，配一个框架。"
+  - "课上列了常见的几个，选了 React。"
+- en: "In React, a component is a function that returns markup, written in JSX. The app is one shell: a header defined only once, a footer, and in between a block that changes with each page."
+  zh:
+  - "在 React 里，一个组件就是一个返回标记的函数，用 JSX 来写。"
+  - "整个应用是一个外壳：一个只定义一次的页头，一个页脚，中间一块随页面变化。"
+- en: "Today's repository uses React with Vite, a development server and build tool, plus React Router. In main dot jsx, a route table maps each address to a page, with a star that catches everything else."
+  zh:
+  - "今天的 repo 用的是 React 加 Vite，Vite 是开发服务器兼构建工具，再加上 React Router。"
+  - "在 main.jsx 里，一张路由表把每个地址对应到一个页面，还有一个兜住其余一切的星号。"
+  en_display:
+  - null
+  - "In main.jsx, a route table maps each address to a page, with a star that catches everything else."
+- en: "In App dot jsx, the header and footer are written once, and between them sits the outlet, the window where the current page appears."
+  zh:
+  - "在 App.jsx 里，页头和页脚只写一次，中间是 outlet，也就是显示当前页面的那扇窗口。"
+  en_display:
+  - "In App.jsx, the header and footer are written once, and between them sits the outlet, the window where the current page appears."
+- en: "React setup, in a new terminal from the cheese app v2 folder: step 1, change into src, frontend react, and run docker-shell.sh. It mounts your code, keeps node modules in a named volume, publishes 3000 to port 5173, and joins the network. Pause and run it."
+  zh:
+  - "React 前端设置，在一个新终端里，从 cheese-app-v2 目录开始：第 1 步，进到 src/frontend-react，运行 docker-shell.sh。"
+  - "它挂载你的代码，把 node modules 放在一个命名的 volume 里，把 3000 发布到 port 5173，再加入网络。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - "React setup, in a new terminal from the cheese-app-v2 folder: step 1, cd src/frontend-react, and run docker-shell.sh."
+  - "It mounts your code, keeps node_modules in a named volume, publishes 3000 to port 5173, and joins the network."
+  - null
+- en: "The banner shows Node and npm. Your first run installs the dependencies into the volume; ours was already up to date."
+  zh:
+  - "横幅显示了 Node 和 npm。"
+  - "你第一次运行时会把依赖装进这个 volume；我们的已经是最新的了。"
+- en: "Step 2: npm run dev. Vite is ready and prints two addresses on 5173; both are inside the container, so on your laptop, use 3000. Pause and start it."
+  zh:
+  - "第 2 步：npm run dev。"
+  - "Vite 就绪了，打印出 5173 上的两个地址；两个都在 container 里面，所以在你的笔记本上，用 3000。"
+  - "暂停一下，把它启动起来。"
+- en: "Step 3: open localhost 3000. The HTML is almost empty: one div called root and a script, main dot jsx. The whole app is one page and its JavaScript."
+  zh:
+  - "第 3 步：打开 localhost:3000。"
+  - "HTML 几乎是空的：一个叫 root 的 div，再加一个脚本，main.jsx。"
+  - "整个应用就是一个页面加上它的 JavaScript。"
+  en_display:
+  - "Step 3: open localhost:3000."
+  - "The HTML is almost empty: one div called root and a script, main.jsx."
+  - null
+- en: "An extra check: every address, even one that does not exist, returns the same HTML. The browser picks the page, not the server."
+  zh:
+  - "一个额外检查：每个地址，哪怕是不存在的，都返回同样的 HTML。"
+  - "挑页面的是浏览器，不是服务器。"
+S11:
+- en: "Now the hook's answer. In the lecture, the page's JavaScript calls the API. Here, every call in api dot js goes to a relative path starting with slash api, with the session ID from local storage."
+  zh:
+  - "现在来回答开头的问题。"
+  - "在课上，页面的 JavaScript 调用 API。"
+  - "在这里，api.js 里的每一次调用都发往一个以 /api 开头的相对路径，带上 localStorage 里的 session ID。"
+  en_display:
+  - null
+  - null
+  - "Here, every call in api.js goes to a relative path starting with /api, with the session ID from localStorage."
+- en: "And vite dot config dot js holds the courier: a proxy rule that forwards slash api to cheese app API service, port 9000, by container name."
+  zh:
+  - "而 vite.config.js 里放着那个信使：一条代理规则，把 /api 转发到 cheese-app-api-service 的 port 9000，按的是 container 名字。"
+  en_display:
+  - "And vite.config.js holds the courier: a proxy rule that forwards /api to cheese-app-api-service, port 9000, by container name."
+- en: "So the browser only ever talks to localhost 3000. Vite, in the frontend container, carries each slash api request across the network. That is why uvicorn answered on 3000."
+  zh:
+  - "所以浏览器只和 localhost:3000 说话。"
+  - "Vite 在前端的 container 里，把每个 /api 请求经网络送过去。"
+  - "这就是 uvicorn 在 3000 上应答的原因。"
+  en_display:
+  - "So the browser only ever talks to localhost:3000."
+  - "Vite, in the frontend container, carries each /api request across the network."
+  - null
+- en: "An origin is the scheme, the host and the port. The page and its API calls share one origin, so the browser has nothing to object to, and the API needs no permission slip."
+  zh:
+  - "一个 origin 就是协议、主机和 port 三样合在一起。"
+  - "页面和它的 API 调用同属一个 origin，所以浏览器没什么好拦的，API 也不需要许可条。"
+- en: "So, a quick test. Could the page's JavaScript call the API by its container name, port 9000, directly?"
+  zh:
+  - "那么，快速测一下。"
+  - "页面的 JavaScript 能不能按 container 名字调用 API，用 port 9000，直接调？"
+- en: "No. The JavaScript runs in your browser, on the laptop, and the laptop's DNS knows no container names. Only code inside the network can use them: the Vite proxy, nginx, the API."
+  zh:
+  - "不能。"
+  - "这段 JavaScript 跑在你的浏览器里，也就是笔记本上，而笔记本的 DNS 不认识任何 container 名字。"
+  - "只有网络里面的代码才能用这些名字：Vite 代理、nginx、API。"
+- en: "An extra experiment: unplug the API from the network for one request. The browser gets 502 with an empty body: the README's troubleshooting row for pages that load empty."
+  zh:
+  - "一个额外实验：把 API 从网络上断开，只为了一个请求。"
+  - "浏览器拿到 502，响应体是空的：正是 README 故障排查表里，页面加载出来是空白的那一行。"
+- en: "Review the app: home, podcasts and newsletters load through the API, and the Recent tab keeps your chats across a reload. In chat, Identify works through the proxy; Ask, and Cheese books with its Tolminc question, get the same 500. Pause and click through."
+  zh:
+  - "Review the app：首页、播客和简报都经过 API 加载，Recent 标签页在刷新后还留着你的聊天。"
+  - "在聊天里，Identify 经过代理能用；Ask，还有问 Tolminc 的 Cheese books，都得到同样的 500。"
+  - "暂停一下，挨个点一遍。"
+- en: "The README's code table names the files we just saw; pause to match each one. Then, in a second terminal in the same folder, docker-shell.sh again opens a shell in the running container; run npm run check: a lint, a format check and a production build. That build is what production serves."
+  zh:
+  - "README 的代码表列出了我们刚看过的文件；暂停一下，逐个对上。"
+  - "然后在第二个终端里，在同一个目录下再运行 docker-shell.sh，会在正在跑的 container 里开一个 shell；在里面跑 npm run check：一次 lint、一次格式检查和一次生产构建。"
+  - "生产环境提供的就是这次构建的结果。"
+S12:
+- en: "In production, Vite does not run, so who serves the files and forwards slash api? Nginx does. Today's README dropped this section on the recording day, but its files are still in main, so we run the earlier README's commands, marked extra."
+  zh:
+  - "在生产环境里，Vite 不运行，那由谁来提供文件、转发 /api？"
+  - "是 nginx。"
+  - "今天的 README 在录制当天删掉了这一节，但它的文件还在 main 分支里，所以我们照早一版 README 的命令跑，标成 extra。"
+  en_display:
+  - "In production, Vite does not run, so who serves the files and forwards /api?"
+  - null
+  - null
+- en: "The production Dockerfile has two stages. The first builds the app with Node. The second starts from nginx and copies in only the built files."
+  zh:
+  - "生产用的 Dockerfile 分两个阶段。"
+  - "第一阶段用 Node 构建应用。"
+  - "第二阶段从 nginx 开始，只拷进构建好的文件。"
+- en: "The nginx template has the same rule as Vite: slash api goes to the API container. Any other page address gets index dot html, so the router can choose the page; only a missing asset is a real 404."
+  zh:
+  - "这个 nginx 模板里有和 Vite 一样的规则：/api 交给 API 的 container。"
+  - "其他任何页面地址都返回 index.html，好让 router 来挑页面；只有缺失的静态资源才是真正的 404。"
+  en_display:
+  - "The nginx template has the same rule as Vite: /api goes to the API container."
+  - "Any other page address gets index.html, so the router can choose the page; only a missing asset is a real 404."
+- en: "Stop the dev server with Control C and exit, then build the production image, tagged prod. Its first stage runs the same Vite build you just checked."
+  zh:
+  - "用 Ctrl-C 停掉开发服务器并 exit，然后构建生产 image，打上 prod 这个 tag。"
+  - "它的第一阶段跑的就是你刚检查过的那次 Vite 构建。"
+  en_display:
+  - "Stop the dev server with Ctrl+C and exit, then build the production image, tagged :prod."
+  - null
+- en: "Run it on the network, publishing 8080 to port 80. Open localhost 8080: the server is now nginx, slash api still reaches the API, and a deep link still gets the page."
+  zh:
+  - "在网络上运行它，把 8080 发布到 port 80。"
+  - "打开 localhost:8080：服务器现在是 nginx，/api 还能到达 API，深层链接也照样拿到页面。"
+  en_display:
+  - null
+  - "Open localhost:8080: the server is now nginx, /api still reaches the API, and a deep link still gets the page."
+- en: "Compare the sizes: 331 megabytes for the dev image, about 95 for production. No Node, no Vite: just files and one proxy rule."
+  zh:
+  - "比较一下大小：开发 image 331 MB，生产的大约 95。"
+  - "没有 Node，没有 Vite：只有文件和一条代理规则。"
+- en: "The lecture's production slide: only the outside changes. In lecture 20, NGINX goes in front on a cloud machine, on port 80; the API's code and port stay the same."
+  zh:
+  - "课上的生产环境那页说：只有外面变了。"
+  - "在第 20 讲里，NGINX 放在一台云端机器的最前面，用 port 80；API 的代码和 port 都不变。"
+- en: "As an extra, stop it, stop the API too, and start the production container again. It will not start. So, a quick test: why would a page server care whether the API is up?"
+  zh:
+  - "额外做一次：停掉它，也停掉 API，再启动生产 container。"
+  - "它起不来。"
+  - "那么，快速测一下：一个提供页面的服务器，为什么会在乎 API 有没有起来？"
+- en: "It exits at once: host not found in upstream. Nginx looks up the proxy target's name when it starts, and the API is gone. Start the API first."
+  zh:
+  - "它马上就退出了：host not found in upstream。"
+  - "原因是 nginx 在启动时就去查代理目标的名字，而 API 已经不在了。"
+  - "先启动 API。"
+S13:
+- en: "Instead of three terminals, one command. Step 1: put your project ID into the compose file in src. It appears twice."
+  zh:
+  - "不用三个终端，一条命令就够。"
+  - "第 1 步：把你的项目 ID 填进 src 里的 compose 文件。"
+  - "它出现了两次。"
+- en: "The file names the same four services. The loader first checks whether the books are already in Chroma, and loads them only if not."
+  zh:
+  - "这个文件列的是同样四个服务。"
+  - "加载器会先检查这些书是不是已经在 Chroma 里了，不在才加载。"
+- en: "Step 2: stop whatever still runs, then docker compose down in src, vector db. Compose warns about two unset variables; the shell scripts set them, so this is harmless."
+  zh:
+  - "第 2 步：停掉还在跑的一切，然后在 src/vector-db 里 docker compose down。"
+  - "Compose 会警告两个变量没设；shell 脚本会设它们，所以这没有害处。"
+  en_display:
+  - "Step 2: stop whatever still runs, then docker compose down in src/vector-db."
+  - null
+- en: "Step 3: change into src, and docker compose up with build. Pause and run it."
+  zh:
+  - "第 3 步：进到 src，运行 docker compose up --build。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - "Step 3: change into src, and docker compose up --build."
+  - null
+- en: "Two warnings: the network and the volume already exist, made by the shell scripts. They are warnings, not errors. Then four containers are created."
+  zh:
+  - "两个警告：网络和 volume 已经存在，是 shell 脚本建的。"
+  - "它们是警告，不是错误。"
+  - "然后建出四个 container。"
+- en: "Chroma, uvicorn and Vite start together, and the loader exits with 0: it found the books already loaded."
+  zh:
+  - "Chroma、uvicorn 和 Vite 同时启动，加载器以 0 退出：它发现书已经加载过了。"
+- en: "Step 4: open localhost 3000 and the API docs. A small slip: the README prints port 900; use 9000."
+  zh:
+  - "第 4 步：打开 localhost:3000 和 API 文档。"
+  - "有一个小疏漏：README 写的是 port 900；请用 9000。"
+  en_display:
+  - "Step 4: open localhost:3000 and the API docs."
+  - null
+- en: "Step 5: Control C, then docker compose down removes all four containers."
+  zh:
+  - "第 5 步：按 Ctrl-C，然后 docker compose down 会删掉全部四个 container。"
+  en_display:
+  - "Step 5: Ctrl+C, then docker compose down removes all four containers."
+- en: "Docker cleanup: compose down in vector db finds nothing left. Docker system prune asks first, then deletes the network and about four and a half gigabytes of build cache."
+  zh:
+  - "Docker Cleanup：在 vector-db 里 compose down，已经什么都不剩了。"
+  - "命令 docker system prune 会先问你，然后删掉网络和大约 4.5 GB 的构建缓存。"
+  en_display:
+  - "Docker cleanup: compose down in vector-db finds nothing left."
+  - null
+- en: "Prune keeps every tagged image, including the API's image of over 4 gigabytes, and the node modules volume. Remove those by name if you need the disk."
+  zh:
+  - "命令 prune 会保留每个打了 tag 的 image，包括超过 4 GB 的 API image，还有 node modules 这个 volume。"
+  - "按名字把它们删掉，如果你需要这块磁盘空间的话。"
+  en_display:
+  - "Prune keeps every tagged image, including the API's image of over 4 gigabytes, and the node_modules volume."
+  - null
+S14:
+- en: "Now Tutorial 24, the lecture's simple frontend. Main dropped it on the recording day; branch 2025 keeps it, with last year's API, which serves it. Branch 2025 builds its own big images: if your disk is tight, remove main's images first."
+  zh:
+  - "现在是教程 24，课上讲的简单前端。"
+  - "录制当天 main 分支删掉了它；2025 分支还留着，连同提供它的去年的 API。"
+  - "2025 分支要构建它自己的大 image：如果磁盘紧张，先删掉 main 分支的 image。"
+- en: "Git switch 2025 refuses at first: your edits to four files would be overwritten. An extra stash puts them aside."
+  zh:
+  - "命令 git switch 2025 一开始会拒绝：你对四个文件的修改会被覆盖。"
+  - "额外用 stash 把它们先放到一边。"
+  en_display:
+  - "git switch 2025 refuses at first: your edits to four files would be overwritten."
+  - null
+- en: "An extra log shows last year's commit, with frontend simple. Its vector db script wants a second key name, so copy your key under it, and set your project ID again."
+  zh:
+  - "额外看一下 log，是去年的 commit，里面有 frontend-simple。"
+  - "它的 vector-db 脚本要另一个密钥名，所以把你的密钥按这个名字再拷一份，再把项目 ID 设一遍。"
+  en_display:
+  - "An extra log shows last year's commit, with frontend-simple."
+  - "Its vector-db script wants a second key name, so copy your key under it, and set your project ID again."
+- en: "Vector DB steps 1 to 3, from the folder above cheese app v2, as the 2025 README spells them, end in the same load: 14,356 chunks. Its Chroma image is tagged latest and still works. Leave with exit; Chroma keeps running."
+  zh:
+  - "Vector DB 的第 1 到 3 步，从 cheese-app-v2 的上一级目录开始，照 2025 分支 README 的写法，最后是同样的加载：14,356 个 chunk。"
+  - "它的 Chroma image 的 tag 是 latest，现在还能用。"
+  - "用 exit 退出；Chroma 还在跑。"
+  en_display:
+  - "Vector DB steps 1 to 3, from the folder above cheese-app-v2, as the 2025 README spells them, end in the same load: 14,356 chunks."
+  - null
+  - null
+- en: "Backend steps 1, 2 and 4, in a new terminal from the folder that holds both clones: change into the API folder, sh docker-shell.sh, and uvicorn server. Pause and start it."
+  zh:
+  - "Backend 的第 1、2、4 步，在一个新终端里，从放着两个 clone 的目录开始：进到 API 目录，sh docker-shell.sh，然后 uvicorn server。"
+  - "暂停一下，把它启动起来。"
+  en_display:
+  - "Backend steps 1, 2 and 4, in a new terminal from the folder that holds both clones: change into the API folder, sh docker-shell.sh, and uvicorn_server."
+  - null
+- en: "Two differences from main: the reloader is WatchFiles, and the model loads before application startup complete, so start-up waits, with no readiness probe."
+  zh:
+  - "和 main 分支有两点不同：重载器是 WatchFiles，而且模型在 application startup complete 之前就加载，所以启动要等，也没有就绪探针。"
+- en: "Then verify localhost 9000: welcome to AC215. A small note: the demo route and the routers the 2025 README asks you to enable are already in the code, except RAG and agent. Don't paste them again, or the route is duplicated."
+  zh:
+  - "然后验证 localhost:9000：Welcome to AC215。"
+  - "说明一点：2025 分支 README 要你启用的演示路由和 router，除了 RAG 和 agent，已经都在代码里了。"
+  - "别再贴一遍，否则路由就重复了。"
+  en_display:
+  - "Then verify localhost:9000: welcome to AC215."
+  - null
+  - null
+- en: "Also, last year's Gemini model is retired: even with a key, its chat fails until the model and region are updated; main uses a current one."
+  zh:
+  - "还有，去年的 Gemini 模型已经退役了：就算有密钥，它的聊天也会失败，得先更新模型和区域才行；main 分支用的是当前的模型。"
+- en: "And what matters next: CORS middleware that allows every origin, the permission slip main no longer needs."
+  zh:
+  - "还有接下来要紧的：允许所有 origin 的 CORS 中间件，也就是 main 分支已经不再需要的那张许可条。"
+S15:
+- en: "Tutorial 24, step 1: change into cheese app v2, src, frontend simple. Steps 2 and 3: sh docker-shell.sh, then http-server on 8080. Pause and start it."
+  zh:
+  - "教程 24，第 1 步：进到 cheese-app-v2/src/frontend-simple。"
+  - "第 2、3 步：sh docker-shell.sh，然后在 8080 上跑 http-server。"
+  - "暂停一下，把它启动起来。"
+  en_display:
+  - "Tutorial 24, step 1: cd cheese-app-v2/src/frontend-simple."
+  - null
+  - null
+- en: "Home page: open index dot html. The landing page links to two more pages: newsletters and chat."
+  zh:
+  - "Home page：打开 index.html。"
+  - "首页链接到另外两个页面：简报和聊天。"
+  en_display:
+  - "Home page: open index.html."
+  - null
+- en: "Newsletter feature: open newsletters dot html. Its script names the API: localhost 9000. This is the lecture's second trip: the page came from 8080, and its JavaScript calls 9000 itself."
+  zh:
+  - "Newsletter feature：打开 newsletters.html。"
+  - "它的脚本写明了 API：localhost:9000。"
+  - "这是课上的第二趟：页面来自 8080，而它的 JavaScript 自己去调用 9000。"
+  en_display:
+  - "Newsletter feature: open newsletters.html."
+  - "Its script names the API: localhost:9000."
+  - null
+- en: "Same laptop, different port, so a different origin. Now the browser checks every answer: did the server allow this origin?"
+  zh:
+  - "同一台笔记本，不同的 port，所以是不同的 origin。"
+  - "现在浏览器会检查每一个回答：服务器允许这个 origin 了吗？"
+- en: "An extra curl sends what the browser sends. The API answers with access control allow origin, star: permission granted."
+  zh:
+  - "额外用 curl 发送浏览器会发的东西。"
+  - "API 的回答里带着 access-control-allow-origin，星号，许可了。"
+  en_display:
+  - null
+  - "The API answers with access-control-allow-origin *, permission granted."
+- en: "First comes 307, then 200: the paths differ by one slash, an extra round trip."
+  zh:
+  - "先是 307，然后是 200：两个路径差一个斜杠，多跑了一趟。"
+- en: "Chat feature: open chat dot html and ask how cheese is made. Now the browser adds a step the lecture never draws: step zero, the preflight."
+  zh:
+  - "Chat feature：打开 chat.html，问一下奶酪是怎么做的。"
+  - "现在浏览器加了一步课上从没画过的：第 0 步，预检。"
+  en_display:
+  - "Chat feature: open chat.html and ask how cheese is made."
+  - null
+- en: "A JSON post with a custom header makes the browser ask first, with an OPTIONS request. The answer allows any origin, these methods and these two headers, for 600 seconds."
+  zh:
+  - "一个带自定义请求头的 JSON POST 请求会让浏览器先问一声，用的是一个 OPTIONS 请求。"
+  - "回答允许任何 origin、这些方法和这两个请求头，有效 600 秒。"
+- en: "The log: OPTIONS 200, then the post bounces with 307 and ends in 500, the same Gemini error. That 500 carries the permission header too, so the browser shows the real error."
+  zh:
+  - "日志里：OPTIONS 200，然后 POST 被 307 弹了一下，最后是 500，同一个 Gemini 错误。"
+  - "这个 500 也带着许可头，所以浏览器显示的是真正的错误。"
+- en: "So CORS is the browser's rule about the server's permission; curl and the docs page never meet it."
+  zh:
+  - "所以 CORS 是浏览器的规则，管的是服务器给不给许可；curl 和文档页都碰不到它。"
+- en: "So, a quick test. Last year's page needed CORS, and this year's React app does not. What changed: the API, the browser, or the origin it calls?"
+  zh:
+  - "那么，快速测一下。"
+  - "去年的页面需要 CORS，今年的 React 应用不需要。"
+  - "变的是什么：API、浏览器，还是它调用的 origin？"
+- en: "The origin. The React page calls its own origin, and a proxy forwards: nothing to permit. The API then dropped the middleware, because nothing needed it."
+  zh:
+  - "是 origin。"
+  - "React 页面调用自己的 origin，由代理转发：没什么需要许可的。"
+  - "API 于是去掉了这个中间件，因为已经没有谁需要它。"
+- en: "To stop, Control C and exit in both terminals. As extras, stop last year's Chroma, discard the branch's edits and switch to main; git stash pop restores yours."
+  zh:
+  - "要停止，在两个终端里都按 Ctrl-C 再 exit。"
+  - "额外地，停掉去年的 Chroma，丢弃这个分支上的修改，切回 main 分支；用 git stash pop 恢复你的修改。"
+  en_display:
+  - "To stop, Ctrl+C and exit in both terminals."
+  - null
+S16:
+- en: "Before you go, a cleanup checklist, all done once already. Exit every container, compose down, back to main, prune after checking its list; then remove the node modules volume and big images by name. Your key stays in secrets."
+  zh:
+  - "走之前，一份清理清单，每一项前面都做过一次。"
+  - "退出每个 container、compose down、切回 main 分支，先看清单再 prune；然后按名字删掉 node modules 这个 volume 和大 image。"
+  - "你的密钥留在 secrets 里。"
+  en_display:
+  - null
+  - "Exit every container, compose down, back to main, prune after checking its list; then remove the node_modules volume and big images by name."
+  - null
+- en: "Here is the whole trip, with the hook answered: the browser talks only to 3000. Inside, Vite in development or nginx in production carries slash api by name to uvicorn on 9000, where a router runs the function. The JSON comes back the same way: one origin, no permission needed."
+  zh:
+  - "这是完整的一趟，开头的问题也有了答案：浏览器只和 3000 说话。"
+  - "在里面，开发环境的 Vite 或生产环境的 nginx，按名字把 /api 送到 9000 上的 uvicorn，由一个 router 运行函数。"
+  - "JSON 原路返回：同一个 origin，不需要许可。"
+  en_display:
+  - null
+  - "Inside, Vite in development or nginx in production carries /api by name to uvicorn on 9000, where a router runs the function."
+  - null
+- en: "Back to the lecture's blueprint. Your four boxes rise into the cluster. NGINX in front, the registry and the persistent disk are still dashed: the next lectures build them."
+  zh:
+  - "回到课上的蓝图。"
+  - "你的四个方框升进了集群里。"
+  - "最前面的 NGINX、registry 和持久化磁盘还是虚线：接下来的几讲会把它们建出来。"
+- en: "For your project, the lecture asks you to draw your solution and technical architecture, and points to a crash course and a template repository."
+  zh:
+  - "在你的课程项目里，课上要你画出自己的解决方案架构和技术架构，还给了一门速成课和一个模板 repo。"
+- en: "Test yourself, pausing on each. One: trace a newsletters request on main. Which container does the browser talk to, and where does port 9000 come in?"
+  zh:
+  - "自测一下，每道题都暂停想一想。"
+  - "第一题：在 main 分支上追踪一次简报请求。"
+  - "浏览器和哪个 container 说话，port 9000 又是在哪一步出现的？"
+- en: "Two: what do api dot service colon app, host 0.0.0.0 and reload each do, and why does square root without a slash answer 307?"
+  zh:
+  - "第二题：api.service:app、--host 0.0.0.0 和 --reload 各起什么作用，不带斜杠的 square root 为什么返回 307？"
+  en_display:
+  - "Two: what do api.service:app, --host 0.0.0.0 and --reload each do, and why does square_root without a slash answer 307?"
+- en: "Three: healthz and readyz. What does each one check in this API?"
+  zh:
+  - "第三题：/healthz 和 /readyz。"
+  - "在这个 API 里，它们各检查什么？"
+  en_display:
+  - "Three: /healthz and /readyz."
+  - null
+- en: "Four: where does a chat stay between two messages, and why can any copy of the API answer it?"
+  zh:
+  - "第四题：两条消息之间，聊天存在哪里，为什么 API 的任何一个副本都能回答它？"
+- en: "Five: which file decides where slash api goes in development, which in production, and why did last year's API need CORS while main's does not?"
+  zh:
+  - "第五题：开发环境里由哪个文件决定 /api 送到哪里，生产环境里又是哪个，为什么去年的 API 需要 CORS，而 main 分支的不需要？"
+  en_display:
+  - "Five: which file decides where /api goes in development, which in production, and why did last year's API need CORS while main's does not?"

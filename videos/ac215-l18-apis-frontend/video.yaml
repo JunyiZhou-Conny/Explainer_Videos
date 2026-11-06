@@ -1,0 +1,78 @@
+id: ac215-l18-apis-frontend
+title: "AC215 · Lecture 18 — APIs and frontend: a FastAPI service, a simple page and a React app (follow-along: cheese-app-v1 + cheese-app-v2)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 18
+  lecture_title: "APIs + Frontend"
+  ed: https://edstem.org/us/courses/97373/lessons/166043/
+  repos:
+    # v1: main, unchanged since 2025-11-02; the whole README
+    - {repo: dlops-io/cheese-app-v1, branch: main, commit: ce03a1029dd6f655a86e3e3edc99bb5938f0cbf8,
+       sections: ["Setup Environments", "Backend API Container", "Frontend App (Simple) Container", "Docker Cleanup"]}
+    # v2: main as a student clones it today (HEAD on 2026-11-05 07:52 -0500, after two moves that day;
+    # the course's Tutorials 23 and 25). See ASSETS.md "Which commit" and BRIEF.md.
+    - {repo: dlops-io/cheese-app-v2, branch: main, commit: 447b5c3c2c06d724e86dddf70e1a244dbe3d7c47,
+       sections: ["Tutorial: Environment Setup", "Tutorial: Vector DB for RAG Setup", "Tutorial: Backend APIs",
+                  "Tutorial: React Frontend Setup", "Tutorial: Setup & Run Cheese App", "Troubleshooting",
+                  "Docker Cleanup"]}
+    # extras only: the README one push earlier the same day, whose "Production images" section 447b5c3
+    # removed (its Dockerfile and nginx.conf.template are still on main)
+    - {repo: dlops-io/cheese-app-v2, branch: main, commit: e98fa551c5d380517c6dc775ae626ea1a828e4d3,
+       sections: ["Production images"]}
+    # the course's Tutorial 24: removed from main on 2026-11-05, kept on branch 2025 (the commit units.json
+    # and the published exam edition videos/ac215-l16-exam/ name); run with its own vector DB and API
+    - {repo: dlops-io/cheese-app-v2, branch: "2025", commit: 14f2a1420b43e9f24e977a9e67b53d7e2614013d,
+       sections: ["Tutorial (23): Vector DB for RAG Setup", "Tutorial (23): Backend APIs",
+                  "Tutorial (24): Simple Frontend App"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L18-apis-frontend.md
+audience: "AC215 student who has done L1-L17 (Docker images and containers, -p HOST:CONTAINER, bind mounts and docker-shell.sh, Docker networks, L5's RAG pipeline into Chroma, L13's cheese CNN, L15's ml-workflow.json key, a GCP project with Vertex AI), new to FastAPI routers, uvicorn, health and readiness probes, static vs React frontends, dev-server proxies, nginx production images and CORS; watching with their own clones of cheese-app-v1 and cheese-app-v2 open, Docker running and ~10 GB free, pausing to run each command — everything runs on the laptop; only the Gemini and embedding calls on Vertex AI use their key (GOLD tags in the video)"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,            title: "Who answered on port 3000?"}
+  - {file: scenes/s02_blueprint.py,  cls: Blueprint,       title: "The blueprint, and your folders"}
+  - {file: scenes/s03_server.py,     cls: ServerAndApp,    title: "v1: a server, an app, a port"}
+  - {file: scenes/s04_route.py,      cls: FunctionToUrl,   title: "A Python function becomes a URL"}
+  - {file: scenes/s05_static.py,     cls: StaticPages,     title: "Files for the browser: the simple frontend"}
+  - {file: scenes/s06_vectordb.py,   cls: VectorDb,        title: "v2: four containers, and the cheese books"}
+  - {file: scenes/s07_ready.py,      cls: AliveAndReady,   title: "Start the API: alive, then ready"}
+  - {file: scenes/s08_routes.py,     cls: ScreensToRoutes, title: "Screens decide the routes"}
+  - {file: scenes/s09_chat.py,       cls: ChatIsAFile,     title: "A chat is a file, not a memory"}
+  - {file: scenes/s10_react.py,      cls: ReactShell,      title: "Why a framework: React with Vite"}
+  - {file: scenes/s11_proxy.py,      cls: OneOrigin,       title: "One origin: the Vite proxy"}
+  - {file: scenes/s12_production.py, cls: NginxImage,      title: "Production: nginx instead of Vite"}
+  - {file: scenes/s13_compose.py,    cls: ComposeUp,       title: "One command, then clean up"}
+  - {file: scenes/s14_branch.py,     cls: Branch2025,      title: "Tutorial 24 lives on branch 2025"}
+  - {file: scenes/s15_cors.py,       cls: CorsPreflight,   title: "Last year's pages: CORS and the preflight"}
+  - {file: scenes/s16_recap.py,      cls: Recap,           title: "Tear down, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L18, part 1: the API — from a Python function to a four-container backend"
+    scenes: [s01_hook, s02_blueprint, s03_server, s04_route, s05_static, s06_vectordb, s07_ready, s08_routes, s09_chat]
+  - id: part2
+    title: "AC215 · L18, part 2: the frontend — React, one origin, nginx, and last year's CORS"
+    scenes: [s10_react, s11_proxy, s12_production, s13_compose, s14_branch, s15_cors, s16_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第18讲跟练 · API 与前端：FastAPI 服务、简单网页和 React 应用，一步一步在本地跑起奶酪 App"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 18 讲教程的逐条命令跟练，照着 dlops-io/cheese-app-v1 和 cheese-app-v2 的 README 一步一步做：
+    上半场（API）：先用 cheese-app-v1 在容器里用 uvicorn 跑起 FastAPI，讲清 server 与 app、0.0.0.0、--reload 和 -p 9000:9000，
+    把一个 Python 函数变成 URL（/square_root、422、307、/docs），再用 http-server 提供静态网页；
+    然后进入 cheese-app-v2：四个容器、一个 Docker network，把奶酪书的 14,356 个 chunk 载入 Chroma，
+    启动 API，看懂 /healthz 与 /readyz、router 与 prefix、/api/docs，聊天记录怎样存成文件，最后跑通 pytest。
+    下半场（前端）：为什么需要前端框架，用 Vite 跑 React 开发服务器，看懂 Vite proxy 怎样让浏览器只访问一个 origin、API 因此不需要 CORS；
+    用 nginx 生产镜像（331 MB → 94.8 MB）、docker compose 一条命令启动整个 App，并完整清理；
+    最后切到 2025 分支跑课件讲的 Simple Frontend，亲眼看 CORS preflight 和 307 重定向。
+    对照课件逐页讲解：technical architecture、一次请求的逐跳路径、API 设计模式与 MCP、single-page app 与组件。
+    录制当天仓库的 main 分支更新了两次，视频说明了跟随哪个 commit。边看边暂停，在自己的电脑上跑每一条命令；Gemini 调用需要你自己的 key。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/cheese-app-v1 · https://github.com/dlops-io/cheese-app-v2
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L18-apis-frontend.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, FastAPI, React, Vite, Docker, CORS, nginx, 哈佛, 教程跟练]
+  tid: 231

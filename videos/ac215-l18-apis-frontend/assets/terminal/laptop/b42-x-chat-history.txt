@@ -1,0 +1,4 @@
+$ find ~/persistent-folder/chat-history -type f | sed 's|/home/student/||'
+persistent-folder/chat-history/llm-cnn/images/671bbeed-0fe3-4e38-ab98-21a8a46dadd0/61a0ecab-d457-4b45-8f43-ee2874507db6.png
+persistent-folder/chat-history/llm-cnn/00000000-0000-4000-8000-000000000001/671bbeed-0fe3-4e38-ab98-21a8a46dadd0.json
+[exit 0]

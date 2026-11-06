@@ -1,0 +1,11 @@
+# expected, NOT a capture: what the README says to look for in the browser at http://localhost:3000.
+# cheese-app-v2 @ 447b5c3 README.md:166-174 (Review the app), verbatim.
+### Review the app
+- **Home:** type a question, or use the camera button to add a photo
+- **Podcasts and Newsletters:** these load through the API
+- **Chat:**
+  - **Ask:** a question for Gemini
+  - **Identify:** add a photo, then ask about the cheese
+  - **Cheese books:** try "How is Tolminc cheese made?"
+
+Your chats appear under **Recent**, and they are still there after you reload the page.

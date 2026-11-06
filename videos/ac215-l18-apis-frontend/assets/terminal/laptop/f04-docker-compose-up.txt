@@ -1,0 +1,152 @@
+$ docker compose up --build
+
+[+] Building 0.5s (30/30) FINISHED
+ => [internal] load local bake definitions                                                                         0.0s
+ => => reading from stdin 2.17kB                                                                                   0.0s
+ => [frontend-react internal] load build definition from Dockerfile.dev                                            0.0s
+ => => transferring dockerfile: 492B                                                                               0.0s
+ => [vector-db-loader internal] load build definition from Dockerfile                                              0.0s
+ => => transferring dockerfile: 657B                                                                               0.0s
+ => [api-service internal] load build definition from Dockerfile.dev                                               0.0s
+ => => transferring dockerfile: 585B                                                                               0.0s
+ => [frontend-react internal] load metadata for docker.io/library/node:24.22.1-bookworm-slim                       0.0s
+ => [vector-db-loader internal] load metadata for docker.io/library/python:3.13-slim-bookworm                      0.0s
+ => [frontend-react internal] load .dockerignore                                                                   0.0s
+ => => transferring context: 79B                                                                                   0.0s
+ => [api-service internal] load .dockerignore                                                                      0.0s
+ => => transferring context: 131B                                                                                  0.0s
+ => [vector-db-loader internal] load .dockerignore                                                                 0.0s
+ => => transferring context: 113B                                                                                  0.0s
+ => [frontend-react 1/3] FROM docker.io/library/node:24.22.1-bookworm-slim@sha256:ebd7e6f1061734570528773c3b7edd5  0.1s
+ => => resolve docker.io/library/node:24.22.1-bookworm-slim@sha256:ebd7e6f1061734570528773c3b7edd5c2ec5730f534607  0.1s
+ => [vector-db-loader internal] load build context                                                                 0.0s
+ => => transferring context: 1.43kB                                                                                0.0s
+ => [api-service 1/6] FROM docker.io/library/python:3.13-slim-bookworm@sha256:9b81caa30624b67250fb55e4ef1a22f6fad  0.0s
+ => => resolve docker.io/library/python:3.13-slim-bookworm@sha256:9b81caa30624b67250fb55e4ef1a22f6fad2dcec7fd2bda  0.0s
+ => [api-service internal] load build context                                                                      0.0s
+ => => transferring context: 64B                                                                                   0.0s
+ => CACHED [frontend-react 2/3] RUN mkdir -p /app/node_modules && chown -R node:node /app                          0.0s
+ => CACHED [frontend-react 3/3] WORKDIR /app                                                                       0.0s
+ => [frontend-react] exporting to image                                                                            0.1s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:676fad93396066223178c7a20da01115dec16134d77296191cdb6e287e128d94                  0.0s
+ => => exporting config sha256:de9faf9ea23805b35d006e3ccccaed174b573a8db1fe427093001b7785c7ef0b                    0.0s
+ => => exporting attestation manifest sha256:fa11cdfadd37205cee88bc8aee8065f00be2af8c2478520984c2b6be54932ea6      0.0s
+ => => exporting manifest list sha256:d959127001ec76e371674271679dbeffd08ccacf3c9280658e33fd7552358f3e             0.0s
+ => => naming to docker.io/library/cheese-app-frontend-react:latest                                                0.0s
+ => => unpacking to docker.io/library/cheese-app-frontend-react:latest                                             0.0s
+ => CACHED [vector-db-loader 2/6] RUN pip install --no-cache-dir uv==0.13.6 &&     useradd -ms /bin/bash app -d /  0.0s
+ => CACHED [vector-db-loader 3/6] WORKDIR /app                                                                     0.0s
+ => CACHED [vector-db-loader 4/6] COPY --chown=app:app pyproject.toml uv.lock ./                                   0.0s
+ => CACHED [vector-db-loader 5/6] RUN uv sync --frozen                                                             0.0s
+ => CACHED [vector-db-loader 6/6] COPY --chown=app:app . ./                                                        0.0s
+ => [vector-db-loader] exporting to image                                                                          0.2s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:eeb2a58e933fcb9ef4c4df9405b441792dae82eab31900ac3add1ae49586a8d8                  0.0s
+ => => exporting config sha256:5a5c970081f4a255df6e0e97b73c61ab27befbce8421fc477daaa6b1741a2c1f                    0.0s
+ => => exporting attestation manifest sha256:e14c4df64b1f489cd0f6d68d7372aedf85e326e268c224d4865c74a44dafb32e      0.0s
+ => => exporting manifest list sha256:fcc3ae6283d6a6af29c275e14a59c8a46c55e7e6cd20a1a851399639bb9254b7             0.0s
+ => => naming to docker.io/library/cheese-app-vector-db-cli:latest                                                 0.0s
+ => => unpacking to docker.io/library/cheese-app-vector-db-cli:latest                                              0.0s
+ => CACHED [api-service 2/5] RUN pip install --no-cache-dir uv==0.13.6 &&     useradd -ms /bin/bash app -d /home/  0.0s
+ => CACHED [api-service 3/5] WORKDIR /app                                                                          0.0s
+ => CACHED [api-service 4/5] COPY pyproject.toml uv.lock ./                                                        0.0s
+ => CACHED [api-service 5/5] RUN uv sync --frozen                                                                  0.0s
+ => [api-service] exporting to image                                                                               0.1s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:01efcde12f8b4ff45c241c26737c79e15a00374f71b0b5d59eafdbd0456ca025                  0.0s
+ => => exporting config sha256:11fb7061f3d584239472d1201a8aec30280034a22a127b134fab6ea1ace3122b                    0.0s
+ => => exporting attestation manifest sha256:e6708d39f3350b40154410fddaa41c8c2ccdd6f26f713bf26e915d87b258fe2d      0.0s
+ => => exporting manifest list sha256:6250368fcf24879e47b3991e23dd25e0f0ce6895ed226739fe600072dea836b2             0.0s
+ => => naming to docker.io/library/cheese-app-api-service:latest                                                   0.0s
+ => => unpacking to docker.io/library/cheese-app-api-service:latest                                                0.0s
+ => [frontend-react] resolving provenance for metadata file                                                        0.0s
+ => [api-service] resolving provenance for metadata file                                                           0.0s
+ => [vector-db-loader] resolving provenance for metadata file                                                      0.0s
+WARN[0000] a network with name cheese-app-network exists but was not created by compose.
+Set `external: true` to use an existing network
+WARN[0000] volume "cheese-app-frontend-react-node_modules" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume
+[+] up 7/7
+ ✔ Image cheese-app-frontend-react     Built                                                                        0.6s
+ ✔ Image cheese-app-vector-db-cli      Built                                                                        0.6s
+ ✔ Image cheese-app-api-service        Built                                                                        0.7s
+ ✔ Container cheese-app-vector-db      Created                                                                      0.0s
+ ✔ Container src-vector-db-loader-1    Created                                                                      0.1s
+ ✔ Container cheese-app-api-service    Created                                                                      0.1s
+ ✔ Container cheese-app-frontend-react Created                                                                      0.0s
+WARN[0000] could not start menu, an error occurred while starting: Error while reading terminfo data:terminfo: TERM environment variable not set
+Attaching to cheese-app-api-service, cheese-app-frontend-react, cheese-app-vector-db, vector-db-loader-1
+cheese-app-vector-db  |
+cheese-app-vector-db  | ==========
+cheese-app-vector-db  | persist_path: "/data"
+cheese-app-vector-db  |
+cheese-app-vector-db  | ==========
+cheese-app-vector-db  |
+cheese-app-vector-db  |
+cheese-app-vector-db  |                 (((((((((    (((((####
+cheese-app-vector-db  |              ((((((((((((((((((((((#########
+cheese-app-vector-db  |            ((((((((((((((((((((((((###########
+cheese-app-vector-db  |          ((((((((((((((((((((((((((############
+cheese-app-vector-db  |         (((((((((((((((((((((((((((#############
+cheese-app-vector-db  |         (((((((((((((((((((((((((((#############
+cheese-app-vector-db  |          (((((((((((((((((((((((((##############
+cheese-app-vector-db  |          ((((((((((((((((((((((((##############
+cheese-app-vector-db  |            (((((((((((((((((((((#############
+cheese-app-vector-db  |              ((((((((((((((((##############
+cheese-app-vector-db  |                 (((((((((    #########
+cheese-app-vector-db  |
+cheese-app-vector-db  | Saving data to: /data
+cheese-app-vector-db  | Connect to Chroma at: http://localhost:8000
+cheese-app-vector-db  | Getting started guide: https://docs.trychroma.com/docs/overview/getting-started
+cheese-app-vector-db  |
+cheese-app-vector-db  | ☁️ To deploy your DB - try Chroma Cloud!
+cheese-app-vector-db  | - Sign up: https://trychroma.com/signup
+cheese-app-vector-db  | - Copy your data to Cloud: chroma copy --to-cloud --all
+cheese-app-vector-db  |
+cheese-app-vector-db  | No telemetry is configured.
+cheese-app-api-service  | Checked 84 packages in 14ms
+cheese-app-api-service  | INFO:     Will watch for changes in these directories: ['/app/api']
+cheese-app-api-service  | INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+cheese-app-api-service  | INFO:     Started reloader process [1] using StatReload
+cheese-app-frontend-react  |
+cheese-app-frontend-react  | up to date in 842ms
+cheese-app-frontend-react  |
+cheese-app-frontend-react  | > cheese-app-frontend@2.0.0 dev
+cheese-app-frontend-react  | > vite
+cheese-app-frontend-react  |
+cheese-app-frontend-react  |
+cheese-app-frontend-react  |   VITE v8.3.5  ready in 660 ms
+cheese-app-frontend-react  |
+cheese-app-frontend-react  |   ➜  Local:   http://localhost:5173/
+cheese-app-frontend-react  |   ➜  Network: http://172.19.0.5:5173/  eth0
+cheese-app-api-service     | INFO:     Started server process [13]
+cheese-app-api-service     | INFO:     Waiting for application startup.
+cheese-app-api-service     | INFO:     Application startup complete.
+cheese-app-api-service     | WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+cheese-app-api-service     | I0000 00:00:1793886640.456143      19 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+cheese-app-api-service     | I0000 00:00:1793886640.537883      19 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+cheese-app-api-service     | To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+cheese-app-api-service     | INFO:     172.19.0.1:34992 - "GET /healthz HTTP/1.1" 200 OK
+vector-db-loader-1 exited with code 0
+cheese-app-api-service     | INFO:     172.19.0.1:49088 - "GET /api/docs HTTP/1.1" 200 OK
+cheese-app-api-service     | INFO:     172.19.0.1:49094 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+cheese-app-api-service     | INFO:     172.19.0.1:49110 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+cheese-app-api-service     | INFO:     172.19.0.1:49122 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+cheese-app-api-service     | WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+cheese-app-api-service     | I0000 00:00:1793886646.358212      19 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+cheese-app-api-service     | INFO:     172.19.0.1:49138 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+cheese-app-api-service     | INFO:     172.19.0.1:49148 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+cheese-app-api-service     | INFO:     172.19.0.1:49160 - "GET /readyz HTTP/1.1" 200 OK
+cheese-app-api-service     | INFO:     172.19.0.1:49164 - "GET /readyz HTTP/1.1" 200 OK
+cheese-app-api-service     | INFO:     172.19.0.5:45640 - "GET /api/newsletters?limit=1 HTTP/1.1" 200 OK
+^C
+Gracefully Stopping... press Ctrl+C again to force
+Container src-vector-db-loader-1 Stopping
+Container cheese-app-frontend-react Stopping
+Container src-vector-db-loader-1 Stopped
+Container cheese-app-frontend-react Stopped
+Container cheese-app-api-service Stopping
+Container cheese-app-api-service Stopped
+Container cheese-app-vector-db Stopping
+Container cheese-app-vector-db Stopped
+[exit 130]

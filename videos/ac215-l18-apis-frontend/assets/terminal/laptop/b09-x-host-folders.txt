@@ -1,0 +1,28 @@
+$ ls outputs | head -30; ls outputs | wc -l; du -sh outputs docker-volumes/chromadb
+cheese-books-embeddings.zip
+chunks-recursive-split-Cheese and its economical uses in the diet.jsonl
+chunks-recursive-split-Cottage Cheese Recipe Book.jsonl
+chunks-recursive-split-Dairying exemplified, or, The business of cheese-making.jsonl
+chunks-recursive-split-Hand-book on cheese making.jsonl
+chunks-recursive-split-Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.jsonl
+chunks-recursive-split-The Book of Cheese.jsonl
+chunks-recursive-split-The Complete Book of Cheese.jsonl
+chunks-recursive-split-The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.jsonl
+chunks-recursive-split-Theres Pippins and Cheese to Come.jsonl
+chunks-recursive-split-Tolminc Cheese.jsonl
+chunks-recursive-split-Womans Institute Library of Cookery.jsonl
+embeddings-recursive-split-Cheese and its economical uses in the diet.jsonl
+embeddings-recursive-split-Cottage Cheese Recipe Book.jsonl
+embeddings-recursive-split-Dairying exemplified, or, The business of cheese-making.jsonl
+embeddings-recursive-split-Hand-book on cheese making.jsonl
+embeddings-recursive-split-Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.jsonl
+embeddings-recursive-split-The Book of Cheese.jsonl
+embeddings-recursive-split-The Complete Book of Cheese.jsonl
+embeddings-recursive-split-The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.jsonl
+embeddings-recursive-split-Theres Pippins and Cheese to Come.jsonl
+embeddings-recursive-split-Tolminc Cheese.jsonl
+embeddings-recursive-split-Womans Institute Library of Cookery.jsonl
+23
+78.8M	outputs
+50.9M	docker-volumes/chromadb
+[exit 0]

@@ -1,0 +1,2 @@
+$ cd src/vector-db
+[exit 0]

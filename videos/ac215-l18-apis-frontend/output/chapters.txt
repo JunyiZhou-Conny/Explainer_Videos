@@ -1,0 +1,16 @@
+00:00 Who answered on port 3000?
+01:22 The blueprint, and your folders
+03:04 v1: a server, an app, a port
+05:42 A Python function becomes a URL
+07:19 Files for the browser: the simple frontend
+09:13 v2: four containers, and the cheese books
+11:16 Start the API: alive, then ready
+13:39 Screens decide the routes
+15:28 A chat is a file, not a memory
+17:46 Why a framework: React with Vite
+19:55 One origin: the Vite proxy
+22:11 Production: nginx instead of Vite
+24:11 One command, then clean up
+25:49 Tutorial 24 lives on branch 2025
+27:55 Last year's pages: CORS and the preflight
+30:26 Tear down, recap, and what's next

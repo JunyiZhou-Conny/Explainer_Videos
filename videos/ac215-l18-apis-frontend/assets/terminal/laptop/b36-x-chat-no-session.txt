@@ -1,0 +1,4 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' -X POST http://localhost:9000/api/llm/chats -H 'Content-Type: application/json' -d '{"content": "How is cheese made?"}'
+{"detail":[{"type":"missing","loc":["header","X-Session-ID"],"msg":"Field required","input":null}]}
+[HTTP 422]
+[exit 0]

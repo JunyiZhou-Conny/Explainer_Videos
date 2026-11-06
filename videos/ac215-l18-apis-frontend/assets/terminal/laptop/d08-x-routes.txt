@@ -1,0 +1,7 @@
+$ for u in / /podcasts /newsletters /chat?model=llm /nope; do printf '%-20s ' $u; curl -s -o /dev/null -w '%{http_code} %{content_type}\n' http://localhost:3000$u; done
+/                    200 text/html
+/podcasts            200 text/html
+/newsletters         200 text/html
+/chat?model=llm      200 text/html
+/nope                200 text/html
+[exit 0]

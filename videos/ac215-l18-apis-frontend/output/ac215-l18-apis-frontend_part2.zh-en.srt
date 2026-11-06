@@ -1,0 +1,1124 @@
+1
+00:00:00,000 --> 00:00:01,664
+第 2 部分：前端
+Part 2: the frontend.
+
+2
+00:00:01,984 --> 00:00:06,485
+API 已经在 port 9000 上跑起来了；现在来做一个用它的页面
+The API is up on port 9000; now a page that uses it.
+
+3
+00:00:06,733 --> 00:00:09,997
+课上从每个功能一个 HTML 页面讲起
+The lecture starts with one HTML page per feature.
+
+4
+00:00:10,317 --> 00:00:13,280
+每个页面都带着自己的页头、脚本和样式
+Each carries its own header, script and style;
+
+5
+00:00:13,280 --> 00:00:17,144
+什么都不共享，每次点击都要加载整个页面：很慢
+nothing is shared, and every click loads a whole page: slow.
+
+6
+00:00:17,517 --> 00:00:21,634
+解决办法是一个用组件搭起来的单页应用，配一个框架
+The fix is a single-page app built from components, with a framework.
+
+7
+00:00:21,954 --> 00:00:24,962
+课上列了常见的几个，选了 React
+The lecture names the common ones and picks React.
+
+8
+00:00:25,200 --> 00:00:30,363
+在 React 里，一个组件就是一个返回标记的函数，用 JSX 来写
+In React, a component is a function that returns markup, written in JSX.
+
+9
+00:00:30,683 --> 00:00:34,653
+整个应用是一个外壳：一个只定义一次的页头
+The app is one shell: a header defined only once, a footer,
+
+10
+00:00:34,653 --> 00:00:38,085
+一个页脚，中间一块随页面变化
+and in between a block that changes with each page.
+
+11
+00:00:38,333 --> 00:00:41,154
+今天的 repo 用的是 React 加 Vite
+Today's repository uses React with Vite,
+
+12
+00:00:41,154 --> 00:00:45,032
+Vite 是开发服务器兼构建工具，再加上 React Router
+a development server and build tool, plus React Router.
+
+13
+00:00:45,352 --> 00:00:49,397
+在 main.jsx 里，一张路由表把每个地址对应到一个页面
+In main.jsx, a route table maps each address to a page,
+
+14
+00:00:49,397 --> 00:00:52,413
+还有一个兜住其余一切的星号
+with a star that catches everything else.
+
+15
+00:00:52,650 --> 00:00:55,965
+在 App.jsx 里，页头和页脚只写一次
+In App.jsx, the header and footer are written once,
+
+16
+00:00:55,965 --> 00:01:00,906
+中间是 outlet，也就是显示当前页面的那扇窗口
+and between them sits the outlet, the window where the current page appears.
+
+17
+00:01:01,150 --> 00:01:06,580
+React 前端设置，在一个新终端里，从 cheese-app-v2 目录开始
+React setup, in a new terminal from the cheese-app-v2 folder:
+
+18
+00:01:06,580 --> 00:01:11,475
+第 1 步，进到 src/frontend-react，运行 docker-shell.sh
+step 1, cd src/frontend-react, and run docker-shell.sh.
+
+19
+00:01:11,795 --> 00:01:16,495
+它挂载你的代码，把 node modules 放在一个命名的 volume 里
+It mounts your code, keeps node_modules in a named volume,
+
+20
+00:01:16,495 --> 00:01:20,627
+把 3000 发布到 port 5173，再加入网络
+publishes 3000 to port 5173, and joins the network.
+
+21
+00:01:20,947 --> 00:01:22,283
+暂停一下，自己跑一遍
+Pause and run it.
+
+22
+00:01:22,333 --> 00:01:24,530
+横幅显示了 Node 和 npm
+The banner shows Node and npm.
+
+23
+00:01:24,850 --> 00:01:30,632
+你第一次运行时会把依赖装进这个 volume；我们的已经是最新的了
+Your first run installs the dependencies into the volume; ours was already up to date.
+
+24
+00:01:30,867 --> 00:01:33,064
+第 2 步：npm run dev
+Step 2: npm run dev.
+
+25
+00:01:33,384 --> 00:01:37,404
+Vite 就绪了，打印出 5173 上的两个地址
+Vite is ready and prints two addresses on 5173;
+
+26
+00:01:37,404 --> 00:01:42,451
+两个都在 container 里面，所以在你的笔记本上，用 3000
+both are inside the container, so on your laptop, use 3000.
+
+27
+00:01:42,771 --> 00:01:44,217
+暂停一下，把它启动起来
+Pause and start it.
+
+28
+00:01:44,267 --> 00:01:47,062
+第 3 步：打开 localhost:3000
+Step 3: open localhost:3000.
+
+29
+00:01:47,382 --> 00:01:51,533
+HTML 几乎是空的：一个叫 root 的 div
+The HTML is almost empty: one div called root
+
+30
+00:01:51,533 --> 00:01:53,654
+再加一个脚本，main.jsx
+and a script, main.jsx.
+
+31
+00:01:53,974 --> 00:01:56,960
+整个应用就是一个页面加上它的 JavaScript
+The whole app is one page and its JavaScript.
+
+32
+00:01:57,200 --> 00:02:03,365
+一个额外检查：每个地址，哪怕是不存在的，都返回同样的 HTML
+An extra check: every address, even one that does not exist, returns the same HTML.
+
+33
+00:02:03,685 --> 00:02:06,267
+挑页面的是浏览器，不是服务器
+The browser picks the page, not the server.
+
+34
+00:02:09,233 --> 00:02:10,833
+现在来回答开头的问题
+Now the hook's answer.
+
+35
+00:02:10,940 --> 00:02:14,481
+在课上，页面的 JavaScript 调用 API
+In the lecture, the page's JavaScript calls the API.
+
+36
+00:02:14,801 --> 00:02:17,583
+在这里，api.js 里的每一次调用都发往
+Here, every call in api.js goes
+
+37
+00:02:17,583 --> 00:02:20,992
+一个以 /api 开头的相对路径
+to a relative path starting with /api,
+
+38
+00:02:20,992 --> 00:02:24,401
+带上 localStorage 里的 session ID
+with the session ID from localStorage.
+
+39
+00:02:24,650 --> 00:02:28,151
+而 vite.config.js 里放着那个信使
+And vite.config.js holds the courier:
+
+40
+00:02:28,151 --> 00:02:29,351
+一条代理规则
+a proxy rule
+
+41
+00:02:29,351 --> 00:02:34,648
+把 /api 转发到 cheese-app-api-service 的 port 9000
+that forwards /api to cheese-app-api-service, port 9000,
+
+42
+00:02:34,648 --> 00:02:36,362
+按的是 container 名字
+by container name.
+
+43
+00:02:36,833 --> 00:02:40,396
+所以浏览器只和 localhost:3000 说话
+So the browser only ever talks to localhost:3000.
+
+44
+00:02:40,716 --> 00:02:46,326
+Vite 在前端的 container 里，把每个 /api 请求经网络送过去
+Vite, in the frontend container, carries each /api request across the network.
+
+45
+00:02:46,646 --> 00:02:49,548
+这就是 uvicorn 在 3000 上应答的原因
+That is why uvicorn answered on 3000.
+
+46
+00:02:49,783 --> 00:02:52,748
+一个 origin 就是协议、主机和 port 三样合在一起
+An origin is the scheme, the host and the port.
+
+47
+00:02:53,068 --> 00:02:56,308
+页面和它的 API 调用同属一个 origin
+The page and its API calls share one origin,
+
+48
+00:02:56,308 --> 00:03:02,050
+所以浏览器没什么好拦的，API 也不需要许可条
+so the browser has nothing to object to, and the API needs no permission slip.
+
+49
+00:03:02,300 --> 00:03:03,900
+那么，快速测一下
+So, a quick test.
+
+50
+00:03:03,964 --> 00:03:08,565
+页面的 JavaScript 能不能按 container 名字调用 API
+Could the page's JavaScript call the API by its container name,
+
+51
+00:03:08,565 --> 00:03:10,165
+用 port 9000，直接调？
+port 9000, directly?
+
+52
+00:03:18,900 --> 00:03:23,514
+不能。这段 JavaScript 跑在你的浏览器里，也就是笔记本上
+No. The JavaScript runs in your browser, on the laptop,
+
+53
+00:03:23,514 --> 00:03:26,751
+而笔记本的 DNS 不认识任何 container 名字
+and the laptop's DNS knows no container names.
+
+54
+00:03:27,071 --> 00:03:32,980
+只有网络里面的代码才能用这些名字：Vite 代理、nginx、API
+Only code inside the network can use them: the Vite proxy, nginx, the API.
+
+55
+00:03:33,216 --> 00:03:38,123
+一个额外实验：把 API 从网络上断开，只为了一个请求
+An extra experiment: unplug the API from the network for one request.
+
+56
+00:03:38,443 --> 00:03:41,365
+浏览器拿到 502，响应体是空的
+The browser gets 502 with an empty body:
+
+57
+00:03:41,365 --> 00:03:45,675
+正是 README 故障排查表里，页面加载出来是空白的那一行
+the README's troubleshooting row for pages that load empty.
+
+58
+00:03:45,916 --> 00:03:50,510
+Review the app：首页、播客和简报都经过 API 加载
+Review the app: home, podcasts and newsletters load through the API,
+
+59
+00:03:50,510 --> 00:03:54,023
+Recent 标签页在刷新后还留着你的聊天
+and the Recent tab keeps your chats across a reload.
+
+60
+00:03:54,343 --> 00:03:57,297
+在聊天里，Identify 经过代理能用
+In chat, Identify works through the proxy;
+
+61
+00:03:57,297 --> 00:04:01,937
+Ask，还有问 Tolminc 的 Cheese books，都得到同样的 500
+Ask, and Cheese books with its Tolminc question, get the same 500.
+
+62
+00:04:02,257 --> 00:04:03,800
+暂停一下，挨个点一遍
+Pause and click through.
+
+63
+00:04:03,850 --> 00:04:08,565
+README 的代码表列出了我们刚看过的文件；暂停一下，逐个对上
+The README's code table names the files we just saw; pause to match each one.
+
+64
+00:04:08,885 --> 00:04:12,294
+然后在第二个终端里，在同一个目录下再运行 docker-shell.sh
+Then, in a second terminal in the same folder,
+
+65
+00:04:12,294 --> 00:04:16,648
+会在正在跑的 container 里开一个 shell
+docker-shell.sh again opens a shell in the running container;
+
+66
+00:04:16,648 --> 00:04:18,148
+在里面跑 npm run check
+run npm run check:
+
+67
+00:04:18,148 --> 00:04:21,557
+一次 lint、一次格式检查和一次生产构建
+a lint, a format check and a production build.
+
+68
+00:04:21,877 --> 00:04:24,010
+生产环境提供的就是这次构建的结果
+That build is what production serves.
+
+69
+00:04:25,250 --> 00:04:30,861
+在生产环境里，Vite 不运行，那由谁来提供文件、转发 /api？
+In production, Vite does not run, so who serves the files and forwards /api?
+
+70
+00:04:31,181 --> 00:04:32,752
+是 nginx
+Nginx does.
+
+71
+00:04:32,802 --> 00:04:36,407
+今天的 README 在录制当天删掉了这一节
+Today's README dropped this section on the recording day,
+
+72
+00:04:36,407 --> 00:04:38,431
+但它的文件还在 main 分支里
+but its files are still in main,
+
+73
+00:04:38,431 --> 00:04:41,847
+所以我们照早一版 README 的命令跑，标成 extra
+so we run the earlier README's commands, marked extra.
+
+74
+00:04:42,083 --> 00:04:44,686
+生产用的 Dockerfile 分两个阶段
+The production Dockerfile has two stages.
+
+75
+00:04:45,006 --> 00:04:46,904
+第一阶段用 Node 构建应用
+The first builds the app with Node.
+
+76
+00:04:47,224 --> 00:04:51,427
+第二阶段从 nginx 开始，只拷进构建好的文件
+The second starts from nginx and copies in only the built files.
+
+77
+00:04:51,667 --> 00:04:55,608
+这个 nginx 模板里有和 Vite 一样的规则
+The nginx template has the same rule as Vite:
+
+78
+00:04:55,608 --> 00:04:58,323
+/api 交给 API 的 container
+/api goes to the API container.
+
+79
+00:04:58,643 --> 00:05:04,581
+其他任何页面地址都返回 index.html，好让 router 来挑页面
+Any other page address gets index.html, so the router can choose the page;
+
+80
+00:05:04,581 --> 00:05:07,389
+只有缺失的静态资源才是真正的 404
+only a missing asset is a real 404.
+
+81
+00:05:07,633 --> 00:05:10,438
+用 Ctrl-C 停掉开发服务器并 exit
+Stop the dev server with Ctrl+C and exit,
+
+82
+00:05:10,438 --> 00:05:13,585
+然后构建生产 image，打上 prod 这个 tag
+then build the production image, tagged :prod.
+
+83
+00:05:13,905 --> 00:05:17,276
+它的第一阶段跑的就是你刚检查过的那次 Vite 构建
+Its first stage runs the same Vite build you just checked.
+
+84
+00:05:17,517 --> 00:05:21,272
+在网络上运行它，把 8080 发布到 port 80
+Run it on the network, publishing 8080 to port 80.
+
+85
+00:05:21,592 --> 00:05:25,617
+打开 localhost:8080：服务器现在是 nginx
+Open localhost:8080: the server is now nginx,
+
+86
+00:05:25,617 --> 00:05:31,341
+/api 还能到达 API，深层链接也照样拿到页面
+/api still reaches the API, and a deep link still gets the page.
+
+87
+00:05:31,583 --> 00:05:38,410
+比较一下大小：开发 image 331 MB，生产的大约 95
+Compare the sizes: 331 megabytes for the dev image, about 95 for production.
+
+88
+00:05:38,730 --> 00:05:42,250
+没有 Node，没有 Vite：只有文件和一条代理规则
+No Node, no Vite: just files and one proxy rule.
+
+89
+00:05:42,500 --> 00:05:46,276
+课上的生产环境那页说：只有外面变了
+The lecture's production slide: only the outside changes.
+
+90
+00:05:46,596 --> 00:05:51,700
+在第 20 讲里，NGINX 放在一台云端机器的最前面，用 port 80
+In lecture 20, NGINX goes in front on a cloud machine, on port 80;
+
+91
+00:05:51,700 --> 00:05:54,639
+API 的代码和 port 都不变
+the API's code and port stay the same.
+
+92
+00:05:54,883 --> 00:06:00,536
+额外做一次：停掉它，也停掉 API，再启动生产 container
+As an extra, stop it, stop the API too, and start the production container again.
+
+93
+00:06:00,856 --> 00:06:02,364
+它起不来
+It will not start.
+
+94
+00:06:02,414 --> 00:06:05,276
+那么，快速测一下：一个提供页面的服务器
+So, a quick test: why would a page server care
+
+95
+00:06:05,276 --> 00:06:06,915
+为什么会在乎 API 有没有起来？
+whether the API is up?
+
+96
+00:06:13,750 --> 00:06:16,843
+它马上就退出了：host not found in upstream
+It exits at once: host not found in upstream.
+
+97
+00:06:17,163 --> 00:06:20,826
+原因是 nginx 在启动时就去查代理目标的名字
+Nginx looks up the proxy target's name when it starts,
+
+98
+00:06:20,826 --> 00:06:22,426
+而 API 已经不在了
+and the API is gone.
+
+99
+00:06:22,646 --> 00:06:24,331
+先启动 API
+Start the API first.
+
+100
+00:06:25,567 --> 00:06:27,956
+不用三个终端，一条命令就够
+Instead of three terminals, one command.
+
+101
+00:06:28,276 --> 00:06:32,628
+第 1 步：把你的项目 ID 填进 src 里的 compose 文件
+Step 1: put your project ID into the compose file in src.
+
+102
+00:06:32,948 --> 00:06:34,384
+它出现了两次
+It appears twice.
+
+103
+00:06:34,434 --> 00:06:36,866
+这个文件列的是同样四个服务
+The file names the same four services.
+
+104
+00:06:37,186 --> 00:06:42,284
+加载器会先检查这些书是不是已经在 Chroma 里了，不在才加载
+The loader first checks whether the books are already in Chroma, and loads them only if not.
+
+105
+00:06:42,534 --> 00:06:45,246
+第 2 步：停掉还在跑的一切
+Step 2: stop whatever still runs,
+
+106
+00:06:45,246 --> 00:06:48,699
+然后在 src/vector-db 里 docker compose down
+then docker compose down in src/vector-db.
+
+107
+00:06:49,019 --> 00:06:51,646
+Compose 会警告两个变量没设
+Compose warns about two unset variables;
+
+108
+00:06:51,646 --> 00:06:54,800
+shell 脚本会设它们，所以这没有害处
+the shell scripts set them, so this is harmless.
+
+109
+00:06:55,050 --> 00:06:59,317
+第 3 步：进到 src，运行 docker compose up --build
+Step 3: change into src, and docker compose up --build.
+
+110
+00:06:59,637 --> 00:07:01,237
+暂停一下，自己跑一遍
+Pause and run it.
+
+111
+00:07:01,384 --> 00:07:06,291
+两个警告：网络和 volume 已经存在，是 shell 脚本建的
+Two warnings: the network and the volume already exist, made by the shell scripts.
+
+112
+00:07:06,611 --> 00:07:08,531
+它们是警告，不是错误
+They are warnings, not errors.
+
+113
+00:07:08,851 --> 00:07:10,813
+然后建出四个 container
+Then four containers are created.
+
+114
+00:07:12,517 --> 00:07:15,176
+Chroma、uvicorn 和 Vite 同时启动
+Chroma, uvicorn and Vite start together,
+
+115
+00:07:15,176 --> 00:07:19,365
+加载器以 0 退出：它发现书已经加载过了
+and the loader exits with 0: it found the books already loaded.
+
+116
+00:07:23,834 --> 00:07:28,335
+第 4 步：打开 localhost:3000 和 API 文档
+Step 4: open localhost:3000 and the API docs.
+
+117
+00:07:28,655 --> 00:07:33,306
+有一个小疏漏：README 写的是 port 900；请用 9000
+A small slip: the README prints port 900; use 9000.
+
+118
+00:07:33,550 --> 00:07:35,003
+第 5 步：按 Ctrl-C
+Step 5: Ctrl+C,
+
+119
+00:07:35,003 --> 00:07:38,990
+然后 docker compose down 会删掉全部四个 container
+then docker compose down removes all four containers.
+
+120
+00:07:39,967 --> 00:07:41,060
+Docker Cleanup
+Docker cleanup:
+
+121
+00:07:41,060 --> 00:07:44,340
+在 vector-db 里 compose down，已经什么都不剩了
+compose down in vector-db finds nothing left.
+
+122
+00:07:44,660 --> 00:07:46,610
+命令 docker system prune 会先问你
+Docker system prune asks first,
+
+123
+00:07:46,610 --> 00:07:51,167
+然后删掉网络和大约 4.5 GB 的构建缓存
+then deletes the network and about four and a half gigabytes of build cache.
+
+124
+00:07:51,417 --> 00:07:53,628
+命令 prune 会保留每个打了 tag 的 image
+Prune keeps every tagged image,
+
+125
+00:07:53,628 --> 00:07:56,876
+包括超过 4 GB 的 API image
+including the API's image of over 4 gigabytes,
+
+126
+00:07:56,876 --> 00:07:58,862
+还有 node modules 这个 volume
+and the node_modules volume.
+
+127
+00:07:59,182 --> 00:08:01,737
+按名字把它们删掉，如果你需要这块磁盘空间的话
+Remove those by name if you need the disk.
+
+128
+00:08:02,933 --> 00:08:06,560
+现在是教程 24，课上讲的简单前端
+Now Tutorial 24, the lecture's simple frontend.
+
+129
+00:08:06,880 --> 00:08:09,777
+录制当天 main 分支删掉了它
+Main dropped it on the recording day;
+
+130
+00:08:09,777 --> 00:08:14,474
+2025 分支还留着，连同提供它的去年的 API
+branch 2025 keeps it, with last year's API, which serves it.
+
+131
+00:08:14,794 --> 00:08:17,991
+2025 分支要构建它自己的大 image
+Branch 2025 builds its own big images:
+
+132
+00:08:17,991 --> 00:08:22,197
+如果磁盘紧张，先删掉 main 分支的 image
+if your disk is tight, remove main's images first.
+
+133
+00:08:22,433 --> 00:08:25,000
+命令 git switch 2025 一开始会拒绝
+git switch 2025 refuses at first:
+
+134
+00:08:25,000 --> 00:08:28,577
+你对四个文件的修改会被覆盖
+your edits to four files would be overwritten.
+
+135
+00:08:28,897 --> 00:08:30,966
+额外用 stash 把它们先放到一边
+An extra stash puts them aside.
+
+136
+00:08:32,183 --> 00:08:35,938
+额外看一下 log，是去年的 commit，里面有 frontend-simple
+An extra log shows last year's commit, with frontend-simple.
+
+137
+00:08:36,258 --> 00:08:39,345
+它的 vector-db 脚本要另一个密钥名
+Its vector-db script wants a second key name,
+
+138
+00:08:39,345 --> 00:08:43,255
+所以把你的密钥按这个名字再拷一份，再把项目 ID 设一遍
+so copy your key under it, and set your project ID again.
+
+139
+00:08:46,433 --> 00:08:48,828
+Vector DB 的第 1 到 3 步
+Vector DB steps 1 to 3,
+
+140
+00:08:48,828 --> 00:08:52,577
+从 cheese-app-v2 的上一级目录开始
+from the folder above cheese-app-v2,
+
+141
+00:08:52,577 --> 00:08:55,805
+照 2025 分支 README 的写法
+as the 2025 README spells them,
+
+142
+00:08:55,805 --> 00:08:59,553
+最后是同样的加载：14,356 个 chunk
+end in the same load: 14,356 chunks.
+
+143
+00:08:59,873 --> 00:09:02,945
+它的 Chroma image 的 tag 是 latest，现在还能用
+Its Chroma image is tagged latest and still works.
+
+144
+00:09:03,265 --> 00:09:05,676
+用 exit 退出；Chroma 还在跑
+Leave with exit; Chroma keeps running.
+
+145
+00:09:06,233 --> 00:09:08,223
+Backend 的第 1、2、4 步
+Backend steps 1, 2 and 4,
+
+146
+00:09:08,223 --> 00:09:12,761
+在一个新终端里，从放着两个 clone 的目录开始
+in a new terminal from the folder that holds both clones:
+
+147
+00:09:12,761 --> 00:09:18,094
+进到 API 目录，sh docker-shell.sh，然后 uvicorn server
+change into the API folder, sh docker-shell.sh, and uvicorn_server.
+
+148
+00:09:18,414 --> 00:09:20,014
+暂停一下，把它启动起来
+Pause and start it.
+
+149
+00:09:20,333 --> 00:09:23,797
+和 main 分支有两点不同：重载器是 WatchFiles
+Two differences from main: the reloader is WatchFiles,
+
+150
+00:09:23,797 --> 00:09:27,388
+而且模型在 application startup complete 之前就加载
+and the model loads before application startup complete,
+
+151
+00:09:27,388 --> 00:09:30,146
+所以启动要等，也没有就绪探针
+so start-up waits, with no readiness probe.
+
+152
+00:09:31,866 --> 00:09:36,687
+然后验证 localhost:9000：Welcome to AC215
+Then verify localhost:9000: welcome to AC215.
+
+153
+00:09:37,007 --> 00:09:43,155
+说明一点：2025 分支 README 要你启用的演示路由和 router
+A small note: the demo route and the routers the 2025 README asks you to enable
+
+154
+00:09:43,155 --> 00:09:46,735
+除了 RAG 和 agent，已经都在代码里了
+are already in the code, except RAG and agent.
+
+155
+00:09:47,055 --> 00:09:50,085
+别再贴一遍，否则路由就重复了
+Don't paste them again, or the route is duplicated.
+
+156
+00:09:50,333 --> 00:09:53,401
+还有，去年的 Gemini 模型已经退役了
+Also, last year's Gemini model is retired:
+
+157
+00:09:53,401 --> 00:09:58,586
+就算有密钥，它的聊天也会失败，得先更新模型和区域才行
+even with a key, its chat fails until the model and region are updated;
+
+158
+00:09:58,586 --> 00:10:00,338
+main 分支用的是当前的模型
+main uses a current one.
+
+159
+00:10:01,300 --> 00:10:05,513
+还有接下来要紧的：允许所有 origin 的 CORS 中间件
+And what matters next: CORS middleware that allows every origin,
+
+160
+00:10:05,513 --> 00:10:08,212
+也就是 main 分支已经不再需要的那张许可条
+the permission slip main no longer needs.
+
+161
+00:10:09,533 --> 00:10:15,741
+教程 24，第 1 步：进到 cheese-app-v2/src/frontend-simple
+Tutorial 24, step 1: cd cheese-app-v2/src/frontend-simple.
+
+162
+00:10:16,061 --> 00:10:19,602
+第 2、3 步：sh docker-shell.sh
+Steps 2 and 3: sh docker-shell.sh,
+
+163
+00:10:19,602 --> 00:10:22,205
+然后在 8080 上跑 http-server
+then http-server on 8080.
+
+164
+00:10:22,525 --> 00:10:23,983
+暂停一下，把它启动起来
+Pause and start it.
+
+165
+00:10:24,033 --> 00:10:26,913
+Home page：打开 index.html
+Home page: open index.html.
+
+166
+00:10:27,233 --> 00:10:31,372
+首页链接到另外两个页面：简报和聊天
+The landing page links to two more pages: newsletters and chat.
+
+167
+00:10:31,616 --> 00:10:35,221
+Newsletter feature：打开 newsletters.html
+Newsletter feature: open newsletters.html.
+
+168
+00:10:35,541 --> 00:10:39,232
+它的脚本写明了 API：localhost:9000
+Its script names the API: localhost:9000.
+
+169
+00:10:39,552 --> 00:10:42,144
+这是课上的第二趟
+This is the lecture's second trip:
+
+170
+00:10:42,144 --> 00:10:46,870
+页面来自 8080，而它的 JavaScript 自己去调用 9000
+the page came from 8080, and its JavaScript calls 9000 itself.
+
+171
+00:10:47,116 --> 00:10:50,252
+同一台笔记本，不同的 port，所以是不同的 origin
+Same laptop, different port, so a different origin.
+
+172
+00:10:50,572 --> 00:10:54,882
+现在浏览器会检查每一个回答：服务器允许这个 origin 了吗？
+Now the browser checks every answer: did the server allow this origin?
+
+173
+00:10:55,116 --> 00:10:57,975
+额外用 curl 发送浏览器会发的东西
+An extra curl sends what the browser sends.
+
+174
+00:10:58,295 --> 00:11:02,243
+API 的回答里带着 access-control-allow-origin
+The API answers with access-control-allow-origin *,
+
+175
+00:11:02,243 --> 00:11:03,843
+星号，许可了
+permission granted.
+
+176
+00:11:06,033 --> 00:11:12,561
+先是 307，然后是 200：两个路径差一个斜杠，多跑了一趟
+First comes 307, then 200: the paths differ by one slash, an extra round trip.
+
+177
+00:11:12,800 --> 00:11:17,685
+Chat feature：打开 chat.html，问一下奶酪是怎么做的
+Chat feature: open chat.html and ask how cheese is made.
+
+178
+00:11:18,005 --> 00:11:23,061
+现在浏览器加了一步课上从没画过的：第 0 步，预检
+Now the browser adds a step the lecture never draws: step zero, the preflight.
+
+179
+00:11:25,283 --> 00:11:29,294
+一个带自定义请求头的 JSON POST 请求会让浏览器先问一声
+A JSON post with a custom header makes the browser ask first,
+
+180
+00:11:29,294 --> 00:11:30,894
+用的是一个 OPTIONS 请求
+with an OPTIONS request.
+
+181
+00:11:31,192 --> 00:11:36,995
+回答允许任何 origin、这些方法和这两个请求头，有效 600 秒
+The answer allows any origin, these methods and these two headers, for 600 seconds.
+
+182
+00:11:37,716 --> 00:11:43,479
+日志里：OPTIONS 200，然后 POST 被 307 弹了一下
+The log: OPTIONS 200, then the post bounces with 307 and ends
+
+183
+00:11:43,479 --> 00:11:46,313
+最后是 500，同一个 Gemini 错误
+in 500, the same Gemini error.
+
+184
+00:11:46,633 --> 00:11:51,647
+这个 500 也带着许可头，所以浏览器显示的是真正的错误
+That 500 carries the permission header too, so the browser shows the real error.
+
+185
+00:11:51,883 --> 00:11:55,684
+所以 CORS 是浏览器的规则，管的是服务器给不给许可
+So CORS is the browser's rule about the server's permission;
+
+186
+00:11:55,684 --> 00:11:58,027
+curl 和文档页都碰不到它
+curl and the docs page never meet it.
+
+187
+00:11:58,266 --> 00:11:59,866
+那么，快速测一下
+So, a quick test.
+
+188
+00:11:59,930 --> 00:12:04,111
+去年的页面需要 CORS，今年的 React 应用不需要
+Last year's page needed CORS, and this year's React app does not.
+
+189
+00:12:04,431 --> 00:12:08,464
+变的是什么：API、浏览器，还是它调用的 origin？
+What changed: the API, the browser, or the origin it calls?
+
+190
+00:12:17,300 --> 00:12:18,573
+是 origin
+The origin.
+
+191
+00:12:18,623 --> 00:12:23,828
+React 页面调用自己的 origin，由代理转发：没什么需要许可的
+The React page calls its own origin, and a proxy forwards: nothing to permit.
+
+192
+00:12:24,148 --> 00:12:27,860
+API 于是去掉了这个中间件，因为已经没有谁需要它
+The API then dropped the middleware, because nothing needed it.
+
+193
+00:12:28,100 --> 00:12:31,343
+要停止，在两个终端里都按 Ctrl-C 再 exit
+To stop, Ctrl+C and exit in both terminals.
+
+194
+00:12:31,663 --> 00:12:34,100
+额外地，停掉去年的 Chroma
+As extras, stop last year's Chroma,
+
+195
+00:12:34,100 --> 00:12:37,302
+丢弃这个分支上的修改，切回 main 分支
+discard the branch's edits and switch to main;
+
+196
+00:12:37,302 --> 00:12:39,321
+用 git stash pop 恢复你的修改
+git stash pop restores yours.
+
+197
+00:12:40,567 --> 00:12:44,194
+走之前，一份清理清单，每一项前面都做过一次
+Before you go, a cleanup checklist, all done once already.
+
+198
+00:12:44,514 --> 00:12:48,013
+退出每个 container、compose down、切回 main 分支
+Exit every container, compose down, back to main,
+
+199
+00:12:48,013 --> 00:12:50,156
+先看清单再 prune
+prune after checking its list;
+
+200
+00:12:50,156 --> 00:12:54,370
+然后按名字删掉 node modules 这个 volume 和大 image
+then remove the node_modules volume and big images by name.
+
+201
+00:12:54,690 --> 00:12:56,439
+你的密钥留在 secrets 里
+Your key stays in secrets.
+
+202
+00:12:56,684 --> 00:13:01,975
+这是完整的一趟，开头的问题也有了答案：浏览器只和 3000 说话
+Here is the whole trip, with the hook answered: the browser talks only to 3000.
+
+203
+00:13:02,295 --> 00:13:06,396
+在里面，开发环境的 Vite 或生产环境的 nginx
+Inside, Vite in development or nginx in production
+
+204
+00:13:06,396 --> 00:13:09,678
+按名字把 /api 送到 9000 上的 uvicorn
+carries /api by name to uvicorn on 9000,
+
+205
+00:13:09,678 --> 00:13:12,385
+由一个 router 运行函数
+where a router runs the function.
+
+206
+00:13:12,705 --> 00:13:17,420
+JSON 原路返回：同一个 origin，不需要许可
+The JSON comes back the same way: one origin, no permission needed.
+
+207
+00:13:18,084 --> 00:13:19,833
+回到课上的蓝图
+Back to the lecture's blueprint.
+
+208
+00:13:20,153 --> 00:13:22,735
+你的四个方框升进了集群里
+Your four boxes rise into the cluster.
+
+209
+00:13:23,055 --> 00:13:27,610
+最前面的 NGINX、registry 和持久化磁盘还是虚线
+NGINX in front, the registry and the persistent disk are still dashed:
+
+210
+00:13:27,610 --> 00:13:29,497
+接下来的几讲会把它们建出来
+the next lectures build them.
+
+211
+00:13:29,734 --> 00:13:35,352
+在你的课程项目里，课上要你画出自己的解决方案架构和技术架构
+For your project, the lecture asks you to draw your solution and technical architecture,
+
+212
+00:13:35,352 --> 00:13:38,864
+还给了一门速成课和一个模板 repo
+and points to a crash course and a template repository.
+
+213
+00:13:39,100 --> 00:13:41,041
+自测一下，每道题都暂停想一想
+Test yourself, pausing on each.
+
+214
+00:13:41,361 --> 00:13:44,007
+第一题：在 main 分支上追踪一次简报请求
+One: trace a newsletters request on main.
+
+215
+00:13:44,327 --> 00:13:46,951
+浏览器和哪个 container 说话
+Which container does the browser talk to,
+
+216
+00:13:46,951 --> 00:13:49,718
+port 9000 又是在哪一步出现的？第二题
+and where does port 9000 come in? Two:
+
+217
+00:13:49,718 --> 00:13:56,091
+api.service:app、--host 0.0.0.0 和 --reload 各起什么作用
+what do api.service:app, --host 0.0.0.0 and --reload each do,
+
+218
+00:13:56,091 --> 00:14:01,524
+不带斜杠的 square root 为什么返回 307？
+and why does square_root without a slash answer 307?
+
+219
+00:14:01,767 --> 00:14:03,730
+第三题：/healthz 和 /readyz
+Three: /healthz and /readyz.
+
+220
+00:14:04,050 --> 00:14:06,119
+在这个 API 里，它们各检查什么？
+What does each one check in this API?
+
+221
+00:14:06,367 --> 00:14:09,601
+第四题：两条消息之间，聊天存在哪里
+Four: where does a chat stay between two messages,
+
+222
+00:14:09,601 --> 00:14:12,319
+为什么 API 的任何一个副本都能回答它？
+and why can any copy of the API answer it?
+
+223
+00:14:12,567 --> 00:14:16,809
+第五题：开发环境里由哪个文件决定 /api 送到哪里
+Five: which file decides where /api goes in development,
+
+224
+00:14:16,809 --> 00:14:18,325
+生产环境里又是哪个
+which in production,
+
+225
+00:14:18,325 --> 00:14:22,871
+为什么去年的 API 需要 CORS，而 main 分支的不需要？
+and why did last year's API need CORS while main's does not?

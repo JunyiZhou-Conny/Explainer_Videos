@@ -1,0 +1,98 @@
+$ docker network create l18ex-net >/dev/null && echo network created
+network created
+[exit 0]
+
+### C4: start nginx before the API exists
+$ docker run --name l18ex-web --network l18ex-net -p 18080:80 -e API_URL=http://cheese-app-api-service:9000 -v $SCRATCH/v2/src/frontend-react/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro -v $SCRATCH/v2/dist:/usr/share/nginx/html:ro nginx:1.31.8-alpine 2>&1 | grep -E 'envsubst|emerg'; docker inspect -f 'exit code {{.State.ExitCode}}' l18ex-web; docker rm l18ex-web >/dev/null
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+20-envsubst-on-templates.sh: Running envsubst on /etc/nginx/templates/default.conf.template to /etc/nginx/conf.d/default.conf
+2026/11/05 15:40:02 [emerg] 1#1: host not found in upstream "cheese-app-api-service" in /etc/nginx/conf.d/default.conf:14
+nginx: [emerg] host not found in upstream "cheese-app-api-service" in /etc/nginx/conf.d/default.conf:14
+exit code 1
+[exit 0]
+
+### B6: the API first, then nginx
+$ docker run -d --name l18ex-api --network l18ex-net --network-alias cheese-app-api-service -e GCP_PROJECT=your-gcp-project -v $SCRATCH/v2/src/api-service:/app l18ex/api313:check uvicorn api.service:app --host 0.0.0.0 --port 9000 >/dev/null; docker run -d --name l18ex-web --network l18ex-net -p 18080:80 -e API_URL=http://cheese-app-api-service:9000 -v $SCRATCH/v2/src/frontend-react/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro -v $SCRATCH/v2/dist:/usr/share/nginx/html:ro nginx:1.31.8-alpine >/dev/null; sleep 4; docker logs l18ex-web 2>&1 | grep -E 'emerg|start worker process' | head -1
+2026/11/05 15:40:03 [notice] 1#1: start worker processes
+[exit 0]
+
+$ curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" 'localhost:18080/healthz'
+200 text/plain
+[exit 0]
+
+$ curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" 'localhost:18080/api/newsletters?limit=1'
+200 application/json
+[exit 0]
+
+$ curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" 'localhost:18080/newsletters'
+200 text/html
+[exit 0]
+
+$ curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" 'localhost:18080/chat?model=llm'
+200 text/html
+[exit 0]
+
+$ curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" 'localhost:18080/assets/index-test.js'
+200 application/javascript
+[exit 0]
+
+$ curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" 'localhost:18080/assets/nope.js'
+404 text/html
+[exit 0]
+
+$ curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" 'localhost:18080/nope.js'
+200 text/html
+[exit 0]
+
+$ curl -sS -i 'localhost:18080/api/newsletters?limit=1' | tr -d '\r' | grep -iE '^(HTTP|server|content-type)'; curl -sS 'localhost:18080/api/newsletters?limit=1' | python3 -c 'import json,sys; print([n["title"] for n in json.load(sys.stdin)])'
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+Content-Type: application/json
+['Spanish Cheese Journey']
+[exit 0]
+
+$ curl -sS -i localhost:18080/assets/index-test.js | tr -d '\r' | grep -i '^cache-control'; curl -sS -i localhost:18080/newsletters | tr -d '\r' | grep -i '^cache-control'
+Cache-Control: public, max-age=31536000, immutable
+Cache-Control: no-cache
+[exit 0]
+
+$ docker logs l18ex-api 2>&1 | grep -E '"GET ' | sed -E 's/^INFO: +[0-9.:]+ - //'
+"GET /api/newsletters?limit=1 HTTP/1.1" 200 OK
+"GET /api/newsletters?limit=1 HTTP/1.1" 200 OK
+"GET /api/newsletters?limit=1 HTTP/1.1" 200 OK
+[exit 0]
+
+### C4 (b): the API goes away while nginx keeps running
+$ docker stop l18ex-api >/dev/null; curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" 'localhost:18080/api/newsletters?limit=1'; curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" localhost:18080/newsletters
+504 text/html
+200 text/html
+[exit 0]
+
+$ docker logs l18ex-web 2>&1 | grep -E '\[error\]' | sed -E 's/^[0-9/: ]+//; s/, client.*//' | head -2
+[error] 25#25: *15 upstream timed out (110: Operation timed out) while connecting to upstream
+[exit 0]
+
+$ docker rm -f l18ex-web >/dev/null; docker start l18ex-api >/dev/null && echo api started again
+api started again
+[exit 0]
+
+### C5: one changed character, proxy_pass ${API_URL}/; (a URI part after the address)
+$ diff $SCRATCH/v2/src/frontend-react/nginx.conf.template $SCRATCH/v2/slash.conf.template
+14c14
+<     proxy_pass ${API_URL};
+---
+>     proxy_pass ${API_URL}/;
+[exit 1]
+
+$ sleep 3; docker run -d --name l18ex-web --network l18ex-net -p 18080:80 -e API_URL=http://cheese-app-api-service:9000 -v $SCRATCH/v2/slash.conf.template:/etc/nginx/templates/default.conf.template:ro -v $SCRATCH/v2/dist:/usr/share/nginx/html:ro nginx:1.31.8-alpine >/dev/null; sleep 3; curl -sS -w ' [HTTP %{http_code}]\n' 'localhost:18080/api/newsletters?limit=1'
+{"detail":"Not Found"} [HTTP 404]
+[exit 0]
+
+$ docker logs l18ex-api 2>&1 | grep -E '"GET ' | sed -E 's/^INFO: +[0-9.:]+ - //' | tail -1
+"GET /newsletters?limit=1 HTTP/1.1" 404 Not Found
+[exit 0]
+
+$ docker rm -f l18ex-web l18ex-api >/dev/null; docker network rm l18ex-net >/dev/null; docker ps -a --filter name=l18ex- --format '{{.Names}}' | wc -l
+0
+[exit 0]
+

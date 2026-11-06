@@ -1,0 +1,50 @@
+$ sh docker-shell.sh
+
+[+] Building 6.6s (9/9) FINISHED                                                     docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 277B                                                           0.0s
+ => [internal] load metadata for docker.io/library/node:20-alpine                              0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => [1/4] FROM docker.io/library/node:20-alpine                                                0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 69.09kB                                                           0.0s
+ => [2/4] RUN set -ex;     apk update &&     apk add --no-cache bash &&     npm install -g ht  6.3s
+ => [3/4] WORKDIR /app                                                                         0.0s
+ => [4/4] ADD --chown=app:app . /app                                                           0.0s
+ => exporting to image                                                                         0.2s
+ => => exporting layers                                                                        0.2s
+ => => writing image sha256:8c2b25d6ff32fff136ee41a28fae8deef54982c7a10bd78451c57cd2e3c78b63   0.0s
+ => => naming to docker.io/library/cheese-app-frontend-simple                                  0.0s
+147a04351575:/app# http-server
+Starting up http-server, serving ./
+
+http-server version: 14.1.1
+
+http-server settings:
+CORS: disabled
+Cache: 3600 seconds
+Connection Timeout: 120 seconds
+Directory Listings: visible
+AutoIndex: visible
+Serve GZIP Files: false
+Serve Brotli Files: false
+Default File Extension: none
+
+Available on:
+  http://127.0.0.1:8080
+  http://172.18.0.2:8080
+Hit CTRL-C to stop the server
+
+[2026-11-05T14:15:52.395Z]  "GET /" "curl/8.23.0"
+(node:7) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2026-11-05T14:15:54.426Z]  "GET /index.html" "curl/8.23.0"
+[2026-11-05T14:15:54.439Z]  "GET /newsletters.html" "curl/8.23.0"
+[2026-11-05T14:15:54.482Z]  "GET /chat.html" "curl/8.23.0"
+^C
+http-server stopped.
+147a04351575:/app#
+147a04351575:/app# exit
+exit
+[exit 0]

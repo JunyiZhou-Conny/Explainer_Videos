@@ -1,0 +1,5 @@
+$ sed -i 's/"ac215-project"/"your-gcp-project"/' src/api-service/docker-shell.sh src/vector-db/docker-shell.sh; git diff --stat
+ src/api-service/docker-shell.sh | 2 +-
+ src/vector-db/docker-shell.sh   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+[exit 0]

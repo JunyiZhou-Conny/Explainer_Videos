@@ -1,0 +1,6 @@
+$ docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'
+NAMES                    IMAGE                            PORTS
+trusting_archimedes      cheese-app-frontend-react:prod   0.0.0.0:8080->80/tcp
+cheese-app-api-service   cheese-app-api-service           0.0.0.0:9000->9000/tcp
+cheese-app-vector-db     chromadb/chroma:1.5.9            0.0.0.0:8000->8000/tcp
+[exit 0]

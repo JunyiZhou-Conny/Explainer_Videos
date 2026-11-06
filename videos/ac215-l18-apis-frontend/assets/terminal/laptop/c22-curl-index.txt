@@ -1,0 +1,6 @@
+$ curl -s -i http://localhost:8080/index.html | grep -E 'HTTP/|<title>|href="/?(newsletters|chat)'
+HTTP/1.1 200 OK
+    <title>Formaggio.me</title>
+                <a href="/newsletters.html" class="nav-link">Newsletters</a>
+                <a href="/chat.html" class="nav-link">Cheese Assistant</a>
+[exit 0]

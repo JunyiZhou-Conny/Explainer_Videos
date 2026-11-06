@@ -1,0 +1,14 @@
+# recorded in the README, NOT a capture: the README's own troubleshooting table.
+# cheese-app-v2 @ 447b5c3 README.md:223-233, verbatim. (With a key that Google rejects, the live captures
+# show a different symptom: 500 Internal Server Error + google.auth RefreshError in the API log; see ASSETS.md.)
+## Troubleshooting
+
+| What you see | What to do |
+| --- | --- |
+| `/readyz` answers `503` with `CNN model is loading` | Wait. The first run downloads the model |
+| `/readyz` answers `503` with `Chroma: ...`, or Cheese books says the same | Chroma is not running. Run `docker compose up -d chromadb` in `src/vector-db` |
+| Cheese books says `The vector DB is empty` | Load it: step 2 of the Vector DB section |
+| Ask says `Gemini: 403` or `PERMISSION_DENIED` | Check `GCP_PROJECT`, the Vertex AI API and the service account's role |
+| Ask says `Gemini: 404` | Google retired the model. Change `GENERATIVE_MODEL` in `api/settings.py` |
+| Pages load with no content | The API container is not running, or `api_server` is not started |
+| `port is already allocated` | Another container is using that port. Stop it, or run `docker ps` to find it |

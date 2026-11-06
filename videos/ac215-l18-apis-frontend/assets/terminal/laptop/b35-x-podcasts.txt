@@ -1,0 +1,12 @@
+$ curl -s http://localhost:9000/api/podcasts | python3 -m json.tool; curl -s -o /dev/null -w 'audio: HTTP %{http_code} %{content_type} %{size_download} bytes\n' http://localhost:9000/api/podcasts/audio/9f2b7e84-5623-4029-bcfd-f99f2d7611e8-EN.mp3
+[
+    {
+        "id": "9f2b7e84-5623-4029-bcfd-f99f2d7611e8",
+        "dts": 1730476705,
+        "title": "Spanish Cheese",
+        "duration": "00:05:36",
+        "audio": "9f2b7e84-5623-4029-bcfd-f99f2d7611e8-EN.mp3"
+    }
+]
+audio: HTTP 200 audio/mpeg 658930 bytes
+[exit 0]

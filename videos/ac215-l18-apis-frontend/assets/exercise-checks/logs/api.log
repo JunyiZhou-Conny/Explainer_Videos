@@ -1,0 +1,133 @@
+### the tests, as in the README (pytest inside the container)
+$ docker run --rm -v $SCRATCH/v2/src/api-service:/app l18ex/api313:check pytest -q 2>&1 | tail -2
+..........................                                               [100%]
+26 passed in 0.46s
+[exit 0]
+
+### B3, B5: the API without the model (TensorFlow is not in this check image, so the CNN never loads)
+$ docker run -d --name l18ex-api -p 19000:9000 -e GCP_PROJECT=your-gcp-project -e PERSISTENT_DIR=/persistent -v $SCRATCH/v2/src/api-service:/app -v $SCRATCH/v2/persistent:/persistent l18ex/api313:check uvicorn api.service:app --host 0.0.0.0 --port 9000 --reload --reload-dir api/ >/dev/null; sleep 6; docker logs l18ex-api 2>&1 | grep -E 'Application startup complete|ModuleNotFoundError'
+INFO:     Application startup complete.
+ModuleNotFoundError: No module named 'tensorflow'
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' localhost:19000/healthz; curl -sS -w ' [HTTP %{http_code}]\n' localhost:19000/readyz
+{"ok":true} [HTTP 200]
+{"detail":"CNN model is loading"} [HTTP 503]
+[exit 0]
+
+$ curl -sS -i 'localhost:19000/api/newsletters/?limit=1' | tr -d '\r' | grep -iE '^(HTTP|location)'
+HTTP/1.1 307 Temporary Redirect
+location: http://localhost:19000/api/newsletters?limit=1
+[exit 0]
+
+$ curl -sS -i -X POST -H Content-Type:application/json -H 'X-Session-ID: 00000000-0000-4000-8000-000000000001' -d '{"content":"hi"}' localhost:19000/api/llm/chats/ | tr -d '\r' | grep -iE '^(HTTP|location)'
+HTTP/1.1 307 Temporary Redirect
+location: http://localhost:19000/api/llm/chats
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' -X POST -H Content-Type:application/json -d '{"content":"hi"}' localhost:19000/api/llm/chats
+{"detail":[{"type":"missing","loc":["header","X-Session-ID"],"msg":"Field required","input":null}]} [HTTP 422]
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' -X POST -H Content-Type:application/json -H 'X-Session-ID: string' -d '{"content":"hi"}' localhost:19000/api/llm/chats
+{"detail":[{"type":"string_pattern_mismatch","loc":["header","X-Session-ID"],"msg":"String should match pattern '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'","input":"string","ctx":{"pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"}}]} [HTTP 422]
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' -H 'X-Session-ID: ../../etc' localhost:19000/api/llm/chats
+{"detail":[{"type":"string_pattern_mismatch","loc":["header","X-Session-ID"],"msg":"String should match pattern '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'","input":"../../etc","ctx":{"pattern":"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"}}]} [HTTP 422]
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' -X POST -H Content-Type:application/json -H 'X-Session-ID: 00000000-0000-4000-8000-000000000001' -d '{"content":""}' localhost:19000/api/llm/chats
+{"detail":"Message must contain text or an image"} [HTTP 422]
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' -X POST -H Content-Type:application/json -H 'X-Session-ID: 00000000-0000-4000-8000-000000000001' -d '{"image":"aGVsbG8="}' localhost:19000/api/llm-cnn/chats
+{"detail":"The CNN model is still loading"} [HTTP 503]
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' -X POST -H Content-Type:application/json -H 'X-Session-ID: 00000000-0000-4000-8000-000000000001' -d '{"content":"How is cheese made?","mode":"llm"}' localhost:19000/api/llm/chats
+Internal Server Error [HTTP 500]
+[exit 0]
+
+$ docker logs l18ex-api 2>&1 | grep -E '^[A-Za-z.]*(Error|Exception)[A-Za-z]*:' | sort | uniq -c
+      1 ModuleNotFoundError: No module named 'tensorflow'
+      1 google.auth.exceptions.DefaultCredentialsError: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+[exit 0]
+
+$ find $SCRATCH/v2/persistent -maxdepth 4 | sed "s|$SCRATCH/v2/||" | sort
+persistent
+[exit 0]
+
+$ docker rm -f l18ex-api >/dev/null
+[exit 0]
+
+### C2: a persistent folder that belongs to root (what Docker creates on Linux when the folder is missing)
+$ mkdir -p $SCRATCH/v2/rootowned && chown root:root $SCRATCH/v2/rootowned && chmod 755 $SCRATCH/v2/rootowned && ls -ld $SCRATCH/v2/rootowned | awk '{print $1, $3, $4}'
+drwxr-xr-x root root
+[exit 0]
+
+$ docker run -d --name l18ex-api -p 19000:9000 -e GCP_PROJECT=your-gcp-project -e PERSISTENT_DIR=/persistent -e PYTHONPATH=/tfstub -v <logs>/tfstub:/tfstub:ro -v $SCRATCH/v2/src/api-service:/app -v $SCRATCH/v2/rootowned:/persistent l18ex/api313:check uvicorn api.service:app --host 0.0.0.0 --port 9000 >/dev/null; sleep 6; docker logs l18ex-api 2>&1 | grep -E 'Application startup complete|PermissionError'
+Exception in thread INFO:     Application startup complete.
+PermissionError: [Errno 13] Permission denied: '/persistent/experiments'
+[exit 0]
+
+$ sleep 10; curl -sS -w ' [HTTP %{http_code}]\n' localhost:19000/readyz
+{"detail":"CNN model is loading"} [HTTP 503]
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' -X POST -H Content-Type:application/json -H 'X-Session-ID: 00000000-0000-4000-8000-000000000001' -d '{"image":"aGVsbG8="}' localhost:19000/api/llm-cnn/chats
+{"detail":"The CNN model is still loading"} [HTTP 503]
+[exit 0]
+
+$ docker rm -f l18ex-api >/dev/null
+[exit 0]
+
+### C3: the model in place, but Chroma not started yet. Check-only: the GitHub packet download through the
+### session proxy timed out (504) on the first run, so the model folder is pre-created with placeholder files
+### (the TF stand-in never reads them); the API and Chroma share a private network, as on cheese-app-network
+$ mkdir -p $SCRATCH/v2/persistent/experiments/experiment_1760994796 && echo '{}' > $SCRATCH/v2/persistent/experiments/experiment_1760994796/data_details.json && touch $SCRATCH/v2/persistent/experiments/experiment_1760994796/mobilenetv2_train_base_True.keras && chmod -R a+rwX $SCRATCH/v2/persistent && docker network create l18ex-net >/dev/null && echo network created
+network created
+[exit 0]
+
+$ docker run -d --name l18ex-api --network l18ex-net -p 19000:9000 -e GCP_PROJECT=your-gcp-project -e PERSISTENT_DIR=/persistent -e PYTHONPATH=/tfstub -v <logs>/tfstub:/tfstub:ro -v $SCRATCH/v2/src/api-service:/app -v $SCRATCH/v2/persistent:/persistent l18ex/api313:check uvicorn api.service:app --host 0.0.0.0 --port 9000 >/dev/null; sleep 6; docker logs l18ex-api 2>&1 | grep -E 'Application startup complete|tf stand-in'
+[tf stand-in] load_model('/persistent/experiments/experiment_1760994796/mobilenetv2_train_base_True.keras')
+INFO:     Application startup complete.
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' localhost:19000/healthz; curl -sS -w ' [HTTP %{http_code}]\n' localhost:19000/readyz
+{"ok":true} [HTTP 200]
+{"detail":"Chroma: Could not connect to a Chroma server. Are you sure it is running?"} [HTTP 503]
+[exit 0]
+
+$ docker image inspect --format '{{index .RepoDigests 0}}' mirror.gcr.io/chromadb/chroma:1.5.9
+mirror.gcr.io/chromadb/chroma@sha256:1e0b73a187a28757c572acba508c46f48c9e8b0acaf5c20e6d95cdedce1acdf6
+[exit 0]
+
+$ docker run -d --name l18ex-chroma --network l18ex-net --network-alias cheese-app-vector-db -e ANONYMIZED_TELEMETRY=FALSE mirror.gcr.io/chromadb/chroma:1.5.9 >/dev/null; for i in $(seq 1 60); do docker exec l18ex-api curl -s -o /dev/null cheese-app-vector-db:8000/api/v2/heartbeat && break; sleep 1; done; docker exec l18ex-api curl -sS cheese-app-vector-db:8000/api/v2/heartbeat | cut -c1-24
+{"nanosecond heartbeat":
+[exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]\n' localhost:19000/readyz
+{"ok":true} [HTTP 200]
+[exit 0]
+
+$ docker stop l18ex-chroma >/dev/null; curl -sS -w ' [HTTP %{http_code}]\n' localhost:19000/readyz
+{"detail":"Chroma: [Errno -2] Name or service not known"} [HTTP 503]
+[exit 0]
+
+$ docker start l18ex-chroma >/dev/null; for i in $(seq 1 30); do curl -s -o /dev/null -w '%{http_code}' localhost:19000/readyz | grep -q 200 && break; sleep 1; done; curl -sS -w ' [HTTP %{http_code}]\n' localhost:19000/readyz
+{"ok":true} [HTTP 200]
+[exit 0]
+
+$ docker logs l18ex-api 2>&1 | grep -E '"GET /(healthz|readyz)' | sed -E 's/^INFO: +[0-9.:]+ - //' | uniq -c
+      1 "GET /healthz HTTP/1.1" 200 OK
+      1 "GET /readyz HTTP/1.1" 503 Service Unavailable
+      1 "GET /readyz HTTP/1.1" 200 OK
+      2 "GET /readyz HTTP/1.1" 503 Service Unavailable
+      2 "GET /readyz HTTP/1.1" 200 OK
+[exit 0]
+
+$ docker rm -f l18ex-api l18ex-chroma >/dev/null; docker network rm l18ex-net >/dev/null; docker ps -a --filter name=l18ex- --format '{{.Names}}' | wc -l
+0
+[exit 0]
+

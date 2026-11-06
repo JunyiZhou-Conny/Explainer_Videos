@@ -1,0 +1,14 @@
+$ docker history --format '{{.Size}}\t{{.CreatedBy}}' cheese-app-frontend-react:prod | cut -c1-110 | head -12
+0B	EXPOSE [80/tcp]
+766kB	COPY /app/dist /usr/share/nginx/html # build…
+20.5kB	COPY nginx.conf.template /etc/nginx/template…
+0B	ENV API_URL=http://cheese-app-api-service:90…
+52.4MB	RUN /bin/sh -c set -x     && apkArch="$(cat …
+0B	ENV ACME_VERSION=0.4.1
+0B	ENV NJS_RELEASE=1
+0B	ENV NJS_VERSION=1.0.2
+0B	CMD ["nginx" "-g" "daemon off;"]
+0B	STOPSIGNAL SIGQUIT
+0B	EXPOSE map[80/tcp:{}]
+0B	ENTRYPOINT ["/docker-entrypoint.sh"]
+[exit 0]

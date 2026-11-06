@@ -1,0 +1,48 @@
+# Chinese (zh-CN) metadata for ac215-l18-apis-frontend (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 端口, 源（origin）, 预检请求; A4), the English
+# colon structure kept (v1：一个服务器、一个应用、一个端口; 生产环境：用 nginx 取代 Vite), commands, tools and names as
+# they are (FastAPI, uvicorn, React, Vite, nginx, CORS, 2025), questions keep their question mark, the one core
+# concept whose Chinese is not the usual search word carries its English short name once (同一个源（origin）), and
+# S16 follows the series' 收尾 pattern. 跟练 = follow-along; APIs + Frontend → API 与前端 (as video.yaml's
+# publish.title_zh "AC215 第18讲跟练 · API 与前端：FastAPI 服务、简单网页和 React 应用，一步一步在本地跑起奶酪 App",
+# in the series pattern of the other meta.yaml titles; the Bilibili upload itself uses publish.title_zh).
+# SERIES RULE (A16): no title, chapter or description names the instructor.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 18 讲：API 与前端——FastAPI 服务、简单网页和 React 应用（跟练：cheese-app-v1 + cheese-app-v2）"
+
+parts:
+  part1: "AC215 · 第 18 讲（上）：API——从一个 Python 函数到四个容器的后端"
+  part2: "AC215 · 第 18 讲（下）：前端——React、同一个源、nginx 和去年的 CORS"
+
+chapters:
+  s01_hook: "是谁在端口 3000 上应答？"
+  s02_blueprint: "蓝图，以及你的目录"
+  s03_server: "v1：一个服务器、一个应用、一个端口"
+  s04_route: "一个 Python 函数变成 URL"
+  s05_static: "给浏览器的文件：简单前端"
+  s06_vectordb: "v2：四个容器，还有奶酪书"
+  s07_ready: "启动 API：先存活，再就绪"
+  s08_routes: "页面决定路由"
+  s09_chat: "聊天是一个文件，不是记忆"
+  s10_react: "为什么要框架：React 加 Vite"
+  s11_proxy: "同一个源（origin）：Vite 代理"
+  s12_production: "生产环境：用 nginx 取代 Vite"
+  s13_compose: "一条命令，然后清理"
+  s14_branch: "教程 24 在 2025 分支上"
+  s15_cors: "去年的页面：CORS 与预检请求"
+  s16_recap: "收尾清理、回顾和下节预告"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but
+# without the course-credit line's names (A16). Facts: script.md v2 (S01-S16, two parts at the README's own seam
+# "Keep this container running."); README sections per ASSETS.md "Which commit" (cheese-app-v1 @ ce03a10; cheese-app-v2
+# main @ 447b5c3 as cloned on 2026-11-05; "Production images" from e98fa55's README as extras; Tutorial 24 from branch
+# 2025 = 14f2a14); captures on a laptop with a key file that belongs to no account, so every Gemini and embedding call
+# stops at its first real error and the successful reply is shown only as the documented shape; nothing creates a
+# billable cloud resource; five pause-and-ponder cards and five test-yourself questions. Paste the chapter timestamps
+# from output/chapters.txt under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 18 讲“API 与前端”的跟练视频，对照两份课件（APIs、Frontend）逐页讲解，并照着 dlops-io/cheese-app-v1 和 cheese-app-v2 的 README 一步一步在自己的笔记本上做：上半场先用 cheese-app-v1 在容器里用 uvicorn 跑起 FastAPI，讲清服务器和应用、api.service:app、--host 0.0.0.0、--reload 和发布的端口，把一个 Python 函数变成 URL（查询字符串、422、307、/docs），再用 http-server 提供静态网页；然后进入 cheese-app-v2：四个容器、一个 Docker 网络，把奶酪书的 14,356 个 chunk 载入 Chroma，启动 API，分清 /healthz（存活）和 /readyz（就绪），看懂 /api 下的 router 和 /api/docs，聊天怎样存成文件，最后跑通 pytest。
+  下半场讲前端：为什么需要框架，用 Vite 跑 React 开发服务器，看懂 Vite 代理怎样让浏览器只和同一个源（origin）打交道、API 因此不需要 CORS；再用两阶段构建的 nginx 生产镜像取代 Vite（331 MB 对大约 95 MB），用 docker compose 一条命令启动整个应用并完整清理；最后切到 2025 分支跑课上讲的简单前端（录制当天 main 分支已删掉这一节），亲眼看浏览器的 CORS 预检请求和一次 307 重定向。
+  英文旁白，配中文和中英双语字幕；录制当天 cheese-app-v2 的 main 分支更新了两次，视频说明了跟随哪个 commit；所有容器都跑在本地，只有 Gemini 和 embedding 调用会用到你自己的 Vertex AI 密钥（视频用金色标签标出），录制用的密钥不属于任何账号，所以这些调用停在第一个真实报错处并如实标明。

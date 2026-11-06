@@ -1,0 +1,8 @@
+$ curl -s -i http://localhost:9000/square_root | head -6
+HTTP/1.1 307 Temporary Redirect
+date: Thu, 05 Nov 2026 13:35:13 GMT
+server: uvicorn
+content-length: 0
+location: http://localhost:9000/square_root/
+
+[exit 0]
