@@ -1,8 +1,0 @@
-$ echo "Waiting for server to start..."
-> sleep 10
-> curl -f http://localhost:9000/ || exit 1
-Waiting for server to start...
-  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
-                                 Dload  Upload  Total   Spent   Left   Speed
-  0      0   0      0   0      0      0      0                              0100     55 100     55   0      0   6997      0                              0100     55 100     55   0      0   6966      0                              0100     55 100     55   0      0   6953      0                              0
-{"message":"Welcome to the Cheese App CI/CD Tutorial!"}[exit 0]

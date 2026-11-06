@@ -1,3 +1,0 @@
-$ docker images
-IMAGE   ID             DISK USAGE   CONTENT SIZE   EXTRA
-[exit 0]

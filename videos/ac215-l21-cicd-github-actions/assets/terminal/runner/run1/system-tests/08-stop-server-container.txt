@@ -1,5 +1,0 @@
-$ docker stop api-server || true
-> docker rm api-server || true
-api-server
-api-server
-[exit 0]

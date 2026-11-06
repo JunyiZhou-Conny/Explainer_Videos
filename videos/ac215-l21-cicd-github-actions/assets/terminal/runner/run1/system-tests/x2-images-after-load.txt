@@ -1,4 +1,0 @@
-$ docker images
-IMAGE                                                     ID             DISK USAGE   CONTENT SIZE   EXTRA
-cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e   a8166eb0bb4a        722MB          176MB        
-[exit 0]
