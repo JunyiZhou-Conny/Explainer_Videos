@@ -9,10 +9,10 @@ Beats (script.md "## S15", one voiceover block each):
 1. CODE(setup_containers.py: 79-90): line 81 PINK, lines 84-85 PURPLE. A GREY laptop (Pulumi + three
    TEAL container cards) and the BLUE VM ('the VM's Docker') joined by a PINK SSH tunnel; the cards
    get GREEN '+' glyphs and copies travel through the tunnel.
-2. Lecture 20 · slide 23. V1: the GREY pull arrow registry -> VM; frontend, vector-db 8000,
-   api-service 9000; slide 23's 'HTTP 80' ghost flips to 3000 (GREY erratum tag); the dashed loader
-   pours and leaves; the GREEN 'appnetwork' cable; a GREY erratum chip 'same mount slip as part 1 …'
-   with a dashed ring on vector-db.
+2. Lecture 20 · slide 23. V1: the GREY pull arrow registry -> VM; frontend; vector-db 8000 with the
+   dashed loader pouring in and leaving; api-service 9000 and the GREEN 'appnetwork' cable; slide 23's
+   'HTTP 80' ghost flips to 3000 (GREY erratum tag); at 'the code', a GREY erratum chip 'same mount
+   slip as part 1 …' with a dashed ring on vector-db, held 1.6 s after the line.
 3. Lecture 20 · slide 24. A YELLOW chip '6 Web server · setup_webserver.py'; nginx on top, the PINK
    'HTTP 80' door drops onto it, the browser and the request arrows; two GREY doors '3000' and '9000'
    on the GCP wall, struck RED.
@@ -51,7 +51,10 @@ Deviations from SHOW:
 - Beat 0/4/6: code panels use elide/cuts (GREY '…') so a picture fits beside them.
 - Beat 1: the picture is a small laptop/VM drawing of our own (V4's '+' glyphs on TEAL cards), not V4.
 - Beat 2: the erratum 'dots' are GREY erratum tags / a GREY dashed ring (no dot glyph exists); the
-  mount-slip chip sits above the picture (no room inside the VM).
+  mount-slip chip sits above the picture (no room inside the VM). The loader pours right after the
+  vector-db box (its slot is where the cable runs) and the cable comes with the API box, so the port
+  erratum and the silent mount-slip chip get the end of the line; a 1.6 s hold lets the chip be read.
+- Beat 3: a 1 s hold on the finished slide-24 picture (routes and struck doors land after the line).
 - Beat 3: the strip is not on screen any more (V1 fills the frame), so chip 6 appears alone as a
   YELLOW chip above the picture. The ghost doors sit on the GCP outline's top edge.
 - Beat 5: the 'GREY-outlined panel' is the header line + illustration tag over the full-frame V1
@@ -277,7 +280,7 @@ class ContainersOverSsh(VoiceScene):
         net = VGroup(Line(md.p(2.9, -0.62), md.p(4.0, -0.62)),
                      Line(md.p(1.95, -0.98), md.p(1.95, -1.85)),
                      Line(md.p(1.95, -1.85), md.p(4.0, -1.85))).set_stroke(OWN, 5)
-        net_l = mono(APPNET, 20, OWN).move_to(md.p(2.95, -1.6))
+        net_l = mono(APPNET, 20, OWN).move_to(md.p(2.8, -1.6))
         slip = grey_chip("same mount slip as part 1: data in /data, not on the disk")
         er_slip = erratum_tag()
         slip_g = VGroup(er_slip, slip).arrange(RIGHT, buff=0.2).move_to([0, 2.15, 0]).align_to([6.4, 0, 0], RIGHT)
@@ -289,15 +292,17 @@ class ContainersOverSsh(VoiceScene):
             md.box(self, "front")
             vo.wait_until("the vector database on 8000")
             md.box(self, "vdb")
+            md.loader(self)                          # pours its data in and leaves (before the cable)
             vo.wait_until("the API on 9000")
             md.box(self, "api")
+            md.show(self, net, net_l, anims=[Create(net), FadeIn(net_l)], run_time=0.6)
             vo.wait_until("The slide puts the frontend on 80")
             md.front_port_fix(self)
             md.show(self, er_front, anims=[FadeIn(er_front, shift=DOWN * 0.1)], run_time=0.4)
-            md.loader(self)
-            md.show(self, net, net_l, anims=[Create(net), FadeIn(net_l)], run_time=0.7)
+            vo.wait_until("the code")
             vring = ring(md.parts["vdb"].frame, S.GREY, buff=0.1, dashed=True)
             md.show(self, slip_g, vring, anims=[FadeIn(slip_g, shift=DOWN * 0.1), Create(vring)], run_time=0.6)
+        self.wait(1.6)                               # the silent erratum chip needs reading time
 
         # ========================================================== 3. slide 24: the web server
         ref3 = lref("24")
@@ -317,6 +322,7 @@ class ContainersOverSsh(VoiceScene):
             md.routes(self)
             self.play(*[Indicate(g[1], color=ERR, scale_factor=1.1) for g in (gd3, gd9)], run_time=0.6)
             md.heal(self)
+        self.wait(1.0)                               # hold the finished slide-24 picture
         self.play(FadeOut(VGroup(md, c6, ref3)), run_time=0.5)
         self.remove(md, c6, ref3)
 

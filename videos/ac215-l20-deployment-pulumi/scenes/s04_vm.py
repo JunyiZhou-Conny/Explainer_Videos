@@ -330,7 +330,7 @@ class VmWithDocker(VoiceScene):
             vo.wait_until("for bookworm")
             bw = next(r for r in r8 if "bookworm" in r.text)
             self.play(substring(bw, "bookworm").animate.set_color(TURN), run_time=0.3)
-            self.play(Indicate(substring(bw, "bookworm"), color=TURN, scale_factor=1.25), run_time=0.6)
+            self.play(Indicate(substring(bw, "bookworm"), color=TURN, scale_factor=1.12), run_time=0.6)
             self.add(t)
             vo.wait_until("and installs the engine")
             r12 = out(self, t, ["…", V02.line(12)], wrap=True, run_time=0.5)
@@ -391,18 +391,17 @@ class VmWithDocker(VoiceScene):
             vo.wait_until("run them once")
             self.play(FadeIn(once, scale=0.9), run_time=0.4)
             flash_tag(self, once, TURN)
-            self.play(FadeOut(VGroup(fc, rr, once)), run_time=0.4)
+            self.play(FadeOut(VGroup(fc, rr, once)), FadeIn(cv, shift=LEFT * 0.4), run_time=0.4)
             self.remove(fc, rr, once)
-            self.play(FadeIn(cv, shift=LEFT * 0.4), run_time=0.4)
             self.add(cv)
             frows = []
             for i, c in enumerate(FOLDERS):
-                type_capture(self, t, c, type_time=0.3)
+                type_capture(self, t, c, type_time=0.22)
                 if i < 3:
-                    frows.append(cv.show(self, folder_row(i), anims=None, run_time=0.25))
+                    frows.append(cv.show(self, folder_row(i), anims=None, run_time=0.2))
                 else:
                     f = frows[i - 3]
-                    self.play(f.animate.set_color(SHARED), run_time=0.25)
+                    self.play(f.animate.set_color(SHARED), run_time=0.2)
                     cv.heal(self)
             bare_prompt(self, t)
 
