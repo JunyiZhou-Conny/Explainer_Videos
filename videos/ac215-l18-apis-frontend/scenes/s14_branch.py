@@ -486,7 +486,7 @@ class Branch2025(VoiceScene):
         lamps = lamp_pair(("dashed", "dashed"))
         noprobe = grey_chip("no probes yet")
         docs = card([label("2025 docs:", 20, S.GREY), VGroup(mono("localhost:9000/docs", 20, ROUTE),
-                                                             label("(no /api)", 20, S.GREY)).arrange(RIGHT, buff=0.15)],
+                                                             label("(no /api)", 20, S.GREY)).arrange(RIGHT, buff=0.3)],
                     size=20, buff=0.08)
         with self.voiceover(SAY[5]) as vo:
             clear_bar(self, t2)

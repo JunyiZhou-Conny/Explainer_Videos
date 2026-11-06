@@ -211,9 +211,8 @@ class StaticPages(VoiceScene):
         ties = [DashedLine(r.get_right(), c.get_left(), color=S.GREY, stroke_width=2, dash_length=0.08)
                 for r, c in zip(rings, chips)]
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(ref0), run_time=0.4)
             vo.wait_until("a page")
-            self.play(FadeIn(page, scale=0.9), run_time=0.6)
+            self.play(FadeIn(page, scale=0.9), FadeIn(ref0), run_time=0.6)     # the tag comes with its picture
             vo.wait_until("The lecture splits a page")
             self.play(page.animate.scale(1.08), rate_func=there_and_back, run_time=0.6)
             for i, (c, cue) in enumerate(zip(cards, ("HTML for structure", "CSS for style",

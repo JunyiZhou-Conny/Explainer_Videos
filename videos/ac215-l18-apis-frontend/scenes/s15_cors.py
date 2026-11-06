@@ -409,7 +409,7 @@ class CorsPreflight(VoiceScene):
         assert tab4.box.get_top()[1] < TRACK_BOTTOM - 0.1
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(op, oc, rp, rc, diff)), run_time=0.4)
-            self.play(FadeOut(tr), FadeOut(ill), FadeIn(tab4, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(tr), FadeOut(ill), FadeOut(ref), FadeIn(tab4, shift=UP * 0.2), run_time=0.5)  # the tag leaves with its picture
             ln = type_capture(self, tab4, C25, type_time=1.4)[-1]
             bar_tag(self, tab4, extra_row())
             o4 = out(self, tab4, C25.at((2, 7)), wrap=True, run_time=0.6)
@@ -425,7 +425,7 @@ class CorsPreflight(VoiceScene):
             clear_bar(self, tab4)
             resize(self, tab4, 3, keep=keep4, run_time=0.5)
             bar_tag(self, tab4, extra_row())
-            self.play(FadeIn(tr), FadeIn(ill), run_time=0.5)
+            self.play(FadeIn(tr), FadeIn(ill), FadeIn(ref), run_time=0.5)  # and comes back with it
             self.play(open_gate(g), run_time=0.6)
             tr.heal(self)
             tr.browser.fill(self, [label("Newsletters", 24, INK), label(FIRST_TITLE, 20, INK), label("…", 20, S.GREY)],
@@ -518,7 +518,7 @@ class CorsPreflight(VoiceScene):
             self.play(net.door_pulse("api", ROUTE), run_time=0.6)        # the POST is seen to land
             tr.heal(self)
             vo.wait_until("The answer allows")
-            self.play(FadeOut(tr), FadeOut(ill), FadeIn(tab7, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(tr), FadeOut(ill), FadeOut(ref6), FadeIn(tab7, shift=UP * 0.2), run_time=0.5)  # B27 leaves: so does its tag
             type_capture(self, tab7, C27, type_time=1.2)
             bar_tag(self, tab7, extra_row())
             o7 = out(self, tab7, C27.at((2, 6)), wrap=True, run_time=0.5)
@@ -607,7 +607,7 @@ class CorsPreflight(VoiceScene):
         assert tail.get_top()[1] < panels[0].get_bottom()[1] - 0.1 and tail.get_bottom()[1] > -SAFE_Y + 0.05, tail
         with self.voiceover(SAY[9]) as vo:
             clear_bar(self, tab8)
-            self.play(FadeOut(tab8), FadeOut(ref6), *[FadeIn(VGroup(f, i), shift=UP * 0.15) for f, i in zip(panels, icons)],
+            self.play(FadeOut(tab8), *[FadeIn(VGroup(f, i), shift=UP * 0.15) for f, i in zip(panels, icons)],
                       run_time=0.7)
             self.play(*[FadeIn(c) for c in caps], run_time=0.5)
             self.play(FadeIn(tail[0], shift=UP * 0.1), run_time=0.5)
