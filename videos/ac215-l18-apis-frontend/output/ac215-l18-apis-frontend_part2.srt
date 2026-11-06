@@ -1,0 +1,1035 @@
+1
+00:00:00,000 --> 00:00:01,664
+Part 2: the frontend.
+
+2
+00:00:01,984 --> 00:00:06,485
+The API is up on port 9000;
+now a page that uses it.
+
+3
+00:00:06,733 --> 00:00:09,997
+The lecture starts
+with one HTML page per feature.
+
+4
+00:00:10,317 --> 00:00:13,280
+Each carries its own header,
+script and style;
+
+5
+00:00:13,280 --> 00:00:17,144
+nothing is shared,
+and every click loads a whole page: slow.
+
+6
+00:00:17,517 --> 00:00:21,634
+The fix is a single-page app built
+from components, with a framework.
+
+7
+00:00:21,954 --> 00:00:24,962
+The lecture names the common
+ones and picks React.
+
+8
+00:00:25,200 --> 00:00:30,363
+In React, a component is a function
+that returns markup, written in JSX.
+
+9
+00:00:30,683 --> 00:00:34,653
+The app is one shell:
+a header defined only once, a footer,
+
+10
+00:00:34,653 --> 00:00:38,085
+and in between a block
+that changes with each page.
+
+11
+00:00:38,333 --> 00:00:41,154
+Today's repository uses React with Vite,
+
+12
+00:00:41,154 --> 00:00:45,032
+a development server and build tool,
+plus React Router.
+
+13
+00:00:45,352 --> 00:00:49,397
+In main.jsx,
+a route table maps each address to a page,
+
+14
+00:00:49,397 --> 00:00:52,413
+with a star that catches everything else.
+
+15
+00:00:52,650 --> 00:00:55,965
+In App.jsx,
+the header and footer are written once,
+
+16
+00:00:55,965 --> 00:01:00,906
+and between them sits the outlet,
+the window where the current page appears.
+
+17
+00:01:01,150 --> 00:01:06,580
+React setup, in a new terminal
+from the cheese-app-v2 folder:
+
+18
+00:01:06,580 --> 00:01:11,475
+step 1, cd src/frontend-react,
+and run docker-shell.sh.
+
+19
+00:01:11,795 --> 00:01:16,495
+It mounts your code,
+keeps node_modules in a named volume,
+
+20
+00:01:16,495 --> 00:01:20,627
+publishes 3000 to port 5173,
+and joins the network.
+
+21
+00:01:20,947 --> 00:01:22,099
+Pause and run it.
+
+22
+00:01:22,333 --> 00:01:24,530
+The banner shows Node and npm.
+
+23
+00:01:24,850 --> 00:01:28,727
+Your first run installs the dependencies
+into the volume;
+
+24
+00:01:28,727 --> 00:01:30,632
+ours was already up to date.
+
+25
+00:01:30,867 --> 00:01:33,064
+Step 2: npm run dev.
+
+26
+00:01:33,384 --> 00:01:37,404
+Vite is ready
+and prints two addresses on 5173;
+
+27
+00:01:37,404 --> 00:01:42,451
+both are inside the container,
+so on your laptop, use 3000.
+
+28
+00:01:42,771 --> 00:01:44,029
+Pause and start it.
+
+29
+00:01:44,267 --> 00:01:47,062
+Step 3: open localhost:3000.
+
+30
+00:01:47,382 --> 00:01:53,654
+The HTML is almost empty:
+one div called root and a script, main.jsx.
+
+31
+00:01:53,974 --> 00:01:56,960
+The whole app is one page
+and its JavaScript.
+
+32
+00:01:57,200 --> 00:02:03,365
+An extra check: every address, even one
+that does not exist, returns the same HTML.
+
+33
+00:02:03,685 --> 00:02:06,267
+The browser picks the page, not the server.
+
+34
+00:02:09,233 --> 00:02:10,620
+Now the hook's answer.
+
+35
+00:02:10,940 --> 00:02:14,481
+In the lecture,
+the page's JavaScript calls the API.
+
+36
+00:02:14,801 --> 00:02:21,024
+Here, every call in api.js goes
+to a relative path starting with /api,
+
+37
+00:02:21,024 --> 00:02:24,401
+with the session ID from localStorage.
+
+38
+00:02:24,650 --> 00:02:28,145
+And vite.config.js holds the courier:
+
+39
+00:02:28,145 --> 00:02:34,662
+a proxy rule that forwards /api
+to cheese-app-api-service, port 9000,
+
+40
+00:02:34,662 --> 00:02:36,362
+by container name.
+
+41
+00:02:36,833 --> 00:02:40,396
+So the browser only ever
+talks to localhost:3000.
+
+42
+00:02:40,716 --> 00:02:43,048
+Vite, in the frontend container,
+
+43
+00:02:43,048 --> 00:02:46,326
+carries each /api request
+across the network.
+
+44
+00:02:46,646 --> 00:02:49,548
+That is why uvicorn answered on 3000.
+
+45
+00:02:49,783 --> 00:02:52,748
+An origin is the scheme,
+the host and the port.
+
+46
+00:02:53,068 --> 00:02:56,308
+The page and its API calls share one origin,
+
+47
+00:02:56,308 --> 00:03:02,050
+so the browser has nothing to object to,
+and the API needs no permission slip.
+
+48
+00:03:02,300 --> 00:03:03,644
+So, a quick test.
+
+49
+00:03:03,964 --> 00:03:10,065
+Could the page's JavaScript call the API
+by its container name, port 9000, directly?
+
+50
+00:03:18,900 --> 00:03:23,514
+No. The JavaScript runs in your browser,
+on the laptop,
+
+51
+00:03:23,514 --> 00:03:26,751
+and the laptop's DNS
+knows no container names.
+
+52
+00:03:27,071 --> 00:03:32,980
+Only code inside the network can use them:
+the Vite proxy, nginx, the API.
+
+53
+00:03:33,216 --> 00:03:34,660
+An extra experiment:
+
+54
+00:03:34,660 --> 00:03:38,123
+unplug the API from the network
+for one request.
+
+55
+00:03:38,443 --> 00:03:41,365
+The browser gets 502 with an empty body:
+
+56
+00:03:41,365 --> 00:03:45,675
+the README's troubleshooting row
+for pages that load empty.
+
+57
+00:03:45,916 --> 00:03:46,945
+Review the app:
+
+58
+00:03:46,945 --> 00:03:50,510
+home, podcasts and newsletters load
+through the API,
+
+59
+00:03:50,510 --> 00:03:54,023
+and the Recent tab keeps your chats
+across a reload.
+
+60
+00:03:54,343 --> 00:03:57,297
+In chat, Identify works through the proxy;
+
+61
+00:03:57,297 --> 00:04:01,937
+Ask, and Cheese books
+with its Tolminc question, get the same 500.
+
+62
+00:04:02,257 --> 00:04:03,602
+Pause and click through.
+
+63
+00:04:03,850 --> 00:04:07,076
+The README's code table
+names the files we just saw;
+
+64
+00:04:07,076 --> 00:04:08,565
+pause to match each one.
+
+65
+00:04:08,885 --> 00:04:12,274
+Then, in a second terminal
+in the same folder,
+
+66
+00:04:12,274 --> 00:04:16,768
+docker-shell.sh again opens a shell
+in the running container;
+
+67
+00:04:16,768 --> 00:04:18,115
+run npm run check:
+
+68
+00:04:18,115 --> 00:04:21,557
+a lint,
+a format check and a production build.
+
+69
+00:04:21,877 --> 00:04:24,010
+That build is what production serves.
+
+70
+00:04:25,250 --> 00:04:30,861
+In production, Vite does not run,
+so who serves the files and forwards /api?
+
+71
+00:04:31,181 --> 00:04:32,482
+Nginx does.
+
+72
+00:04:32,802 --> 00:04:36,382
+Today's README dropped this section
+on the recording day,
+
+73
+00:04:36,382 --> 00:04:38,416
+but its files are still in main,
+
+74
+00:04:38,416 --> 00:04:41,847
+so we run the earlier README's commands,
+marked extra.
+
+75
+00:04:42,083 --> 00:04:44,686
+The production Dockerfile has two stages.
+
+76
+00:04:45,006 --> 00:04:46,904
+The first builds the app with Node.
+
+77
+00:04:47,224 --> 00:04:51,427
+The second starts from nginx
+and copies in only the built files.
+
+78
+00:04:51,667 --> 00:04:55,608
+The nginx template
+has the same rule as Vite:
+
+79
+00:04:55,608 --> 00:04:58,323
+/api goes to the API container.
+
+80
+00:04:58,643 --> 00:05:04,581
+Any other page address gets index.html,
+so the router can choose the page;
+
+81
+00:05:04,581 --> 00:05:07,389
+only a missing asset is a real 404.
+
+82
+00:05:07,633 --> 00:05:10,438
+Stop the dev server with Ctrl+C and exit,
+
+83
+00:05:10,438 --> 00:05:13,585
+then build the production image,
+tagged :prod.
+
+84
+00:05:13,905 --> 00:05:17,276
+Its first stage runs the same
+Vite build you just checked.
+
+85
+00:05:17,517 --> 00:05:21,272
+Run it on the network,
+publishing 8080 to port 80.
+
+86
+00:05:21,592 --> 00:05:25,617
+Open localhost:8080:
+the server is now nginx,
+
+87
+00:05:25,617 --> 00:05:31,341
+/api still reaches the API,
+and a deep link still gets the page.
+
+88
+00:05:31,583 --> 00:05:33,221
+Compare the sizes:
+
+89
+00:05:33,221 --> 00:05:38,410
+331 megabytes for the dev image,
+about 95 for production.
+
+90
+00:05:38,730 --> 00:05:42,250
+No Node, no Vite:
+just files and one proxy rule.
+
+91
+00:05:42,500 --> 00:05:46,276
+The lecture's production slide:
+only the outside changes.
+
+92
+00:05:46,596 --> 00:05:51,700
+In lecture 20, NGINX goes in front
+on a cloud machine, on port 80;
+
+93
+00:05:51,700 --> 00:05:54,639
+the API's code and port stay the same.
+
+94
+00:05:54,883 --> 00:06:00,536
+As an extra, stop it, stop the API too,
+and start the production container again.
+
+95
+00:06:00,856 --> 00:06:02,094
+It will not start.
+
+96
+00:06:02,414 --> 00:06:03,539
+So, a quick test:
+
+97
+00:06:03,539 --> 00:06:06,915
+why would a page server care
+whether the API is up?
+
+98
+00:06:13,750 --> 00:06:16,843
+It exits at once:
+host not found in upstream.
+
+99
+00:06:17,163 --> 00:06:22,326
+Nginx looks up the proxy target's name
+when it starts, and the API is gone.
+
+100
+00:06:22,646 --> 00:06:24,331
+Start the API first.
+
+101
+00:06:25,567 --> 00:06:27,956
+Instead of three terminals, one command.
+
+102
+00:06:28,276 --> 00:06:32,628
+Step 1: put your project ID
+into the compose file in src.
+
+103
+00:06:32,948 --> 00:06:34,186
+It appears twice.
+
+104
+00:06:34,434 --> 00:06:36,866
+The file names the same four services.
+
+105
+00:06:37,186 --> 00:06:40,771
+The loader first checks
+whether the books are already in Chroma,
+
+106
+00:06:40,771 --> 00:06:42,284
+and loads them only if not.
+
+107
+00:06:42,534 --> 00:06:48,699
+Step 2: stop whatever still runs,
+then docker compose down in src/vector-db.
+
+108
+00:06:49,019 --> 00:06:51,646
+Compose warns about two unset variables;
+
+109
+00:06:51,646 --> 00:06:54,800
+the shell scripts set them,
+so this is harmless.
+
+110
+00:06:55,050 --> 00:06:59,317
+Step 3: change into src,
+and docker compose up --build.
+
+111
+00:06:59,637 --> 00:07:00,789
+Pause and run it.
+
+112
+00:07:01,384 --> 00:07:04,716
+Two warnings:
+the network and the volume already exist,
+
+113
+00:07:04,716 --> 00:07:06,291
+made by the shell scripts.
+
+114
+00:07:06,611 --> 00:07:08,531
+They are warnings, not errors.
+
+115
+00:07:08,851 --> 00:07:10,813
+Then four containers are created.
+
+116
+00:07:12,517 --> 00:07:17,104
+Chroma, uvicorn and Vite start together,
+and the loader exits with 0:
+
+117
+00:07:17,104 --> 00:07:19,365
+it found the books already loaded.
+
+118
+00:07:23,834 --> 00:07:28,335
+Step 4:
+open localhost:3000 and the API docs.
+
+119
+00:07:28,655 --> 00:07:33,306
+A small slip:
+the README prints port 900; use 9000.
+
+120
+00:07:33,550 --> 00:07:38,990
+Step 5: Ctrl+C, then docker compose down
+removes all four containers.
+
+121
+00:07:39,967 --> 00:07:41,060
+Docker cleanup:
+
+122
+00:07:41,060 --> 00:07:44,340
+compose down
+in vector-db finds nothing left.
+
+123
+00:07:44,660 --> 00:07:46,545
+Docker system prune asks first,
+
+124
+00:07:46,545 --> 00:07:48,024
+then deletes the network
+
+125
+00:07:48,024 --> 00:07:51,167
+and about four and a half
+gigabytes of build cache.
+
+126
+00:07:51,417 --> 00:07:53,622
+Prune keeps every tagged image,
+
+127
+00:07:53,622 --> 00:07:56,895
+including the API's image
+of over 4 gigabytes,
+
+128
+00:07:56,895 --> 00:07:58,862
+and the node_modules volume.
+
+129
+00:07:59,182 --> 00:08:01,700
+Remove those by name if you need the disk.
+
+130
+00:08:02,933 --> 00:08:06,560
+Now Tutorial 24,
+the lecture's simple frontend.
+
+131
+00:08:06,880 --> 00:08:09,777
+Main dropped it on the recording day;
+
+132
+00:08:09,777 --> 00:08:14,474
+branch 2025 keeps it,
+with last year's API, which serves it.
+
+133
+00:08:14,794 --> 00:08:17,991
+Branch 2025 builds its own big images:
+
+134
+00:08:17,991 --> 00:08:22,197
+if your disk is tight,
+remove main's images first.
+
+135
+00:08:22,433 --> 00:08:25,000
+git switch 2025 refuses at first:
+
+136
+00:08:25,000 --> 00:08:28,577
+your edits to four files
+would be overwritten.
+
+137
+00:08:28,897 --> 00:08:30,966
+An extra stash puts them aside.
+
+138
+00:08:32,183 --> 00:08:35,938
+An extra log shows last year's commit,
+with frontend-simple.
+
+139
+00:08:36,258 --> 00:08:39,345
+Its vector-db script
+wants a second key name,
+
+140
+00:08:39,345 --> 00:08:43,255
+so copy your key under it,
+and set your project ID again.
+
+141
+00:08:46,433 --> 00:08:52,583
+Vector DB steps 1 to 3,
+from the folder above cheese-app-v2,
+
+142
+00:08:52,583 --> 00:08:59,553
+as the 2025 README spells them,
+end in the same load: 14,356 chunks.
+
+143
+00:08:59,873 --> 00:09:02,945
+Its Chroma image is tagged latest
+and still works.
+
+144
+00:09:03,265 --> 00:09:05,676
+Leave with exit; Chroma keeps running.
+
+145
+00:09:06,233 --> 00:09:12,796
+Backend steps 1, 2 and 4, in a new terminal
+from the folder that holds both clones:
+
+146
+00:09:12,796 --> 00:09:18,094
+change into the API folder,
+sh docker-shell.sh, and uvicorn_server.
+
+147
+00:09:18,414 --> 00:09:19,673
+Pause and start it.
+
+148
+00:09:20,333 --> 00:09:23,797
+Two differences from main:
+the reloader is WatchFiles,
+
+149
+00:09:23,797 --> 00:09:27,388
+and the model loads
+before application startup complete,
+
+150
+00:09:27,388 --> 00:09:30,146
+so start-up waits, with no readiness probe.
+
+151
+00:09:31,866 --> 00:09:36,687
+Then verify localhost:9000:
+welcome to AC215.
+
+152
+00:09:37,007 --> 00:09:42,377
+A small note: the demo route
+and the routers the 2025 README asks you
+
+153
+00:09:42,377 --> 00:09:46,735
+to enable are already in the code,
+except RAG and agent.
+
+154
+00:09:47,055 --> 00:09:50,085
+Don't paste them again,
+or the route is duplicated.
+
+155
+00:09:50,333 --> 00:09:54,611
+Also, last year's Gemini model is retired:
+even with a key,
+
+156
+00:09:54,611 --> 00:09:58,576
+its chat fails until the model
+and region are updated;
+
+157
+00:09:58,576 --> 00:10:00,338
+main uses a current one.
+
+158
+00:10:01,300 --> 00:10:05,513
+And what matters next:
+CORS middleware that allows every origin,
+
+159
+00:10:05,513 --> 00:10:08,212
+the permission slip main no longer needs.
+
+160
+00:10:09,533 --> 00:10:15,741
+Tutorial 24, step 1:
+cd cheese-app-v2/src/frontend-simple.
+
+161
+00:10:16,061 --> 00:10:22,205
+Steps 2 and 3: sh docker-shell.sh,
+then http-server on 8080.
+
+162
+00:10:22,525 --> 00:10:23,784
+Pause and start it.
+
+163
+00:10:24,033 --> 00:10:26,913
+Home page: open index.html.
+
+164
+00:10:27,233 --> 00:10:31,372
+The landing page links to two more pages:
+newsletters and chat.
+
+165
+00:10:31,616 --> 00:10:35,221
+Newsletter feature: open newsletters.html.
+
+166
+00:10:35,541 --> 00:10:39,232
+Its script names the API: localhost:9000.
+
+167
+00:10:39,552 --> 00:10:42,144
+This is the lecture's second trip:
+
+168
+00:10:42,144 --> 00:10:46,870
+the page came from 8080,
+and its JavaScript calls 9000 itself.
+
+169
+00:10:47,116 --> 00:10:50,252
+Same laptop, different port,
+so a different origin.
+
+170
+00:10:50,572 --> 00:10:54,882
+Now the browser checks every answer:
+did the server allow this origin?
+
+171
+00:10:55,116 --> 00:10:57,975
+An extra curl sends what the browser sends.
+
+172
+00:10:58,295 --> 00:11:02,243
+The API answers
+with access-control-allow-origin *,
+
+173
+00:11:02,243 --> 00:11:03,714
+permission granted.
+
+174
+00:11:06,033 --> 00:11:08,238
+First comes 307, then 200:
+
+175
+00:11:08,238 --> 00:11:12,561
+the paths differ by one slash,
+an extra round trip.
+
+176
+00:11:12,800 --> 00:11:17,685
+Chat feature:
+open chat.html and ask how cheese is made.
+
+177
+00:11:18,005 --> 00:11:21,420
+Now the browser adds a step
+the lecture never draws:
+
+178
+00:11:21,420 --> 00:11:23,061
+step zero, the preflight.
+
+179
+00:11:25,283 --> 00:11:29,294
+A JSON post with a custom header
+makes the browser ask first,
+
+180
+00:11:29,294 --> 00:11:30,872
+with an OPTIONS request.
+
+181
+00:11:31,192 --> 00:11:36,995
+The answer allows any origin, these methods
+and these two headers, for 600 seconds.
+
+182
+00:11:37,716 --> 00:11:44,235
+The log: OPTIONS 200, then the post
+bounces with 307 and ends in 500,
+
+183
+00:11:44,235 --> 00:11:46,313
+the same Gemini error.
+
+184
+00:11:46,633 --> 00:11:51,647
+That 500 carries the permission header too,
+so the browser shows the real error.
+
+185
+00:11:51,883 --> 00:11:55,684
+So CORS is the browser's rule
+about the server's permission;
+
+186
+00:11:55,684 --> 00:11:58,027
+curl and the docs page never meet it.
+
+187
+00:11:58,266 --> 00:11:59,610
+So, a quick test.
+
+188
+00:11:59,930 --> 00:12:04,111
+Last year's page needed CORS,
+and this year's React app does not.
+
+189
+00:12:04,431 --> 00:12:08,464
+What changed: the API, the browser,
+or the origin it calls?
+
+190
+00:12:17,300 --> 00:12:18,303
+The origin.
+
+191
+00:12:18,623 --> 00:12:23,828
+The React page calls its own origin,
+and a proxy forwards: nothing to permit.
+
+192
+00:12:24,148 --> 00:12:27,860
+The API then dropped the middleware,
+because nothing needed it.
+
+193
+00:12:28,100 --> 00:12:31,343
+To stop, Ctrl+C and exit in both terminals.
+
+194
+00:12:31,663 --> 00:12:34,108
+As extras, stop last year's Chroma,
+
+195
+00:12:34,108 --> 00:12:37,321
+discard the branch's edits
+and switch to main;
+
+196
+00:12:37,321 --> 00:12:39,321
+git stash pop restores yours.
+
+197
+00:12:40,567 --> 00:12:44,194
+Before you go, a cleanup checklist,
+all done once already.
+
+198
+00:12:44,514 --> 00:12:48,032
+Exit every container,
+compose down, back to main,
+
+199
+00:12:48,032 --> 00:12:50,186
+prune after checking its list;
+
+200
+00:12:50,186 --> 00:12:54,370
+then remove the node_modules
+volume and big images by name.
+
+201
+00:12:54,690 --> 00:12:56,439
+Your key stays in secrets.
+
+202
+00:12:56,684 --> 00:12:59,872
+Here is the whole trip,
+with the hook answered:
+
+203
+00:12:59,872 --> 00:13:01,975
+the browser talks only to 3000.
+
+204
+00:13:02,295 --> 00:13:04,510
+Inside, Vite in development
+
+205
+00:13:04,510 --> 00:13:09,678
+or nginx in production carries /api
+by name to uvicorn on 9000,
+
+206
+00:13:09,678 --> 00:13:12,385
+where a router runs the function.
+
+207
+00:13:12,705 --> 00:13:17,420
+The JSON comes back the same way:
+one origin, no permission needed.
+
+208
+00:13:18,084 --> 00:13:19,833
+Back to the lecture's blueprint.
+
+209
+00:13:20,153 --> 00:13:22,735
+Your four boxes rise into the cluster.
+
+210
+00:13:23,055 --> 00:13:27,610
+NGINX in front, the registry
+and the persistent disk are still dashed:
+
+211
+00:13:27,610 --> 00:13:29,497
+the next lectures build them.
+
+212
+00:13:29,734 --> 00:13:30,827
+For your project,
+
+213
+00:13:30,827 --> 00:13:35,327
+the lecture asks you to draw
+your solution and technical architecture,
+
+214
+00:13:35,327 --> 00:13:38,864
+and points to a crash course
+and a template repository.
+
+215
+00:13:39,100 --> 00:13:41,041
+Test yourself, pausing on each.
+
+216
+00:13:41,361 --> 00:13:44,007
+One: trace a newsletters request on main.
+
+217
+00:13:44,327 --> 00:13:49,063
+Which container does the browser talk to,
+and where does port 9000 come in?
+
+218
+00:13:49,300 --> 00:13:56,137
+Two: what do api.service:app,
+--host 0.0.0.0 and --reload each do,
+
+219
+00:13:56,137 --> 00:14:01,524
+and why does square_root
+without a slash answer 307?
+
+220
+00:14:01,767 --> 00:14:03,730
+Three: /healthz and /readyz.
+
+221
+00:14:04,050 --> 00:14:06,119
+What does each one check in this API?
+
+222
+00:14:06,367 --> 00:14:09,601
+Four:
+where does a chat stay between two messages,
+
+223
+00:14:09,601 --> 00:14:12,319
+and why can any copy of the API answer it?
+
+224
+00:14:12,567 --> 00:14:14,395
+Five: which file decides
+
+225
+00:14:14,395 --> 00:14:18,358
+where /api goes in development,
+which in production,
+
+226
+00:14:18,358 --> 00:14:22,871
+and why did last year's API need CORS
+while main's does not?
+

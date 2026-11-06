@@ -3,7 +3,7 @@
 03:04 v1: a server, an app, a port
 05:42 A Python function becomes a URL
 07:19 Files for the browser: the simple frontend
-09:14 v2: four containers, and the cheese books
-11:18 Start the API: alive, then ready
-13:38 Screens decide the routes
-15:26 A chat is a file, not a memory
+09:13 v2: four containers, and the cheese books
+11:16 Start the API: alive, then ready
+13:39 Screens decide the routes
+15:28 A chat is a file, not a memory

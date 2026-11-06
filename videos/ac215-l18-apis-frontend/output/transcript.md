@@ -42,7 +42,7 @@ Step 6: open square root, with its trailing slash. No arguments, so the defaults
 Step 7: add x equals 2 and y equals 10. The query string fills the function's arguments, and back comes the square root of 104.
 Two extras. A letter instead of a number bounces off the float type hint with 422.
 Without the trailing slash, FastAPI answers 307 and points to the slash version.
-The server's log shows each request with its status: 200, 200, 200, 422, 307.
+The server's log shows each request with its status. 200, 200, 200, 422, 307.
 Step 8: open slash docs. FastAPI built this page from your code: x and y appear as numbers, with their defaults, and you can try a call right there.
 The type hints became the validation and the documentation. Pause and try one call from the docs page.
 
@@ -57,7 +57,7 @@ Step 6: refresh, and the new text appears. Edits to main dot js may need a hard 
 To clean up, press Control C and type exit in both terminals. The container list is then empty, because both removed themselves.
 Docker system prune asks first, so type y for yes; the image list shows what stays.
 
-## 09:14 — v2: four containers, and the cheese books
+## 09:13 — v2: four containers, and the cheese books
 Now version 2, the real app: four containers on one Docker network. Chroma, the vector database, on 8000; a loader; the API on 9000; and the React frontend on 3000.
 The prerequisites: a Google Cloud project with the Vertex AI API, the ml workflow key with the Vertex AI User role, and about 10 gigabytes. With your key, chat and embedding calls bill your project.
 One honest note: our recording's key file is well-formed but belongs to no account. Everything that does not call Google works exactly as for you; the first Google call fails, and we show where.
@@ -70,7 +70,7 @@ Step 3: chat. The first Google call, embedding the question, fails here: invalid
 A small note: chat always asks its own fixed question, how is cheese made; there is no place to type yours. To ask another, edit that line in cli dot py.
 Step 4: exit. Chroma keeps running on 8000, as an extra docker ps shows, and the network's phone book now turns its name into an address.
 
-## 11:18 — Start the API: alive, then ready
+## 11:16 — Start the API: alive, then ready
 Backend APIs. In a new terminal, from the cheese app v2 folder: step 1, change into src, api service, and run docker-shell.sh. The first build takes a while, because of TensorFlow, so pause and start it.
 The banner offers two commands: API server and pytest.
 This script checks first: if the container already runs, it just opens a shell in it. Otherwise it mounts secrets without write access, mounts your persistent folder, publishes 9000, and joins the network.
@@ -83,7 +83,7 @@ Another extra: the version 1 habits fail. Slash and slash docs answer 404; every
 So, a quick test. Healthz says 200 and readyz says 503. Do you restart the container, or wait?
 Wait: about nine seconds later, readyz says 200: the model is loaded and Chroma answers. A restart would only start the loading over. Kubernetes, which you meet in lectures 19 and 22, can use exactly these two probes: restart on liveness, send traffic on readiness.
 
-## 13:38 — Screens decide the routes
+## 13:39 — Screens decide the routes
 Which routes does the API need? The lecture starts from the screens: newsletters, podcasts, and a chat that takes a photo. Each screen needs data, and each kind of data becomes a group of routes.
 In service dot py, newsletters and podcasts get a router each under slash api. Then one function stamps out three chat routers: Ask, Identify and Cheese books. The lecture shows six groups; agent chat has no router in this repository.
 The lecture also shows three places an agent can sit, with or without an MCP service. This repository has none.
@@ -95,7 +95,7 @@ API docs: they moved to slash api, docs. An extra listing shows all 25 operation
 In the docs, pause and try get newsletters with a limit of 2. Two newsletters come back as JSON, newest first: the lecture's example, now real. An unknown ID gets 404, newsletter not found.
 Review the code: the README's table maps each file. Service dot py builds the app, settings dot py holds every setting, the routers hold the routes, and one utils file per chat mode does the work.
 
-## 15:26 — A chat is a file, not a memory
+## 15:28 — A chat is a file, not a memory
 The lecture's chat handler says: use Gemini to generate text. In the repository, one route starts a chat and another continues it. The real path names the mode: slash api, llm, chats.
 How does the API remember a conversation? It does not: with every message, the browser sends a session ID, one random UUID per browser. The API opens that session's chat file, adds your message and the reply, saves, and forgets.
 Two extras: no session ID, or an empty message, gets 422.
@@ -107,7 +107,7 @@ Two more README notes. Each message rebuilds the conversation from the saved fil
 Last, the tests: in a second terminal, in the same folder, docker-shell.sh again opens a shell in the running container. Run pytest: 26 passed. Pause and run it.
 Keep this container running. The API is ready, but nobody can use it from a browser yet. In part 2 the browser talks to port 3000, so how does that reach 9000?
 
-## 17:40 — Why a framework: React with Vite
+## 17:46 — Why a framework: React with Vite
 Part 2: the frontend. The API is up on port 9000; now a page that uses it.
 The lecture starts with one HTML page per feature. Each carries its own header, script and style; nothing is shared, and every click loads a whole page: slow.
 The fix is a single-page app built from components, with a framework. The lecture names the common ones and picks React.
@@ -120,7 +120,7 @@ Step 2: npm run dev. Vite is ready and prints two addresses on 5173; both are in
 Step 3: open localhost 3000. The HTML is almost empty: one div called root and a script, main dot jsx. The whole app is one page and its JavaScript.
 An extra check: every address, even one that does not exist, returns the same HTML. The browser picks the page, not the server.
 
-## 19:49 — One origin: the Vite proxy
+## 19:55 — One origin: the Vite proxy
 Now the hook's answer. In the lecture, the page's JavaScript calls the API. Here, every call in api dot js goes to a relative path starting with slash api, with the session ID from local storage.
 And vite dot config dot js holds the courier: a proxy rule that forwards slash api to cheese app API service, port 9000, by container name.
 So the browser only ever talks to localhost 3000. Vite, in the frontend container, carries each slash api request across the network. That is why uvicorn answered on 3000.
@@ -129,9 +129,9 @@ So, a quick test. Could the page's JavaScript call the API by its container name
 No. The JavaScript runs in your browser, on the laptop, and the laptop's DNS knows no container names. Only code inside the network can use them: the Vite proxy, nginx, the API.
 An extra experiment: unplug the API from the network for one request. The browser gets 502 with an empty body: the README's troubleshooting row for pages that load empty.
 Review the app: home, podcasts and newsletters load through the API, and the Recent tab keeps your chats across a reload. In chat, Identify works through the proxy; Ask, and Cheese books with its Tolminc question, get the same 500. Pause and click through.
-The README's code table names the files we just saw; pause to match each one. Then, in a second terminal in the same folder, npm run check: a lint, a format check and a production build. That build is what production serves.
+The README's code table names the files we just saw; pause to match each one. Then, in a second terminal in the same folder, docker-shell.sh again opens a shell in the running container; run npm run check: a lint, a format check and a production build. That build is what production serves.
 
-## 22:01 — Production: nginx instead of Vite
+## 22:11 — Production: nginx instead of Vite
 In production, Vite does not run, so who serves the files and forwards slash api? Nginx does. Today's README dropped this section on the recording day, but its files are still in main, so we run the earlier README's commands, marked extra.
 The production Dockerfile has two stages. The first builds the app with Node. The second starts from nginx and copies in only the built files.
 The nginx template has the same rule as Vite: slash api goes to the API container. Any other page address gets index dot html, so the router can choose the page; only a missing asset is a real 404.
@@ -142,7 +142,7 @@ The lecture's production slide: only the outside changes. In lecture 20, NGINX g
 As an extra, stop it, stop the API too, and start the production container again. It will not start. So, a quick test: why would a page server care whether the API is up?
 It exits at once: host not found in upstream. Nginx looks up the proxy target's name when it starts, and the API is gone. Start the API first.
 
-## 24:01 — One command, then clean up
+## 24:11 — One command, then clean up
 Instead of three terminals, one command. Step 1: put your project ID into the compose file in src. It appears twice.
 The file names the same four services. The loader first checks whether the books are already in Chroma, and loads them only if not.
 Step 2: stop whatever still runs, then docker compose down in src, vector db. Compose warns about two unset variables; the shell scripts set them, so this is harmless.
@@ -154,18 +154,18 @@ Step 5: Control C, then docker compose down removes all four containers.
 Docker cleanup: compose down in vector db finds nothing left. Docker system prune asks first, then deletes the network and about four and a half gigabytes of build cache.
 Prune keeps every tagged image, including the API's image of over 4 gigabytes, and the node modules volume. Remove those by name if you need the disk.
 
-## 25:38 — Tutorial 24 lives on branch 2025
+## 25:49 — Tutorial 24 lives on branch 2025
 Now Tutorial 24, the lecture's simple frontend. Main dropped it on the recording day; branch 2025 keeps it, with last year's API, which serves it. Branch 2025 builds its own big images: if your disk is tight, remove main's images first.
 Git switch 2025 refuses at first: your edits to four files would be overwritten. An extra stash puts them aside.
 An extra log shows last year's commit, with frontend simple. Its vector db script wants a second key name, so copy your key under it, and set your project ID again.
-Vector DB steps 1 to 3, as the 2025 README spells them, end in the same load: 14,356 chunks. Its Chroma image is tagged latest and still works. Leave with exit; Chroma keeps running.
+Vector DB steps 1 to 3, from the folder above cheese app v2, as the 2025 README spells them, end in the same load: 14,356 chunks. Its Chroma image is tagged latest and still works. Leave with exit; Chroma keeps running.
 Backend steps 1, 2 and 4, in a new terminal from the folder that holds both clones: change into the API folder, sh docker-shell.sh, and uvicorn server. Pause and start it.
 Two differences from main: the reloader is WatchFiles, and the model loads before application startup complete, so start-up waits, with no readiness probe.
 Then verify localhost 9000: welcome to AC215. A small note: the demo route and the routers the 2025 README asks you to enable are already in the code, except RAG and agent. Don't paste them again, or the route is duplicated.
 Also, last year's Gemini model is retired: even with a key, its chat fails until the model and region are updated; main uses a current one.
 And what matters next: CORS middleware that allows every origin, the permission slip main no longer needs.
 
-## 27:43 — Last year's pages: CORS and the preflight
+## 27:55 — Last year's pages: CORS and the preflight
 Tutorial 24, step 1: change into cheese app v2, src, frontend simple. Steps 2 and 3: sh docker-shell.sh, then http-server on 8080. Pause and start it.
 Home page: open index dot html. The landing page links to two more pages: newsletters and chat.
 Newsletter feature: open newsletters dot html. Its script names the API: localhost 9000. This is the lecture's second trip: the page came from 8080, and its JavaScript calls 9000 itself.
@@ -180,7 +180,7 @@ So, a quick test. Last year's page needed CORS, and this year's React app does n
 The origin. The React page calls its own origin, and a proxy forwards: nothing to permit. The API then dropped the middleware, because nothing needed it.
 To stop, Control C and exit in both terminals. As extras, stop last year's Chroma, discard the branch's edits and switch to main; git stash pop restores yours.
 
-## 30:14 — Tear down, recap, and what's next
+## 30:26 — Tear down, recap, and what's next
 Before you go, a cleanup checklist, all done once already. Exit every container, compose down, back to main, prune after checking its list; then remove the node modules volume and big images by name. Your key stays in secrets.
 Here is the whole trip, with the hook answered: the browser talks only to 3000. Inside, Vite in development or nginx in production carries slash api by name to uvicorn on 9000, where a router runs the function. The JSON comes back the same way: one origin, no permission needed.
 Back to the lecture's blueprint. Your four boxes rise into the cluster. NGINX in front, the registry and the persistent disk are still dashed: the next lectures build them.

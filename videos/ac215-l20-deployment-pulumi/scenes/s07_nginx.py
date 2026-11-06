@@ -209,8 +209,10 @@ class OnePublicDoor(VoiceScene):
                 return lambda: unpin(self, ln, mob)
             on_bar(t, mob)
             self.play(FadeIn(mob), run_time=0.3)
+            t.add(mob)                       # part of the terminal: stays above its box
 
             def rm():
+                t.remove(mob)
                 self.play(FadeOut(mob), run_time=0.25)
                 self.remove(mob)
             return rm
@@ -279,7 +281,7 @@ class OnePublicDoor(VoiceScene):
             vo.wait_until("catches paths that start with slash api service")
             self.play(Indicate(code_span(p1.code, 0, "^~ /api-service/"), color=TURN, scale_factor=1.08),
                       run_time=0.5)
-            self.add(p1)
+            self.add(p1, bar35)
             pr.match(self, "api")
             vo.wait_until("It passes them to api service on port 9000")
             self.play(pr.light_target("api"), run_time=0.7)
@@ -300,13 +302,13 @@ class OnePublicDoor(VoiceScene):
             self.play(slash.animate.set_color(ROUTE), run_time=0.2)
             self.play(Indicate(slash, color=ROUTE, scale_factor=2.0), FadeIn(one), GrowArrow(pointer),
                       run_time=0.7)
-            self.add(p1)
+            self.add(p1, bar37, one, pointer)
             vo.wait_until("With it, nginx swaps the matched prefix for that slash")
             pr.snip(self)
             vo.wait_until("so slash api service slash status reaches the API")
             pr.arrive(self)
             self.play(Indicate(slash, color=ROUTE, scale_factor=1.8), run_time=0.6)
-            self.add(p1)
+            self.add(p1, bar37, one, pointer)
 
         # ========================================================== 3. location /: the frontend
         p2 = conf_panel(46, 55, {49: "proxy_set_header", 50: "proxy_set_header", 51: "proxy_set_header",
@@ -361,22 +363,24 @@ class OnePublicDoor(VoiceScene):
             rc = readme_card((165, 167), log_rows)
             rc.move_to([0, t.box.get_top()[1] + 0.2 + rc.height / 2, 0])
             ec = readme_card(156, VGroup(mono_line(readme(156), 20, INK)))
-            ec.move_to([-6.45 + ec.width / 2, rc.get_top()[1] + 0.2 + ec.height / 2, 0])
-            assert rc.get_left()[0] > -6.6 and rc.get_right()[0] < 6.6, (rc.get_left(), rc.get_right())
-            assert ec.get_top()[1] < TRACK_BOTTOM - 0.05, ec.get_top()
-            self.play(FadeIn(rc, shift=UP * 0.2), FadeIn(ec, shift=UP * 0.2), run_time=0.5)
             r0 = log_rows[0]
-            q_open = substring(ec.body[0], "'")
             i1 = README_LOG[0].index("'")
             i2 = README_LOG[0].rindex("'")
             q_close = glyph_range(r0, i1, i1 + 1)
-            arc = ArcBetweenPoints(q_open.get_bottom() + DOWN * 0.05, q_close.get_top() + UP * 0.05, angle=-PI / 3)
+            q_open = substring(ec.body[0], "'")
+            # the outer quote sits right above the inner one: the arc is short and clears both headers
+            ec.move_to([0, rc.get_top()[1] + 0.25 + ec.height / 2, 0])
+            ec.shift(RIGHT * (q_close.get_center()[0] + 0.35 - q_open.get_center()[0]))
+            assert rc.get_left()[0] > -6.6 and rc.get_right()[0] < 6.6, (rc.get_left(), rc.get_right())
+            assert ec.get_top()[1] < TRACK_BOTTOM - 0.05 and ec.get_left()[0] > -6.55, (ec.get_top(), ec.get_left())
+            self.play(FadeIn(rc, shift=UP * 0.2), FadeIn(ec, shift=UP * 0.2), run_time=0.5)
+            arc = ArcBetweenPoints(q_open.get_bottom() + DOWN * 0.05, q_close.get_top() + UP * 0.05, angle=-PI / 2)
             arc.set_stroke(ROUTE, 4)
             closes = label("the quote closes here", 20, ROUTE)
             closes.next_to(ec, RIGHT, buff=0.4).align_to(ec, DOWN).shift(UP * 0.05)
             self.play(Create(arc), q_open.animate.set_color(ROUTE), q_close.animate.set_color(ROUTE), run_time=0.6)
             self.play(FadeIn(closes, shift=LEFT * 0.1), run_time=0.4)
-            self.add(rc, ec)
+            self.add(rc, ec, arc)
             vo.wait_until("so the shell eats the log format")
             outside = glyph_range(r0, i1 + 1, i2)
             oq = label("outside quotes", 20, S.GREY)
@@ -389,7 +393,7 @@ class OnePublicDoor(VoiceScene):
             for g in empties:
                 for m in g:
                     m.set_opacity(0)
-            self.add(rc)
+            self.add(rc, oq, arc)
             vo.wait_until("and leaves a dash and two brackets")
             self.play(track(trk, 13, True), run_time=0.3)
             wc = type_capture(self, t, V45, type_time=0.35)[-1]
@@ -650,17 +654,18 @@ class OnePublicDoor(VoiceScene):
             self.add(s)
             nb.routes(self, run_time=0.6)
             vo.wait_until("Start order matters")
-            self.play(Indicate(nb.boxes["front"], color=TURN, scale_factor=1.08), run_time=0.5)
-            self.play(Indicate(nb.boxes["nginx"], color=TURN, scale_factor=1.08), run_time=0.5)
+            self.play(nb.boxes["front"].frame.animate(rate_func=there_and_back).set_stroke(TURN, 6), run_time=0.6)
+            self.play(nb.boxes["nginx"].frame.animate(rate_func=there_and_back).set_stroke(TURN, 6), run_time=0.6)
             nb.heal(self)
             vo.wait_until("and so does a restart policy")
             nb.show(self, bracket, nrp, anims=[Create(bracket), FadeIn(nrp, shift=UP * 0.1)], run_time=0.5)
             vo.wait_until("which only the vector database command has")
             nb.show(self, ra, r96, tie, anims=[FadeIn(ra, shift=RIGHT * 0.2), FadeIn(r96), Create(tie)],
                     run_time=0.6)
-            self.play(Indicate(nb.boxes["vdb"], color=OWN, scale_factor=1.08), run_time=0.6)
+            self.play(nb.boxes["vdb"].frame.animate(rate_func=there_and_back).set_stroke(OWN, 6), run_time=0.7)
             nb.heal(self)
 
+        rm_x()
         self.play(FadeOut(VGroup(trk, s, nb)), run_time=0.6)
         self.remove(trk, s, nb)
         self.wait(0.3)

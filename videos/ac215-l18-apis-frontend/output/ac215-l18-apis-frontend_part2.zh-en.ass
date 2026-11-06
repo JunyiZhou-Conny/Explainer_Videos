@@ -1,0 +1,239 @@
+[Script Info]
+Title: AC215 · L18, part 2: the frontend — React, one origin, nginx, and last year's CORS
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.66,Bilingual,,0,0,0,,第 2 部分：前端\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2: the frontend.
+Dialogue: 0,0:00:01.98,0:00:06.48,Bilingual,,0,0,0,,API 已经在 port 9000 上跑起来了；现在来做一个用它的页面\N{\fs33\c&H00C8C0B8&\bord1.4}The API is up on port 9000; now a page that uses it.
+Dialogue: 0,0:00:06.73,0:00:10.00,Bilingual,,0,0,0,,课上从每个功能一个 HTML 页面讲起\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture starts with one HTML page per feature.
+Dialogue: 0,0:00:10.32,0:00:13.28,Bilingual,,0,0,0,,每个页面都带着自己的页头、脚本和样式\N{\fs33\c&H00C8C0B8&\bord1.4}Each carries its own header, script and style;
+Dialogue: 0,0:00:13.28,0:00:17.14,Bilingual,,0,0,0,,什么都不共享，每次点击都要加载整个页面：很慢\N{\fs33\c&H00C8C0B8&\bord1.4}nothing is shared, and every click loads a whole page: slow.
+Dialogue: 0,0:00:17.52,0:00:21.63,Bilingual,,0,0,0,,解决办法是一个用组件搭起来的单页应用，配一个框架\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is a single-page app built from components, with a framework.
+Dialogue: 0,0:00:21.95,0:00:24.96,Bilingual,,0,0,0,,课上列了常见的几个，选了 React\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture names the common ones and picks React.
+Dialogue: 0,0:00:25.20,0:00:30.36,Bilingual,,0,0,0,,在 React 里，一个组件就是一个返回标记的函数，用 JSX 来写\N{\fs33\c&H00C8C0B8&\bord1.4}In React, a component is a function that returns markup, written in JSX.
+Dialogue: 0,0:00:30.68,0:00:34.65,Bilingual,,0,0,0,,整个应用是一个外壳：一个只定义一次的页头\N{\fs33\c&H00C8C0B8&\bord1.4}The app is one shell: a header defined only once, a footer,
+Dialogue: 0,0:00:34.65,0:00:38.08,Bilingual,,0,0,0,,一个页脚，中间一块随页面变化\N{\fs33\c&H00C8C0B8&\bord1.4}and in between a block that changes with each page.
+Dialogue: 0,0:00:38.33,0:00:41.15,Bilingual,,0,0,0,,今天的 repo 用的是 React 加 Vite\N{\fs33\c&H00C8C0B8&\bord1.4}Today's repository uses React with Vite,
+Dialogue: 0,0:00:41.15,0:00:45.03,Bilingual,,0,0,0,,Vite 是开发服务器兼构建工具，再加上 React Router\N{\fs33\c&H00C8C0B8&\bord1.4}a development server and build tool, plus React Router.
+Dialogue: 0,0:00:45.35,0:00:49.40,Bilingual,,0,0,0,,在 main.jsx 里，一张路由表把每个地址对应到一个页面\N{\fs33\c&H00C8C0B8&\bord1.4}In main.jsx, a route table maps each address to a page,
+Dialogue: 0,0:00:49.40,0:00:52.41,Bilingual,,0,0,0,,还有一个兜住其余一切的星号\N{\fs33\c&H00C8C0B8&\bord1.4}with a star that catches everything else.
+Dialogue: 0,0:00:52.65,0:00:55.97,Bilingual,,0,0,0,,在 App.jsx 里，页头和页脚只写一次\N{\fs33\c&H00C8C0B8&\bord1.4}In App.jsx, the header and footer are written once,
+Dialogue: 0,0:00:55.97,0:01:00.91,Bilingual,,0,0,0,,中间是 outlet，也就是显示当前页面的那扇窗口\N{\fs33\c&H00C8C0B8&\bord1.4}and between them sits the outlet, the window where the current page appears.
+Dialogue: 0,0:01:01.15,0:01:06.58,Bilingual,,0,0,0,,React 前端设置，在一个新终端里，从 cheese-app-v2 目录开始\N{\fs33\c&H00C8C0B8&\bord1.4}React setup, in a new terminal from the cheese-app-v2 folder:
+Dialogue: 0,0:01:06.58,0:01:11.47,Bilingual,,0,0,0,,第 1 步，进到 src/frontend-react，运行 docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}step 1, cd src/frontend-react, and run docker-shell.sh.
+Dialogue: 0,0:01:11.80,0:01:16.49,Bilingual,,0,0,0,,它挂载你的代码，把 node modules 放在一个命名的 volume 里\N{\fs33\c&H00C8C0B8&\bord1.4}It mounts your code, keeps node_modules in a named volume,
+Dialogue: 0,0:01:16.49,0:01:20.63,Bilingual,,0,0,0,,把 3000 发布到 port 5173，再加入网络\N{\fs33\c&H00C8C0B8&\bord1.4}publishes 3000 to port 5173, and joins the network.
+Dialogue: 0,0:01:20.95,0:01:22.28,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:01:22.33,0:01:24.53,Bilingual,,0,0,0,,横幅显示了 Node 和 npm\N{\fs33\c&H00C8C0B8&\bord1.4}The banner shows Node and npm.
+Dialogue: 0,0:01:24.85,0:01:30.63,Bilingual,,0,0,0,,你第一次运行时会把依赖装进这个 volume；我们的已经是最新的了\N{\fs33\c&H00C8C0B8&\bord1.4}Your first run installs the dependencies into the volume; ours was already up to date.
+Dialogue: 0,0:01:30.87,0:01:33.06,Bilingual,,0,0,0,,第 2 步：npm run dev\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: npm run dev.
+Dialogue: 0,0:01:33.38,0:01:37.40,Bilingual,,0,0,0,,Vite 就绪了，打印出 5173 上的两个地址\N{\fs33\c&H00C8C0B8&\bord1.4}Vite is ready and prints two addresses on 5173;
+Dialogue: 0,0:01:37.40,0:01:42.45,Bilingual,,0,0,0,,两个都在 container 里面，所以在你的笔记本上，用 3000\N{\fs33\c&H00C8C0B8&\bord1.4}both are inside the container, so on your laptop, use 3000.
+Dialogue: 0,0:01:42.77,0:01:44.22,Bilingual,,0,0,0,,暂停一下，把它启动起来\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and start it.
+Dialogue: 0,0:01:44.27,0:01:47.06,Bilingual,,0,0,0,,第 3 步：打开 localhost:3000\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: open localhost:3000.
+Dialogue: 0,0:01:47.38,0:01:51.53,Bilingual,,0,0,0,,HTML 几乎是空的：一个叫 root 的 div\N{\fs33\c&H00C8C0B8&\bord1.4}The HTML is almost empty: one div called root
+Dialogue: 0,0:01:51.53,0:01:53.65,Bilingual,,0,0,0,,再加一个脚本，main.jsx\N{\fs33\c&H00C8C0B8&\bord1.4}and a script, main.jsx.
+Dialogue: 0,0:01:53.97,0:01:56.96,Bilingual,,0,0,0,,整个应用就是一个页面加上它的 JavaScript\N{\fs33\c&H00C8C0B8&\bord1.4}The whole app is one page and its JavaScript.
+Dialogue: 0,0:01:57.20,0:02:03.36,Bilingual,,0,0,0,,一个额外检查：每个地址，哪怕是不存在的，都返回同样的 HTML\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check: every address, even one that does not exist, returns the same HTML.
+Dialogue: 0,0:02:03.68,0:02:06.27,Bilingual,,0,0,0,,挑页面的是浏览器，不是服务器\N{\fs33\c&H00C8C0B8&\bord1.4}The browser picks the page, not the server.
+Dialogue: 0,0:02:09.23,0:02:10.83,Bilingual,,0,0,0,,现在来回答开头的问题\N{\fs33\c&H00C8C0B8&\bord1.4}Now the hook's answer.
+Dialogue: 0,0:02:10.94,0:02:14.48,Bilingual,,0,0,0,,在课上，页面的 JavaScript 调用 API\N{\fs33\c&H00C8C0B8&\bord1.4}In the lecture, the page's JavaScript calls the API.
+Dialogue: 0,0:02:14.80,0:02:17.58,Bilingual,,0,0,0,,在这里，api.js 里的每一次调用都发往\N{\fs33\c&H00C8C0B8&\bord1.4}Here, every call in api.js goes
+Dialogue: 0,0:02:17.58,0:02:20.99,Bilingual,,0,0,0,,一个以 /api 开头的相对路径\N{\fs33\c&H00C8C0B8&\bord1.4}to a relative path starting with /api,
+Dialogue: 0,0:02:20.99,0:02:24.40,Bilingual,,0,0,0,,带上 localStorage 里的 session ID\N{\fs33\c&H00C8C0B8&\bord1.4}with the session ID from localStorage.
+Dialogue: 0,0:02:24.65,0:02:28.15,Bilingual,,0,0,0,,而 vite.config.js 里放着那个信使\N{\fs33\c&H00C8C0B8&\bord1.4}And vite.config.js holds the courier:
+Dialogue: 0,0:02:28.15,0:02:29.35,Bilingual,,0,0,0,,一条代理规则\N{\fs33\c&H00C8C0B8&\bord1.4}a proxy rule
+Dialogue: 0,0:02:29.35,0:02:34.65,Bilingual,,0,0,0,,把 /api 转发到 cheese-app-api-service 的 port 9000\N{\fs33\c&H00C8C0B8&\bord1.4}that forwards /api to cheese-app-api-service, port 9000,
+Dialogue: 0,0:02:34.65,0:02:36.36,Bilingual,,0,0,0,,按的是 container 名字\N{\fs33\c&H00C8C0B8&\bord1.4}by container name.
+Dialogue: 0,0:02:36.83,0:02:40.40,Bilingual,,0,0,0,,所以浏览器只和 localhost:3000 说话\N{\fs33\c&H00C8C0B8&\bord1.4}So the browser only ever talks to localhost:3000.
+Dialogue: 0,0:02:40.72,0:02:46.33,Bilingual,,0,0,0,,Vite 在前端的 container 里，把每个 /api 请求经网络送过去\N{\fs33\c&H00C8C0B8&\bord1.4}Vite, in the frontend container, carries each /api request across the network.
+Dialogue: 0,0:02:46.65,0:02:49.55,Bilingual,,0,0,0,,这就是 uvicorn 在 3000 上应答的原因\N{\fs33\c&H00C8C0B8&\bord1.4}That is why uvicorn answered on 3000.
+Dialogue: 0,0:02:49.78,0:02:52.75,Bilingual,,0,0,0,,一个 origin 就是协议、主机和 port 三样合在一起\N{\fs33\c&H00C8C0B8&\bord1.4}An origin is the scheme, the host and the port.
+Dialogue: 0,0:02:53.07,0:02:56.31,Bilingual,,0,0,0,,页面和它的 API 调用同属一个 origin\N{\fs33\c&H00C8C0B8&\bord1.4}The page and its API calls share one origin,
+Dialogue: 0,0:02:56.31,0:03:02.05,Bilingual,,0,0,0,,所以浏览器没什么好拦的，API 也不需要许可条\N{\fs33\c&H00C8C0B8&\bord1.4}so the browser has nothing to object to, and the API needs no permission slip.
+Dialogue: 0,0:03:02.30,0:03:03.90,Bilingual,,0,0,0,,那么，快速测一下\N{\fs33\c&H00C8C0B8&\bord1.4}So, a quick test.
+Dialogue: 0,0:03:03.96,0:03:08.57,Bilingual,,0,0,0,,页面的 JavaScript 能不能按 container 名字调用 API\N{\fs33\c&H00C8C0B8&\bord1.4}Could the page's JavaScript call the API by its container name,
+Dialogue: 0,0:03:08.57,0:03:10.17,Bilingual,,0,0,0,,用 port 9000，直接调？\N{\fs33\c&H00C8C0B8&\bord1.4}port 9000, directly?
+Dialogue: 0,0:03:18.90,0:03:23.51,Bilingual,,0,0,0,,不能。这段 JavaScript 跑在你的浏览器里，也就是笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}No. The JavaScript runs in your browser, on the laptop,
+Dialogue: 0,0:03:23.51,0:03:26.75,Bilingual,,0,0,0,,而笔记本的 DNS 不认识任何 container 名字\N{\fs33\c&H00C8C0B8&\bord1.4}and the laptop's DNS knows no container names.
+Dialogue: 0,0:03:27.07,0:03:32.98,Bilingual,,0,0,0,,只有网络里面的代码才能用这些名字：Vite 代理、nginx、API\N{\fs33\c&H00C8C0B8&\bord1.4}Only code inside the network can use them: the Vite proxy, nginx, the API.
+Dialogue: 0,0:03:33.22,0:03:38.12,Bilingual,,0,0,0,,一个额外实验：把 API 从网络上断开，只为了一个请求\N{\fs33\c&H00C8C0B8&\bord1.4}An extra experiment: unplug the API from the network for one request.
+Dialogue: 0,0:03:38.44,0:03:41.37,Bilingual,,0,0,0,,浏览器拿到 502，响应体是空的\N{\fs33\c&H00C8C0B8&\bord1.4}The browser gets 502 with an empty body:
+Dialogue: 0,0:03:41.37,0:03:45.68,Bilingual,,0,0,0,,正是 README 故障排查表里，页面加载出来是空白的那一行\N{\fs33\c&H00C8C0B8&\bord1.4}the README's troubleshooting row for pages that load empty.
+Dialogue: 0,0:03:45.92,0:03:50.51,Bilingual,,0,0,0,,Review the app：首页、播客和简报都经过 API 加载\N{\fs33\c&H00C8C0B8&\bord1.4}Review the app: home, podcasts and newsletters load through the API,
+Dialogue: 0,0:03:50.51,0:03:54.02,Bilingual,,0,0,0,,Recent 标签页在刷新后还留着你的聊天\N{\fs33\c&H00C8C0B8&\bord1.4}and the Recent tab keeps your chats across a reload.
+Dialogue: 0,0:03:54.34,0:03:57.30,Bilingual,,0,0,0,,在聊天里，Identify 经过代理能用\N{\fs33\c&H00C8C0B8&\bord1.4}In chat, Identify works through the proxy;
+Dialogue: 0,0:03:57.30,0:04:01.94,Bilingual,,0,0,0,,Ask，还有问 Tolminc 的 Cheese books，都得到同样的 500\N{\fs33\c&H00C8C0B8&\bord1.4}Ask, and Cheese books with its Tolminc question, get the same 500.
+Dialogue: 0,0:04:02.26,0:04:03.80,Bilingual,,0,0,0,,暂停一下，挨个点一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and click through.
+Dialogue: 0,0:04:03.85,0:04:08.57,Bilingual,,0,0,0,,README 的代码表列出了我们刚看过的文件；暂停一下，逐个对上\N{\fs33\c&H00C8C0B8&\bord1.4}The README's code table names the files we just saw; pause to match each one.
+Dialogue: 0,0:04:08.89,0:04:12.29,Bilingual,,0,0,0,,然后在第二个终端里，在同一个目录下再运行 docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Then, in a second terminal in the same folder,
+Dialogue: 0,0:04:12.29,0:04:16.65,Bilingual,,0,0,0,,会在正在跑的 container 里开一个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}docker-shell.sh again opens a shell in the running container;
+Dialogue: 0,0:04:16.65,0:04:18.15,Bilingual,,0,0,0,,在里面跑 npm run check\N{\fs33\c&H00C8C0B8&\bord1.4}run npm run check:
+Dialogue: 0,0:04:18.15,0:04:21.56,Bilingual,,0,0,0,,一次 lint、一次格式检查和一次生产构建\N{\fs33\c&H00C8C0B8&\bord1.4}a lint, a format check and a production build.
+Dialogue: 0,0:04:21.88,0:04:24.01,Bilingual,,0,0,0,,生产环境提供的就是这次构建的结果\N{\fs33\c&H00C8C0B8&\bord1.4}That build is what production serves.
+Dialogue: 0,0:04:25.25,0:04:30.86,Bilingual,,0,0,0,,在生产环境里，Vite 不运行，那由谁来提供文件、转发 /api？\N{\fs33\c&H00C8C0B8&\bord1.4}In production, Vite does not run, so who serves the files and forwards /api?
+Dialogue: 0,0:04:31.18,0:04:32.75,Bilingual,,0,0,0,,是 nginx\N{\fs33\c&H00C8C0B8&\bord1.4}Nginx does.
+Dialogue: 0,0:04:32.80,0:04:36.41,Bilingual,,0,0,0,,今天的 README 在录制当天删掉了这一节\N{\fs33\c&H00C8C0B8&\bord1.4}Today's README dropped this section on the recording day,
+Dialogue: 0,0:04:36.41,0:04:38.43,Bilingual,,0,0,0,,但它的文件还在 main 分支里\N{\fs33\c&H00C8C0B8&\bord1.4}but its files are still in main,
+Dialogue: 0,0:04:38.43,0:04:41.85,Bilingual,,0,0,0,,所以我们照早一版 README 的命令跑，标成 extra\N{\fs33\c&H00C8C0B8&\bord1.4}so we run the earlier README's commands, marked extra.
+Dialogue: 0,0:04:42.08,0:04:44.69,Bilingual,,0,0,0,,生产用的 Dockerfile 分两个阶段\N{\fs33\c&H00C8C0B8&\bord1.4}The production Dockerfile has two stages.
+Dialogue: 0,0:04:45.01,0:04:46.90,Bilingual,,0,0,0,,第一阶段用 Node 构建应用\N{\fs33\c&H00C8C0B8&\bord1.4}The first builds the app with Node.
+Dialogue: 0,0:04:47.22,0:04:51.43,Bilingual,,0,0,0,,第二阶段从 nginx 开始，只拷进构建好的文件\N{\fs33\c&H00C8C0B8&\bord1.4}The second starts from nginx and copies in only the built files.
+Dialogue: 0,0:04:51.67,0:04:55.61,Bilingual,,0,0,0,,这个 nginx 模板里有和 Vite 一样的规则\N{\fs33\c&H00C8C0B8&\bord1.4}The nginx template has the same rule as Vite:
+Dialogue: 0,0:04:55.61,0:04:58.32,Bilingual,,0,0,0,,/api 交给 API 的 container\N{\fs33\c&H00C8C0B8&\bord1.4}/api goes to the API container.
+Dialogue: 0,0:04:58.64,0:05:04.58,Bilingual,,0,0,0,,其他任何页面地址都返回 index.html，好让 router 来挑页面\N{\fs33\c&H00C8C0B8&\bord1.4}Any other page address gets index.html, so the router can choose the page;
+Dialogue: 0,0:05:04.58,0:05:07.39,Bilingual,,0,0,0,,只有缺失的静态资源才是真正的 404\N{\fs33\c&H00C8C0B8&\bord1.4}only a missing asset is a real 404.
+Dialogue: 0,0:05:07.63,0:05:10.44,Bilingual,,0,0,0,,用 Ctrl-C 停掉开发服务器并 exit\N{\fs33\c&H00C8C0B8&\bord1.4}Stop the dev server with Ctrl+C and exit,
+Dialogue: 0,0:05:10.44,0:05:13.58,Bilingual,,0,0,0,,然后构建生产 image，打上 prod 这个 tag\N{\fs33\c&H00C8C0B8&\bord1.4}then build the production image, tagged :prod.
+Dialogue: 0,0:05:13.90,0:05:17.28,Bilingual,,0,0,0,,它的第一阶段跑的就是你刚检查过的那次 Vite 构建\N{\fs33\c&H00C8C0B8&\bord1.4}Its first stage runs the same Vite build you just checked.
+Dialogue: 0,0:05:17.52,0:05:21.27,Bilingual,,0,0,0,,在网络上运行它，把 8080 发布到 port 80\N{\fs33\c&H00C8C0B8&\bord1.4}Run it on the network, publishing 8080 to port 80.
+Dialogue: 0,0:05:21.59,0:05:25.62,Bilingual,,0,0,0,,打开 localhost:8080：服务器现在是 nginx\N{\fs33\c&H00C8C0B8&\bord1.4}Open localhost:8080: the server is now nginx,
+Dialogue: 0,0:05:25.62,0:05:31.34,Bilingual,,0,0,0,,/api 还能到达 API，深层链接也照样拿到页面\N{\fs33\c&H00C8C0B8&\bord1.4}/api still reaches the API, and a deep link still gets the page.
+Dialogue: 0,0:05:31.58,0:05:38.41,Bilingual,,0,0,0,,比较一下大小：开发 image 331 MB，生产的大约 95\N{\fs33\c&H00C8C0B8&\bord1.4}Compare the sizes: 331 megabytes for the dev image, about 95 for production.
+Dialogue: 0,0:05:38.73,0:05:42.25,Bilingual,,0,0,0,,没有 Node，没有 Vite：只有文件和一条代理规则\N{\fs33\c&H00C8C0B8&\bord1.4}No Node, no Vite: just files and one proxy rule.
+Dialogue: 0,0:05:42.50,0:05:46.28,Bilingual,,0,0,0,,课上的生产环境那页说：只有外面变了\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's production slide: only the outside changes.
+Dialogue: 0,0:05:46.60,0:05:51.70,Bilingual,,0,0,0,,在第 20 讲里，NGINX 放在一台云端机器的最前面，用 port 80\N{\fs33\c&H00C8C0B8&\bord1.4}In lecture 20, NGINX goes in front on a cloud machine, on port 80;
+Dialogue: 0,0:05:51.70,0:05:54.64,Bilingual,,0,0,0,,API 的代码和 port 都不变\N{\fs33\c&H00C8C0B8&\bord1.4}the API's code and port stay the same.
+Dialogue: 0,0:05:54.88,0:06:00.54,Bilingual,,0,0,0,,额外做一次：停掉它，也停掉 API，再启动生产 container\N{\fs33\c&H00C8C0B8&\bord1.4}As an extra, stop it, stop the API too, and start the production container again.
+Dialogue: 0,0:06:00.86,0:06:02.36,Bilingual,,0,0,0,,它起不来\N{\fs33\c&H00C8C0B8&\bord1.4}It will not start.
+Dialogue: 0,0:06:02.41,0:06:05.28,Bilingual,,0,0,0,,那么，快速测一下：一个提供页面的服务器\N{\fs33\c&H00C8C0B8&\bord1.4}So, a quick test: why would a page server care
+Dialogue: 0,0:06:05.28,0:06:06.92,Bilingual,,0,0,0,,为什么会在乎 API 有没有起来？\N{\fs33\c&H00C8C0B8&\bord1.4}whether the API is up?
+Dialogue: 0,0:06:13.75,0:06:16.84,Bilingual,,0,0,0,,它马上就退出了：host not found in upstream\N{\fs33\c&H00C8C0B8&\bord1.4}It exits at once: host not found in upstream.
+Dialogue: 0,0:06:17.16,0:06:20.83,Bilingual,,0,0,0,,原因是 nginx 在启动时就去查代理目标的名字\N{\fs33\c&H00C8C0B8&\bord1.4}Nginx looks up the proxy target's name when it starts,
+Dialogue: 0,0:06:20.83,0:06:22.43,Bilingual,,0,0,0,,而 API 已经不在了\N{\fs33\c&H00C8C0B8&\bord1.4}and the API is gone.
+Dialogue: 0,0:06:22.65,0:06:24.33,Bilingual,,0,0,0,,先启动 API\N{\fs33\c&H00C8C0B8&\bord1.4}Start the API first.
+Dialogue: 0,0:06:25.57,0:06:27.96,Bilingual,,0,0,0,,不用三个终端，一条命令就够\N{\fs33\c&H00C8C0B8&\bord1.4}Instead of three terminals, one command.
+Dialogue: 0,0:06:28.28,0:06:32.63,Bilingual,,0,0,0,,第 1 步：把你的项目 ID 填进 src 里的 compose 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: put your project ID into the compose file in src.
+Dialogue: 0,0:06:32.95,0:06:34.38,Bilingual,,0,0,0,,它出现了两次\N{\fs33\c&H00C8C0B8&\bord1.4}It appears twice.
+Dialogue: 0,0:06:34.43,0:06:36.87,Bilingual,,0,0,0,,这个文件列的是同样四个服务\N{\fs33\c&H00C8C0B8&\bord1.4}The file names the same four services.
+Dialogue: 0,0:06:37.19,0:06:42.28,Bilingual,,0,0,0,,加载器会先检查这些书是不是已经在 Chroma 里了，不在才加载\N{\fs33\c&H00C8C0B8&\bord1.4}The loader first checks whether the books are already in Chroma, and loads them only if not.
+Dialogue: 0,0:06:42.53,0:06:45.25,Bilingual,,0,0,0,,第 2 步：停掉还在跑的一切\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: stop whatever still runs,
+Dialogue: 0,0:06:45.25,0:06:48.70,Bilingual,,0,0,0,,然后在 src/vector-db 里 docker compose down\N{\fs33\c&H00C8C0B8&\bord1.4}then docker compose down in src/vector-db.
+Dialogue: 0,0:06:49.02,0:06:51.65,Bilingual,,0,0,0,,Compose 会警告两个变量没设\N{\fs33\c&H00C8C0B8&\bord1.4}Compose warns about two unset variables;
+Dialogue: 0,0:06:51.65,0:06:54.80,Bilingual,,0,0,0,,shell 脚本会设它们，所以这没有害处\N{\fs33\c&H00C8C0B8&\bord1.4}the shell scripts set them, so this is harmless.
+Dialogue: 0,0:06:55.05,0:06:59.32,Bilingual,,0,0,0,,第 3 步：进到 src，运行 docker compose up --build\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: change into src, and docker compose up --build.
+Dialogue: 0,0:06:59.64,0:07:01.24,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:07:01.38,0:07:06.29,Bilingual,,0,0,0,,两个警告：网络和 volume 已经存在，是 shell 脚本建的\N{\fs33\c&H00C8C0B8&\bord1.4}Two warnings: the network and the volume already exist, made by the shell scripts.
+Dialogue: 0,0:07:06.61,0:07:08.53,Bilingual,,0,0,0,,它们是警告，不是错误\N{\fs33\c&H00C8C0B8&\bord1.4}They are warnings, not errors.
+Dialogue: 0,0:07:08.85,0:07:10.81,Bilingual,,0,0,0,,然后建出四个 container\N{\fs33\c&H00C8C0B8&\bord1.4}Then four containers are created.
+Dialogue: 0,0:07:12.52,0:07:15.18,Bilingual,,0,0,0,,Chroma、uvicorn 和 Vite 同时启动\N{\fs33\c&H00C8C0B8&\bord1.4}Chroma, uvicorn and Vite start together,
+Dialogue: 0,0:07:15.18,0:07:19.36,Bilingual,,0,0,0,,加载器以 0 退出：它发现书已经加载过了\N{\fs33\c&H00C8C0B8&\bord1.4}and the loader exits with 0: it found the books already loaded.
+Dialogue: 0,0:07:23.83,0:07:28.33,Bilingual,,0,0,0,,第 4 步：打开 localhost:3000 和 API 文档\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: open localhost:3000 and the API docs.
+Dialogue: 0,0:07:28.65,0:07:33.31,Bilingual,,0,0,0,,有一个小疏漏：README 写的是 port 900；请用 9000\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README prints port 900; use 9000.
+Dialogue: 0,0:07:33.55,0:07:35.00,Bilingual,,0,0,0,,第 5 步：按 Ctrl-C\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: Ctrl+C,
+Dialogue: 0,0:07:35.00,0:07:38.99,Bilingual,,0,0,0,,然后 docker compose down 会删掉全部四个 container\N{\fs33\c&H00C8C0B8&\bord1.4}then docker compose down removes all four containers.
+Dialogue: 0,0:07:39.97,0:07:41.06,Bilingual,,0,0,0,,Docker Cleanup\N{\fs33\c&H00C8C0B8&\bord1.4}Docker cleanup:
+Dialogue: 0,0:07:41.06,0:07:44.34,Bilingual,,0,0,0,,在 vector-db 里 compose down，已经什么都不剩了\N{\fs33\c&H00C8C0B8&\bord1.4}compose down in vector-db finds nothing left.
+Dialogue: 0,0:07:44.66,0:07:46.61,Bilingual,,0,0,0,,命令 docker system prune 会先问你\N{\fs33\c&H00C8C0B8&\bord1.4}Docker system prune asks first,
+Dialogue: 0,0:07:46.61,0:07:51.17,Bilingual,,0,0,0,,然后删掉网络和大约 4.5 GB 的构建缓存\N{\fs33\c&H00C8C0B8&\bord1.4}then deletes the network and about four and a half gigabytes of build cache.
+Dialogue: 0,0:07:51.42,0:07:53.63,Bilingual,,0,0,0,,命令 prune 会保留每个打了 tag 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Prune keeps every tagged image,
+Dialogue: 0,0:07:53.63,0:07:56.88,Bilingual,,0,0,0,,包括超过 4 GB 的 API image\N{\fs33\c&H00C8C0B8&\bord1.4}including the API's image of over 4 gigabytes,
+Dialogue: 0,0:07:56.88,0:07:58.86,Bilingual,,0,0,0,,还有 node modules 这个 volume\N{\fs33\c&H00C8C0B8&\bord1.4}and the node_modules volume.
+Dialogue: 0,0:07:59.18,0:08:01.74,Bilingual,,0,0,0,,按名字把它们删掉，如果你需要这块磁盘空间的话\N{\fs33\c&H00C8C0B8&\bord1.4}Remove those by name if you need the disk.
+Dialogue: 0,0:08:02.93,0:08:06.56,Bilingual,,0,0,0,,现在是教程 24，课上讲的简单前端\N{\fs33\c&H00C8C0B8&\bord1.4}Now Tutorial 24, the lecture's simple frontend.
+Dialogue: 0,0:08:06.88,0:08:09.78,Bilingual,,0,0,0,,录制当天 main 分支删掉了它\N{\fs33\c&H00C8C0B8&\bord1.4}Main dropped it on the recording day;
+Dialogue: 0,0:08:09.78,0:08:14.47,Bilingual,,0,0,0,,2025 分支还留着，连同提供它的去年的 API\N{\fs33\c&H00C8C0B8&\bord1.4}branch 2025 keeps it, with last year's API, which serves it.
+Dialogue: 0,0:08:14.79,0:08:17.99,Bilingual,,0,0,0,,2025 分支要构建它自己的大 image\N{\fs33\c&H00C8C0B8&\bord1.4}Branch 2025 builds its own big images:
+Dialogue: 0,0:08:17.99,0:08:22.20,Bilingual,,0,0,0,,如果磁盘紧张，先删掉 main 分支的 image\N{\fs33\c&H00C8C0B8&\bord1.4}if your disk is tight, remove main's images first.
+Dialogue: 0,0:08:22.43,0:08:25.00,Bilingual,,0,0,0,,命令 git switch 2025 一开始会拒绝\N{\fs33\c&H00C8C0B8&\bord1.4}git switch 2025 refuses at first:
+Dialogue: 0,0:08:25.00,0:08:28.58,Bilingual,,0,0,0,,你对四个文件的修改会被覆盖\N{\fs33\c&H00C8C0B8&\bord1.4}your edits to four files would be overwritten.
+Dialogue: 0,0:08:28.90,0:08:30.97,Bilingual,,0,0,0,,额外用 stash 把它们先放到一边\N{\fs33\c&H00C8C0B8&\bord1.4}An extra stash puts them aside.
+Dialogue: 0,0:08:32.18,0:08:35.94,Bilingual,,0,0,0,,额外看一下 log，是去年的 commit，里面有 frontend-simple\N{\fs33\c&H00C8C0B8&\bord1.4}An extra log shows last year's commit, with frontend-simple.
+Dialogue: 0,0:08:36.26,0:08:39.35,Bilingual,,0,0,0,,它的 vector-db 脚本要另一个密钥名\N{\fs33\c&H00C8C0B8&\bord1.4}Its vector-db script wants a second key name,
+Dialogue: 0,0:08:39.35,0:08:43.26,Bilingual,,0,0,0,,所以把你的密钥按这个名字再拷一份，再把项目 ID 设一遍\N{\fs33\c&H00C8C0B8&\bord1.4}so copy your key under it, and set your project ID again.
+Dialogue: 0,0:08:46.43,0:08:48.83,Bilingual,,0,0,0,,Vector DB 的第 1 到 3 步\N{\fs33\c&H00C8C0B8&\bord1.4}Vector DB steps 1 to 3,
+Dialogue: 0,0:08:48.83,0:08:52.58,Bilingual,,0,0,0,,从 cheese-app-v2 的上一级目录开始\N{\fs33\c&H00C8C0B8&\bord1.4}from the folder above cheese-app-v2,
+Dialogue: 0,0:08:52.58,0:08:55.80,Bilingual,,0,0,0,,照 2025 分支 README 的写法\N{\fs33\c&H00C8C0B8&\bord1.4}as the 2025 README spells them,
+Dialogue: 0,0:08:55.80,0:08:59.55,Bilingual,,0,0,0,,最后是同样的加载：14,356 个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}end in the same load: 14,356 chunks.
+Dialogue: 0,0:08:59.87,0:09:02.95,Bilingual,,0,0,0,,它的 Chroma image 的 tag 是 latest，现在还能用\N{\fs33\c&H00C8C0B8&\bord1.4}Its Chroma image is tagged latest and still works.
+Dialogue: 0,0:09:03.27,0:09:05.68,Bilingual,,0,0,0,,用 exit 退出；Chroma 还在跑\N{\fs33\c&H00C8C0B8&\bord1.4}Leave with exit; Chroma keeps running.
+Dialogue: 0,0:09:06.23,0:09:08.22,Bilingual,,0,0,0,,Backend 的第 1、2、4 步\N{\fs33\c&H00C8C0B8&\bord1.4}Backend steps 1, 2 and 4,
+Dialogue: 0,0:09:08.22,0:09:12.76,Bilingual,,0,0,0,,在一个新终端里，从放着两个 clone 的目录开始\N{\fs33\c&H00C8C0B8&\bord1.4}in a new terminal from the folder that holds both clones:
+Dialogue: 0,0:09:12.76,0:09:18.09,Bilingual,,0,0,0,,进到 API 目录，sh docker-shell.sh，然后 uvicorn server\N{\fs33\c&H00C8C0B8&\bord1.4}change into the API folder, sh docker-shell.sh, and uvicorn_server.
+Dialogue: 0,0:09:18.41,0:09:20.01,Bilingual,,0,0,0,,暂停一下，把它启动起来\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and start it.
+Dialogue: 0,0:09:20.33,0:09:23.80,Bilingual,,0,0,0,,和 main 分支有两点不同：重载器是 WatchFiles\N{\fs33\c&H00C8C0B8&\bord1.4}Two differences from main: the reloader is WatchFiles,
+Dialogue: 0,0:09:23.80,0:09:27.39,Bilingual,,0,0,0,,而且模型在 application startup complete 之前就加载\N{\fs33\c&H00C8C0B8&\bord1.4}and the model loads before application startup complete,
+Dialogue: 0,0:09:27.39,0:09:30.15,Bilingual,,0,0,0,,所以启动要等，也没有就绪探针\N{\fs33\c&H00C8C0B8&\bord1.4}so start-up waits, with no readiness probe.
+Dialogue: 0,0:09:31.87,0:09:36.69,Bilingual,,0,0,0,,然后验证 localhost:9000：Welcome to AC215\N{\fs33\c&H00C8C0B8&\bord1.4}Then verify localhost:9000: welcome to AC215.
+Dialogue: 0,0:09:37.01,0:09:43.16,Bilingual,,0,0,0,,说明一点：2025 分支 README 要你启用的演示路由和 router\N{\fs33\c&H00C8C0B8&\bord1.4}A small note: the demo route and the routers the 2025 README asks you to enable
+Dialogue: 0,0:09:43.16,0:09:46.74,Bilingual,,0,0,0,,除了 RAG 和 agent，已经都在代码里了\N{\fs33\c&H00C8C0B8&\bord1.4}are already in the code, except RAG and agent.
+Dialogue: 0,0:09:47.06,0:09:50.09,Bilingual,,0,0,0,,别再贴一遍，否则路由就重复了\N{\fs33\c&H00C8C0B8&\bord1.4}Don't paste them again, or the route is duplicated.
+Dialogue: 0,0:09:50.33,0:09:53.40,Bilingual,,0,0,0,,还有，去年的 Gemini 模型已经退役了\N{\fs33\c&H00C8C0B8&\bord1.4}Also, last year's Gemini model is retired:
+Dialogue: 0,0:09:53.40,0:09:58.59,Bilingual,,0,0,0,,就算有密钥，它的聊天也会失败，得先更新模型和区域才行\N{\fs33\c&H00C8C0B8&\bord1.4}even with a key, its chat fails until the model and region are updated;
+Dialogue: 0,0:09:58.59,0:10:00.34,Bilingual,,0,0,0,,main 分支用的是当前的模型\N{\fs33\c&H00C8C0B8&\bord1.4}main uses a current one.
+Dialogue: 0,0:10:01.30,0:10:05.51,Bilingual,,0,0,0,,还有接下来要紧的：允许所有 origin 的 CORS 中间件\N{\fs33\c&H00C8C0B8&\bord1.4}And what matters next: CORS middleware that allows every origin,
+Dialogue: 0,0:10:05.51,0:10:08.21,Bilingual,,0,0,0,,也就是 main 分支已经不再需要的那张许可条\N{\fs33\c&H00C8C0B8&\bord1.4}the permission slip main no longer needs.
+Dialogue: 0,0:10:09.53,0:10:15.74,Bilingual,,0,0,0,,教程 24，第 1 步：进到 cheese-app-v2/src/frontend-simple\N{\fs33\c&H00C8C0B8&\bord1.4}Tutorial 24, step 1: cd cheese-app-v2/src/frontend-simple.
+Dialogue: 0,0:10:16.06,0:10:19.60,Bilingual,,0,0,0,,第 2、3 步：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Steps 2 and 3: sh docker-shell.sh,
+Dialogue: 0,0:10:19.60,0:10:22.21,Bilingual,,0,0,0,,然后在 8080 上跑 http-server\N{\fs33\c&H00C8C0B8&\bord1.4}then http-server on 8080.
+Dialogue: 0,0:10:22.53,0:10:23.98,Bilingual,,0,0,0,,暂停一下，把它启动起来\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and start it.
+Dialogue: 0,0:10:24.03,0:10:26.91,Bilingual,,0,0,0,,Home page：打开 index.html\N{\fs33\c&H00C8C0B8&\bord1.4}Home page: open index.html.
+Dialogue: 0,0:10:27.23,0:10:31.37,Bilingual,,0,0,0,,首页链接到另外两个页面：简报和聊天\N{\fs33\c&H00C8C0B8&\bord1.4}The landing page links to two more pages: newsletters and chat.
+Dialogue: 0,0:10:31.62,0:10:35.22,Bilingual,,0,0,0,,Newsletter feature：打开 newsletters.html\N{\fs33\c&H00C8C0B8&\bord1.4}Newsletter feature: open newsletters.html.
+Dialogue: 0,0:10:35.54,0:10:39.23,Bilingual,,0,0,0,,它的脚本写明了 API：localhost:9000\N{\fs33\c&H00C8C0B8&\bord1.4}Its script names the API: localhost:9000.
+Dialogue: 0,0:10:39.55,0:10:42.14,Bilingual,,0,0,0,,这是课上的第二趟\N{\fs33\c&H00C8C0B8&\bord1.4}This is the lecture's second trip:
+Dialogue: 0,0:10:42.14,0:10:46.87,Bilingual,,0,0,0,,页面来自 8080，而它的 JavaScript 自己去调用 9000\N{\fs33\c&H00C8C0B8&\bord1.4}the page came from 8080, and its JavaScript calls 9000 itself.
+Dialogue: 0,0:10:47.12,0:10:50.25,Bilingual,,0,0,0,,同一台笔记本，不同的 port，所以是不同的 origin\N{\fs33\c&H00C8C0B8&\bord1.4}Same laptop, different port, so a different origin.
+Dialogue: 0,0:10:50.57,0:10:54.88,Bilingual,,0,0,0,,现在浏览器会检查每一个回答：服务器允许这个 origin 了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Now the browser checks every answer: did the server allow this origin?
+Dialogue: 0,0:10:55.12,0:10:57.98,Bilingual,,0,0,0,,额外用 curl 发送浏览器会发的东西\N{\fs33\c&H00C8C0B8&\bord1.4}An extra curl sends what the browser sends.
+Dialogue: 0,0:10:58.30,0:11:02.24,Bilingual,,0,0,0,,API 的回答里带着 access-control-allow-origin\N{\fs33\c&H00C8C0B8&\bord1.4}The API answers with access-control-allow-origin *,
+Dialogue: 0,0:11:02.24,0:11:03.84,Bilingual,,0,0,0,,星号，许可了\N{\fs33\c&H00C8C0B8&\bord1.4}permission granted.
+Dialogue: 0,0:11:06.03,0:11:12.56,Bilingual,,0,0,0,,先是 307，然后是 200：两个路径差一个斜杠，多跑了一趟\N{\fs33\c&H00C8C0B8&\bord1.4}First comes 307, then 200: the paths differ by one slash, an extra round trip.
+Dialogue: 0,0:11:12.80,0:11:17.69,Bilingual,,0,0,0,,Chat feature：打开 chat.html，问一下奶酪是怎么做的\N{\fs33\c&H00C8C0B8&\bord1.4}Chat feature: open chat.html and ask how cheese is made.
+Dialogue: 0,0:11:18.01,0:11:23.06,Bilingual,,0,0,0,,现在浏览器加了一步课上从没画过的：第 0 步，预检\N{\fs33\c&H00C8C0B8&\bord1.4}Now the browser adds a step the lecture never draws: step zero, the preflight.
+Dialogue: 0,0:11:25.28,0:11:29.29,Bilingual,,0,0,0,,一个带自定义请求头的 JSON POST 请求会让浏览器先问一声\N{\fs33\c&H00C8C0B8&\bord1.4}A JSON post with a custom header makes the browser ask first,
+Dialogue: 0,0:11:29.29,0:11:30.89,Bilingual,,0,0,0,,用的是一个 OPTIONS 请求\N{\fs33\c&H00C8C0B8&\bord1.4}with an OPTIONS request.
+Dialogue: 0,0:11:31.19,0:11:37.00,Bilingual,,0,0,0,,回答允许任何 origin、这些方法和这两个请求头，有效 600 秒\N{\fs33\c&H00C8C0B8&\bord1.4}The answer allows any origin, these methods and these two headers, for 600 seconds.
+Dialogue: 0,0:11:37.72,0:11:43.48,Bilingual,,0,0,0,,日志里：OPTIONS 200，然后 POST 被 307 弹了一下\N{\fs33\c&H00C8C0B8&\bord1.4}The log: OPTIONS 200, then the post bounces with 307 and ends
+Dialogue: 0,0:11:43.48,0:11:46.31,Bilingual,,0,0,0,,最后是 500，同一个 Gemini 错误\N{\fs33\c&H00C8C0B8&\bord1.4}in 500, the same Gemini error.
+Dialogue: 0,0:11:46.63,0:11:51.65,Bilingual,,0,0,0,,这个 500 也带着许可头，所以浏览器显示的是真正的错误\N{\fs33\c&H00C8C0B8&\bord1.4}That 500 carries the permission header too, so the browser shows the real error.
+Dialogue: 0,0:11:51.88,0:11:55.68,Bilingual,,0,0,0,,所以 CORS 是浏览器的规则，管的是服务器给不给许可\N{\fs33\c&H00C8C0B8&\bord1.4}So CORS is the browser's rule about the server's permission;
+Dialogue: 0,0:11:55.68,0:11:58.03,Bilingual,,0,0,0,,curl 和文档页都碰不到它\N{\fs33\c&H00C8C0B8&\bord1.4}curl and the docs page never meet it.
+Dialogue: 0,0:11:58.27,0:11:59.87,Bilingual,,0,0,0,,那么，快速测一下\N{\fs33\c&H00C8C0B8&\bord1.4}So, a quick test.
+Dialogue: 0,0:11:59.93,0:12:04.11,Bilingual,,0,0,0,,去年的页面需要 CORS，今年的 React 应用不需要\N{\fs33\c&H00C8C0B8&\bord1.4}Last year's page needed CORS, and this year's React app does not.
+Dialogue: 0,0:12:04.43,0:12:08.46,Bilingual,,0,0,0,,变的是什么：API、浏览器，还是它调用的 origin？\N{\fs33\c&H00C8C0B8&\bord1.4}What changed: the API, the browser, or the origin it calls?
+Dialogue: 0,0:12:17.30,0:12:18.57,Bilingual,,0,0,0,,是 origin\N{\fs33\c&H00C8C0B8&\bord1.4}The origin.
+Dialogue: 0,0:12:18.62,0:12:23.83,Bilingual,,0,0,0,,React 页面调用自己的 origin，由代理转发：没什么需要许可的\N{\fs33\c&H00C8C0B8&\bord1.4}The React page calls its own origin, and a proxy forwards: nothing to permit.
+Dialogue: 0,0:12:24.15,0:12:27.86,Bilingual,,0,0,0,,API 于是去掉了这个中间件，因为已经没有谁需要它\N{\fs33\c&H00C8C0B8&\bord1.4}The API then dropped the middleware, because nothing needed it.
+Dialogue: 0,0:12:28.10,0:12:31.34,Bilingual,,0,0,0,,要停止，在两个终端里都按 Ctrl-C 再 exit\N{\fs33\c&H00C8C0B8&\bord1.4}To stop, Ctrl+C and exit in both terminals.
+Dialogue: 0,0:12:31.66,0:12:34.10,Bilingual,,0,0,0,,额外地，停掉去年的 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}As extras, stop last year's Chroma,
+Dialogue: 0,0:12:34.10,0:12:37.30,Bilingual,,0,0,0,,丢弃这个分支上的修改，切回 main 分支\N{\fs33\c&H00C8C0B8&\bord1.4}discard the branch's edits and switch to main;
+Dialogue: 0,0:12:37.30,0:12:39.32,Bilingual,,0,0,0,,用 git stash pop 恢复你的修改\N{\fs33\c&H00C8C0B8&\bord1.4}git stash pop restores yours.
+Dialogue: 0,0:12:40.57,0:12:44.19,Bilingual,,0,0,0,,走之前，一份清理清单，每一项前面都做过一次\N{\fs33\c&H00C8C0B8&\bord1.4}Before you go, a cleanup checklist, all done once already.
+Dialogue: 0,0:12:44.51,0:12:48.01,Bilingual,,0,0,0,,退出每个 container、compose down、切回 main 分支\N{\fs33\c&H00C8C0B8&\bord1.4}Exit every container, compose down, back to main,
+Dialogue: 0,0:12:48.01,0:12:50.16,Bilingual,,0,0,0,,先看清单再 prune\N{\fs33\c&H00C8C0B8&\bord1.4}prune after checking its list;
+Dialogue: 0,0:12:50.16,0:12:54.37,Bilingual,,0,0,0,,然后按名字删掉 node modules 这个 volume 和大 image\N{\fs33\c&H00C8C0B8&\bord1.4}then remove the node_modules volume and big images by name.
+Dialogue: 0,0:12:54.69,0:12:56.44,Bilingual,,0,0,0,,你的密钥留在 secrets 里\N{\fs33\c&H00C8C0B8&\bord1.4}Your key stays in secrets.
+Dialogue: 0,0:12:56.68,0:13:01.97,Bilingual,,0,0,0,,这是完整的一趟，开头的问题也有了答案：浏览器只和 3000 说话\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the whole trip, with the hook answered: the browser talks only to 3000.
+Dialogue: 0,0:13:02.29,0:13:06.40,Bilingual,,0,0,0,,在里面，开发环境的 Vite 或生产环境的 nginx\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, Vite in development or nginx in production
+Dialogue: 0,0:13:06.40,0:13:09.68,Bilingual,,0,0,0,,按名字把 /api 送到 9000 上的 uvicorn\N{\fs33\c&H00C8C0B8&\bord1.4}carries /api by name to uvicorn on 9000,
+Dialogue: 0,0:13:09.68,0:13:12.38,Bilingual,,0,0,0,,由一个 router 运行函数\N{\fs33\c&H00C8C0B8&\bord1.4}where a router runs the function.
+Dialogue: 0,0:13:12.70,0:13:17.42,Bilingual,,0,0,0,,JSON 原路返回：同一个 origin，不需要许可\N{\fs33\c&H00C8C0B8&\bord1.4}The JSON comes back the same way: one origin, no permission needed.
+Dialogue: 0,0:13:18.08,0:13:19.83,Bilingual,,0,0,0,,回到课上的蓝图\N{\fs33\c&H00C8C0B8&\bord1.4}Back to the lecture's blueprint.
+Dialogue: 0,0:13:20.15,0:13:22.73,Bilingual,,0,0,0,,你的四个方框升进了集群里\N{\fs33\c&H00C8C0B8&\bord1.4}Your four boxes rise into the cluster.
+Dialogue: 0,0:13:23.05,0:13:27.61,Bilingual,,0,0,0,,最前面的 NGINX、registry 和持久化磁盘还是虚线\N{\fs33\c&H00C8C0B8&\bord1.4}NGINX in front, the registry and the persistent disk are still dashed:
+Dialogue: 0,0:13:27.61,0:13:29.50,Bilingual,,0,0,0,,接下来的几讲会把它们建出来\N{\fs33\c&H00C8C0B8&\bord1.4}the next lectures build them.
+Dialogue: 0,0:13:29.73,0:13:35.35,Bilingual,,0,0,0,,在你的课程项目里，课上要你画出自己的解决方案架构和技术架构\N{\fs33\c&H00C8C0B8&\bord1.4}For your project, the lecture asks you to draw your solution and technical architecture,
+Dialogue: 0,0:13:35.35,0:13:38.86,Bilingual,,0,0,0,,还给了一门速成课和一个模板 repo\N{\fs33\c&H00C8C0B8&\bord1.4}and points to a crash course and a template repository.
+Dialogue: 0,0:13:39.10,0:13:41.04,Bilingual,,0,0,0,,自测一下，每道题都暂停想一想\N{\fs33\c&H00C8C0B8&\bord1.4}Test yourself, pausing on each.
+Dialogue: 0,0:13:41.36,0:13:44.01,Bilingual,,0,0,0,,第一题：在 main 分支上追踪一次简报请求\N{\fs33\c&H00C8C0B8&\bord1.4}One: trace a newsletters request on main.
+Dialogue: 0,0:13:44.33,0:13:46.95,Bilingual,,0,0,0,,浏览器和哪个 container 说话\N{\fs33\c&H00C8C0B8&\bord1.4}Which container does the browser talk to,
+Dialogue: 0,0:13:46.95,0:13:49.72,Bilingual,,0,0,0,,port 9000 又是在哪一步出现的？第二题\N{\fs33\c&H00C8C0B8&\bord1.4}and where does port 9000 come in? Two:
+Dialogue: 0,0:13:49.72,0:13:56.09,Bilingual,,0,0,0,,api.service:app、--host 0.0.0.0 和 --reload 各起什么作用\N{\fs33\c&H00C8C0B8&\bord1.4}what do api.service:app, --host 0.0.0.0 and --reload each do,
+Dialogue: 0,0:13:56.09,0:14:01.52,Bilingual,,0,0,0,,不带斜杠的 square root 为什么返回 307？\N{\fs33\c&H00C8C0B8&\bord1.4}and why does square_root without a slash answer 307?
+Dialogue: 0,0:14:01.77,0:14:03.73,Bilingual,,0,0,0,,第三题：/healthz 和 /readyz\N{\fs33\c&H00C8C0B8&\bord1.4}Three: /healthz and /readyz.
+Dialogue: 0,0:14:04.05,0:14:06.12,Bilingual,,0,0,0,,在这个 API 里，它们各检查什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What does each one check in this API?
+Dialogue: 0,0:14:06.37,0:14:09.60,Bilingual,,0,0,0,,第四题：两条消息之间，聊天存在哪里\N{\fs33\c&H00C8C0B8&\bord1.4}Four: where does a chat stay between two messages,
+Dialogue: 0,0:14:09.60,0:14:12.32,Bilingual,,0,0,0,,为什么 API 的任何一个副本都能回答它？\N{\fs33\c&H00C8C0B8&\bord1.4}and why can any copy of the API answer it?
+Dialogue: 0,0:14:12.57,0:14:16.81,Bilingual,,0,0,0,,第五题：开发环境里由哪个文件决定 /api 送到哪里\N{\fs33\c&H00C8C0B8&\bord1.4}Five: which file decides where /api goes in development,
+Dialogue: 0,0:14:16.81,0:14:18.32,Bilingual,,0,0,0,,生产环境里又是哪个\N{\fs33\c&H00C8C0B8&\bord1.4}which in production,
+Dialogue: 0,0:14:18.32,0:14:22.87,Bilingual,,0,0,0,,为什么去年的 API 需要 CORS，而 main 分支的不需要？\N{\fs33\c&H00C8C0B8&\bord1.4}and why did last year's API need CORS while main's does not?
