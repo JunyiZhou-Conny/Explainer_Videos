@@ -207,7 +207,7 @@ class DockerHub(VoiceScene):
                     if ch in "<>":
                         brackets.add(*glyph_range(row, i, i + 1))
             self.play(brackets.animate.set_color(ROUTE), run_time=0.4)
-            self.play(Indicate(brackets, color=ROUTE, scale_factor=1.5), run_time=0.7)
+            self.play(*[Indicate(g, color=ROUTE, scale_factor=1.5) for g in brackets], run_time=0.7)  # each in place
             self.add(t)
             lts = [substring(echo, "<", 0), substring(echo, "<", 1)]
             y_lbl = rows[-1].strut.get_center()[1] - t.pitch * 1.3
@@ -332,8 +332,9 @@ class DockerHub(VoiceScene):
             self.play(Indicate(push, color=ROUTE, scale_factor=1.2), run_time=0.6)
             self.add(p2)
             vo.wait_until("The API script builds for")
-            self.play(FadeOut(VGroup(p2, l27)), FadeIn(fe_c), run_time=0.6)
+            self.play(FadeOut(VGroup(p2, l27), shift=UP * 0.3), run_time=0.35)   # no cross-fade of two panels
             self.remove(p2, l27)
+            self.play(FadeIn(fe_c, shift=UP * 0.3), run_time=0.35)
             self.play(FadeIn(api_c, shift=LEFT * 1.2), run_time=0.6)
             spans = [code_span(api_c.code, k, "linux/amd64,linux/arm64") for k in (0, 4)]
             self.play(*[s.animate.set_color(ROUTE) for s in spans], FadeIn(one, scale=0.9), run_time=0.6)
@@ -485,14 +486,18 @@ class DockerHub(VoiceScene):
             self.play(FadeOut(VGroup(t2, bar_tag, crates, notes, ghosts, foot)), run_time=0.6)
             self.remove(t2, bar_tag, crates, notes, ghosts, foot)
             self.play(FadeIn(sc, shift=UP * 0.15), run_time=0.6)
+            self.play(Indicate(ln2, color=INK, scale_factor=1.05), run_time=0.6)
+            self.add(sc)
+            vo.wait_until("using the public dlops images")
             self.play(Indicate(ln1[1], color=CONTAINER, scale_factor=1.12), run_time=0.6)
             self.add(sc)
             vo.wait_until("which are a little older than the code")
             self.play(Create(clk[0]), FadeIn(clk[1:]), FadeIn(old, shift=LEFT * 0.2), run_time=0.6)
             self.play(Rotate(clk[1], -PI, about_point=clk[0].get_center()), run_time=0.8)
             vo.wait_until("If you pushed yours")
-            self.play(FadeIn(swc, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(swc[0]), FadeIn(swap[0], shift=UP * 0.15), run_time=0.6)
             vo.wait_until("replace dlops with your user name")
+            self.play(FadeIn(swap[1]), TransformFromCopy(swap[0], swap[2]), run_time=0.8)
             self.play(Indicate(swap[2], color=TURN, scale_factor=1.1), run_time=0.7)
         self.play(FadeOut(VGroup(sc, clk, old, swc, trk)), run_time=0.6)
         self.wait(0.3)

@@ -376,7 +376,7 @@ class ContainersOverSsh(VoiceScene):
                          mono("zone", 22, INK), mono("persistent_disk_name", 22, INK),
                          VGroup(mono("ssh_user:", 22, INK), mono(SA_SHORT, 22, TURN)).arrange(RIGHT, buff=0.2),
                          mono("ssh_command", 22, INK)).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
-        endc = card(list(ex_rows), color=OWN, head="Outputs · __main__.py lines 29–34", size=22)
+        endc = card(list(ex_rows), color=OWN, head="Outputs · drawn from the code", size=22)
         endc.move_to([0, 0, 0]).align_to([0, 2.8, 0], UP)
         ill_e = illustration_tag().next_to(endc, RIGHT, buff=0.3).align_to(endc, UP)
         assert endc.get_top()[1] < 2.85 and ill_e.get_right()[0] < 6.5
@@ -407,9 +407,9 @@ class ContainersOverSsh(VoiceScene):
         c_ssh = mono("ssh", 24, INK)
         c_ins = mono("-i /secrets/ssh-key-deployment", 24, OWN)
         c_rest = mono(f"{SA_SHORT}@{IP_PH}", 24, INK)
-        full = VGroup(c_ssh.copy(), c_ins, c_rest.copy()).arrange(RIGHT, buff=0.24).move_to([0, -3.0, 0])
+        full = VGroup(c_ssh.copy(), c_ins, c_rest.copy()).arrange(RIGHT, buff=0.24, aligned_edge=UP).move_to([0, -3.0, 0])
         c_ssh.move_to(full[0])
-        c_rest.next_to(c_ssh, RIGHT, buff=0.24)
+        c_rest.next_to(c_ssh, RIGHT, buff=0.24).align_to(c_ssh, UP)
         assert full.get_right()[0] < 6.5 and full.get_left()[0] > -6.5, full.get_right()
         bar6 = hl_bar(ex_rows[5], TURN, 0.25)
         link = DashedLine(ex_rows[5].get_bottom() + DOWN * 0.05, p6.get_top() + UP * 0.03, color=S.GREY,
@@ -486,7 +486,7 @@ class ContainersOverSsh(VoiceScene):
         assert pc.get_top()[1] < kd.get_bottom()[1] - 0.05, (pc.get_top(), kd.get_bottom())
 
         # ========================================================== 9. the narrow key goes on the VM
-        on_vm = md.p(2.2, 0.32)
+        on_vm = md.p(1.95, 0.4)
         home = np.array([-5.15, -3.17, 0])
         red_t = VGroup(label("creates VMs,", 20, INK), label("disks, buckets", 20, INK)).arrange(DOWN, buff=0.06)
         red = VGroup(RoundedRectangle(width=red_t.width + 0.4, height=red_t.height + 0.24, corner_radius=0.12,
@@ -502,6 +502,7 @@ class ContainersOverSsh(VoiceScene):
             md.heal(self)
             self.play(Indicate(ks.glyph, color=OWN, scale_factor=1.2), run_time=0.6)
             assert ks.get_bottom()[1] > md.parts["front"].frame.get_top()[1] + 0.02, ks.get_bottom()
+            assert ks.get_top()[1] < md.parts["vm"].title.get_bottom()[1] + 0.02, ks.get_top()
             vo.wait_until("it cannot create VMs")
             self.play(kd.animate.set_opacity(1), run_time=0.3)
             red.next_to(kd, RIGHT, buff=0.3)
@@ -582,9 +583,9 @@ class ContainersOverSsh(VoiceScene):
         pr.shift(RIGHT * 3.3 + DOWN * 0.1)
         st = route_chip("from /status")
         with self.voiceover(SAY[11]) as vo:
-            self.play(FadeOut(VGroup(gone10, repo)), ReplacementTransform(ref7, ref11), FadeIn(title, shift=DOWN * 0.1),
-                      run_time=0.6)
+            self.play(FadeOut(VGroup(gone10, repo)), ReplacementTransform(ref7, ref11), run_time=0.5)
             self.remove(gone10, repo)
+            self.play(FadeIn(title, shift=DOWN * 0.1), run_time=0.4)
             self.play(FadeIn(bw), FadeIn(ill11), run_time=0.5)
             assert bw.frame.get_right()[0] < pr.get_left()[0] - 0.1, (bw.frame.get_right(), pr.get_left())
             assert pr.get_top()[1] < title.get_bottom()[1] - 0.05 and pr.get_right()[0] < 6.5, pr.get_right()
