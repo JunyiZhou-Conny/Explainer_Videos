@@ -1,0 +1,10 @@
+$ act -l
+time="2026-11-06T19:50:29Z" level=info msg="Using docker host 'unix:///var/run/docker.sock', and daemon socket 'unix:///var/run/docker.sock'"
+Stage  Job ID             Job name               Workflow name  Workflow file  Events           
+0      build              Build Docker Image     CI Pipeline    ci.yml         push,pull_request
+1      integration-tests  Integration Tests      CI Pipeline    ci.yml         push,pull_request
+1      system-tests       System Tests           CI Pipeline    ci.yml         push,pull_request
+1      lint-and-format    Lint and Format Check  CI Pipeline    ci.yml         push,pull_request
+1      unit-tests         Unit Tests             CI Pipeline    ci.yml         pull_request,push
+2      test-summary       Test Summary           CI Pipeline    ci.yml         push,pull_request
+[exit 0]

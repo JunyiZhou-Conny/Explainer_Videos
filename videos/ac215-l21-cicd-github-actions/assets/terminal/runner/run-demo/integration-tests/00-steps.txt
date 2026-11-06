@@ -1,0 +1,6 @@
+job: integration-tests (name: Integration Tests) on a fresh capture runner, commit c3b227f43d3a523509262e5cc83dfc5a248eeb2d
+01  success   Checkout code
+02  success   Download Docker image
+03  success   Load Docker image
+04  failure   Run integration tests
+job result: failure

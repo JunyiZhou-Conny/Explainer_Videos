@@ -1,0 +1,8 @@
+$ docker run --rm cheese-app-api:2892b1bfbcb0848ba16f600ee55b23d1ba81d99c black --check --line-length 120 api/
+Container is running!!!
+Executing command: black --check --line-length 120 api/
+would reformat /app/api/service.py
+
+Oh no! 💥 💔 💥
+1 file would be reformatted, 2 files would be left unchanged.
+[exit 1]

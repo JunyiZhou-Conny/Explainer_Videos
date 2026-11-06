@@ -1,0 +1,3 @@
+$ docker run -d --name api-server -p 9000:9000 -e DEV=1 cheese-app-api:c3b227f43d3a523509262e5cc83dfc5a248eeb2d
+081d7fe53794995de2c69ec97438b421f8436c60ac6cef86a0ad96659d3e7796
+[exit 0]

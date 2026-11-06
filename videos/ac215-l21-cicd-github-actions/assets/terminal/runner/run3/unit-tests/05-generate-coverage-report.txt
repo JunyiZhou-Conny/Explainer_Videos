@@ -1,0 +1,78 @@
+$ docker run --rm -v /home/runner/work/cheese-app-ci-cd/cheese-app-ci-cd/coverage:/app/coverage cheese-app-api:2892b1bfbcb0848ba16f600ee55b23d1ba81d99c pytest tests/unit/ --cov=api --cov-report=term --cov-report=xml --cov-report=html:coverage
+Container is running!!!
+Executing command: pytest tests/unit/ --cov=api --cov-report=term --cov-report=xml --cov-report=html:coverage
+/home/app/.local/lib/python3.11/site-packages/pytest_asyncio/plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+============================= test session starts ==============================
+platform linux -- Python 3.11.18, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pytest.ini
+plugins: anyio-4.16.0, platformdirs-4.14.5, asyncio-1.4.1.post1, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 11 items
+
+tests/unit/test_utils.py::TestPower::test_power_positive_integers PASSED [  9%]
+tests/unit/test_utils.py::TestPower::test_power_with_zero_exponent PASSED [ 18%]
+tests/unit/test_utils.py::TestPower::test_power_with_one PASSED          [ 27%]
+tests/unit/test_utils.py::TestPower::test_power_negative_base PASSED     [ 36%]
+tests/unit/test_utils.py::TestPower::test_power_negative_exponent PASSED [ 45%]
+tests/unit/test_utils.py::TestPower::test_power_with_floats PASSED       [ 54%]
+tests/unit/test_utils.py::TestPower::test_power_large_numbers PASSED     [ 63%]
+tests/unit/test_utils.py::TestPower::test_power_fractional_exponent PASSED [ 72%]
+tests/unit/test_utils.py::TestPower::test_power_special_float_values PASSED [ 81%]
+tests/unit/test_utils.py::TestPower::test_power_invalid_inputs PASSED    [ 90%]
+tests/unit/test_utils.py::TestPower::test_power_boolean_values PASSED    [100%]
+INTERNALERROR> Traceback (most recent call last):
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/_pytest/main.py", line 333, in wrap_session
+INTERNALERROR>     session.exitstatus = doit(config, session) or 0
+INTERNALERROR>                          ^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/_pytest/main.py", line 387, in _main
+INTERNALERROR>     config.hook.pytest_runtestloop(session=session)
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_caller.py", line 197, in __call__
+INTERNALERROR>     return self._hookexec(
+INTERNALERROR>            ^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_manager.py", line 183, in _hookexec
+INTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_execution.py", line 195, in _multicall
+INTERNALERROR>     raise exception
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_execution.py", line 167, in _multicall
+INTERNALERROR>     teardown.throw(exception)
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/_pytest/logging.py", line 829, in pytest_runtestloop
+INTERNALERROR>     return (yield)  # Run all the tests.
+INTERNALERROR>             ^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_execution.py", line 167, in _multicall
+INTERNALERROR>     teardown.throw(exception)
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/_pytest/terminal.py", line 723, in pytest_runtestloop
+INTERNALERROR>     result = yield
+INTERNALERROR>              ^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_execution.py", line 180, in _multicall
+INTERNALERROR>     teardown.send(result)
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pytest_cov/plugin.py", line 362, in pytest_runtestloop
+INTERNALERROR>     self.cov_total = self.cov_controller.summary(self.cov_report)
+INTERNALERROR>                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pytest_cov/engine.py", line 44, in ensure_topdir_wrapper
+INTERNALERROR>     return meth(self, *args, **kwargs)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pytest_cov/engine.py", line 189, in summary
+INTERNALERROR>     self.cov.html_report(ignore_errors=True, directory=output)
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/control.py", line 1266, in html_report
+INTERNALERROR>     return reporter.report(morfs)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/html.py", line 386, in report
+INTERNALERROR>     self.make_local_static_report_files()
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/html.py", line 435, in make_local_static_report_files
+INTERNALERROR>     self.copy_static_file(data_filename(static))
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/html.py", line 425, in copy_static_file
+INTERNALERROR>     dest = copy_with_cache_bust(src, self.directory)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/html.py", line 271, in copy_with_cache_bust
+INTERNALERROR>     with open(os.path.join(dest_dir, dest), "wb") as f:
+INTERNALERROR>          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR> PermissionError: [Errno 13] Permission denied: 'coverage/style_cb_4667309f.css'
+
+============================== 11 passed in 0.12s ==============================
+[exit 3]

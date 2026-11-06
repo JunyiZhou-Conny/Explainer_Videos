@@ -1,0 +1,4 @@
+$ docker run --rm cheese-app-api:2289d89d3cfe316334fe208cea10530c4f2378c6 flake8 --max-line-length=120 --extend-ignore=E203,W503 api/
+Container is running!!!
+Executing command: flake8 --max-line-length=120 --extend-ignore=E203,W503 api/
+[exit 0]

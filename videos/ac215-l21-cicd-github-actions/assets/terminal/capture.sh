@@ -65,18 +65,22 @@ EOF
   rm -f "$d/Dockerfile" "$d/capture-ca.crt"; rmdir "$d"
 }
 start_runner() {  # start_runner <name> [net]: a fresh runner with an empty Docker engine; "net"
-  # also gives its docker CLI the proxy (only the build job downloads anything)
+  # also gives its docker CLI the proxy and its engine the Docker Hub mirror (only the build job
+  # downloads anything; the others pull from Docker Hub itself, as a hosted runner would)
+  local mirror=; [ "$2" = net ] && mirror=--registry-mirror=https://mirror.gcr.io
   docker rm -f -v "$1" >/dev/null 2>&1 || true
   docker run -d --privileged --name "$1" --hostname runner -v /var/lib/docker "${PXENV[@]}" \
     -v "$HERE":/capture:ro --entrypoint sh l21-runner:capture -c \
-    'exec dockerd-entrypoint.sh dockerd --host=unix:///var/run/docker.sock --registry-mirror=https://mirror.gcr.io' >/dev/null
+    "exec dockerd-entrypoint.sh dockerd --host=unix:///var/run/docker.sock $mirror" >/dev/null
   local pj=; [ "$2" = net ] && pj=$PROXY_JSON
   docker exec -e PROXY_JSON="$pj" "$1" sh -c '
     until docker info >/dev/null 2>&1; do sleep 1; done
     mkdir -p /root/.docker; [ -n "$PROXY_JSON" ] && echo "$PROXY_JSON" > /root/.docker/config.json; true'
 }
-capture_only_base() {  # in runner $1: python:3.11-slim-bookworm + the proxy CA, same tag (as L09)
-  [ -n "$RELAY" ] || return 0
+capture_only_base() {  # in runner $1: python:3.11-slim-bookworm + the proxy CA, same tag (as L09).
+  # Off by default: on 2026-11-06 the unmodified base built fine here; set CAPTURE_BASE=1 if your
+  # sandbox needs the CA inside the build.
+  [ -n "$RELAY" ] && [ -n "$CAPTURE_BASE" ] || return 0
   docker exec "$1" sh -c '
     d=$(mktemp -d); cp /capture-ca.crt $d/capture-ca.crt
     cat > $d/Dockerfile <<EOF
@@ -137,6 +141,12 @@ laptop)
           mkdir -p /home/student/.docker
           [ -n "$PROXY_JSON" ] && echo "$PROXY_JSON" > /home/student/.docker/config.json
           chown -R student:student /home/student; chmod 777 /out' ;;
+      act-setup)  # capture-only: act + Node.js (for the JavaScript actions) on the laptop.
+        # GitHub release downloads are blocked in the recording sandbox, so act was built from
+        # source through the Go module proxy, CGO_ENABLED=0 `go install github.com/nektos/act@v0.2.97`
+        # in a golang:1.25-bookworm container; pass the binary as ACT_BIN.
+        docker cp "$ACT_BIN" l21-laptop:/usr/local/bin/act >/dev/null
+        docker exec l21-laptop sh -c 'apk add --no-cache -q nodejs >/dev/null' ;;
       teardown)
         docker rm -f l21-laptop >/dev/null; docker volume rm l21-laptop-docker >/dev/null ;;
       *)
@@ -171,11 +181,11 @@ run)     # run <label> <sha>: build, then the four check jobs, then test-summary
 noload)  # extra: the unit-tests command on a fresh runner that skipped `docker load` (ponder)
   label=$1; sha=$2; runner_image; out="$HERE/runner/$label"; mkdir -p "$out"
   start_runner l21-runner-noload
-  docker exec l21-runner-noload bash -c "cd /tmp; { echo '\$ docker images'; docker images 2>&1; echo \"[exit \$?]\"; } > /tmp/x1.txt
+  docker exec l21-runner-noload bash -c "mkdir -p /out; cd /; { echo '\$ docker images'; docker images 2>&1; echo \"[exit \$?]\"; } > /out/x1.txt
     { echo '\$ docker run --rm cheese-app-api:$sha pytest tests/unit/ -v --tb=short'
-      docker run --rm cheese-app-api:$sha pytest tests/unit/ -v --tb=short 2>&1; echo \"[exit \$?]\"; } > /tmp/x2.txt"
-  docker cp l21-runner-noload:/tmp/x1.txt "$out/x1-images.txt" >/dev/null
-  docker cp l21-runner-noload:/tmp/x2.txt "$out/x2-unit-tests-without-load.txt" >/dev/null
+      docker run --rm cheese-app-api:$sha pytest tests/unit/ -v --tb=short 2>&1; echo \"[exit \$?]\"; } > /out/x2.txt"
+  docker cp l21-runner-noload:/out/x1.txt "$out/x1-images.txt" >/dev/null
+  docker cp l21-runner-noload:/out/x2.txt "$out/x2-unit-tests-without-load.txt" >/dev/null
   docker rm -f -v l21-runner-noload >/dev/null ;;
 cleanup)
   docker rm -f l21-relay >/dev/null 2>&1 || true

@@ -1,0 +1,8 @@
+# illustration source: generated 2026-11-06 from .github/workflows/ci.yml at b8458ff (PyYAML; not a run). Job id, name:, runs-on, needs:, if:, number of steps
+workflow: CI Pipeline | on: {'push': {'branches': ['main', 'develop']}, 'pull_request': {'branches': ['main', 'develop']}}
+build              name='Build Docker Image'       runs-on=ubuntu-latest needs=- if=- steps=5
+lint-and-format    name='Lint and Format Check'    runs-on=ubuntu-latest needs=build if=- steps=5
+unit-tests         name='Unit Tests'               runs-on=ubuntu-latest needs=build if=- steps=6
+integration-tests  name='Integration Tests'        runs-on=ubuntu-latest needs=build if=- steps=4
+system-tests       name='System Tests'             runs-on=ubuntu-latest needs=build if=- steps=8
+test-summary       name='Test Summary'             runs-on=ubuntu-latest needs=unit-tests,integration-tests,system-tests if=always() steps=3

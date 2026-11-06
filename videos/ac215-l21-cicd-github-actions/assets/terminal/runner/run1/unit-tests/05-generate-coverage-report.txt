@@ -74,5 +74,5 @@ INTERNALERROR>     with open(os.path.join(dest_dir, dest), "wb") as f:
 INTERNALERROR>          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 INTERNALERROR> PermissionError: [Errno 13] Permission denied: 'coverage/style_cb_4667309f.css'
 
-============================== 11 passed in 0.12s ==============================
+============================== 11 passed in 0.13s ==============================
 [exit 3]

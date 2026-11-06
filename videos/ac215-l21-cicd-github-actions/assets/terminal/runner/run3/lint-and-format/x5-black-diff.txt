@@ -1,0 +1,23 @@
+$ docker run --rm cheese-app-api:2892b1bfbcb0848ba16f600ee55b23d1ba81d99c black --diff --line-length 120 api/
+Container is running!!!
+Executing command: black --diff --line-length 120 api/
+--- /app/api/service.py	2026-11-06 19:21:16+00:00
++++ /app/api/service.py	2026-11-06 19:41:43.895968+00:00
+@@ -38,11 +38,11 @@
+ @app.get("/euclidean_distance/")
+ async def calculate_euclidean_distance(x: float = 1, y: float = 2):
+     """Calculate the Euclidean distance from origin: sqrt(x^2 + y^2)
+     Returns the distance of a point (x, y) from the origin (0, 0)
+     """
+-    z=power(x,2)+power(y,2)
++    z = power(x, 2) + power(y, 2)
+     result = math.sqrt(z)
+     return {
+         "x": x,
+         "y": y,
+         "distance": result,
+would reformat /app/api/service.py
+
+All done! ✨ 🍰 ✨
+1 file would be reformatted, 2 files would be left unchanged.
+[exit 0]

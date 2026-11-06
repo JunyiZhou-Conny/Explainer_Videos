@@ -8,6 +8,7 @@
 #   l-fix       turn it green: pre-commit (README Part 4, L09) fixes utils.py, commit, push (run 2)
 #   l-noverify  slides 29-31: a messy "quick fix" blocked by the hooks, then `--no-verify` (run 3)
 #   l-part6     README Part 6's "break the tests" line and the one that does break them (context)
+#   l-act       nektos/act (not in the README) runs ci.yml on the laptop, at b8458ff (run 1's commit)
 # Steps marked "extra" are not in Part 5 of the README; they are checks the video uses.
 OUT=$1; SEG=$2
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -22,7 +23,7 @@ step() {  # step <name> <command...>   (no terminal: plain output, as in a scrip
   { echo "\$ $*"; bash -c "$*" 2>&1; echo "[exit $?]"; } > "$OUT/$name.txt"
 }
 capture_only_base() {  # recording sandbox only (CAPTURE_CA set); see ASSETS.md, "capture-only"
-  [ -n "$CAPTURE_CA" ] || return 0
+  [ -n "$CAPTURE_CA" ] && [ -n "$CAPTURE_BASE" ] || return 0   # off by default, see capture.sh
   local d; d=$(mktemp -d); cp "$CAPTURE_CA" "$d/capture-ca.crt"
   {
     echo "# capture-only, NOT part of the tutorial: the recording sandbox reaches the internet through"
@@ -115,6 +116,17 @@ l-part6)
   step 56-build "docker build -t cheese-app-api:local ."
   step 57-unit "docker run --rm cheese-app-api:local pytest tests/unit/ -v"
   step 58-restore "git checkout -- tests/unit/test_utils.py && git status --short"
+  ;;
+l-act)
+  # extra: act reads .github/workflows/ci.yml and plays GitHub's runner locally, no account needed.
+  # -P ubuntu-latest=-self-hosted runs every job directly on this machine (one shared Docker engine,
+  # NOT a fresh VM per job); --artifact-server-path gives upload/download-artifact a local store.
+  rm -rf act-run1
+  git clone -q "$STANDIN" act-run1 && cd act-run1 && git reset -q --hard b8458ff0cc1898700b32a873b4665f43f50df71e
+  step 60-act-version "act --version"
+  step 61-act-list "act -l"
+  step 62-act-push "act push -P ubuntu-latest=-self-hosted --artifact-server-path /tmp/act-artifacts"
+  step 63-images-after "docker images"
   ;;
 *) echo "unknown segment $SEG" >&2; exit 2 ;;
 esac

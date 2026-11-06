@@ -1,0 +1,751 @@
+$ act push -P ubuntu-latest=-self-hosted --artifact-server-path /tmp/act-artifacts
+time="2026-11-06T19:50:29Z" level=info msg="Using docker host 'unix:///var/run/docker.sock', and daemon socket 'unix:///var/run/docker.sock'"
+time="2026-11-06T19:50:29Z" level=info msg="Start server on http://127.0.0.1:34567"
+[CI Pipeline/Build Docker Image] ⭐ Run Set up job
+[CI Pipeline/Build Docker Image]   ✅  Success - Set up job
+[CI Pipeline/Build Docker Image]   ☁  git clone 'https://github.com/docker/setup-buildx-action' # ref=v3
+[CI Pipeline/Build Docker Image]   ☁  git clone 'https://github.com/actions/upload-artifact' # ref=v4
+[CI Pipeline/Build Docker Image] ⭐ Run Main Checkout code
+[CI Pipeline/Build Docker Image]   ✅  Success - Main Checkout code [33.978636ms]
+[CI Pipeline/Build Docker Image] ⭐ Run Main Set up Docker Buildx
+[CI Pipeline/Build Docker Image]   | (node:3971) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[CI Pipeline/Build Docker Image]   | (Use `node --trace-deprecation ...` to show where the warning was created)
+[CI Pipeline/Build Docker Image]   ❓  ::group::Docker info
+[CI Pipeline/Build Docker Image]   | [command]/usr/local/bin/docker version
+[CI Pipeline/Build Docker Image]   | Client:
+[CI Pipeline/Build Docker Image]   |  Version:           29.8.2
+[CI Pipeline/Build Docker Image]   |  API version:       1.56
+[CI Pipeline/Build Docker Image]   |  Go version:        go1.26.8
+[CI Pipeline/Build Docker Image]   |  Git commit:        7fc2dff
+[CI Pipeline/Build Docker Image]   |  Built:             Wed Sep 30 19:31:45 2026
+[CI Pipeline/Build Docker Image]   |  OS/Arch:           linux/amd64
+[CI Pipeline/Build Docker Image]   |  Context:           default
+[CI Pipeline/Build Docker Image]   | 
+[CI Pipeline/Build Docker Image]   | Server: Docker Engine - Community
+[CI Pipeline/Build Docker Image]   |  Engine:
+[CI Pipeline/Build Docker Image]   |   Version:          29.8.2
+[CI Pipeline/Build Docker Image]   |   API version:      1.56 (minimum version 1.40)
+[CI Pipeline/Build Docker Image]   |   Go version:       go1.26.8
+[CI Pipeline/Build Docker Image]   |   Git commit:       8af9fe3
+[CI Pipeline/Build Docker Image]   |   Built:            Wed Sep 30 19:34:22 2026
+[CI Pipeline/Build Docker Image]   |   OS/Arch:          linux/amd64
+[CI Pipeline/Build Docker Image]   |   Experimental:     false
+[CI Pipeline/Build Docker Image]   |  containerd:
+[CI Pipeline/Build Docker Image]   |   Version:          v2.3.6
+[CI Pipeline/Build Docker Image]   |   GitCommit:        ee2735368117d2eb259779949d5e75cdafec9761
+[CI Pipeline/Build Docker Image]   |  runc:
+[CI Pipeline/Build Docker Image]   |   Version:          1.5.2
+[CI Pipeline/Build Docker Image]   |   GitCommit:        v1.5.2-0-g29dd3dc
+[CI Pipeline/Build Docker Image]   |  docker-init:
+[CI Pipeline/Build Docker Image]   |   Version:          0.19.0
+[CI Pipeline/Build Docker Image]   |   GitCommit:        de40ad0
+[CI Pipeline/Build Docker Image]   | [command]/usr/local/bin/docker info
+[CI Pipeline/Build Docker Image]   | Client:
+[CI Pipeline/Build Docker Image]   |  Version:    29.8.2
+[CI Pipeline/Build Docker Image]   |  Context:    default
+[CI Pipeline/Build Docker Image]   |  Debug Mode: false
+[CI Pipeline/Build Docker Image]   |  Plugins:
+[CI Pipeline/Build Docker Image]   |   buildx: Docker Buildx (Docker Inc.)
+[CI Pipeline/Build Docker Image]   |     Version:  v0.37.2
+[CI Pipeline/Build Docker Image]   |     Path:     /usr/local/libexec/docker/cli-plugins/docker-buildx
+[CI Pipeline/Build Docker Image]   |   compose: Docker Compose (Docker Inc.)
+[CI Pipeline/Build Docker Image]   |     Version:  v5.6.0
+[CI Pipeline/Build Docker Image]   |     Path:     /usr/local/libexec/docker/cli-plugins/docker-compose
+[CI Pipeline/Build Docker Image]   | 
+[CI Pipeline/Build Docker Image]   | Server:
+[CI Pipeline/Build Docker Image]   |  Containers: 0
+[CI Pipeline/Build Docker Image]   |   Running: 0
+[CI Pipeline/Build Docker Image]   |   Paused: 0
+[CI Pipeline/Build Docker Image]   |   Stopped: 0
+[CI Pipeline/Build Docker Image]   |  Images: 3
+[CI Pipeline/Build Docker Image]   |  Server Version: 29.8.2
+[CI Pipeline/Build Docker Image]   |  Storage Driver: overlayfs
+[CI Pipeline/Build Docker Image]   |   driver-type: io.containerd.snapshotter.v1
+[CI Pipeline/Build Docker Image]   |  Logging Driver: json-file
+[CI Pipeline/Build Docker Image]   |  Cgroup Driver: cgroupfs
+[CI Pipeline/Build Docker Image]   |  Cgroup Version: 1
+[CI Pipeline/Build Docker Image]   |  Plugins:
+[CI Pipeline/Build Docker Image]   |   Volume: local
+[CI Pipeline/Build Docker Image]   |   Network: bridge host ipvlan macvlan null overlay
+[CI Pipeline/Build Docker Image]   |   Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+[CI Pipeline/Build Docker Image]   |  CDI spec directories:
+[CI Pipeline/Build Docker Image]   |   /etc/cdi
+[CI Pipeline/Build Docker Image]   |   /var/run/cdi
+[CI Pipeline/Build Docker Image]   |  Swarm: inactive
+[CI Pipeline/Build Docker Image]   |  Runtimes: io.containerd.runc.v2 runc
+[CI Pipeline/Build Docker Image]   |  Default Runtime: runc
+[CI Pipeline/Build Docker Image]   |  Init Binary: docker-init
+[CI Pipeline/Build Docker Image]   |  containerd version: ee2735368117d2eb259779949d5e75cdafec9761
+[CI Pipeline/Build Docker Image]   |  runc version: v1.5.2-0-g29dd3dc
+[CI Pipeline/Build Docker Image]   |  init version: de40ad0
+[CI Pipeline/Build Docker Image]   |  Security Options:
+[CI Pipeline/Build Docker Image]   |   seccomp
+[CI Pipeline/Build Docker Image]   |    Profile: builtin
+[CI Pipeline/Build Docker Image]   |  Kernel Version: 6.18.44-fc-v242
+[CI Pipeline/Build Docker Image]   |  Operating System: Alpine Linux v3.24 (containerized)
+[CI Pipeline/Build Docker Image]   |  OSType: linux
+[CI Pipeline/Build Docker Image]   |  Architecture: x86_64
+[CI Pipeline/Build Docker Image]   |  CPUs: 4
+[CI Pipeline/Build Docker Image]   |  Total Memory: 15.71GiB
+[CI Pipeline/Build Docker Image]   |  Name: laptop
+[CI Pipeline/Build Docker Image]   |  ID: dfcee848-d72f-47e2-a11d-522ab2fe1a07
+[CI Pipeline/Build Docker Image]   |  Docker Root Dir: /var/lib/docker
+[CI Pipeline/Build Docker Image]   |  Debug Mode: false
+[CI Pipeline/Build Docker Image]   |  HTTPS Proxy: http://172.17.0.1:38721
+[CI Pipeline/Build Docker Image]   |  No Proxy: localhost,127.0.0.1
+[CI Pipeline/Build Docker Image]   |  Experimental: false
+[CI Pipeline/Build Docker Image]   |  Insecure Registries:
+[CI Pipeline/Build Docker Image]   |   127.0.0.0/8
+[CI Pipeline/Build Docker Image]   |   ::1/128
+[CI Pipeline/Build Docker Image]   |  Registry Mirrors:
+[CI Pipeline/Build Docker Image]   |   https://mirror.gcr.io/
+[CI Pipeline/Build Docker Image]   |  Live Restore Enabled: false
+[CI Pipeline/Build Docker Image]   |  Product License: Community Engine
+[CI Pipeline/Build Docker Image]   |  Firewall Backend: iptables
+[CI Pipeline/Build Docker Image]   |   EnableUserlandProxy: true
+[CI Pipeline/Build Docker Image]   |   UserlandProxyPath: /usr/local/bin/docker-proxy
+[CI Pipeline/Build Docker Image]   | 
+[CI Pipeline/Build Docker Image]   | WARNING: Support for cgroup v1 is deprecated and planned to be removed by no later than May 2029 (https://github.com/moby/moby/issues/51111)
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ❓  ::group::Buildx version
+[CI Pipeline/Build Docker Image]   | [command]/usr/local/bin/docker buildx version
+[CI Pipeline/Build Docker Image]   | github.com/docker/buildx v0.37.2 2d379c0c3f22da0d2759d132a0ec81ca949098f0
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ❓  ::group::Inspecting default docker context
+[CI Pipeline/Build Docker Image]   | [
+[CI Pipeline/Build Docker Image]   |   {
+[CI Pipeline/Build Docker Image]   |     "Name": "default",
+[CI Pipeline/Build Docker Image]   |     "Metadata": {},
+[CI Pipeline/Build Docker Image]   |     "Endpoints": {
+[CI Pipeline/Build Docker Image]   |       "docker": {
+[CI Pipeline/Build Docker Image]   |         "Host": "unix:///var/run/docker.sock",
+[CI Pipeline/Build Docker Image]   |         "SkipTLSVerify": false
+[CI Pipeline/Build Docker Image]   |       }
+[CI Pipeline/Build Docker Image]   |     },
+[CI Pipeline/Build Docker Image]   |     "TLSMaterial": {},
+[CI Pipeline/Build Docker Image]   |     "Storage": {
+[CI Pipeline/Build Docker Image]   |       "MetadataPath": "<IN MEMORY>",
+[CI Pipeline/Build Docker Image]   |       "TLSPath": "<IN MEMORY>"
+[CI Pipeline/Build Docker Image]   |     }
+[CI Pipeline/Build Docker Image]   |   }
+[CI Pipeline/Build Docker Image]   | ]
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ❓  ::group::Creating a new builder instance
+[CI Pipeline/Build Docker Image]   | [command]/usr/local/bin/docker buildx create --name builder-91cd76d4-6ae0-4a76-9893-1014c532dd05 --driver docker-container --buildkitd-flags --allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host --use
+[CI Pipeline/Build Docker Image]   | builder-91cd76d4-6ae0-4a76-9893-1014c532dd05
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ❓  ::group::Booting builder
+[CI Pipeline/Build Docker Image]   | [command]/usr/local/bin/docker buildx inspect --bootstrap --builder builder-91cd76d4-6ae0-4a76-9893-1014c532dd05
+[CI Pipeline/Build Docker Image]   | #1 [internal] booting buildkit
+[CI Pipeline/Build Docker Image]   | #1 pulling image moby/buildkit:buildx-stable-1
+[CI Pipeline/Build Docker Image]   | #1 pulling image moby/buildkit:buildx-stable-1 0.7s done
+[CI Pipeline/Build Docker Image]   | #1 creating container buildx_buildkit_builder-91cd76d4-6ae0-4a76-9893-1014c532dd050
+[CI Pipeline/Build Docker Image]   | #1 creating container buildx_buildkit_builder-91cd76d4-6ae0-4a76-9893-1014c532dd050 0.6s done
+[CI Pipeline/Build Docker Image]   | #1 DONE 1.4s
+[CI Pipeline/Build Docker Image]   | Name:          builder-91cd76d4-6ae0-4a76-9893-1014c532dd05
+[CI Pipeline/Build Docker Image]   | Driver:        docker-container
+[CI Pipeline/Build Docker Image]   | Last Activity: 2026-11-06 19:50:32 +0000 UTC
+[CI Pipeline/Build Docker Image]   | 
+[CI Pipeline/Build Docker Image]   | Nodes:
+[CI Pipeline/Build Docker Image]   | Name:                  builder-91cd76d4-6ae0-4a76-9893-1014c532dd050
+[CI Pipeline/Build Docker Image]   | Endpoint:              unix:///var/run/docker.sock
+[CI Pipeline/Build Docker Image]   | Status:                running
+[CI Pipeline/Build Docker Image]   | BuildKit daemon flags: --allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host
+[CI Pipeline/Build Docker Image]   | BuildKit version:      v0.34.2
+[CI Pipeline/Build Docker Image]   | Platforms:             linux/amd64, linux/amd64/v2, linux/amd64/v3, linux/amd64/v4, linux/386
+[CI Pipeline/Build Docker Image]   | Labels:
+[CI Pipeline/Build Docker Image]   |  org.mobyproject.buildkit.worker.executor:         oci
+[CI Pipeline/Build Docker Image]   |  org.mobyproject.buildkit.worker.hostname:         22a3ccd52dbb
+[CI Pipeline/Build Docker Image]   |  org.mobyproject.buildkit.worker.network:          host
+[CI Pipeline/Build Docker Image]   |  org.mobyproject.buildkit.worker.oci.process-mode: sandbox
+[CI Pipeline/Build Docker Image]   |  org.mobyproject.buildkit.worker.selinux.enabled:  false
+[CI Pipeline/Build Docker Image]   |  org.mobyproject.buildkit.worker.snapshotter:      overlayfs
+[CI Pipeline/Build Docker Image]   | GC Policy rule#0:
+[CI Pipeline/Build Docker Image]   |  All:            false
+[CI Pipeline/Build Docker Image]   |  Filters:        type==source.local type==exec.cachemount type==source.git.checkout
+[CI Pipeline/Build Docker Image]   |  Keep Duration:  48h0m0s
+[CI Pipeline/Build Docker Image]   |  Max Used Space: 488.3MiB
+[CI Pipeline/Build Docker Image]   | GC Policy rule#1:
+[CI Pipeline/Build Docker Image]   |  All:            false
+[CI Pipeline/Build Docker Image]   |  Keep Duration:  1440h0m0s
+[CI Pipeline/Build Docker Image]   |  Reserved Space: 9.313GiB
+[CI Pipeline/Build Docker Image]   |  Max Used Space: 93.13GiB
+[CI Pipeline/Build Docker Image]   |  Min Free Space: 47.5GiB
+[CI Pipeline/Build Docker Image]   | GC Policy rule#2:
+[CI Pipeline/Build Docker Image]   |  All:            false
+[CI Pipeline/Build Docker Image]   |  Reserved Space: 9.313GiB
+[CI Pipeline/Build Docker Image]   |  Max Used Space: 93.13GiB
+[CI Pipeline/Build Docker Image]   |  Min Free Space: 47.5GiB
+[CI Pipeline/Build Docker Image]   | GC Policy rule#3:
+[CI Pipeline/Build Docker Image]   |  All:            true
+[CI Pipeline/Build Docker Image]   |  Reserved Space: 9.313GiB
+[CI Pipeline/Build Docker Image]   |  Max Used Space: 93.13GiB
+[CI Pipeline/Build Docker Image]   |  Min Free Space: 47.5GiB
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ❓  ::group::Inspect builder
+[CI Pipeline/Build Docker Image]   | {
+[CI Pipeline/Build Docker Image]   |   "nodes": [
+[CI Pipeline/Build Docker Image]   |     {
+[CI Pipeline/Build Docker Image]   |       "name": "builder-91cd76d4-6ae0-4a76-9893-1014c532dd050",
+[CI Pipeline/Build Docker Image]   |       "endpoint": "unix:///var/run/docker.sock",
+[CI Pipeline/Build Docker Image]   |       "status": "running",
+[CI Pipeline/Build Docker Image]   |       "buildkitd-flags": "--allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host",
+[CI Pipeline/Build Docker Image]   |       "buildkit": "v0.34.2",
+[CI Pipeline/Build Docker Image]   |       "platforms": "linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4,linux/386",
+[CI Pipeline/Build Docker Image]   |       "features": {
+[CI Pipeline/Build Docker Image]   |         "Automatically load images to the Docker Engine image store": true,
+[CI Pipeline/Build Docker Image]   |         "Cache export": true,
+[CI Pipeline/Build Docker Image]   |         "Direct push": true,
+[CI Pipeline/Build Docker Image]   |         "Docker exporter": true,
+[CI Pipeline/Build Docker Image]   |         "Multi-platform build": true,
+[CI Pipeline/Build Docker Image]   |         "OCI exporter": true
+[CI Pipeline/Build Docker Image]   |       },
+[CI Pipeline/Build Docker Image]   |       "labels": {
+[CI Pipeline/Build Docker Image]   |         "org.mobyproject.buildkit.worker.executor": "oci",
+[CI Pipeline/Build Docker Image]   |         "org.mobyproject.buildkit.worker.hostname": "22a3ccd52dbb",
+[CI Pipeline/Build Docker Image]   |         "org.mobyproject.buildkit.worker.network": "host",
+[CI Pipeline/Build Docker Image]   |         "org.mobyproject.buildkit.worker.oci.process-mode": "sandbox",
+[CI Pipeline/Build Docker Image]   |         "org.mobyproject.buildkit.worker.selinux.enabled": "false",
+[CI Pipeline/Build Docker Image]   |         "org.mobyproject.buildkit.worker.snapshotter": "overlayfs"
+[CI Pipeline/Build Docker Image]   |       },
+[CI Pipeline/Build Docker Image]   |       "gcPolicy": [
+[CI Pipeline/Build Docker Image]   |         {
+[CI Pipeline/Build Docker Image]   |           "all": false,
+[CI Pipeline/Build Docker Image]   |           "filter": [
+[CI Pipeline/Build Docker Image]   |             "type==source.local type==exec.cachemount type==source.git.checkout"
+[CI Pipeline/Build Docker Image]   |           ],
+[CI Pipeline/Build Docker Image]   |           "keepDuration": "48h0m0s",
+[CI Pipeline/Build Docker Image]   |           "maxUsedSpace": "488.3MiB"
+[CI Pipeline/Build Docker Image]   |         },
+[CI Pipeline/Build Docker Image]   |         {
+[CI Pipeline/Build Docker Image]   |           "all": false,
+[CI Pipeline/Build Docker Image]   |           "keepDuration": "1440h0m0s",
+[CI Pipeline/Build Docker Image]   |           "reservedSpace": "9.313GiB",
+[CI Pipeline/Build Docker Image]   |           "maxUsedSpace": "93.13GiB",
+[CI Pipeline/Build Docker Image]   |           "minFreeSpace": "47.5GiB"
+[CI Pipeline/Build Docker Image]   |         },
+[CI Pipeline/Build Docker Image]   |         {
+[CI Pipeline/Build Docker Image]   |           "all": false,
+[CI Pipeline/Build Docker Image]   |           "reservedSpace": "9.313GiB",
+[CI Pipeline/Build Docker Image]   |           "maxUsedSpace": "93.13GiB",
+[CI Pipeline/Build Docker Image]   |           "minFreeSpace": "47.5GiB"
+[CI Pipeline/Build Docker Image]   |         },
+[CI Pipeline/Build Docker Image]   |         {
+[CI Pipeline/Build Docker Image]   |           "all": true,
+[CI Pipeline/Build Docker Image]   |           "reservedSpace": "9.313GiB",
+[CI Pipeline/Build Docker Image]   |           "maxUsedSpace": "93.13GiB",
+[CI Pipeline/Build Docker Image]   |           "minFreeSpace": "47.5GiB"
+[CI Pipeline/Build Docker Image]   |         }
+[CI Pipeline/Build Docker Image]   |       ]
+[CI Pipeline/Build Docker Image]   |     }
+[CI Pipeline/Build Docker Image]   |   ],
+[CI Pipeline/Build Docker Image]   |   "name": "builder-91cd76d4-6ae0-4a76-9893-1014c532dd05",
+[CI Pipeline/Build Docker Image]   |   "driver": "docker-container",
+[CI Pipeline/Build Docker Image]   |   "lastActivity": "2026-11-06T19:50:32.000Z"
+[CI Pipeline/Build Docker Image]   | }
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ❓  ::group::BuildKit version
+[CI Pipeline/Build Docker Image]   | builder-91cd76d4-6ae0-4a76-9893-1014c532dd050: v0.34.2
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ✅  Success - Main Set up Docker Buildx [3.092262365s]
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: endpoint=unix:///var/run/docker.sock
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: status=running
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: flags=--allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: name=builder-91cd76d4-6ae0-4a76-9893-1014c532dd05
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: driver=docker-container
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: platforms=linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4,linux/386
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: nodes=[
+  {
+    "name": "builder-91cd76d4-6ae0-4a76-9893-1014c532dd050",
+    "endpoint": "unix:///var/run/docker.sock",
+    "status": "running",
+    "buildkitd-flags": "--allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host",
+    "buildkit": "v0.34.2",
+    "platforms": "linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4,linux/386",
+    "features": {
+      "Automatically load images to the Docker Engine image store": true,
+      "Cache export": true,
+      "Direct push": true,
+      "Docker exporter": true,
+      "Multi-platform build": true,
+      "OCI exporter": true
+    },
+    "labels": {
+      "org.mobyproject.buildkit.worker.executor": "oci",
+      "org.mobyproject.buildkit.worker.hostname": "22a3ccd52dbb",
+      "org.mobyproject.buildkit.worker.network": "host",
+      "org.mobyproject.buildkit.worker.oci.process-mode": "sandbox",
+      "org.mobyproject.buildkit.worker.selinux.enabled": "false",
+      "org.mobyproject.buildkit.worker.snapshotter": "overlayfs"
+    },
+    "gcPolicy": [
+      {
+        "all": false,
+        "filter": [
+          "type==source.local type==exec.cachemount type==source.git.checkout"
+        ],
+        "keepDuration": "48h0m0s",
+        "maxUsedSpace": "488.3MiB"
+      },
+      {
+        "all": false,
+        "keepDuration": "1440h0m0s",
+        "reservedSpace": "9.313GiB",
+        "maxUsedSpace": "93.13GiB",
+        "minFreeSpace": "47.5GiB"
+      },
+      {
+        "all": false,
+        "reservedSpace": "9.313GiB",
+        "maxUsedSpace": "93.13GiB",
+        "minFreeSpace": "47.5GiB"
+      },
+      {
+        "all": true,
+        "reservedSpace": "9.313GiB",
+        "maxUsedSpace": "93.13GiB",
+        "minFreeSpace": "47.5GiB"
+      }
+    ]
+  }
+]
+[CI Pipeline/Build Docker Image] ⭐ Run Main Build Docker image
+[CI Pipeline/Build Docker Image]   | [+] Building 0.0s (0/1)                                          docker:default
+[CI Pipeline/Build Docker Image]   | [+] Building 0.2s (1/2)                                          docker:default
+[CI Pipeline/Build Docker Image]   | [34m => [internal] load build definition from Dockerfile                       0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => transferring dockerfile: 1.25kB                                     0.0s
+[CI Pipeline/Build Docker Image]   | [0m => [internal] load metadata for docker.io/library/python:3.11-slim-bookw  0.2s
+[CI Pipeline/Build Docker Image]   | [+] Building 0.3s (1/2)                                          docker:default
+[CI Pipeline/Build Docker Image]   | [34m => [internal] load build definition from Dockerfile                       0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => transferring dockerfile: 1.25kB                                     0.0s
+[CI Pipeline/Build Docker Image]   | [0m => [internal] load metadata for docker.io/library/python:3.11-slim-bookw  0.3s
+[CI Pipeline/Build Docker Image]   | [+] Building 0.5s (1/2)                                          docker:default
+[CI Pipeline/Build Docker Image]   | [34m => [internal] load build definition from Dockerfile                       0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => transferring dockerfile: 1.25kB                                     0.0s
+[CI Pipeline/Build Docker Image]   | [0m => [internal] load metadata for docker.io/library/python:3.11-slim-bookw  0.4s
+[CI Pipeline/Build Docker Image]   | [+] Building 0.6s (1/2)                                          docker:default
+[CI Pipeline/Build Docker Image]   | [34m => [internal] load build definition from Dockerfile                       0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => transferring dockerfile: 1.25kB                                     0.0s
+[CI Pipeline/Build Docker Image]   | [0m => [internal] load metadata for docker.io/library/python:3.11-slim-bookw  0.6s
+[CI Pipeline/Build Docker Image]   | [+] Building 0.7s (2/2)                                          docker:default
+[CI Pipeline/Build Docker Image]   | [34m => [internal] load build definition from Dockerfile                       0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => transferring dockerfile: 1.25kB                                     0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => [internal] load metadata for docker.io/library/python:3.11-slim-bookw  0.7s
+[CI Pipeline/Build Docker Image]   | [0m[+] Building 0.9s (16/16) FINISHED                               docker:default
+[CI Pipeline/Build Docker Image]   | [34m => [internal] load build definition from Dockerfile                       0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => transferring dockerfile: 1.25kB                                     0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => [internal] load metadata for docker.io/library/python:3.11-slim-bookw  0.7s
+[CI Pipeline/Build Docker Image]   | [0m[34m => [internal] load .dockerignore                                          0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => transferring context: 2B                                            0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => [ 1/11] FROM docker.io/library/python:3.11-slim-bookworm@sha256:a83ba  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => resolve docker.io/library/python:3.11-slim-bookworm@sha256:a83ba18  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => [internal] load build context                                          0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => transferring context: 12.34kB                                       0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [ 2/11] RUN set -ex;     apt-get update &&     apt-get upgrade  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [ 3/11] RUN useradd -ms /bin/bash app -d /home/app -u 1000 &&   0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [ 4/11] WORKDIR /app                                            0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [ 5/11] COPY --chown=app:app pyproject.toml ./                  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [ 6/11] RUN pip install --no-cache-dir --user .                 0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [ 7/11] COPY --chown=app:app src/api-service/api/ ./api/        0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [ 8/11] COPY --chown=app:app tests/ ./tests/                    0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [ 9/11] COPY --chown=app:app pytest.ini ./                      0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [10/11] COPY --chown=app:app docker-entrypoint.sh ./            0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => CACHED [11/11] RUN chmod +x docker-entrypoint.sh                       0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => exporting to image                                                     0.1s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => exporting layers                                                    0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => exporting manifest sha256:e1df573d596f6e04e3fbadd6dc0d60d6d170a45b  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => exporting config sha256:972d634a0e246c80f9b0f92217a093b318a64d7de7  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => exporting attestation manifest sha256:aaf1d084bb123965b35559534dce  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => exporting manifest list sha256:527505239b4aaf96aa512d41c362a5f1b7e  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => naming to docker.io/library/cheese-app-api:b8458ff0cc1898700b32a87  0.0s
+[CI Pipeline/Build Docker Image]   | [0m[34m => => unpacking to docker.io/library/cheese-app-api:b8458ff0cc1898700b32  0.0s
+[CI Pipeline/Build Docker Image]   | [0m
+[CI Pipeline/Build Docker Image]   ✅  Success - Main Build Docker image [1.063223618s]
+[CI Pipeline/Build Docker Image] ⭐ Run Main Save Docker image
+[CI Pipeline/Build Docker Image]   ✅  Success - Main Save Docker image [4.480376362s]
+[CI Pipeline/Build Docker Image] ⭐ Run Main Upload Docker image artifact
+[CI Pipeline/Build Docker Image]   | (node:4486) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[CI Pipeline/Build Docker Image]   | (Use `node --trace-deprecation ...` to show where the warning was created)
+[CI Pipeline/Build Docker Image]   | With the provided path, there will be 1 file uploaded
+[CI Pipeline/Build Docker Image]   | Artifact name is valid!
+[CI Pipeline/Build Docker Image]   | Root directory input is valid!
+[CI Pipeline/Build Docker Image]   | Beginning upload of artifact content to blob storage
+[CI Pipeline/Build Docker Image]   | (node:4486) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 8388608
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 16777216
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 25165824
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 33554432
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 41943040
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 50331648
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 58720256
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 67108864
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 75497472
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 83886080
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 92274688
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 100663296
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 109051904
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 117440512
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 125829120
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 134217728
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 142606336
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 150994944
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 159383552
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 167772160
+[CI Pipeline/Build Docker Image]   | Uploaded bytes 174794992
+[CI Pipeline/Build Docker Image]   | Finished uploading artifact content to blob storage!
+[CI Pipeline/Build Docker Image]   | SHA256 digest of uploaded artifact zip is f6417f370a31b7e23d75615badfce93bc5e24d4b25f70eebc01db1af1e9e5901
+[CI Pipeline/Build Docker Image]   | Finalizing artifact upload
+[CI Pipeline/Build Docker Image]   | Artifact docker-image.zip successfully finalized. Artifact ID 3572604477
+[CI Pipeline/Build Docker Image]   | Artifact docker-image has been successfully uploaded! Final size is 174794992 bytes. Artifact ID is 3572604477
+[CI Pipeline/Build Docker Image]   | Artifact download URL: https://github.com//home/actions/runs/1/artifacts/3572604477
+[CI Pipeline/Build Docker Image]   ✅  Success - Main Upload Docker image artifact [9.554394913s]
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: artifact-id=3572604477
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: artifact-digest=f6417f370a31b7e23d75615badfce93bc5e24d4b25f70eebc01db1af1e9e5901
+[CI Pipeline/Build Docker Image]   ⚙  ::set-output:: artifact-url=https://github.com//home/actions/runs/1/artifacts/3572604477
+[CI Pipeline/Build Docker Image] ⭐ Run Post Set up Docker Buildx
+[CI Pipeline/Build Docker Image]   ❓  ::group::Removing builder
+[CI Pipeline/Build Docker Image]   | (node:4497) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[CI Pipeline/Build Docker Image]   | (Use `node --trace-deprecation ...` to show where the warning was created)
+[CI Pipeline/Build Docker Image]   | [command]/usr/local/bin/docker buildx rm builder-91cd76d4-6ae0-4a76-9893-1014c532dd05
+[CI Pipeline/Build Docker Image]   | builder-91cd76d4-6ae0-4a76-9893-1014c532dd05 removed
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ❓  ::group::Cleaning up certificates
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ❓  ::group::Post cache
+[CI Pipeline/Build Docker Image]   | State not set
+[CI Pipeline/Build Docker Image]   ❓  ::endgroup::
+[CI Pipeline/Build Docker Image]   ✅  Success - Post Set up Docker Buildx [950.272555ms]
+[CI Pipeline/Build Docker Image] ⭐ Run Complete job
+[CI Pipeline/Build Docker Image] Cleaning up container for job Build Docker Image
+[CI Pipeline/Build Docker Image]   ✅  Success - Complete job
+[CI Pipeline/Build Docker Image] 🏁  Job succeeded
+[CI Pipeline/Lint and Format Check] ⭐ Run Set up job
+[CI Pipeline/Unit Tests           ] ⭐ Run Set up job
+[CI Pipeline/Integration Tests    ] ⭐ Run Set up job
+[CI Pipeline/System Tests         ] ⭐ Run Set up job
+[CI Pipeline/Lint and Format Check]   ✅  Success - Set up job
+[CI Pipeline/Lint and Format Check]   ☁  git clone 'https://github.com/actions/download-artifact' # ref=v4
+[CI Pipeline/Unit Tests           ]   ✅  Success - Set up job
+[CI Pipeline/Unit Tests           ]   ☁  git clone 'https://github.com/actions/download-artifact' # ref=v4
+[CI Pipeline/Integration Tests    ]   ✅  Success - Set up job
+[CI Pipeline/Integration Tests    ]   ☁  git clone 'https://github.com/actions/download-artifact' # ref=v4
+[CI Pipeline/System Tests         ]   ✅  Success - Set up job
+[CI Pipeline/System Tests         ]   ☁  git clone 'https://github.com/actions/download-artifact' # ref=v4
+[CI Pipeline/Lint and Format Check] ⭐ Run Main Checkout code
+[CI Pipeline/Lint and Format Check]   ✅  Success - Main Checkout code [58.185858ms]
+[CI Pipeline/Lint and Format Check] ⭐ Run Main Download Docker image
+[CI Pipeline/Unit Tests           ]   ☁  git clone 'https://github.com/actions/upload-artifact' # ref=v4
+[CI Pipeline/Lint and Format Check]   | Downloading single artifact
+[CI Pipeline/Lint and Format Check]   | (node:4641) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[CI Pipeline/Lint and Format Check]   | (Use `node --trace-deprecation ...` to show where the warning was created)
+[CI Pipeline/Lint and Format Check]   | Preparing to download the following artifacts:
+[CI Pipeline/Lint and Format Check]   | - docker-image (ID: 3572604477, Size: 60, Expected Digest: undefined)
+[CI Pipeline/Lint and Format Check]   | Redirecting to blob download url: http://127.0.0.1:34567/twirp/github.actions.results.api.v1.ArtifactService/DownloadArtifact
+[CI Pipeline/Lint and Format Check]   | Starting download of artifact to: /tmp
+[CI Pipeline/Lint and Format Check]   | (node:4641) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+[CI Pipeline/Integration Tests    ] ⭐ Run Main Checkout code
+[CI Pipeline/Integration Tests    ]   ✅  Success - Main Checkout code [84.142494ms]
+[CI Pipeline/Integration Tests    ] ⭐ Run Main Download Docker image
+[CI Pipeline/System Tests         ] ⭐ Run Main Checkout code
+[CI Pipeline/System Tests         ]   ✅  Success - Main Checkout code [63.049108ms]
+[CI Pipeline/System Tests         ] ⭐ Run Main Download Docker image
+[CI Pipeline/Integration Tests    ]   | Downloading single artifact
+[CI Pipeline/Integration Tests    ]   | (node:4652) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[CI Pipeline/Integration Tests    ]   | (Use `node --trace-deprecation ...` to show where the warning was created)
+[CI Pipeline/Integration Tests    ]   | Preparing to download the following artifacts:
+[CI Pipeline/Integration Tests    ]   | - docker-image (ID: 3572604477, Size: 60, Expected Digest: undefined)
+[CI Pipeline/Integration Tests    ]   | Redirecting to blob download url: http://127.0.0.1:34567/twirp/github.actions.results.api.v1.ArtifactService/DownloadArtifact
+[CI Pipeline/Integration Tests    ]   | Starting download of artifact to: /tmp
+[CI Pipeline/Integration Tests    ]   | (node:4652) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+[CI Pipeline/System Tests         ]   | Downloading single artifact
+[CI Pipeline/System Tests         ]   | (node:4659) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[CI Pipeline/System Tests         ]   | (Use `node --trace-deprecation ...` to show where the warning was created)
+[CI Pipeline/System Tests         ]   | Preparing to download the following artifacts:
+[CI Pipeline/System Tests         ]   | - docker-image (ID: 3572604477, Size: 60, Expected Digest: undefined)
+[CI Pipeline/System Tests         ]   | Redirecting to blob download url: http://127.0.0.1:34567/twirp/github.actions.results.api.v1.ArtifactService/DownloadArtifact
+[CI Pipeline/System Tests         ]   | Starting download of artifact to: /tmp
+[CI Pipeline/System Tests         ]   | (node:4659) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+[CI Pipeline/Unit Tests           ] ⭐ Run Main Checkout code
+[CI Pipeline/Unit Tests           ]   ✅  Success - Main Checkout code [42.118116ms]
+[CI Pipeline/Unit Tests           ] ⭐ Run Main Download Docker image
+[CI Pipeline/Unit Tests           ]   | Downloading single artifact
+[CI Pipeline/Unit Tests           ]   | (node:4674) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[CI Pipeline/Unit Tests           ]   | (Use `node --trace-deprecation ...` to show where the warning was created)
+[CI Pipeline/Unit Tests           ]   | Preparing to download the following artifacts:
+[CI Pipeline/Unit Tests           ]   | - docker-image (ID: 3572604477, Size: 60, Expected Digest: undefined)
+[CI Pipeline/Unit Tests           ]   | Redirecting to blob download url: http://127.0.0.1:34567/twirp/github.actions.results.api.v1.ArtifactService/DownloadArtifact
+[CI Pipeline/Unit Tests           ]   | Starting download of artifact to: /tmp
+[CI Pipeline/Unit Tests           ]   | (node:4674) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+[CI Pipeline/Lint and Format Check]   | SHA256 digest of downloaded artifact is f6417f370a31b7e23d75615badfce93bc5e24d4b25f70eebc01db1af1e9e5901
+[CI Pipeline/Lint and Format Check]   | Artifact download completed successfully.
+[CI Pipeline/Lint and Format Check]   | Total of 1 artifact(s) downloaded
+[CI Pipeline/Lint and Format Check]   | Download artifact has finished successfully
+[CI Pipeline/Lint and Format Check]   ✅  Success - Main Download Docker image [6.025931206s]
+[CI Pipeline/Lint and Format Check]   ⚙  ::set-output:: download-path=/tmp
+[CI Pipeline/Lint and Format Check] ⭐ Run Main Load Docker image
+[CI Pipeline/Lint and Format Check]   | Loaded image: cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e
+[CI Pipeline/Lint and Format Check]   ✅  Success - Main Load Docker image [2.326376927s]
+[CI Pipeline/Lint and Format Check] ⭐ Run Main Run Black formatter check
+[CI Pipeline/System Tests         ]   | SHA256 digest of downloaded artifact is f6417f370a31b7e23d75615badfce93bc5e24d4b25f70eebc01db1af1e9e5901
+[CI Pipeline/System Tests         ]   | Artifact download completed successfully.
+[CI Pipeline/System Tests         ]   | Total of 1 artifact(s) downloaded
+[CI Pipeline/System Tests         ]   | Download artifact has finished successfully
+[CI Pipeline/System Tests         ]   ✅  Success - Main Download Docker image [6.463007397s]
+[CI Pipeline/System Tests         ]   ⚙  ::set-output:: download-path=/tmp
+[CI Pipeline/System Tests         ] ⭐ Run Main Load Docker image
+[CI Pipeline/Integration Tests    ]   | SHA256 digest of downloaded artifact is f6417f370a31b7e23d75615badfce93bc5e24d4b25f70eebc01db1af1e9e5901
+[CI Pipeline/Integration Tests    ]   | Artifact download completed successfully.
+[CI Pipeline/Integration Tests    ]   | Total of 1 artifact(s) downloaded
+[CI Pipeline/Integration Tests    ]   | Download artifact has finished successfully
+[CI Pipeline/Integration Tests    ]   ✅  Success - Main Download Docker image [7.148668826s]
+[CI Pipeline/Integration Tests    ]   ⚙  ::set-output:: download-path=/tmp
+[CI Pipeline/Integration Tests    ] ⭐ Run Main Load Docker image
+[CI Pipeline/Lint and Format Check]   | Container is running!!!
+[CI Pipeline/Lint and Format Check]   | Executing command: black --check --line-length 120 api/
+[CI Pipeline/Lint and Format Check]   | would reformat /app/api/utils.py
+[CI Pipeline/Lint and Format Check]   | 
+[CI Pipeline/Lint and Format Check]   | Oh no! 💥 💔 💥
+[CI Pipeline/Lint and Format Check]   | 1 file would be reformatted, 2 files would be left unchanged.
+[CI Pipeline/Lint and Format Check]   ❌  Failure - Main Run Black formatter check [1.384878232s]
+[CI Pipeline/Lint and Format Check] exit status 1
+[CI Pipeline/Lint and Format Check] ⭐ Run Complete job
+[CI Pipeline/Lint and Format Check]   ✅  Success - Complete job
+[CI Pipeline/Lint and Format Check] 🏁  Job failed
+[CI Pipeline/Unit Tests           ]   | SHA256 digest of downloaded artifact is f6417f370a31b7e23d75615badfce93bc5e24d4b25f70eebc01db1af1e9e5901
+[CI Pipeline/Unit Tests           ]   | Artifact download completed successfully.
+[CI Pipeline/Unit Tests           ]   | Total of 1 artifact(s) downloaded
+[CI Pipeline/Unit Tests           ]   | Download artifact has finished successfully
+[CI Pipeline/Unit Tests           ]   ✅  Success - Main Download Docker image [6.617869656s]
+[CI Pipeline/Unit Tests           ]   ⚙  ::set-output:: download-path=/tmp
+[CI Pipeline/Unit Tests           ] ⭐ Run Main Load Docker image
+[CI Pipeline/System Tests         ]   | Loaded image: cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e
+[CI Pipeline/System Tests         ]   ✅  Success - Main Load Docker image [2.259760312s]
+[CI Pipeline/System Tests         ] ⭐ Run Main Start API server container
+[CI Pipeline/System Tests         ]   | a853c141eb30ec5bb6af6c0531b97a94fdd3192396a117e3ffe02eb6d7caf9f8
+[CI Pipeline/System Tests         ]   ✅  Success - Main Start API server container [273.92545ms]
+[CI Pipeline/System Tests         ] ⭐ Run Main Wait for server to be ready
+[CI Pipeline/System Tests         ]   | Waiting for server to start...
+[CI Pipeline/Integration Tests    ]   | Loaded image: cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e
+[CI Pipeline/Integration Tests    ]   ✅  Success - Main Load Docker image [2.646565396s]
+[CI Pipeline/Integration Tests    ] ⭐ Run Main Run integration tests
+[CI Pipeline/Integration Tests    ]   | Container is running!!!
+[CI Pipeline/Integration Tests    ]   | Executing command: pytest tests/integration/ -v --tb=short
+[CI Pipeline/Integration Tests    ]   | /home/app/.local/lib/python3.11/site-packages/pytest_asyncio/plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+[CI Pipeline/Integration Tests    ]   | The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+[CI Pipeline/Integration Tests    ]   | 
+[CI Pipeline/Integration Tests    ]   |   warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+[CI Pipeline/Integration Tests    ]   | ============================= test session starts ==============================
+[CI Pipeline/Integration Tests    ]   | platform linux -- Python 3.11.18, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python3.11
+[CI Pipeline/Integration Tests    ]   | cachedir: .pytest_cache
+[CI Pipeline/Integration Tests    ]   | rootdir: /app
+[CI Pipeline/Integration Tests    ]   | configfile: pytest.ini
+[CI Pipeline/Integration Tests    ]   | plugins: anyio-4.16.0, platformdirs-4.14.5, asyncio-1.4.1.post1, cov-7.1.0
+[CI Pipeline/Integration Tests    ]   | asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+[CI Pipeline/Unit Tests           ]   | Loaded image: cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e
+[CI Pipeline/Unit Tests           ]   ✅  Success - Main Load Docker image [2.69641886s]
+[CI Pipeline/Unit Tests           ] ⭐ Run Main Run unit tests
+[CI Pipeline/Unit Tests           ]   | Container is running!!!
+[CI Pipeline/Unit Tests           ]   | Executing command: pytest tests/unit/ -v --tb=short
+[CI Pipeline/Integration Tests    ]   | collecting ... collected 10 items
+[CI Pipeline/Integration Tests    ]   | 
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestAPIEndpoints::test_root_endpoint PASSED [ 10%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestAPIEndpoints::test_root_returns_json PASSED [ 20%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_endpoint PASSED [ 30%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_default_parameters PASSED [ 40%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_with_floats PASSED [ 50%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestAPIEndpoints::test_invalid_route_returns_404 PASSED [ 60%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestAPIEndpoints::test_method_not_allowed PASSED [ 70%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestCORS::test_cors_enabled PASSED        [ 80%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::TestCORS::test_cors_allows_all_origins PASSED [ 90%]
+[CI Pipeline/Integration Tests    ]   | tests/integration/test_api.py::test_api_health_check PASSED              [100%]
+[CI Pipeline/Integration Tests    ]   | 
+[CI Pipeline/Integration Tests    ]   | ======================== 10 passed, 1 warning in 0.40s =========================
+[CI Pipeline/Integration Tests    ]   ✅  Success - Main Run integration tests [1.612691267s]
+[CI Pipeline/Integration Tests    ] ⭐ Run Complete job
+[CI Pipeline/Integration Tests    ] Cleaning up container for job Integration Tests
+[CI Pipeline/Integration Tests    ]   ✅  Success - Complete job
+[CI Pipeline/Integration Tests    ] 🏁  Job succeeded
+[CI Pipeline/Unit Tests           ]   | /home/app/.local/lib/python3.11/site-packages/pytest_asyncio/plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+[CI Pipeline/Unit Tests           ]   | The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+[CI Pipeline/Unit Tests           ]   | 
+[CI Pipeline/Unit Tests           ]   |   warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+[CI Pipeline/Unit Tests           ]   | ============================= test session starts ==============================
+[CI Pipeline/Unit Tests           ]   | platform linux -- Python 3.11.18, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python3.11
+[CI Pipeline/Unit Tests           ]   | cachedir: .pytest_cache
+[CI Pipeline/Unit Tests           ]   | rootdir: /app
+[CI Pipeline/Unit Tests           ]   | configfile: pytest.ini
+[CI Pipeline/Unit Tests           ]   | plugins: anyio-4.16.0, platformdirs-4.14.5, asyncio-1.4.1.post1, cov-7.1.0
+[CI Pipeline/Unit Tests           ]   | asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+[CI Pipeline/Unit Tests           ]   | collecting ... collected 11 items
+[CI Pipeline/Unit Tests           ]   | 
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_positive_integers PASSED [  9%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_with_zero_exponent PASSED [ 18%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_with_one PASSED          [ 27%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_negative_base PASSED     [ 36%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_negative_exponent PASSED [ 45%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_with_floats PASSED       [ 54%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_large_numbers PASSED     [ 63%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_fractional_exponent PASSED [ 72%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_special_float_values PASSED [ 81%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_invalid_inputs PASSED    [ 90%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_boolean_values PASSED    [100%]
+[CI Pipeline/Unit Tests           ]   | 
+[CI Pipeline/Unit Tests           ]   | ============================== 11 passed in 0.03s ==============================
+[CI Pipeline/Unit Tests           ]   ✅  Success - Main Run unit tests [1.001609379s]
+[CI Pipeline/Unit Tests           ] ⭐ Run Main Generate coverage report
+[CI Pipeline/Unit Tests           ]   | Container is running!!!
+[CI Pipeline/Unit Tests           ]   | Executing command: pytest tests/unit/ --cov=api --cov-report=term --cov-report=xml --cov-report=html:coverage
+[CI Pipeline/Unit Tests           ]   | /home/app/.local/lib/python3.11/site-packages/pytest_asyncio/plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+[CI Pipeline/Unit Tests           ]   | The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+[CI Pipeline/Unit Tests           ]   | 
+[CI Pipeline/Unit Tests           ]   |   warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+[CI Pipeline/Unit Tests           ]   | ============================= test session starts ==============================
+[CI Pipeline/Unit Tests           ]   | platform linux -- Python 3.11.18, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python3.11
+[CI Pipeline/Unit Tests           ]   | cachedir: .pytest_cache
+[CI Pipeline/Unit Tests           ]   | rootdir: /app
+[CI Pipeline/Unit Tests           ]   | configfile: pytest.ini
+[CI Pipeline/Unit Tests           ]   | plugins: anyio-4.16.0, platformdirs-4.14.5, asyncio-1.4.1.post1, cov-7.1.0
+[CI Pipeline/Unit Tests           ]   | asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+[CI Pipeline/Unit Tests           ]   | collecting ... collected 11 items
+[CI Pipeline/Unit Tests           ]   | 
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_positive_integers PASSED [  9%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_with_zero_exponent PASSED [ 18%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_with_one PASSED          [ 27%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_negative_base PASSED     [ 36%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_negative_exponent PASSED [ 45%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_with_floats PASSED       [ 54%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_large_numbers PASSED     [ 63%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_fractional_exponent PASSED [ 72%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_special_float_values PASSED [ 81%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_invalid_inputs PASSED    [ 90%]
+[CI Pipeline/Unit Tests           ]   | tests/unit/test_utils.py::TestPower::test_power_boolean_values PASSED    [100%]
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR> Traceback (most recent call last):
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/_pytest/main.py", line 333, in wrap_session
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     session.exitstatus = doit(config, session) or 0
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>                          ^^^^^^^^^^^^^^^^^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/_pytest/main.py", line 387, in _main
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     config.hook.pytest_runtestloop(session=session)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_caller.py", line 197, in __call__
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     return self._hookexec(
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>            ^^^^^^^^^^^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_manager.py", line 183, in _hookexec
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_execution.py", line 195, in _multicall
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     raise exception
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_execution.py", line 167, in _multicall
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     teardown.throw(exception)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/_pytest/logging.py", line 829, in pytest_runtestloop
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     return (yield)  # Run all the tests.
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>             ^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_execution.py", line 167, in _multicall
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     teardown.throw(exception)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/_pytest/terminal.py", line 723, in pytest_runtestloop
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     result = yield
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>              ^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pluggy/_execution.py", line 180, in _multicall
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     teardown.send(result)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pytest_cov/plugin.py", line 362, in pytest_runtestloop
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     self.cov_total = self.cov_controller.summary(self.cov_report)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pytest_cov/engine.py", line 44, in ensure_topdir_wrapper
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     return meth(self, *args, **kwargs)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/pytest_cov/engine.py", line 189, in summary
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     self.cov.html_report(ignore_errors=True, directory=output)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/control.py", line 1266, in html_report
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     return reporter.report(morfs)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/html.py", line 386, in report
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     self.make_local_static_report_files()
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/html.py", line 435, in make_local_static_report_files
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     self.copy_static_file(data_filename(static))
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/html.py", line 425, in copy_static_file
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     dest = copy_with_cache_bust(src, self.directory)
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>   File "/home/app/.local/lib/python3.11/site-packages/coverage/html.py", line 271, in copy_with_cache_bust
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>     with open(os.path.join(dest_dir, dest), "wb") as f:
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR>          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[CI Pipeline/Unit Tests           ]   | INTERNALERROR> PermissionError: [Errno 13] Permission denied: 'coverage/style_cb_4667309f.css'
+[CI Pipeline/Unit Tests           ]   | 
+[CI Pipeline/Unit Tests           ]   | ============================== 11 passed in 0.16s ==============================
+[CI Pipeline/Unit Tests           ] Failed but continue next step
+[CI Pipeline/Unit Tests           ]   ❌  Failure - Main Generate coverage report [1.149254617s]
+[CI Pipeline/Unit Tests           ] ⭐ Run Main Upload coverage report
+[CI Pipeline/Unit Tests           ]   | (node:5137) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[CI Pipeline/Unit Tests           ]   | (Use `node --trace-deprecation ...` to show where the warning was created)
+[CI Pipeline/Unit Tests           ]   🚧  ::warning::No files were found with the provided path: coverage/. No artifacts will be uploaded.
+[CI Pipeline/Unit Tests           ]   ✅  Success - Main Upload coverage report [453.385902ms]
+[CI Pipeline/Unit Tests           ] ⭐ Run Complete job
+[CI Pipeline/Unit Tests           ] Cleaning up container for job Unit Tests
+[CI Pipeline/Unit Tests           ]   ✅  Success - Complete job
+[CI Pipeline/Unit Tests           ] 🏁  Job succeeded
+[CI Pipeline/System Tests         ]   | {"message":"Welcome to the Cheese App CI/CD Tutorial!"}
+[CI Pipeline/System Tests         ]   ✅  Success - Main Wait for server to be ready [10.018321125s]
+[CI Pipeline/System Tests         ] ⭐ Run Main Run system tests
+[CI Pipeline/System Tests         ]   | Container is running!!!
+[CI Pipeline/System Tests         ]   | Executing command: pytest tests/system/ -v --tb=short
+[CI Pipeline/System Tests         ]   | /home/app/.local/lib/python3.11/site-packages/pytest_asyncio/plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+[CI Pipeline/System Tests         ]   | The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+[CI Pipeline/System Tests         ]   | 
+[CI Pipeline/System Tests         ]   |   warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+[CI Pipeline/System Tests         ]   | ============================= test session starts ==============================
+[CI Pipeline/System Tests         ]   | platform linux -- Python 3.11.18, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python3.11
+[CI Pipeline/System Tests         ]   | cachedir: .pytest_cache
+[CI Pipeline/System Tests         ]   | rootdir: /app
+[CI Pipeline/System Tests         ]   | configfile: pytest.ini
+[CI Pipeline/System Tests         ]   | plugins: anyio-4.16.0, platformdirs-4.14.5, asyncio-1.4.1.post1, cov-7.1.0
+[CI Pipeline/System Tests         ]   | asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+[CI Pipeline/System Tests         ]   | collecting ... collected 5 items
+[CI Pipeline/System Tests         ]   | 
+[CI Pipeline/System Tests         ]   | tests/system/test_system_api.py::TestAPIEndpoints::test_root_endpoint PASSED [ 20%]
+[CI Pipeline/System Tests         ]   | tests/system/test_system_api.py::TestAPIEndpoints::test_health_check PASSED [ 40%]
+[CI Pipeline/System Tests         ]   | tests/system/test_system_api.py::TestAPIEndpoints::test_euclidean_distance_endpoint_default PASSED [ 60%]
+[CI Pipeline/System Tests         ]   | tests/system/test_system_api.py::TestAPIEndpoints::test_euclidean_distance_endpoint_custom_values PASSED [ 80%]
+[CI Pipeline/System Tests         ]   | tests/system/test_system_api.py::TestAPIWithoutServer::test_api_structure PASSED [100%]
+[CI Pipeline/System Tests         ]   | 
+[CI Pipeline/System Tests         ]   | ============================== 5 passed in 0.44s ===============================
+[CI Pipeline/System Tests         ]   ✅  Success - Main Run system tests [1.339553149s]
+[CI Pipeline/System Tests         ] ⭐ Run Main Show server logs
+[CI Pipeline/System Tests         ]   | Container is running!!!
+[CI Pipeline/System Tests         ]   | Running in DEV mode
+[CI Pipeline/System Tests         ]   | INFO:     Will watch for changes in these directories: ['/app']
+[CI Pipeline/System Tests         ]   | INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+[CI Pipeline/System Tests         ]   | INFO:     Started reloader process [7] using StatReload
+[CI Pipeline/System Tests         ]   | INFO:     Started server process [9]
+[CI Pipeline/System Tests         ]   | INFO:     Waiting for application startup.
+[CI Pipeline/System Tests         ]   | INFO:     Application startup complete.
+[CI Pipeline/System Tests         ]   | INFO:     172.18.0.1:43174 - "GET / HTTP/1.1" 200 OK
+[CI Pipeline/System Tests         ]   | INFO:     172.18.0.1:43176 - "GET /health HTTP/1.1" 200 OK
+[CI Pipeline/System Tests         ]   | INFO:     172.18.0.1:43192 - "GET / HTTP/1.1" 200 OK
+[CI Pipeline/System Tests         ]   | INFO:     172.18.0.1:43196 - "GET /health HTTP/1.1" 200 OK
+[CI Pipeline/System Tests         ]   | INFO:     172.18.0.1:43206 - "GET /euclidean_distance/ HTTP/1.1" 200 OK
+[CI Pipeline/System Tests         ]   | INFO:     172.18.0.1:43208 - "GET /euclidean_distance/?x=3&y=4 HTTP/1.1" 200 OK
+[CI Pipeline/System Tests         ]   ✅  Success - Main Show server logs [28.230407ms]
+[CI Pipeline/System Tests         ] ⭐ Run Main Stop server container
+[CI Pipeline/System Tests         ]   | api-server
+[CI Pipeline/System Tests         ]   | api-server
+[CI Pipeline/System Tests         ]   ✅  Success - Main Stop server container [10.315930476s]
+[CI Pipeline/System Tests         ] ⭐ Run Complete job
+[CI Pipeline/System Tests         ] Cleaning up container for job System Tests
+[CI Pipeline/System Tests         ]   ✅  Success - Complete job
+[CI Pipeline/System Tests         ] 🏁  Job succeeded
+[CI Pipeline/Test Summary         ] ⭐ Run Set up job
+[CI Pipeline/Test Summary         ]   ✅  Success - Set up job
+[CI Pipeline/Test Summary         ]   ☁  git clone 'https://github.com/slackapi/slack-github-action' # ref=v1.26.0
+[CI Pipeline/Test Summary         ] ⭐ Run Main Check test results
+[CI Pipeline/Test Summary         ]   | Unit Tests: success
+[CI Pipeline/Test Summary         ]   | Integration Tests: success
+[CI Pipeline/Test Summary         ]   | System Tests: success
+[CI Pipeline/Test Summary         ]   | ✅ All tests passed!
+[CI Pipeline/Test Summary         ]   ✅  Success - Main Check test results [3.951ms]
+[CI Pipeline/Test Summary         ]   ⚙  ::set-output:: status=success
+[CI Pipeline/Test Summary         ] ⭐ Run Main Check if Slack webhook is configured
+[CI Pipeline/Test Summary         ]   ✅  Success - Main Check if Slack webhook is configured [23.719357ms]
+[CI Pipeline/Test Summary         ]   ⚙  ::set-output:: enabled=false
+[CI Pipeline/Test Summary         ] ⭐ Run Complete job
+[CI Pipeline/Test Summary         ] Cleaning up container for job Test Summary
+[CI Pipeline/Test Summary         ]   ✅  Success - Complete job
+[CI Pipeline/Test Summary         ] 🏁  Job succeeded
+Error: Job 'Lint and Format Check' failed
+[exit 1]

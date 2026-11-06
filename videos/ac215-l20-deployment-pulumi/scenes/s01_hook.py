@@ -27,10 +27,11 @@ Beats (script.md "## S01", one voiceover block each):
 5. The roadmap fades; the V1 laptop ('Local Computer') waits at the left. Four chips slide out of it,
    one per phrase: "cheese-app-v3 + secrets/ beside it", "a GCP project with billing", "a Docker Hub
    account", and the GOLD cost tag "this lecture costs money · delete it at the end of each part".
-6. The chips fade. Sample YELLOW tracker (README › Deployment to GCP (Manual) · step 2 of 15, Docker
-   login, the step whose command is the sample) top left; code panel `nginx.conf · lines 35–44`;
-   a 2-row strip types README:21's `docker login -u <USER NAME> -p <ACCESS TOKEN>` and a YELLOW
-   `▶ your turn` row tag pulses beside it, each on its phrase.
+6. The chips fade. Sample YELLOW tracker (README › Deployment to GCP (Manual) · step 5 of 15, Install
+   Docker, the step whose command is the sample) top left; code panel `nginx.conf · lines 35–44`;
+   a 2-row `cheese-app-vm` strip types vm/03's `sudo docker --version` (README:51, works as printed;
+   S04 runs it) and a YELLOW `▶ your turn` row tag pulses beside it, each on its phrase. Not the
+   README's `docker login -u <USER NAME> -p <ACCESS TOKEN>`: S03 shows that one failing as typed.
 7. The samples fade. A text-free terminal glyph returns and moves into the left column of a GREY
    two-column card: "a machine you own / → real, complete" (GREEN tick) | "Google · Docker Hub /
    → stops at its first honest error" (RED dot), GREY footer "and we say what yours prints". Fade;
@@ -63,8 +64,8 @@ CHIPS = ("cheese-app-v3 + secrets/ beside it", "a GCP project with billing", "a 
 CHIP_CUES = ("You need cheese app version 3", "a Google Cloud project with billing", "and a Docker Hub account",
              "This costs real money")
 COST_TEXT = "this lecture costs money · delete it at the end of each part"
-LOGIN = "docker login -u <USER NAME> -p <ACCESS TOKEN>"
-assert f"`{LOGIN}`" in readme(21), readme(21)
+V03 = capture("vm/03")                    # the sample command works as printed (S04 runs it for real)
+assert V03.cmd == "sudo docker --version", V03.cmd
 NGINX = "src/deployment/nginx-conf/nginx/nginx.conf"
 TOP = 3.5                       # top edge of the strip (no tracker in this scene)
 
@@ -303,9 +304,9 @@ class Hook(VoiceScene):
             flash_tag(self, cost, COST)
 
         # ========================================================== 6. how to read the screen
-        trk = tracker_m(2)
+        trk = tracker_m(5)
         panel = code(NGINX, 35, 44, font_size=20, dedent=True, cuts={36: "# Remove the rewrite"}, shown="nginx.conf")
-        tS = term(P_LAPTOP, rows=2, title=T_LAPTOP)
+        tS = term(P_VM, rows=2, title=T_VM)
         panel.move_to([0, (TRACK_BOTTOM - 0.1 + tS.box.get_top()[1] + 0.1) / 2, 0])
         assert panel.get_top()[1] < TRACK_BOTTOM - 0.05 and panel.get_bottom()[1] > tS.box.get_top()[1] + 0.05, \
             (panel.get_top(), panel.get_bottom(), tS.box.get_top())
@@ -320,10 +321,10 @@ class Hook(VoiceScene):
             self.add(panel)
             vo.wait_until("and a yellow tag")
             self.play(FadeIn(tS), run_time=0.3)
-            ln = type_cmd(self, tS, LOGIN, type_time=0.8)
-            turn = on_bar(tS, turn_row())      # the command row has no room beside it
-            self.play(FadeIn(turn, shift=LEFT * 0.1), run_time=0.4)
-            tS.add(turn)
+            ln = type_capture(self, tS, V03, type_time=0.6)[0]
+            turn = beside(turn_row(), ln)      # beside the command, as S04 block 4 does
+            assert turn.get_right()[0] < 6.6, turn.get_right()
+            pin(self, ln, turn)
             vo.wait_until("means pause and run it")
             flash_tag(self, turn, TURN)
             self.add(tS)

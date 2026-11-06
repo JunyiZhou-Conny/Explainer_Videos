@@ -1,0 +1,15 @@
+$ sed -i 's/z = power(x, 2) + power(y, 2)/z=power(x,2)+power(y,2)/' src/api-service/api/service.py && git diff
+diff --git a/src/api-service/api/service.py b/src/api-service/api/service.py
+index 1991255..d62cf8c 100644
+--- a/src/api-service/api/service.py
++++ b/src/api-service/api/service.py
+@@ -40,7 +40,7 @@ async def calculate_euclidean_distance(x: float = 1, y: float = 2):
+     """Calculate the Euclidean distance from origin: sqrt(x^2 + y^2)
+     Returns the distance of a point (x, y) from the origin (0, 0)
+     """
+-    z = power(x, 2) + power(y, 2)
++    z=power(x,2)+power(y,2)
+     result = math.sqrt(z)
+     return {
+         "x": x,
+[exit 0]

@@ -1,0 +1,3 @@
+$ ls -l /tmp/cheese-app-api.tar
+-rw-------    1 root     root     176112128 Nov  6 19:37 /tmp/cheese-app-api.tar
+[exit 0]

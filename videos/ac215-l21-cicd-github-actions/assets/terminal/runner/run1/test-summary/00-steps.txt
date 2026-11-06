@@ -1,5 +1,5 @@
 job: test-summary (name: Test Summary) on a fresh capture runner, commit b8458ff0cc1898700b32a873b4665f43f50df71e
-01  failure   Check test results
-02  skipped   Check if Slack webhook is configured
-03  skipped   Send Slack notification   (steps.slack-check.outputs.enabled is '')
-job result: failure
+01  success   Check test results
+02  success   Check if Slack webhook is configured
+03  skipped   Send Slack notification   (steps.slack-check.outputs.enabled is 'false')
+job result: success

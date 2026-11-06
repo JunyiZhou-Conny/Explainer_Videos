@@ -2,7 +2,7 @@ $ docker run --rm cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e black 
 Container is running!!!
 Executing command: black --diff --line-length 120 api/
 --- /app/api/utils.py	2025-11-13 18:59:04+00:00
-+++ /app/api/utils.py	2026-11-06 19:19:14.772980+00:00
++++ /app/api/utils.py	2026-11-06 19:34:29.084821+00:00
 @@ -2,13 +2,12 @@
  Utility functions for mathematical operations
  Used by the Cheese App API Service

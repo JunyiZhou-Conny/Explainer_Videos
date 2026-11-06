@@ -25,5 +25,5 @@ tests/integration/test_api.py::TestCORS::test_cors_enabled PASSED        [ 80%]
 tests/integration/test_api.py::TestCORS::test_cors_allows_all_origins PASSED [ 90%]
 tests/integration/test_api.py::test_api_health_check PASSED              [100%]
 
-======================== 10 passed, 1 warning in 0.40s =========================
+======================== 10 passed, 1 warning in 0.35s =========================
 [exit 0]

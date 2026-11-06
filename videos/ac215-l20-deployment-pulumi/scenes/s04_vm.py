@@ -35,8 +35,8 @@ Beats (script.md "## S04", one voiceover block each):
 7. TRACKER [M] 7. `echo '<___Json Key___>' > secrets/gcp-service.json` -> no output; TRACKER [M] 7
    · extra: `cat secrets/gcp-service.json` (extra) -> TERM(vm/18: 2) YELLOW. A GREEN key
    'gcp-service.json' with a GREY-dashed 'your key text here' label, then it slides into the VM's
-   secrets/ row; GREY chips 'your laptop: secrets/gcp-service.json' and 'made in S10 if you have
-   none'; a RED chip 'never commit · never show'.
+   secrets/ row; GREY chips 'your laptop: secrets/gcp-service.json' and 'made in part 2 if you have
+   none'; a RED chip 'never commit · never show' (kept into beat 8 until the terminal shrinks).
 8. TRACKER [M] 8. `sudo docker network create cheese-app-network` -> TERM(vm/19: 2) GREY (the id,
    never read). The terminal shrinks to a 3-row strip and the corner VM opens into V2
    `NamePhoneBook`: a GREEN cable `cheese-app-network` and an empty phone book 'names on this
@@ -55,8 +55,14 @@ Deviations from SHOW:
   last words ("from your home directory"). Folders appear in the corner VM (not in SHOW) so that the
   key of beat 7 has its secrets/ row to slide into.
 - Beat 6: `$(pwd)` is shown as text inside the PINK chip (it is not in the ls output).
-- Beat 7: the laptop chip is split in two ('your laptop: …' / 'made in S10 if you have none') to fit
-  beside the strip.
+- Beat 7: the laptop chip is split in two ('your laptop: …' / 'made in part 2 if you have none') to
+  fit beside the strip; 'S10' (SHOW's scene id) reads 'part 2' on screen, as the narration says. The
+  RED 'never' chip, the only on-screen key warning, stays through beat 8's `network create` and
+  leaves when the terminal shrinks (whole-video QA: it was on screen for about 1 s).
+- Beats 1-2 (whole-video QA, follow-along): a YELLOW '▶ your turn' sits on the small form for all of
+  beat 1 (creating the VM is the viewer's job), and on "SSH in" a GREY chip 'VM instances list · SSH
+  button' says how (README:46 says only "SSH into the VM"). The narration has no pause line here
+  yet (script.md owns it).
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -244,10 +250,14 @@ class VmWithDocker(VoiceScene):
         cost = cost_tag("billed while it runs · the disk while it exists")
         cost.move_to([-6.45 + cost.width / 2, -3.15, 0])
         assert small.get_right()[0] < gate80.get_left()[0] - 0.2, (small.get_right(), gate80.get_left())
+        yt_form = your_turn().next_to(small.frame, UP, buff=0.12).align_to(small.frame, LEFT).shift(RIGHT * 0.2)
+        assert yt_form.get_top()[1] < TRACK_BOTTOM - 0.05, yt_form.get_top()
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(stages, ref8)), run_time=0.4)
             self.remove(stages, ref8)
             self.play(ReplacementTransform(form, small), run_time=0.7)
+            self.play(FadeIn(yt_form, shift=DOWN * 0.1), run_time=0.4)
+            flash_tag(self, yt_form, TURN)
             md.vm(self)
             self.play(Create(dk[0]), FadeIn(dk[1:], shift=UP * 0.15), run_time=0.6)
             vo.wait_until("Those two ticks add network tags")
@@ -282,11 +292,15 @@ class VmWithDocker(VoiceScene):
         stand.move_to([0.0, 2.2, 0])
         stand_ar = arrow(stand.get_right() + RIGHT * 0.05, cvm.fence.get_left() + np.array([0, 0.15, 0]) + LEFT * 0.42,
                          S.GREY, stroke=3, buff=0)
+        ssh = grey_chip("VM instances list · SSH button")
+        ssh.move_to([-6.45 + ssh.width / 2, 1.45, 0])
+        assert ssh.get_bottom()[1] > t.box.get_top()[1] + 0.1, (ssh.get_bottom(), t.box.get_top())
+        assert ssh.get_right()[0] < cvm.fence.get_left()[0] - 0.5, ssh.get_right()
         with self.voiceover(SAY[2]) as vo:
             vm_part, disk_part = md.parts["vm"], dk
             self.remove(md)
             self.add(vm_part, disk_part, fence, gate80, gate443)
-            self.play(FadeOut(VGroup(small, t_http, t_https, ties, cost, fence_t, disk_part)),
+            self.play(FadeOut(VGroup(small, yt_form, t_http, t_https, ties, cost, fence_t, disk_part)),
                       track(trk, 4, True), run_time=0.5)
             self.play(ReplacementTransform(vm_part.frame, cvm.frame), ReplacementTransform(vm_part.title, cvm.title),
                       ReplacementTransform(fence, cvm.fence), ReplacementTransform(gate80, cvm.gates[0]),
@@ -294,7 +308,7 @@ class VmWithDocker(VoiceScene):
             self.remove(*cvm.get_family(), vm_part, fence, gate80, gate443)
             cv.add(cvm)
             self.add(cv)
-            self.play(FadeIn(t, shift=UP * 0.3), run_time=0.4)
+            self.play(FadeIn(t, shift=UP * 0.3), FadeIn(ssh, shift=RIGHT * 0.2), run_time=0.4)
             ln = type_capture(self, t, V00, type_time=0.9)[0]
             et = on_bar(t, extra_row())
             self.play(FadeIn(et), run_time=0.3)
@@ -317,8 +331,8 @@ class VmWithDocker(VoiceScene):
         # ========================================================== 3. install Docker
         dl = docker_layer()
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(stand, stand_ar, et)), track(trk, 5), run_time=0.5)
-            self.remove(stand, stand_ar, et)
+            self.play(FadeOut(VGroup(stand, stand_ar, et, ssh)), track(trk, 5), run_time=0.5)
+            self.remove(stand, stand_ar, et, ssh)
             vo.wait_until("download it with curl")
             type_capture(self, t, V01, type_time=0.8)
             bare_prompt(self, t)
@@ -442,7 +456,7 @@ class VmWithDocker(VoiceScene):
         dash_l = dashed_chip("your key text here")
         dash_l.next_to(key, RIGHT, buff=0.35)
         lap1 = grey_chip("your laptop: secrets/gcp-service.json")
-        lap2 = grey_chip("made in S10 if you have none")
+        lap2 = grey_chip("made in part 2 if you have none")
         VGroup(lap1, lap2).arrange(DOWN, aligned_edge=LEFT, buff=0.15).move_to([-6.45, 0.45, 0], aligned_edge=LEFT)
         never = chip("never commit · never show", ERR, size=20, fill_opacity=0.14)
         never.move_to([-6.45 + never.width / 2, -0.6, 0])
@@ -488,11 +502,13 @@ class VmWithDocker(VoiceScene):
         nb.book.shift(UP * 0.36)
         assert nb.title.get_top()[1] < TRACK_BOTTOM - 0.05, nb.title.get_top()
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(lap1, lap2, never)), track(trk, 8), run_time=0.5)
-            self.remove(lap1, lap2, never)
+            self.play(FadeOut(VGroup(lap1, lap2)), track(trk, 8), run_time=0.5)
+            self.remove(lap1, lap2)
             net = type_capture(self, t, V19, type_time=0.6)[0]
             idr = out(self, t, [(V19.line(2), S.GREY)], run_time=0.4)
             vo.wait_until("a private network")
+            self.play(FadeOut(never), run_time=0.3)
+            self.remove(never)
             resize(self, t, 3, keep=[*rows_of(net), idr[0]] if hasattr(net, "rows") else [net, idr[0]],
                    run_time=0.5)
             assert nb.vm.get_bottom()[1] > t.box.get_top()[1] + 0.1, (nb.vm.get_bottom(), t.box.get_top())

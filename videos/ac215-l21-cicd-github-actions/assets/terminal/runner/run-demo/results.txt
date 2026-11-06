@@ -1,0 +1,6 @@
+build=success
+lint-and-format=failure
+unit-tests=success
+integration-tests=failure
+system-tests=failure
+test-summary=failure

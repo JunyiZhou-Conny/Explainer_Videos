@@ -25,7 +25,7 @@ Beats (script.md "## S02", one voiceover block each):
    points down to a TEAL-outlined card 'this video · cheese-app-v3 / its own docker-shell.sh scripts'.
 6. TRACKER [M] 1 · extra · our spelling, then · extra. A full-width `laptop` terminal: `git clone
    https://github.com/dlops-io/cheese-app-v3.git` (row tag `extra · our spelling`) -> TERM(p01: 2);
-   p02's command (extra; folds) -> TERM(p02: 2) only. The hash YELLOW (not read), the date PINK; a
+   p02's first command (the git log; extra) -> TERM(p02: 2) only. The hash YELLOW (not read), the date PINK; a
    GREY chip 'the course site links: main'. Fade; empty frame.
 
 Deviations from SHOW: beat 2's chips do not shrink to a row under the top edge (text never scales
@@ -47,6 +47,10 @@ CLONE = "git clone https://github.com/dlops-io/cheese-app-v3.git"
 assert P01.cmd == CLONE, P01.cmd
 assert P01.line(2) == "Cloning into 'cheese-app-v3'...", P01.line(2)
 assert P02.cmd.startswith("git -C cheese-app-v3 log -1 --format="), P02.cmd
+# p02's recording also listed the remote branches through a masking sed (recording only, its output
+# never shown): type only the first command, the git log whose output line 2 is.
+GIT_LOG = P02.cmd.split("; ")[0]
+assert GIT_LOG == "git -C cheese-app-v3 log -1 --format='%H %ci %s'", GIT_LOG
 HASH = "3ecef56fea879ac480d260c0906cd95baf05179a"
 DATE = "2025-11-28"
 assert P02.line(2).startswith(f"{HASH} {DATE} "), P02.line(2)
@@ -317,7 +321,7 @@ class TheGoal(VoiceScene):
             pin(self, ln, tg)
             out(self, t, P01.at(2), run_time=0.3)
             self.play(track(trk, 1, True), run_time=0.4)
-            ln2 = type_capture(self, t, P02, type_time=1.0)[0]
+            ln2 = type_cmd(self, t, GIT_LOG, type_time=1.0)
             tg2 = beside(extra_row(), ln2)
             pin(self, ln2, tg2)
             vo.wait_until("the branch the course site links")

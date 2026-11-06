@@ -12,7 +12,8 @@ Beats (script.md "## S03", one voiceover block each):
    On "replace the whole placeholder" both placeholders are underlined YELLOW.
 2. A GREY ghost of `-p <ACCESS TOKEN>` lifts out of the typed line and is struck through; a GREY
    card (tag `extra`, no output panel): `echo "$TOKEN" | docker login -u <you> --password-stdin`
-   with `<you>` YELLOW and `--password-stdin` GREEN.
+   with `<you>` YELLOW and `--password-stdin` GREEN, under a first row `read -s TOKEN` (GREY note
+   'paste, Enter') so $TOKEN is defined and never typed on the command line.
 3. TRACKER [M] 3. The terminal shrinks to a 3-row strip. CODE(src/frontend-react/docker-hub.sh:
    7–14) top left; line 11 `DOCKER_USERNAME="dlops"` YELLOW (bar + "dlops"); right of it 'line 11'
    (YELLOW) over a GREY chip '→ your Docker Hub user'.
@@ -44,6 +45,8 @@ Deviations from SHOW:
 - Beat 1: the `>` brackets turn PINK with the `<` ones (the `>` before the newline is what bash
   complains about; the SAY says "angle brackets"); the label says 'redirections' and points at the
   echoed line (line 3), the only place with empty rows under it.
+- Beat 2: the card adds a first row `read -s TOKEN` / 'paste, Enter' above the SHOW's command
+  (whole-video QA 03:12: `$TOKEN` was defined nowhere, so a copied command piped an empty string).
 - Beat 2: the ghost is struck in RED (RED = "don't" in the colour table).
 - Beat 4: the 3-row strip leaves at the start of beat 4: CODE 25–35 (11 lines) does not fit over a
   strip, and two side-by-side panels do not fit the frame at >= 20 pt. The frontend panel therefore
@@ -93,6 +96,7 @@ assert "linux/amd64,linux/arm64 -t" in excerpt(API, 31, 31)
 assert "linux/amd64,linux/arm64 --push" in excerpt(API, 35, 35)
 
 BETTER = 'echo "$TOKEN" | docker login -u <you> --password-stdin'   # extra (no capture, no output)
+READ = "read -s TOKEN"   # defines $TOKEN without echo or shell history (QA 03:12: $TOKEN was undefined)
 GHOST_PROMPTS = (P_API, P_VDB)
 
 
@@ -232,12 +236,16 @@ class DockerHub(VoiceScene):
         cmd = mono_line(BETTER, 20, INK)
         substring(cmd, "<you>").set_color(TURN)
         substring(cmd, "--password-stdin").set_color(OWN)
-        bc = card([cmd])
+        rd = mono_line(READ, 20, INK)
+        rd_note = label("paste, Enter", 20, S.GREY)
+        rd_row = VGroup(rd, rd_note).arrange(RIGHT, buff=0.45)
+        bc = card([rd_row, cmd])
         etag = extra_tag()
-        bc.move_to([-6.45 + bc.width / 2, 1.35, 0])
+        bc.move_to([-6.45 + bc.width / 2, 1.74 - bc.height / 2, 0])
         etag.next_to(bc, UP, buff=0.12).align_to(bc, LEFT)
         ghost = mono("-p <ACCESS TOKEN>", 20, S.GREY)
-        ghost.move_to([bc.get_right()[0] + 0.4 + ghost.width / 2, 1.35, 0])
+        ghost.move_to([bc.get_right()[0] + 0.4 + ghost.width / 2, cmd.get_center()[1], 0])
+        assert etag.get_top()[1] < TRACK_BOTTOM - 0.05, (etag.get_top(), TRACK_BOTTOM)
         assert ghost.get_right()[0] < 6.5, ghost.get_right()
         assert bc.get_bottom()[1] > t.box.get_top()[1] + 0.2 and bc.get_top()[1] < TRACK_BOTTOM
         with self.voiceover(SAY[2]) as vo:
@@ -252,6 +260,7 @@ class DockerHub(VoiceScene):
             self.add(bc)
             vo.wait_until("keeps the token out of your shell history")
             self.play(Indicate(substring(cmd, '"$TOKEN"'), color=INK, scale_factor=1.12),
+                      Indicate(substring(rd, "TOKEN"), color=INK, scale_factor=1.12),
                       Indicate(substring(cmd, "<you>"), color=TURN, scale_factor=1.12), run_time=0.8)
             self.add(bc)
 
