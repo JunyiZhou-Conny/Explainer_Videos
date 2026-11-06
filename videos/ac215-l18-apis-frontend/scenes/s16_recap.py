@@ -482,7 +482,7 @@ class Recap(VoiceScene):
                     self.play(Indicate(si[3], color=TURN, scale_factor=3.0), run_time=0.7)
                     vo.wait_until("and reload")
                     self.play(si[1].animate(rate_func=there_and_back).set_stroke(TURN, width=7), run_time=0.8)
-                    vo.wait_until("and why does square root")
+                    vo.wait_until("why does square root")
                     self.play(Indicate(qcards[1].body[2], color=TURN, scale_factor=1.06), run_time=0.8)
                     vo.wait_until("without a slash")
                     self.play(Circumscribe(qcards[1].body[2], color=TURN, buff=0.08), run_time=1.0)
