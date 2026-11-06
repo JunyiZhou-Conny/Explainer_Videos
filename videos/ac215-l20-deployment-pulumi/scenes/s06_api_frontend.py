@@ -46,6 +46,10 @@ Deviations from SHOW:
 - Beat 3: vm/32 lines 5 and 7 are 86 characters; they are cropped after 'DISK USAGE' / '5.07GB'.
 - Beat 4: one 8-row terminal instead of three separate strips (the corner V2 keeps its place).
 - Beat 5: the terminal clears before the 12-row interactive block so the error lands on time.
+- Beat 6: the two repeated README blocks (vm/40, vm/41) type fast in chunks of up to 6 rows with one
+  scroll per chunk (fast_block), and `exit` types at "we exit", so the screen keeps pace with the words.
+- The api box draws attention with pulse() (frame stroke + name), never Indicate on the whole box:
+  that repaints its opaque fill and hides the name.
 - Beat 7: '▶ your turn' sits on the title bar: the frontend command has scrolled off by the time the
   narration says 'Pause'.
 """
@@ -180,6 +184,38 @@ def api_slot() -> VMobject:
 LEFT_X = -6.45          # left column above the 8-row terminal: x -6.45 .. 1.4, y 0.75 .. 2.75
 
 
+def pulse(scene, mv: MiniVm, key: str, color, run_time: float = 0.7):
+    """PLAYS: a container box in the small V2 draws attention without hiding its name (Indicate on
+    the whole box repaints its opaque fill and covers the label)."""
+    b = mv.boxes[key]
+    scene.play(b.frame.animate(rate_func=there_and_back).set_stroke(color, width=7),
+               Indicate(b.name, color=color, scale_factor=1.12), run_time=run_time)
+    mv.heal(scene)
+
+
+def fast_block(scene, t: Terminal, cap, type_time: float = 0.07, chunk: int = 4) -> None:
+    """PLAYS: a README block typed again, fast: the rows of `cap`'s command (exactly as the capture
+    spells them, folded like type_capture) type in chunks of `chunk` rows, with one gentle scroll per
+    chunk instead of one per row."""
+    keep, cont, rows = t.prompt, False, []
+    for row in cap.cmd_lines:
+        p = (t.prompt + " ") if not cont else ""
+        rows.append((row, not cont, len(t.fold(p + row, first_prefix=len(p)))))
+        cont = row.rstrip().endswith("\\")
+    i = 0
+    try:
+        while i < len(rows):
+            grp, n = [], 0
+            while i < len(rows) and (not grp or n + rows[i][2] <= chunk):
+                grp.append(rows[i]); n += rows[i][2]; i += 1
+            room(scene, t, n)
+            for row, has_prompt, _ in grp:
+                t.set_prompt(keep if has_prompt else "")
+                t.type(scene, row, type_time)
+    finally:
+        t.set_prompt(keep)
+
+
 def at_left(m, y: float):
     return m.move_to([LEFT_X + m.width / 2, y, 0])
 
@@ -274,8 +310,7 @@ class ApiAndFrontend(VoiceScene):
             out(self, t, [(V31.line(26), TURN), V31.line(27)], wrap=True, run_time=0.5)
             vo.wait_until("then uvicorn running on port 9000")
             out(self, t, ["…", (V31.line(53), OWN)], wrap=True, run_time=0.5)
-            self.play(Indicate(mv.boxes["api"].frame, color=OWN, scale_factor=1.08), run_time=0.6)
-            mv.heal(self)
+            pulse(self, mv, "api", OWN, run_time=0.6)
             vo.wait_until("The model comes from a GitHub release")
             self.play(FadeIn(models, shift=RIGHT * 0.2), run_time=0.5)
             self.play(FadeIn(gh, shift=RIGHT * 0.2), run_time=0.5)
@@ -300,8 +335,7 @@ class ApiAndFrontend(VoiceScene):
             self.add(t)
             self.play(FadeIn(dk, shift=RIGHT * 0.2), run_time=0.4)
             vo.wait_until("with TensorFlow inside")
-            self.play(Indicate(mv.boxes["api"], color=TURN, scale_factor=1.1), run_time=0.7)
-            mv.heal(self)
+            pulse(self, mv, "api", TURN)
 
         # ========================================================== 4. three curls
         er = erratum_tag()
@@ -352,8 +386,7 @@ class ApiAndFrontend(VoiceScene):
             self.play(Indicate(t.find("Conflict"), color=ERR, scale_factor=1.03), run_time=0.6)
             self.add(t)
             vo.wait_until("because the detached container still runs")
-            self.play(Indicate(mv.boxes["api"], color=CONTAINER, scale_factor=1.12), run_time=0.7)
-            mv.heal(self)
+            pulse(self, mv, "api", TURN)
 
         # ========================================================== 6. rm -f, the shell, back to detached
         opt = grey_chip("optional · the dev mode from L18")
@@ -366,18 +399,19 @@ class ApiAndFrontend(VoiceScene):
             out(self, t, V39.at(2), run_time=0.3)
             mv.stop(self, "api")
             vo.wait_until("and the variant opens a shell")
-            type_capture(self, t, V40, type_time=0.08)
+            fast_block(self, t, V40, chunk=6)
             out(self, t, V40.at(13, 16, "…"), run_time=0.4)
+            vo.wait_until("It is optional")
+            self.play(FadeIn(opt, shift=RIGHT * 0.2), run_time=0.4)
+            vo.wait_until("we exit")
             ex = type_at(self, t, V40, 24, type_time=0.3)
             cid = at_prompt(V40, 24)[0].split("@")[1].split(":")[0]
-            self.play(substring(ex, cid).animate.set_color(S.GREY_DARK), run_time=0.3)
+            substring(ex, cid).set_color(S.GREY_DARK)
             self.add(t)
             out(self, t, V40.at(25), run_time=0.3)
             t.set_prompt(P_VM)
-            vo.wait_until("It is optional")
-            self.play(FadeIn(opt, shift=RIGHT * 0.2), run_time=0.4)
-            vo.wait_until("we exit and start the detached one again")
-            type_capture(self, t, V41, type_time=0.08)
+            vo.wait_until("and start the detached one again")
+            fast_block(self, t, V41, chunk=6)
             out(self, t, [(V41.line(11), S.GREY)], run_time=0.3)
             mv.start(self, "api")
 

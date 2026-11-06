@@ -59,6 +59,13 @@ Deviations from SHOW:
 - Beat 8: '…' lines mark the gaps 12–17 and 20–22 of vm/28; the erratum ghost, the fix and the rerun
   note sit above a 4-row strip (the terminal shrinks after the listing) rather than on the 10-row
   terminal, which leaves no room for them.
+- Timing (critic pass): beats 1 and 3 clear the terminal before their long README blocks (no row-by-
+  row scrolling) and type them in pieces, each flag as it is named; beat 4 knocks on "creates the
+  collection" and pours the dots while the counter steps through the hidden inserts (knock_on /
+  pour_counting: nb.pour() split in two), so the count lands with "14,356 chunks in all".
+- Beat 6: the '?' sits just above the vector-DB box (nb.question() would cover its name); the PONDER
+  card is centred on V2 and V2's edges are dimmed under it. Filled plates (door, box) flash with
+  pulse() (outline + words), never Indicate (its colour floods the opaque fill over the words).
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -132,13 +139,58 @@ def mini_book() -> VGroup:
     return g
 
 
+def pulse(frame, words, color) -> list:
+    """ANIMS: flash a filled plate without hiding its words: the outline thickens and back, the words
+    pulse in `color` (Indicate on the whole plate would flood its opaque fill over the words)."""
+    return [frame.animate(rate_func=there_and_back).set_stroke(width=7),
+            Indicate(words, color=color, scale_factor=1.12)]
+
+
+def knock_on(scene, nb) -> tuple:
+    """PLAYS: the first half of nb.pour(): the loader knocks on 'cheese-app-vector-db:8000' (PINK
+    arc + label, the book entry flashes). The arc and label stay (parts of nb) until dropped."""
+    lb, vb = nb.boxes["loader"], nb.boxes["vdb"]
+    knock = route(lb.frame.get_top() + LEFT * 0.2, vb.frame.get_top() + RIGHT * 0.2, arc=0.9)
+    kt = label(f"{C_VDB}:8000", 20, ROUTE).move_to(nb.p(-2.05, 1.12))
+    nb.show(scene, knock, kt, anims=[Create(knock), FadeIn(kt)], run_time=0.6,
+            extra=[Indicate(nb.entries["vdb"], color=ROUTE)])
+    return knock, kt
+
+
+def pour_counting(scene, nb, ctr, values, n: int = 12, run_time: float = 1.0) -> None:
+    """PLAYS: the second half of nb.pour() (the TEAL dots flow into the vector-DB box and stay as
+    nb.data) while the counter `ctr` steps through `values` (one Finished-inserting line each)."""
+    lb, vb = nb.boxes["loader"], nb.boxes["vdb"]
+    dots = VGroup(*[Dot(radius=0.05, color=CONTAINER) for _ in range(n)])
+    for d in dots:
+        d.move_to(lb.frame.get_left())
+    c = vb.frame.get_center()
+    tg = [c + np.array([-0.55 + 0.1 * i, -0.36, 0]) for i in range(n)]
+    pos = ctr.get_center()
+
+    def step(m, a):
+        k = min(len(values) - 1, int(a * len(values)))
+        m.become(counter_text(values[k]).move_to(pos))
+
+    scene.add(dots)
+    scene.play(LaggedStart(*[d.animate.move_to(p) for d, p in zip(dots, tg)], lag_ratio=0.1),
+               UpdateFromAlphaFunc(ctr, step), run_time=run_time)
+    scene.remove(dots)
+    nb.data.add(*dots)
+    if nb.data not in nb.submobjects:
+        nb.add(nb.data)
+    nb.heal(scene)
+
+
 def counter_text(v: int) -> Text:
     return steady(f"{v:,}", 36, TURN)
 
 
-def row_with(t: Terminal, sub: str):
-    """The terminal row (on screen) that holds `sub`."""
-    return t.find(sub)
+def type_rows(scene, t: Terminal, rows, type_time: float, first: bool = True) -> list:
+    """PLAYS: type some rows of a README command block (verbatim): the first at the prompt when
+    `first`, every other one a continuation row (the block's rows all end in ' \\'). Lets a scene
+    type a long block in pieces, each flag as it is named."""
+    return [type_cmd(scene, t, r, type_time, prompt=(first and i == 0)) for i, r in enumerate(rows)]
 
 
 class VectorDb(VoiceScene):
@@ -190,26 +242,38 @@ class VectorDb(VoiceScene):
         nb = NamePhoneBook(built=True)
         nb.shift(NB_SHIFT)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(stages, ref)), run_time=0.4)
+            # a fresh screen (no scrolling) and the flags typed as they are named, so each glow is on
+            # its word: '-d' with "detached", the network, then the port, then the rest
+            self.play(FadeOut(VGroup(stages, ref)), FadeOut(t.lines), run_time=0.4)
             self.remove(stages, ref)
-            run = type_capture(self, t, V23, type_time=0.2)
-            idr = out(self, t, [(V23.line(10), S.GREY)], run_time=0.3)
-            rr = {k: rows_of(ln)[0] for k, ln in zip(("d", "name", "net", "p", "e1", "e2", "v", "re", "img"), run)}
-            assert rr["net"].text.strip() == "--network cheese-app-network \\" and rr["v"].text.strip().startswith(GHOST)
+            for m in list(t.lines):
+                t.lines.remove(m)
+            rows = V23.cmd_lines
+            run = type_rows(self, t, rows[:1], 0.25)
             vo.wait_until("Then run it detached")
-            self.play(substring(rr["d"], "-d").animate.set_color(TURN), run_time=0.3)
-            self.play(Indicate(substring(rr["d"], "-d"), color=TURN, scale_factor=1.4), run_time=0.5)
+            d = substring(rows_of(run[0])[0], "-d")
+            self.play(d.animate.set_color(TURN), run_time=0.3)
+            self.play(Indicate(d, color=TURN, scale_factor=1.4), run_time=0.4)
             self.add(t)
+            run += type_rows(self, t, rows[1:3], 0.2, first=False)
             vo.wait_until("on cheese app network")
+            rr = {k: rows_of(ln)[0] for k, ln in zip(("d", "name", "net"), run)}
+            assert rr["net"].text.strip() == "--network cheese-app-network \\", rr["net"].text
             g = substring(rr["net"], "--network cheese-app-network")
             self.play(g.animate.set_color(OWN), run_time=0.3)
-            self.play(Indicate(g, color=OWN, scale_factor=1.08), run_time=0.5)
+            self.play(Indicate(g, color=OWN, scale_factor=1.08), run_time=0.4)
             self.add(t)
+            run += type_rows(self, t, rows[3:4], 0.2, first=False)
             vo.wait_until("publishing port 8000")
-            g = substring(rr["p"], "-p 8000:8000")
+            g = substring(rows_of(run[3])[0], "-p 8000:8000")
             self.play(g.animate.set_color(ROUTE), run_time=0.3)
-            self.play(Indicate(g, color=ROUTE, scale_factor=1.12), run_time=0.5)
+            self.play(Indicate(g, color=ROUTE, scale_factor=1.12), run_time=0.4)
             self.add(t)
+            run += type_rows(self, t, rows[4:], 0.15, first=False)
+            idr = out(self, t, [(V23.line(10), S.GREY)], run_time=0.3)
+            assert len(t.lines) <= t.rows, len(t.lines)
+            rr = {k: rows_of(ln)[0] for k, ln in zip(("d", "name", "net", "p", "e1", "e2", "v", "re", "img"), run)}
+            assert rr["v"].text.strip().startswith(GHOST) and "--restart always" in rr["re"].text
             vo.wait_until("restarting always")
             g = substring(rr["re"], "--restart always")
             self.play(g.animate.set_color(TURN), run_time=0.3)
@@ -237,13 +301,13 @@ class VectorDb(VoiceScene):
             pr = out(self, t, [V24.line(3)], wrap=True, run_time=0.4)
             prow = next(r for r in pr if "0.0.0.0:8000->8000/tcp" in r.text)
             g = substring(prow, "0.0.0.0:8000->8000/tcp")
-            self.play(g.animate.set_color(ROUTE), Indicate(nb.doors["vdb"], color=ROUTE, scale_factor=1.2),
+            self.play(g.animate.set_color(ROUTE), *pulse(nb.doors["vdb"].plate, nb.doors["vdb"].text, ROUTE),
                       run_time=0.6)
             self.add(t)
             nb.heal(self)
             vo.wait_until("the heartbeat answers")
             out(self, t, V24.at(4), run_time=0.4)
-            self.play(Indicate(nb.boxes["vdb"], color=CONTAINER, scale_factor=1.08), run_time=0.6)
+            self.play(*pulse(nb.boxes["vdb"].frame, nb.boxes["vdb"].name, CONTAINER), run_time=0.6)
             nb.heal(self)
             vo.wait_until("Chroma version one")
             vr = out(self, t, V24.at(5), run_time=0.4)
@@ -254,16 +318,19 @@ class VectorDb(VoiceScene):
         # ========================================================== 3. the loader's command
         card = mini_book()
         with self.voiceover(SAY[3]) as vo:
-            self.play(track(trk, 10), run_time=0.4)
-            resize(self, t, 10, extra=[FadeOut(nb)], run_time=0.6)
-            self.remove(nb)
             card.move_to([6.45 - card.width / 2, 0, 0])
-            card.set_y((t.box.get_top()[1] + PIC_TOP) / 2 + 0.05)
-            assert card.get_bottom()[1] > t.box.get_top()[1] + 0.05 and card.get_top()[1] < 2.95, card.get_top()
-            self.play(FadeIn(card, shift=LEFT * 0.2), run_time=0.4)
+            self.play(track(trk, 10), run_time=0.4)
+            top = vm_term(rows=10).box.get_top()[1]  # where the box's top will be (resize keeps the bottom)
+            card.set_y((top + PIC_TOP) / 2 + 0.05)
+            resize(self, t, 10, extra=[FadeOut(nb), FadeIn(card, shift=LEFT * 0.2)], run_time=0.6)
+            self.remove(nb)
+            assert card.get_bottom()[1] > t.box.get_top()[1] + 0.05 and card.get_top()[1] < 2.95, (card.get_bottom(), t.box.get_top())
             type_capture(self, t, V26, type_time=0.5)
             out(self, t, V26.at(2, "…", (45, 46)), wrap=True, run_time=0.4)
-            lrun = type_capture(self, t, V27, type_time=0.15)
+            # a fresh screen for the 9-row block (no scrolling), typed up to the host row first
+            t.clear(self, run_time=0.3)
+            rows = V27.cmd_lines
+            lrun = type_rows(self, t, rows[:3], 0.15)
             host = rows_of(lrun[2])[0]
             proj = rows_of(lrun[1])[0]
             assert "CHROMADB_HOST=cheese-app-vector-db" in host.text and "GCP_PROJECT=ac215-project" in proj.text
@@ -272,6 +339,8 @@ class VectorDb(VoiceScene):
             self.play(g.animate.set_color(ROUTE), run_time=0.3)
             self.add(t)
             pin(self, host, beside(row_tag("a name, not an address", ROUTE), host))
+            lrun += type_rows(self, t, rows[3:], 0.12, first=False)
+            assert len(t.lines) <= t.rows, len(t.lines)
             vo.wait_until("cheese app vector db, not by address")
             self.play(Indicate(card.entry, color=OWN, scale_factor=1.12),
                       Indicate(substring(host, "cheese-app-vector-db"), color=ROUTE, scale_factor=1.1), run_time=0.8)
@@ -287,34 +356,30 @@ class VectorDb(VoiceScene):
         ctr = counter_text(0)
         VGroup(ctr_l, ctr).arrange(DOWN, buff=0.2).move_to([-5.15, 0.55, 0])
         with self.voiceover(SAY[4]) as vo:
-            resize(self, t, 3, extra=[FadeOut(card)], run_time=0.5)
+            resize(self, t, 3, extra=[FadeOut(card), FadeIn(nb)], run_time=0.5)
             self.remove(card)
-            self.play(FadeIn(nb), run_time=0.5)
             nb.heal(self)
             assert ctr_l.get_right()[0] < nb.vm.get_left()[0] - 0.2, (ctr_l.get_right(), nb.vm.get_left())
-            out(self, t, V27.at(13, 18), run_time=0.4)
+            out(self, t, V27.at(13, 18), run_time=0.3)
             nb.loader(self)
             vo.wait_until("creates the collection")
-            out(self, t, V27.at(19, 20), run_time=0.4)
+            # the client connects by name and creates the collection: the loader knocks on the DB
+            nf = out(self, t, V27.at(19, 20, 24), run_time=0.3)
+            knock, kt = knock_on(self, nb)
             vo.wait_until("and loads eleven files")
-            nf = out(self, t, V27.at(24), run_time=0.3)
-            self.play(substring(nf[0], "11").animate.set_color(TURN), FadeIn(ctr_l), FadeIn(ctr), run_time=0.4)
-            self.play(Indicate(substring(nf[0], "11"), color=TURN, scale_factor=1.4), run_time=0.4)
+            eleven = substring(nf[-1], "11")
+            self.play(eleven.animate.set_color(TURN), FadeIn(ctr_l), FadeIn(ctr), run_time=0.35)
+            self.play(Indicate(eleven, color=TURN, scale_factor=1.4), run_time=0.45)
             self.add(t)
-            out(self, t, [V27.line(25), "…"], wrap=True, run_time=0.4, chunk=3)
-            out(self, t, V27.at(37), wrap=True, run_time=0.3)
-            new = counter_text(SUMS[0]).move_to(ctr)
-            self.play(Transform(ctr, new), run_time=0.25)
-            nb.pour(self, n=12, run_time=1.4)
-            out(self, t, ["…"], run_time=0.2)
-            for v in SUMS[1:10]:
-                new = counter_text(v).move_to(ctr)
-                self.play(Transform(ctr, new), run_time=0.16)
-            vo.wait_until("14,356 chunks in all")
-            out(self, t, [V27.line(169), "…", V27.line(180)], wrap=True, run_time=0.4, chunk=3)
-            new = counter_text(SUMS[10]).move_to(ctr)
-            self.play(Transform(ctr, new), run_time=0.3)
-            self.play(Indicate(ctr, color=TURN, scale_factor=1.2), run_time=0.6)
+            out(self, t, [V27.line(25), "…"], wrap=True, run_time=0.2, chunk=3)
+            out(self, t, V27.at(37), wrap=True, run_time=0.2)
+            self.play(Transform(ctr, counter_text(SUMS[0]).move_to(ctr)), run_time=0.2)
+            out(self, t, ["…"], run_time=0.15)
+            # the inserts hidden in the '…': dots pour in while the counter steps through them
+            pour_counting(self, nb, ctr, SUMS[1:10], run_time=1.0)
+            out(self, t, [V27.line(169), "…", V27.line(180)], wrap=True, run_time=0.2, chunk=3)
+            nb.drop(self, knock, kt, run_time=0.25, extra=[Transform(ctr, counter_text(SUMS[10]).move_to(ctr))])
+            self.play(Indicate(ctr, color=TURN, scale_factor=1.2), run_time=0.4)
             last = t.lines[-1]
             assert last.text == "'recursive-split-collection'", last.text
             vo.wait_until("The embeddings come precomputed")
@@ -350,8 +415,19 @@ class VectorDb(VoiceScene):
             vo.wait_until("Are the 14,356 chunks gone too")
             self.play(nb.data.animate.set_opacity(0), run_time=0.4)
             nb.heal(self)
-            nb.question(self, "vdb")
-        card_p = ponder(self, "The loader ran with --rm\nand is gone.\nAre the 14,356 chunks gone too?", 8)
+            # the '?' sits just above the box (nb.question() would put it on the box's name)
+            qm = label("?", 44, TURN).next_to(nb.boxes["vdb"].frame, UP, buff=0.1)
+            assert qm.get_top()[1] < nb.doors["vdb"].get_bottom()[1] - 0.05, (qm.get_top(), nb.doors["vdb"].get_bottom())
+            nb.show(self, qm, anims=[FadeIn(qm, scale=1.3)], run_time=0.4)
+            self.play(Indicate(qm, color=TURN, scale_factor=1.3), run_time=0.5)
+            nb.heal(self)
+        # the card lies over V2 (centred on it); V2's edges that stick out are dimmed
+        dim = Rectangle(width=nb.width + 0.3, height=nb.height + 0.3).set_stroke(width=0)
+        dim.set_fill(S.BG, 0.8).move_to(nb)
+        self.play(FadeIn(dim), run_time=0.3)
+        vc = nb.vm.get_center()
+        card_p = ponder(self, "The loader ran with --rm\nand is gone.\nAre the 14,356 chunks gone too?", 8,
+                        center=(vc[0], vc[1]))
 
         # ========================================================== 7. the answer: inside the container
         inside = label("inside the container", 20, TURN)
@@ -362,9 +438,9 @@ class VectorDb(VoiceScene):
         gone = grey_chip("remove the container → gone · the loader refills it")
         gone.move_to([0.8, -2.45, 0])
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(card_p), run_time=0.4)
-            self.remove(card_p)
-            nb.unquestion(self)
+            self.play(FadeOut(card_p), FadeOut(dim), run_time=0.4)
+            self.remove(card_p, dim)
+            nb.drop(self, qm, shift=UP * 0.3)
             self.play(nb.data.animate.set_opacity(1), run_time=0.5)
             nb.heal(self)
             self.play(GrowArrow(pointer), FadeIn(inside, shift=RIGHT * 0.15), run_time=0.6)
@@ -372,7 +448,7 @@ class VectorDb(VoiceScene):
             self.play(Indicate(nb.data, color=TURN, scale_factor=1.15), run_time=0.6)
             nb.heal(self)
             vo.wait_until("which keeps running")
-            self.play(Indicate(nb.boxes["vdb"], color=CONTAINER, scale_factor=1.08), run_time=0.7)
+            self.play(*pulse(nb.boxes["vdb"].frame, nb.boxes["vdb"].name, CONTAINER), run_time=0.7)
             nb.heal(self)
             vo.wait_until("Remove it, and the loader")
             self.play(FadeIn(gone, shift=UP * 0.15), run_time=0.5)
