@@ -62,10 +62,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l18-apis-frontend.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l18-apis-frontend.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 32:11.2 (1931.2 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l18-apis-frontend.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l18-apis-frontend_part1.mp4` | part 1, DURATION_P1: the API — from a Python function to a four-container backend (S01–S09). Release asset, not in Git |
-| `output/ac215-l18-apis-frontend_part2.mp4` | part 2, DURATION_P2: the frontend — React, one origin, nginx, and last year's CORS (S10–S16). Release asset, not in Git |
+| `output/ac215-l18-apis-frontend_part1.mp4` | part 1, 17:46.2 (1066.2 s): the API — from a Python function to a four-container backend (S01–S09). Release asset, not in Git |
+| `output/ac215-l18-apis-frontend_part2.mp4` | part 2, 14:25.0 (865.0 s): the frontend — React, one origin, nginx, and last year's CORS (S10–S16). Release asset, not in Git |
 | `output/ac215-l18-apis-frontend.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l18-apis-frontend.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l18-apis-frontend.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -84,7 +84,26 @@ video and the two part cuts) are release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts). Part 1 (17:46) is chapters 00:00–15:28 below; part 2 (14:25) restarts at 00:00 with "Why a framework: React with Vite", its chapters at 00:00, 02:09, 04:25, 06:25, 08:02, 10:09, 12:40.
+
+```
+00:00 Who answered on port 3000?
+01:22 The blueprint, and your folders
+03:04 v1: a server, an app, a port
+05:42 A Python function becomes a URL
+07:19 Files for the browser: the simple frontend
+09:13 v2: four containers, and the cheese books
+11:16 Start the API: alive, then ready
+13:39 Screens decide the routes
+15:28 A chat is a file, not a memory
+17:46 Why a framework: React with Vite
+19:55 One origin: the Vite proxy
+22:11 Production: nginx instead of Vite
+24:11 One command, then clean up
+25:49 Tutorial 24 lives on branch 2025
+27:55 Last year's pages: CORS and the preflight
+30:26 Tear down, recap, and what's next
+```
 
 ## What you'll learn
 
