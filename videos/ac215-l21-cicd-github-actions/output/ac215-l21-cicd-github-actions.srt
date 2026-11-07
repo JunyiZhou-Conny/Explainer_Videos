@@ -1,0 +1,2318 @@
+1
+00:00:00,000 --> 00:00:04,587
+You push the course's own code,
+untouched, to a repository of your own.
+
+2
+00:00:04,907 --> 00:00:08,149
+Soon after, one log says:
+unit tests, success.
+
+3
+00:00:08,469 --> 00:00:10,389
+Integration tests, success.
+
+4
+00:00:10,709 --> 00:00:12,352
+System tests, success.
+
+5
+00:00:12,672 --> 00:00:13,973
+All tests passed.
+
+6
+00:00:15,017 --> 00:00:18,397
+And the same file,
+run end to end, ends like this:
+
+7
+00:00:18,397 --> 00:00:20,628
+job Lint and Format Check failed.
+
+8
+00:00:20,948 --> 00:00:24,297
+Five machines green, one red,
+and the whole run red.
+
+9
+00:00:24,617 --> 00:00:28,372
+The pipeline says every test passed,
+and the pipeline failed.
+
+10
+00:00:28,692 --> 00:00:29,822
+Both are true.
+
+11
+00:00:30,067 --> 00:00:33,374
+So which machine said no,
+and why didn't the summary hear it?
+
+12
+00:00:33,694 --> 00:00:36,958
+By the end of part 1 you will see this
+on your own push.
+
+13
+00:00:37,278 --> 00:00:39,453
+In part 2 we open every log.
+
+14
+00:00:39,700 --> 00:00:43,561
+In lecture 9 these checks ran
+on your laptop, before a commit.
+
+15
+00:00:43,881 --> 00:00:48,081
+Today they move to GitHub,
+and they run on every push to main,
+
+16
+00:00:48,081 --> 00:00:50,452
+on fresh machines that nobody owns.
+
+17
+00:00:50,700 --> 00:00:54,025
+Lecture 21 has four sections:
+remote Git hooks,
+
+18
+00:00:54,025 --> 00:00:58,764
+GitHub webhooks, continuous integration,
+and continuous deployment.
+
+19
+00:00:59,084 --> 00:01:03,500
+We follow it slide by slide,
+and the README Part 5 step by step.
+
+20
+00:01:03,750 --> 00:01:08,181
+To follow along, you need
+a fresh clone of the course's repository,
+
+21
+00:01:08,181 --> 00:01:12,347
+Docker running, a GitHub account,
+and a repository of your own.
+
+22
+00:01:12,667 --> 00:01:16,977
+No cloud and no keys,
+and on a public repository, no bill.
+
+23
+00:01:17,217 --> 00:01:22,039
+The tracker names the README step,
+code panels name their file and lines,
+
+24
+00:01:22,039 --> 00:01:25,473
+and a yellow tag,
+your turn, means pause and run it.
+
+25
+00:01:25,793 --> 00:01:29,324
+The runs you will see ran
+right here on fresh machines;
+
+26
+00:01:29,324 --> 00:01:32,342
+the GitHub pages are drawings,
+and they say so.
+
+27
+00:01:33,483 --> 00:01:36,619
+The lecture opens with a recap:
+local Git hooks.
+
+28
+00:01:36,939 --> 00:01:41,163
+A pre-commit hook runs on your laptop,
+before the commit even exists.
+
+29
+00:01:41,483 --> 00:01:44,256
+A pre-push hook runs
+before your commits leave.
+
+30
+00:01:44,576 --> 00:01:47,435
+In lecture 9 you installed this repo's set.
+
+31
+00:01:47,683 --> 00:01:51,181
+Here is that chain, with this repo's boxes:
+
+32
+00:01:51,181 --> 00:01:52,915
+seven hygiene checks,
+
+33
+00:01:52,915 --> 00:01:56,631
+then Black, then
+Flake8, both at 120 columns,
+
+34
+00:01:56,631 --> 00:01:58,990
+and only on files under src/.
+
+35
+00:01:59,310 --> 00:02:01,336
+The lecture's chain ends with tests.
+
+36
+00:02:01,656 --> 00:02:05,198
+This repo's hooks run none:
+it leaves the tests to CI.
+
+37
+00:02:05,433 --> 00:02:06,653
+The lecture's catch:
+
+38
+00:02:06,653 --> 00:02:10,617
+hooks run only on a machine
+where someone ran pre-commit install.
+
+39
+00:02:10,937 --> 00:02:14,777
+A teammate's laptop without them
+sends its commit through unchecked.
+
+40
+00:02:15,097 --> 00:02:17,102
+So the checks depend on the laptop.
+
+41
+00:02:17,350 --> 00:02:19,182
+That's where remote hooks come in:
+
+42
+00:02:19,182 --> 00:02:21,659
+they run on the server
+that receives the push.
+
+43
+00:02:21,979 --> 00:02:25,231
+A pre-receive hook runs
+before the push is accepted,
+
+44
+00:02:25,231 --> 00:02:26,481
+so it can refuse it.
+
+45
+00:02:26,801 --> 00:02:29,979
+The update hook does the same,
+one branch at a time.
+
+46
+00:02:30,216 --> 00:02:33,344
+A post-receive hook runs
+after the code is in,
+
+47
+00:02:33,344 --> 00:02:36,744
+for integration tests,
+notifications and clean-up.
+
+48
+00:02:37,064 --> 00:02:39,774
+It can report, but it can no longer say no.
+
+49
+00:02:40,016 --> 00:02:44,688
+One honest note: GitHub.com
+doesn't run your own pre-receive scripts.
+
+50
+00:02:45,008 --> 00:02:47,082
+It gives you two pieces instead:
+
+51
+00:02:47,082 --> 00:02:52,006
+Actions, which runs after the push,
+and branch protection, which can say no.
+
+52
+00:02:52,250 --> 00:02:54,341
+And hooks act only inside Git.
+
+53
+00:02:54,661 --> 00:02:58,223
+To tell a chat what happened,
+the lecture reaches for webhooks.
+
+54
+00:02:58,466 --> 00:03:01,453
+Now the lecture's motivation,
+in three slides.
+
+55
+00:03:01,773 --> 00:03:04,695
+On your laptop,
+the checks fire on every commit.
+
+56
+00:03:05,015 --> 00:03:09,432
+Then you push, and on the shared repository,
+nothing runs them at all.
+
+57
+00:03:09,666 --> 00:03:11,674
+So the checks move to the server:
+
+58
+00:03:11,674 --> 00:03:15,021
+build a container, check the code,
+summarize the tests.
+
+59
+00:03:15,341 --> 00:03:19,501
+Same idea, new home,
+for every push to main from every laptop.
+
+60
+00:03:19,821 --> 00:03:22,146
+That move is continuous integration.
+
+61
+00:03:24,317 --> 00:03:28,598
+The lecture defines continuous integration
+as a series of scripts
+
+62
+00:03:28,598 --> 00:03:31,826
+that run automatically
+whenever the code changes.
+
+63
+00:03:32,146 --> 00:03:34,699
+They integrate changes continuously,
+
+64
+00:03:34,699 --> 00:03:37,890
+test automatically,
+enforce coding standards,
+
+65
+00:03:37,890 --> 00:03:39,592
+and run static analysis.
+
+66
+00:03:39,834 --> 00:03:41,239
+In ordinary software,
+
+67
+00:03:41,239 --> 00:03:45,253
+that buys faster releases, better code,
+and easier teamwork.
+
+68
+00:03:45,573 --> 00:03:49,156
+Machine learning adds a twist;
+we come back to it at the end.
+
+69
+00:03:49,400 --> 00:03:51,725
+Slide 21 draws it as a loop.
+
+70
+00:03:52,045 --> 00:03:56,756
+Developers commit to the codebase;
+the codebase is built, then tested;
+
+71
+00:03:56,756 --> 00:03:59,853
+and notifications flow back
+to the developers.
+
+72
+00:04:00,173 --> 00:04:02,670
+For now, the way back is a question mark.
+
+73
+00:04:02,917 --> 00:04:05,285
+The course's pipeline has five stages.
+
+74
+00:04:05,605 --> 00:04:10,636
+A commit triggers it, the container
+is built, Black and Flake8 check the code,
+
+75
+00:04:10,636 --> 00:04:13,861
+the tests run,
+and a summary reports pass or fail.
+
+76
+00:04:14,100 --> 00:04:18,111
+Now the README, Part 5:
+GitHub Actions, remote CI.
+
+77
+00:04:18,431 --> 00:04:24,153
+It says all CI tests run inside
+Docker containers using Python 3.11,
+
+78
+00:04:24,153 --> 00:04:26,089
+the same as production.
+
+79
+00:04:26,409 --> 00:04:31,380
+This repo has no production yet:
+take it as the same image you would deploy.
+
+80
+00:04:31,617 --> 00:04:35,777
+This one isn't in the README, it's extra:
+list the workflows folder.
+
+81
+00:04:36,097 --> 00:04:41,942
+One file, ci.yml, in .github/workflows,
+at the root of the repository.
+
+82
+00:04:42,262 --> 00:04:46,316
+GitHub looks only there;
+a workflow in a subfolder never runs.
+
+83
+00:04:46,550 --> 00:04:47,550
+Open it.
+
+84
+00:04:47,787 --> 00:04:51,009
+The file gives the workflow a name,
+CI Pipeline.
+
+85
+00:04:51,329 --> 00:04:54,209
+Next comes the key called on,
+just the word on.
+
+86
+00:04:54,529 --> 00:04:56,875
+It lists the events that start the workflow.
+
+87
+00:04:57,195 --> 00:05:03,062
+Under jobs, each job gets its own machine,
+called a runner: runs-on: ubuntu-latest.
+
+88
+00:05:03,300 --> 00:05:05,732
+Inside a job, steps run in order.
+
+89
+00:05:06,052 --> 00:05:11,441
+A step is either a shell script, under run,
+or a reusable action, under uses,
+
+90
+00:05:11,441 --> 00:05:13,004
+like actions/checkout,
+
+91
+00:05:13,004 --> 00:05:16,271
+which copies your repository
+onto the machine.
+
+92
+00:05:16,591 --> 00:05:20,154
+Event, workflow, jobs, steps:
+that is the whole grammar.
+
+93
+00:05:21,300 --> 00:05:23,092
+When does the pipeline wake up?
+
+94
+00:05:23,412 --> 00:05:26,377
+The slide says
+on every push or pull request.
+
+95
+00:05:26,697 --> 00:05:30,294
+The file is more precise:
+pushes to main or develop,
+
+96
+00:05:30,294 --> 00:05:32,991
+and pull requests into main or develop.
+
+97
+00:05:33,233 --> 00:05:35,452
+Push to main, and a runner wakes up.
+
+98
+00:05:35,772 --> 00:05:37,372
+Push to develop, the same.
+
+99
+00:05:37,692 --> 00:05:40,363
+Push to a feature branch,
+and nothing happens:
+
+100
+00:05:40,363 --> 00:05:43,964
+on any other branch,
+the pipeline waits for your pull request.
+
+101
+00:05:44,284 --> 00:05:48,380
+A small note: the comment
+at the top of the file says main only;
+
+102
+00:05:48,380 --> 00:05:50,556
+the triggers say main and develop.
+
+103
+00:05:50,800 --> 00:05:51,800
+Quick test.
+
+104
+00:05:52,101 --> 00:05:54,427
+You push three commits to feature/login.
+
+105
+00:05:54,747 --> 00:05:56,069
+How many runs start?
+
+106
+00:05:56,389 --> 00:05:58,715
+Then you open a pull request into main.
+
+107
+00:05:59,035 --> 00:06:00,037
+How many now?
+
+108
+00:06:08,883 --> 00:06:11,656
+None for the three pushes:
+the branch filter.
+
+109
+00:06:11,976 --> 00:06:13,873
+One when the pull request opens,
+
+110
+00:06:13,873 --> 00:06:17,075
+and one more for every later push
+while it stays open.
+
+111
+00:06:17,317 --> 00:06:19,173
+And it doesn't test your branch tip.
+
+112
+00:06:19,493 --> 00:06:23,135
+GitHub makes a temporary merge
+of your branch into main,
+
+113
+00:06:23,135 --> 00:06:26,256
+and the commit ID the jobs see names
+that merge.
+
+114
+00:06:26,576 --> 00:06:31,567
+What will land is what gets tested:
+each merge is tested, as the lecture says.
+
+115
+00:06:31,817 --> 00:06:35,145
+The lecture warns
+that integrating often costs compute.
+
+116
+00:06:35,465 --> 00:06:38,056
+This file answers with a branch filter,
+
+117
+00:06:38,056 --> 00:06:41,844
+one build shared by every job,
+and an image kept one day.
+
+118
+00:06:42,164 --> 00:06:46,160
+On private repositories every run
+counts against your plan;
+
+119
+00:06:46,160 --> 00:06:47,582
+public ones run free.
+
+120
+00:06:47,817 --> 00:06:49,073
+And timing matters:
+
+121
+00:06:49,073 --> 00:06:52,446
+the run starts after GitHub
+has accepted your push.
+
+122
+00:06:52,766 --> 00:06:56,435
+It's the bell, not the gate:
+a red run doesn't undo the push.
+
+123
+00:06:57,583 --> 00:06:58,853
+Next, the README:
+
+124
+00:06:58,853 --> 00:07:02,810
+6 jobs that run in parallel,
+except for dependencies.
+
+125
+00:07:03,130 --> 00:07:04,969
+Each has an ID and a name:
+
+126
+00:07:04,969 --> 00:07:11,122
+Build Docker Image, Lint and Format Check,
+Unit Tests, Integration Tests, System Tests,
+
+127
+00:07:11,122 --> 00:07:12,324
+and Test Summary.
+
+128
+00:07:12,566 --> 00:07:15,054
+Remember the names: GitHub shows them,
+
+129
+00:07:15,054 --> 00:07:18,262
+not the IDs,
+and we'll need them to protect main.
+
+130
+00:07:18,500 --> 00:07:20,548
+Start from the lecture's row of five.
+
+131
+00:07:20,868 --> 00:07:24,068
+Commit drops out first:
+it's the event, not a job.
+
+132
+00:07:24,388 --> 00:07:27,758
+Build Container stays on the left:
+it's the build job.
+
+133
+00:07:28,000 --> 00:07:30,389
+Now each needs line draws one arrow.
+
+134
+00:07:30,709 --> 00:07:32,608
+Lint and format needs build.
+
+135
+00:07:32,928 --> 00:07:37,451
+Unit tests, integration tests
+and system tests each need build too.
+
+136
+00:07:37,771 --> 00:07:41,033
+So after the build,
+four jobs run side by side,
+
+137
+00:07:41,033 --> 00:07:42,698
+each on its own machine.
+
+138
+00:07:42,933 --> 00:07:45,557
+Test summary needs the three test jobs.
+
+139
+00:07:45,877 --> 00:07:48,842
+Look closely:
+the lint job isn't on that list.
+
+140
+00:07:49,162 --> 00:07:51,727
+The lecture lists the stages in order;
+
+141
+00:07:51,727 --> 00:07:57,397
+on GitHub, four of them run side by side,
+and the summary listens only to the tests.
+
+142
+00:07:57,717 --> 00:07:59,210
+Keep that gap in mind.
+
+143
+00:07:59,450 --> 00:08:02,924
+An extra check, not in the README:
+a tool called act,
+
+144
+00:08:02,924 --> 00:08:07,578
+which you don't need, takes the same file
+and lists the jobs in stages.
+
+145
+00:08:07,898 --> 00:08:09,349
+Stage 0, build.
+
+146
+00:08:09,669 --> 00:08:11,503
+Stage 1, the four checks.
+
+147
+00:08:11,823 --> 00:08:13,338
+Stage 2, the summary.
+
+148
+00:08:13,583 --> 00:08:14,991
+Then the key concepts.
+
+149
+00:08:15,311 --> 00:08:19,574
+Artifact sharing and unique image tags come
+with the build job;
+
+150
+00:08:19,574 --> 00:08:21,807
+parallel execution, you just saw;
+
+151
+00:08:21,807 --> 00:08:26,340
+conditional execution and network modes come
+with the system tests.
+
+152
+00:08:26,583 --> 00:08:29,239
+The README's screenshot gives the times:
+
+153
+00:08:29,239 --> 00:08:33,090
+about 2 minutes on the clock,
+with four jobs side by side.
+
+154
+00:08:33,410 --> 00:08:38,147
+On a private repository, each job is billed
+and rounded up separately:
+
+155
+00:08:38,147 --> 00:08:39,703
+about 6 billed minutes.
+
+156
+00:08:40,850 --> 00:08:41,938
+Time to push.
+
+157
+00:08:42,258 --> 00:08:45,432
+Start from a fresh clone,
+not your lecture 9 folder:
+
+158
+00:08:45,432 --> 00:08:50,194
+that one has the Black fix committed,
+and your first run would come out green.
+
+159
+00:08:50,514 --> 00:08:54,695
+Clone, change into the folder,
+and git status says the tree is clean.
+
+160
+00:08:58,600 --> 00:09:00,435
+Your prompt shows your own user.
+
+161
+00:09:00,755 --> 00:09:02,243
+Two extra checks first:
+
+162
+00:09:02,243 --> 00:09:06,838
+the pinned commit is still the head of main
+on the course's repository,
+
+163
+00:09:06,838 --> 00:09:10,333
+and the last two commits
+are both called demo class 1.
+
+164
+00:09:10,653 --> 00:09:14,216
+The second undid a bug planted in class;
+we'll run it later.
+
+165
+00:09:14,450 --> 00:09:16,775
+Now the README block, Push to GitHub.
+
+166
+00:09:17,095 --> 00:09:18,909
+git add . — no output.
+
+167
+00:09:19,229 --> 00:09:22,365
+Then git commit -m "Add CI pipeline".
+
+168
+00:09:22,685 --> 00:09:26,141
+And Git answers:
+nothing to commit, working tree clean.
+
+169
+00:09:26,383 --> 00:09:29,863
+A small slip, and a harmless one:
+in a clone or a fork,
+
+170
+00:09:29,863 --> 00:09:33,786
+the pipeline is already committed,
+so there is nothing to add.
+
+171
+00:09:34,033 --> 00:09:38,342
+Before the README's git push,
+an extra check: git remote -v.
+
+172
+00:09:38,662 --> 00:09:42,844
+Origin is still the course's repository,
+and you can't write to it.
+
+173
+00:09:43,164 --> 00:09:46,449
+GitHub would refuse a push from here:
+permission denied.
+
+174
+00:09:46,683 --> 00:09:49,584
+So point origin at a repository you own.
+
+175
+00:09:49,904 --> 00:09:55,378
+Either fork the course's repository
+and enable workflows on its Actions tab,
+
+176
+00:09:55,378 --> 00:09:57,755
+or create a new empty repository.
+
+177
+00:09:58,075 --> 00:10:02,576
+Either way, run git remote set-url origin,
+with your own address.
+
+178
+00:10:02,896 --> 00:10:04,475
+Pause and set yours up.
+
+179
+00:10:07,683 --> 00:10:10,534
+This recording machine can't push to GitHub,
+
+180
+00:10:10,534 --> 00:10:14,616
+so an empty repository
+on the same machine stands in for yours.
+
+181
+00:10:14,936 --> 00:10:17,710
+From now on we just say your repository.
+
+182
+00:10:17,950 --> 00:10:19,550
+Now the README's git push.
+
+183
+00:10:19,870 --> 00:10:21,534
+New branch, main -> main.
+
+184
+00:10:21,854 --> 00:10:24,734
+This push is the event,
+and run 1 starts now.
+
+185
+00:10:25,054 --> 00:10:26,483
+Pause and push yours.
+
+186
+00:10:27,300 --> 00:10:30,033
+On a fork, that commit is already on GitHub,
+
+187
+00:10:30,033 --> 00:10:33,636
+so git push says Everything up-to-date
+and starts nothing.
+
+188
+00:10:33,956 --> 00:10:37,138
+To get run 1 anyway, push an empty commit:
+
+189
+00:10:37,138 --> 00:10:41,380
+git commit --allow-empty -m "Trigger CI",
+then git push.
+
+190
+00:10:41,700 --> 00:10:45,519
+Or wait, and your first run
+then comes with the fix in part 2.
+
+191
+00:10:46,867 --> 00:10:51,710
+Watch GitHub Actions: go to your repository,
+and click the Actions tab.
+
+192
+00:10:52,030 --> 00:10:56,766
+Your run is listed under the commit message,
+with a yellow dot: in progress.
+
+193
+00:10:57,086 --> 00:11:00,819
+A green checkmark means success;
+a red X means failure.
+
+194
+00:11:01,139 --> 00:11:02,696
+Pause and open yours.
+
+195
+00:11:02,934 --> 00:11:07,287
+Click it, and GitHub draws the run
+as the graph you just built:
+
+196
+00:11:07,287 --> 00:11:11,019
+build first, four jobs side by side,
+the summary last.
+
+197
+00:11:11,267 --> 00:11:12,867
+A word on how we show it.
+
+198
+00:11:13,187 --> 00:11:15,885
+We ran every job of this file right here,
+
+199
+00:11:15,885 --> 00:11:20,163
+each on a brand-new machine
+with an empty Docker, as GitHub does.
+
+200
+00:11:20,483 --> 00:11:25,006
+And a tool called act ran the whole file
+a second way, with the same verdict.
+
+201
+00:11:25,250 --> 00:11:29,497
+So the GitHub pages you see
+are drawings built from the workflow file,
+
+202
+00:11:29,497 --> 00:11:30,711
+marked illustration.
+
+203
+00:11:31,031 --> 00:11:32,973
+Every log line in them is real.
+
+204
+00:11:33,217 --> 00:11:35,457
+A question, before the colors come in.
+
+205
+00:11:35,777 --> 00:11:37,782
+You already know this run turns red.
+
+206
+00:11:38,102 --> 00:11:42,881
+Is your push on main in your repository now,
+or did the red run refuse it?
+
+207
+00:11:51,717 --> 00:11:52,998
+Yes, it's on main:
+
+208
+00:11:52,998 --> 00:11:57,840
+the push landed before any job started,
+and a red run can't undo it.
+
+209
+00:11:58,160 --> 00:11:59,461
+Build: green.
+
+210
+00:11:59,781 --> 00:12:01,872
+Lint and Format Check: red.
+
+211
+00:12:02,192 --> 00:12:04,944
+The three tests and Test Summary: green.
+
+212
+00:12:05,264 --> 00:12:06,586
+The run: red.
+
+213
+00:12:06,834 --> 00:12:11,293
+Those checks and crosses next to your commit
+are the lecture's notifications.
+
+214
+00:12:11,613 --> 00:12:16,284
+And act, the second witness, agrees:
+five jobs succeeded, one failed.
+
+215
+00:12:16,534 --> 00:12:19,734
+A kind note:
+the README's screenshot is all green.
+
+216
+00:12:20,054 --> 00:12:22,337
+It shows an earlier version of the code.
+
+217
+00:12:22,657 --> 00:12:25,984
+Your first run is red,
+and in part 2 you turn it green.
+
+218
+00:12:26,234 --> 00:12:31,034
+And here is the hook, on your own push:
+two of these six machines disagree.
+
+219
+00:12:31,354 --> 00:12:34,852
+In part 2 we open every log,
+one job at a time.
+
+220
+00:12:36,200 --> 00:12:38,099
+Part 2, job by job.
+
+221
+00:12:38,419 --> 00:12:41,875
+First, build container:
+the lecture builds it first,
+
+222
+00:12:41,875 --> 00:12:47,059
+so every check runs in the same environment,
+and build problems show up early.
+
+223
+00:12:47,300 --> 00:12:49,924
+The lecture speaks of one remote CI server.
+
+224
+00:12:50,244 --> 00:12:53,226
+GitHub gives you a new one for every job:
+
+225
+00:12:53,226 --> 00:12:56,644
+runs-on:
+ubuntu-latest, six times in this file.
+
+226
+00:12:56,964 --> 00:12:59,183
+Each job starts on an empty machine.
+
+227
+00:12:59,467 --> 00:13:02,428
+The README's build job
+builds the image once,
+
+228
+00:13:02,428 --> 00:13:04,139
+tagged with the commit ID.
+
+229
+00:13:04,459 --> 00:13:08,350
+It saves it as a tar file
+and uploads it as an artifact,
+
+230
+00:13:08,350 --> 00:13:11,477
+so every other job gets
+the exact same image.
+
+231
+00:13:11,717 --> 00:13:15,152
+On GitHub, click a job,
+then a step, to open its log.
+
+232
+00:13:15,472 --> 00:13:22,128
+Docker builds the image from the Dockerfile
+and names it cheese-app-api:<commit ID>.
+
+233
+00:13:22,448 --> 00:13:25,370
+That tag means this commit's image,
+nothing else.
+
+234
+00:13:25,617 --> 00:13:28,997
+A small slip:
+the README promises Buildx caching,
+
+235
+00:13:28,997 --> 00:13:33,756
+but the build runs on the default builder,
+and nothing saves a cache,
+
+236
+00:13:33,756 --> 00:13:36,860
+so every fresh machine
+rebuilds from scratch.
+
+237
+00:13:37,180 --> 00:13:38,822
+The exercises show how.
+
+238
+00:13:39,067 --> 00:13:44,571
+docker save folds the image into one file,
+about 176 megabytes.
+
+239
+00:13:44,891 --> 00:13:48,838
+The upload step carries it
+to the artifact store, kept for one day.
+
+240
+00:13:49,158 --> 00:13:51,077
+Then the build machine is thrown away.
+
+241
+00:13:51,317 --> 00:13:53,322
+Now step into a fresh check job.
+
+242
+00:13:53,642 --> 00:13:57,120
+An extra command,
+docker images, shows just the header.
+
+243
+00:13:57,440 --> 00:13:58,698
+No image at all.
+
+244
+00:13:58,933 --> 00:14:04,654
+So every check job downloads the artifact
+and runs docker load -i on the tar:
+
+245
+00:14:04,654 --> 00:14:07,701
+the same tag, unpacked from the suitcase.
+
+246
+00:14:08,021 --> 00:14:09,557
+That's artifact sharing.
+
+247
+00:14:09,877 --> 00:14:12,278
+And the artifact expires after a day,
+
+248
+00:14:12,278 --> 00:14:16,043
+so re-running a failed job
+tomorrow fails at the download.
+
+249
+00:14:16,283 --> 00:14:17,648
+Your turn to predict.
+
+250
+00:14:17,968 --> 00:14:21,680
+Delete the "Load Docker image"
+step from the unit tests job.
+
+251
+00:14:22,000 --> 00:14:24,241
+Which step fails, and with what error?
+
+252
+00:14:33,083 --> 00:14:34,619
+The "Run unit tests" step.
+
+253
+00:14:34,939 --> 00:14:38,908
+Docker looks for the image
+on the machine and finds nothing,
+
+254
+00:14:38,908 --> 00:14:42,197
+then asks Docker Hub,
+where no such image exists:
+
+255
+00:14:42,197 --> 00:14:43,472
+pull access denied.
+
+256
+00:14:43,792 --> 00:14:48,401
+Exit code 125:
+the step fails, so the job fails.
+
+257
+00:14:49,950 --> 00:14:51,507
+Next, lint and format.
+
+258
+00:14:51,827 --> 00:14:54,736
+The lecture's coding standards
+are Black here,
+
+259
+00:14:54,736 --> 00:14:57,203
+and its static code analysis is Flake8.
+
+260
+00:14:57,523 --> 00:15:01,189
+Remember lecture 9:
+a formatter rewrites your code;
+
+261
+00:15:01,189 --> 00:15:02,771
+a linter only reports.
+
+262
+00:15:03,017 --> 00:15:08,329
+Both run inside the image,
+on the api/ folder, at 120 columns.
+
+263
+00:15:08,649 --> 00:15:12,190
+The Black step says continue-on-error,
+false: it blocks.
+
+264
+00:15:12,510 --> 00:15:17,907
+The Flake8 step says true: it's advisory,
+a warning that never fails the job.
+
+265
+00:15:18,150 --> 00:15:19,537
+How does a step fail?
+
+266
+00:15:19,857 --> 00:15:22,203
+Every command ends with an exit code.
+
+267
+00:15:22,523 --> 00:15:24,017
+Zero opens the gate.
+
+268
+00:15:24,337 --> 00:15:25,628
+Anything else shuts it,
+
+269
+00:15:25,628 --> 00:15:29,051
+and the red climbs from the step
+to the job to the whole run.
+
+270
+00:15:29,300 --> 00:15:32,991
+Run 1, the Black step:
+would reformat utils.py.
+
+271
+00:15:33,311 --> 00:15:35,188
+1 file would be reformatted.
+
+272
+00:15:35,508 --> 00:15:37,748
+Exit code 1, so the gate shuts.
+
+273
+00:15:37,983 --> 00:15:40,138
+The step list shows what happened next.
+
+274
+00:15:40,458 --> 00:15:41,588
+Black, failure.
+
+275
+00:15:41,908 --> 00:15:43,210
+Flake8, skipped.
+
+276
+00:15:43,530 --> 00:15:48,031
+The steps below a failed step don't run,
+unless they ask to run always.
+
+277
+00:15:48,267 --> 00:15:53,732
+The cause is the mess you met in lecture 9,
+still in the repository on purpose:
+
+278
+00:15:53,732 --> 00:15:58,229
+no space after the comma,
+and three blank lines where two belong.
+
+279
+00:15:58,467 --> 00:16:00,451
+What would the skipped Flake8 have said?
+
+280
+00:16:00,771 --> 00:16:04,056
+An extra run shows two warnings
+on those same lines.
+
+281
+00:16:04,376 --> 00:16:08,216
+But even then it's advisory:
+only Black decides the job.
+
+282
+00:16:08,450 --> 00:16:10,824
+So that's the whole rule: a step fails
+
+283
+00:16:10,824 --> 00:16:13,698
+when its command exits
+with anything but zero.
+
+284
+00:16:14,018 --> 00:16:16,173
+It's the only thing CI listens to.
+
+285
+00:16:17,717 --> 00:16:18,869
+Now the tests.
+
+286
+00:16:19,189 --> 00:16:22,320
+The lecture's one test box
+is three jobs here,
+
+287
+00:16:22,320 --> 00:16:25,248
+side by side, each at a different altitude.
+
+288
+00:16:25,484 --> 00:16:30,135
+Unit tests check one function at a time,
+with no outside dependencies.
+
+289
+00:16:30,455 --> 00:16:33,569
+The log collects 11 tests, and 11 pass.
+
+290
+00:16:33,817 --> 00:16:37,700
+Then the coverage step runs them again,
+and all 11 pass again.
+
+291
+00:16:38,020 --> 00:16:40,246
+But pytest hits an internal error:
+
+292
+00:16:40,246 --> 00:16:43,652
+permission denied,
+writing into the coverage folder.
+
+293
+00:16:43,972 --> 00:16:45,166
+Exit code 3.
+
+294
+00:16:45,400 --> 00:16:46,872
+Yet the job is green.
+
+295
+00:16:47,192 --> 00:16:51,053
+The step says continue-on-error,
+so the failure is shunted aside.
+
+296
+00:16:51,373 --> 00:16:54,778
+Then the upload, marked if:
+always(), finds no files;
+
+297
+00:16:54,778 --> 00:16:57,091
+on GitHub, a yellow warning says so.
+
+298
+00:16:57,334 --> 00:17:03,073
+The README has a small gap:
+it promises terminal, XML and HTML reports.
+
+299
+00:17:03,393 --> 00:17:06,529
+Docker creates
+the missing coverage folder as root,
+
+300
+00:17:06,529 --> 00:17:09,665
+and the container's user,
+app, can't write into it.
+
+301
+00:17:09,985 --> 00:17:14,102
+Create the folder writable first;
+the exercises have the fix.
+
+302
+00:17:14,350 --> 00:17:17,851
+Integration tests use
+the FastAPI test client:
+
+303
+00:17:17,851 --> 00:17:21,582
+the app is called inside
+the same Python process.
+
+304
+00:17:21,902 --> 00:17:24,825
+No server, no port. 10 passed.
+
+305
+00:17:25,067 --> 00:17:27,243
+System tests need the real thing.
+
+306
+00:17:27,563 --> 00:17:29,562
+One container starts the server
+
+307
+00:17:29,562 --> 00:17:33,174
+in the background and publishes
+port 9000 on the runner.
+
+308
+00:17:33,494 --> 00:17:34,812
+An extra command,
+
+309
+00:17:34,812 --> 00:17:38,379
+docker ps, shows it running,
+with 9000 mapped.
+
+310
+00:17:38,617 --> 00:17:44,441
+Then the job waits 10 seconds,
+and curl -f knocks on localhost:9000.
+
+311
+00:17:44,761 --> 00:17:48,708
+Only when the welcome message
+comes back does the next gate open.
+
+312
+00:17:48,950 --> 00:17:52,696
+A second container runs the tests
+with --network host:
+
+313
+00:17:52,696 --> 00:17:57,483
+it shares the runner's network,
+so localhost:9000 reaches the server.
+
+314
+00:17:57,803 --> 00:17:58,892
+5 passed.
+
+315
+00:17:59,134 --> 00:18:04,632
+Two steps marked if: always() come last,
+even after a failure: show the server log,
+
+316
+00:18:04,632 --> 00:18:09,203
+where every test request arrives,
+then stop and remove the container.
+
+317
+00:18:09,523 --> 00:18:12,104
+That's the README's conditional execution.
+
+318
+00:18:12,350 --> 00:18:16,275
+In lecture 9, a missing server
+made these tests skip quietly.
+
+319
+00:18:16,595 --> 00:18:19,476
+Here the curl gate
+makes it fail loudly instead.
+
+320
+00:18:21,117 --> 00:18:22,597
+Last job: the summary,
+
+321
+00:18:22,597 --> 00:18:27,240
+which the lecture says collects
+the results and reports pass or fail.
+
+322
+00:18:27,560 --> 00:18:30,034
+Its needs line names the three test jobs.
+
+323
+00:18:30,354 --> 00:18:33,929
+And if: always() lets it run
+even when one of them failed:
+
+324
+00:18:33,929 --> 00:18:36,456
+it runs, which isn't the same as passing.
+
+325
+00:18:36,700 --> 00:18:39,131
+Its script prints each job's result,
+
+326
+00:18:39,131 --> 00:18:42,507
+writes a status
+to $GITHUB_OUTPUT for later steps,
+
+327
+00:18:42,507 --> 00:18:45,511
+and exits with 1
+if any result isn't success.
+
+328
+00:18:45,750 --> 00:18:50,593
+In run 1, three success tokens arrive:
+unit, integration, system.
+
+329
+00:18:50,913 --> 00:18:52,214
+All tests passed.
+
+330
+00:18:52,450 --> 00:18:54,285
+And here is the hook, answered.
+
+331
+00:18:54,605 --> 00:18:58,359
+Lint isn't in needs,
+so its failure never reaches the summary.
+
+332
+00:18:58,679 --> 00:18:59,957
+The run is still red,
+
+333
+00:18:59,957 --> 00:19:02,818
+because any failed job
+turns the whole run red.
+
+334
+00:19:03,067 --> 00:19:07,151
+The README says the summary checks
+the results of all test jobs,
+
+335
+00:19:07,151 --> 00:19:10,278
+and that's literally true:
+lint isn't a test job.
+
+336
+00:19:10,598 --> 00:19:14,608
+Add lint and format to needs
+and to the check if you want it counted.
+
+337
+00:19:14,850 --> 00:19:16,343
+Now the bug from class.
+
+338
+00:19:16,663 --> 00:19:17,861
+In the demo commit,
+
+339
+00:19:17,861 --> 00:19:22,338
+the distance function takes
+the square root of 2 times z, instead of z.
+
+340
+00:19:22,658 --> 00:19:24,877
+We ran this one for you: just watch.
+
+341
+00:19:25,117 --> 00:19:26,546
+Predict before the run.
+
+342
+00:19:26,866 --> 00:19:30,216
+Which jobs turn red now,
+and what does Test Summary say?
+
+343
+00:19:39,050 --> 00:19:42,143
+Integration: red, 1 failed and 9 passed.
+
+344
+00:19:42,463 --> 00:19:46,432
+The distance for 3 and 4 came back
+as about 7, not 5.
+
+345
+00:19:46,667 --> 00:19:50,133
+System: red, 2 failed and 3 passed:
+3 and 4 again,
+
+346
+00:19:50,133 --> 00:19:54,710
+and the default point, 1 and 2,
+which came back too large as well.
+
+347
+00:19:55,030 --> 00:19:59,104
+Unit: green, because only
+the power function has unit tests.
+
+348
+00:19:59,424 --> 00:20:02,198
+Lint: red anyway, for utils.py.
+
+349
+00:20:02,434 --> 00:20:06,061
+And the summary now says some tests failed,
+and exits with 1.
+
+350
+00:20:06,381 --> 00:20:08,087
+This time the summary heard it.
+
+351
+00:20:09,633 --> 00:20:11,894
+Back to run 1 and the lecture's loop.
+
+352
+00:20:12,214 --> 00:20:14,187
+The notification came back red,
+
+353
+00:20:14,187 --> 00:20:17,625
+so now the developer fixes
+the code and commits again,
+
+354
+00:20:17,625 --> 00:20:19,852
+and the loop goes around once more.
+
+355
+00:20:20,100 --> 00:20:22,493
+The fix is the tool from lecture 9,
+
+356
+00:20:22,493 --> 00:20:26,457
+Part 4 of the same README,
+so these steps are extras here.
+
+357
+00:20:26,777 --> 00:20:29,959
+pip install pre-commit,
+then pre-commit install,
+
+358
+00:20:29,959 --> 00:20:32,345
+which puts the hook into .git/hooks.
+
+359
+00:20:32,583 --> 00:20:34,738
+Then pre-commit run --all-files.
+
+360
+00:20:35,058 --> 00:20:36,856
+The hygiene checks pass;
+
+361
+00:20:36,856 --> 00:20:41,500
+Black fails, because it modified a file:
+reformatted utils.py.
+
+362
+00:20:41,820 --> 00:20:43,399
+Flake8 then passes.
+
+363
+00:20:43,719 --> 00:20:44,871
+Pause and run it.
+
+364
+00:20:45,116 --> 00:20:47,972
+git diff shows exactly what Black changed:
+
+365
+00:20:47,972 --> 00:20:51,303
+a space after the comma,
+and one blank line gone.
+
+366
+00:20:51,550 --> 00:20:53,790
+Run it again, and every hook passes.
+
+367
+00:20:54,110 --> 00:20:55,731
+Nothing is left to fix.
+
+368
+00:20:56,150 --> 00:20:59,577
+Now git add .,
+and git commit with a message:
+
+369
+00:20:59,577 --> 00:21:01,633
+Format utils.py with Black.
+
+370
+00:21:01,953 --> 00:21:04,598
+The message is ours; the README has none.
+
+371
+00:21:04,918 --> 00:21:06,838
+The hooks run on the commit and pass.
+
+372
+00:21:07,158 --> 00:21:08,310
+Then git push.
+
+373
+00:21:08,630 --> 00:21:10,059
+Pause and push yours.
+
+374
+00:21:10,300 --> 00:21:12,113
+Run 2: all six green.
+
+375
+00:21:12,433 --> 00:21:17,041
+In the lint job, Black is happy,
+and this time Flake8 runs too, and passes.
+
+376
+00:21:17,361 --> 00:21:20,284
+On a fork, this is your first run,
+and it's green.
+
+377
+00:21:20,533 --> 00:21:23,242
+Now your run matches
+the README's screenshot.
+
+378
+00:21:23,562 --> 00:21:24,973
+One turn of the loop:
+
+379
+00:21:24,973 --> 00:21:28,533
+a red notification,
+a fix, a commit, and a green run.
+
+380
+00:21:29,983 --> 00:21:32,735
+The lecture calls this one
+the local conundrum.
+
+381
+00:21:33,055 --> 00:21:37,812
+If the hooks already ran on your laptop,
+why run the same checks again on a server?
+
+382
+00:21:38,050 --> 00:21:40,845
+These steps are extras,
+and you can just watch.
+
+383
+00:21:41,165 --> 00:21:45,403
+A quick edit squeezes
+the spaces out of one line in service.py,
+
+384
+00:21:45,403 --> 00:21:46,882
+and git diff shows it.
+
+385
+00:21:47,116 --> 00:21:50,316
+git add ., then git commit -m "quick fix".
+
+386
+00:21:50,636 --> 00:21:54,946
+The Black hook fails and reformats the file,
+so the hook stopped the commit.
+
+387
+00:21:55,883 --> 00:21:59,766
+git status --short shows the letter M,
+for modified, twice.
+
+388
+00:22:00,086 --> 00:22:04,438
+Black fixed your working copy,
+but the staged copy is still the messy one.
+
+389
+00:22:04,683 --> 00:22:09,419
+Now the lecture's command:
+git commit --no-verify -m "quick fix".
+
+390
+00:22:09,739 --> 00:22:14,774
+No hook ran, and the commit exists:
+--no-verify skips every pre-commit check.
+
+391
+00:22:15,050 --> 00:22:16,050
+We push it.
+
+392
+00:22:16,309 --> 00:22:19,786
+Run 3: lint and format, red, on service.py.
+
+393
+00:22:20,106 --> 00:22:22,218
+The tests and the summary all pass.
+
+394
+00:22:22,883 --> 00:22:26,104
+The skipped Flake8 would have flagged
+that line three times.
+
+395
+00:22:26,424 --> 00:22:31,310
+CI caught what --no-verify let through:
+slide 31, at your terminal.
+
+396
+00:22:31,550 --> 00:22:33,043
+Clean up the experiment.
+
+397
+00:22:33,363 --> 00:22:37,651
+Here, git restore only throws away
+Black's fix in the working copy.
+
+398
+00:22:37,971 --> 00:22:39,310
+If you followed along,
+
+399
+00:22:39,310 --> 00:22:42,473
+the messy commit is on your main now,
+pushed or not.
+
+400
+00:22:42,793 --> 00:22:43,987
+Not pushed yet?
+
+401
+00:22:44,307 --> 00:22:47,209
+git reset --hard HEAD~1 drops it.
+
+402
+00:22:47,529 --> 00:22:48,529
+Pushed?
+
+403
+00:22:48,595 --> 00:22:53,864
+Run pre-commit run --all-files,
+then add, commit and push, before part 6.
+
+404
+00:22:54,100 --> 00:22:59,092
+But CI repeats only Black and Flake8,
+and only on the api/ folder.
+
+405
+00:22:59,412 --> 00:23:05,076
+The seven hygiene hooks never run in CI:
+trailing whitespace, end of file,
+
+406
+00:23:05,076 --> 00:23:09,438
+YAML, large files,
+JSON, merge markers, and private keys.
+
+407
+00:23:09,683 --> 00:23:13,608
+One more gap: the hooks pin an older
+Black than the image installs.
+
+408
+00:23:13,928 --> 00:23:17,683
+At the time of recording they agreed,
+but they can drift apart.
+
+409
+00:23:17,933 --> 00:23:22,520
+A teammate commits a private key file
+with --no-verify and pushes to main.
+
+410
+00:23:22,840 --> 00:23:25,058
+Which job of this pipeline catches it?
+
+411
+00:23:33,900 --> 00:23:37,740
+None. The detect-private-key hook
+is a local hook only.
+
+412
+00:23:38,060 --> 00:23:41,690
+The fix is one CI step,
+pre-commit run --all-files:
+
+413
+00:23:41,690 --> 00:23:46,316
+the very step that fails
+on the lecture's imagined Slack message.
+
+414
+00:23:46,636 --> 00:23:49,388
+And rotate that key; it's already on GitHub.
+
+415
+00:23:50,733 --> 00:23:54,466
+That imagined message brings us back
+to the lecture's webhooks.
+
+416
+00:23:54,786 --> 00:23:58,134
+A webhook is GitHub
+calling an outside address
+
+417
+00:23:58,134 --> 00:23:59,808
+when something happens:
+
+418
+00:23:59,808 --> 00:24:03,149
+to start an outside CI
+system such as Jenkins,
+
+419
+00:24:03,149 --> 00:24:05,474
+to deploy, or to post to a chat.
+
+420
+00:24:05,716 --> 00:24:09,257
+This part is optional:
+it needs your own Slack workspace.
+
+421
+00:24:09,577 --> 00:24:12,009
+And this webhook works the other way round.
+
+422
+00:24:12,329 --> 00:24:15,267
+Slack gives you an incoming webhook,
+an address,
+
+423
+00:24:15,267 --> 00:24:18,388
+and the last steps
+of the test summary job call it.
+
+424
+00:24:18,708 --> 00:24:21,588
+GitHub doesn't ring this bell;
+your workflow does.
+
+425
+00:24:21,833 --> 00:24:25,746
+The lecture imagines a Slack
+channel told about every push,
+
+426
+00:24:25,746 --> 00:24:29,790
+failures included, with the failed step,
+counts and duration.
+
+427
+00:24:30,110 --> 00:24:34,142
+This workflow sends less:
+passed or failed, the repository,
+
+428
+00:24:34,142 --> 00:24:38,516
+branch, commit and author,
+one mark per test job, and two links.
+
+429
+00:24:38,750 --> 00:24:40,734
+The webhook address is a secret.
+
+430
+00:24:41,054 --> 00:24:45,118
+Add it under Settings →
+Secrets and variables → Actions,
+
+431
+00:24:45,118 --> 00:24:50,270
+as a new repository secret named
+SLACK_WEBHOOK_URL, not under Webhooks.
+
+432
+00:24:50,590 --> 00:24:54,387
+It never goes in the repository,
+logs show it as ***,
+
+433
+00:24:54,387 --> 00:24:57,395
+and pull requests from forks don't get it.
+
+434
+00:24:57,633 --> 00:25:00,345
+The check step tests
+whether the secret is set,
+
+435
+00:25:00,345 --> 00:25:02,710
+and writes enabled=true or enabled=false.
+
+436
+00:25:03,030 --> 00:25:05,505
+Why not test the secret
+right in the if line?
+
+437
+00:25:05,825 --> 00:25:08,012
+GitHub doesn't allow secrets there;
+
+438
+00:25:08,012 --> 00:25:12,822
+the repository's own history tried it,
+and replaced it with this shell check.
+
+439
+00:25:13,066 --> 00:25:16,149
+In run 1 there's no secret,
+so enabled is false,
+
+440
+00:25:16,149 --> 00:25:19,168
+and the Slack step is skipped,
+as it should be.
+
+441
+00:25:19,416 --> 00:25:20,696
+Now the demo run.
+
+442
+00:25:21,016 --> 00:25:22,723
+Check test results fails.
+
+443
+00:25:23,043 --> 00:25:26,484
+The check step has no if:
+always(), so it's skipped too,
+
+444
+00:25:26,484 --> 00:25:30,232
+enabled stays empty,
+and the Slack step's condition is false.
+
+445
+00:25:30,466 --> 00:25:33,197
+As written,
+the bell only rings for good news.
+
+446
+00:25:33,517 --> 00:25:36,695
+The fix is one line: if:
+always(), on the check step.
+
+447
+00:25:37,015 --> 00:25:39,554
+The exercises have a hardened version.
+
+448
+00:25:40,900 --> 00:25:44,676
+Part 6 of the README is optional,
+and it's the lecture's gate.
+
+449
+00:25:44,996 --> 00:25:47,727
+A push-triggered run
+is the post-receive bell.
+
+450
+00:25:48,047 --> 00:25:52,248
+On GitHub.com,
+the gate that refuses is branch protection,
+
+451
+00:25:52,248 --> 00:25:54,276
+with required status checks.
+
+452
+00:25:54,517 --> 00:25:57,632
+Go to Settings → Branches,
+and add a rule for main.
+
+453
+00:25:57,952 --> 00:26:00,874
+Tick the boxes "Require
+a pull request before merging",
+
+454
+00:26:00,874 --> 00:26:03,584
+and "Require status checks
+to pass before merging".
+
+455
+00:26:03,904 --> 00:26:08,234
+Today's page may call it a classic rule,
+or offer rulesets instead.
+
+456
+00:26:08,483 --> 00:26:09,784
+Then pick the checks.
+
+457
+00:26:10,104 --> 00:26:13,690
+A small slip:
+the picker lists jobs by their names,
+
+458
+00:26:13,690 --> 00:26:18,190
+like Lint and Format Check and Unit Tests,
+not the README's IDs.
+
+459
+00:26:18,510 --> 00:26:20,707
+They appear only after a recent run.
+
+460
+00:26:21,027 --> 00:26:24,227
+On a private repository
+this needs a paid plan.
+
+461
+00:26:24,467 --> 00:26:28,542
+Then test it:
+git checkout -b feature/test-protection.
+
+462
+00:26:28,862 --> 00:26:32,647
+Pushing that branch starts nothing,
+as you saw with the triggers;
+
+463
+00:26:32,647 --> 00:26:35,325
+the run starts
+when you open the pull request.
+
+464
+00:26:35,567 --> 00:26:39,556
+The README breaks the tests
+by appending def broken(): assert False.
+
+465
+00:26:39,876 --> 00:26:43,077
+An extra run in the image
+still says 11 passed,
+
+466
+00:26:43,077 --> 00:26:47,641
+because pytest only collects functions
+whose names start with test.
+
+467
+00:26:47,883 --> 00:26:51,019
+So name it test_broken instead,
+an extra fix.
+
+468
+00:26:51,339 --> 00:26:53,366
+Now 1 failed and 11 passed.
+
+469
+00:26:53,686 --> 00:26:56,416
+That's the one
+that turns the pull request red,
+
+470
+00:26:56,416 --> 00:26:59,553
+and with protection on,
+the merge button stays locked.
+
+471
+00:26:59,800 --> 00:27:03,924
+Then git add .,
+git commit -m "Intentionally break tests",
+
+472
+00:27:03,924 --> 00:27:07,053
+and git push origin feature/test-protection.
+
+473
+00:27:07,373 --> 00:27:12,323
+Open the pull request on GitHub:
+the merge stays locked until the tests pass.
+
+474
+00:27:12,643 --> 00:27:14,328
+Pause and try it on yours.
+
+475
+00:27:14,648 --> 00:27:17,293
+Here, git checkout --
+puts the test file back.
+
+476
+00:27:18,433 --> 00:27:20,452
+The twist the lecture promised:
+
+477
+00:27:20,452 --> 00:27:24,620
+non-determinism enters every stage
+when the code trains a model.
+
+478
+00:27:24,940 --> 00:27:29,433
+Its answers: version everything;
+automate retraining and testing,
+
+479
+00:27:29,433 --> 00:27:33,580
+which Milestone 5 asks for;
+monitor; and roll out with care.
+
+480
+00:27:33,816 --> 00:27:37,251
+Continuous deployment,
+the lecture's last section,
+
+481
+00:27:37,251 --> 00:27:40,067
+automates the release: that's lecture 23.
+
+482
+00:27:40,316 --> 00:27:41,852
+Clean up: switch to main,
+
+483
+00:27:41,852 --> 00:27:44,924
+and delete
+the feature/test-protection branch here
+
+484
+00:27:44,924 --> 00:27:47,591
+and on GitHub; that closes its pull request.
+
+485
+00:27:47,911 --> 00:27:49,217
+Remove the branch rule,
+
+486
+00:27:49,217 --> 00:27:52,113
+and the Slack secret and webhook,
+if you made them.
+
+487
+00:27:52,433 --> 00:27:55,281
+Disable the workflow
+on a private repository,
+
+488
+00:27:55,281 --> 00:27:57,938
+and run the Docker cleanup from lecture 9.
+
+489
+00:27:58,183 --> 00:27:59,442
+Once more, the loop.
+
+490
+00:27:59,762 --> 00:28:01,234
+Your push is the event.
+
+491
+00:28:01,554 --> 00:28:05,906
+Each job gets a fresh machine,
+so the image travels as an artifact.
+
+492
+00:28:06,226 --> 00:28:09,170
+Every step is a gate
+that reads an exit code,
+
+493
+00:28:09,170 --> 00:28:12,114
+and the summary hears
+only the jobs it needs.
+
+494
+00:28:12,350 --> 00:28:14,291
+Test yourself, pausing on each.
+
+495
+00:28:14,611 --> 00:28:18,096
+One: name two ways code
+reaches the shared repository
+
+496
+00:28:18,096 --> 00:28:20,265
+without passing your local hooks.
+
+497
+00:28:20,585 --> 00:28:22,739
+Which checks does this pipeline repeat?
+
+498
+00:28:22,983 --> 00:28:26,588
+Two: which unit gets a fresh machine,
+a job or a step?
+
+499
+00:28:26,908 --> 00:28:30,172
+And why does that force a docker load
+in every check job?
+
+500
+00:28:30,416 --> 00:28:34,384
+Three: your run is red,
+but the summary says all tests passed.
+
+501
+00:28:34,704 --> 00:28:36,966
+Why, and what is the one-line fix?
+
+502
+00:28:37,200 --> 00:28:40,325
+Four:
+why can Flake8 fail without failing its job,
+
+503
+00:28:40,325 --> 00:28:43,450
+and why don't you see its output
+when Black fails?
+
+504
+00:28:44,183 --> 00:28:48,255
+Five: is a push-triggered run a pre-receive
+or a post-receive check,
+
+505
+00:28:48,255 --> 00:28:49,751
+and what makes it a gate?
+
+506
+00:28:50,071 --> 00:28:53,250
+Answers are in the exercises
+and the study guide.
+

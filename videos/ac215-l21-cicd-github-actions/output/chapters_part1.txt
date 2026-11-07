@@ -1,7 +1,7 @@
 00:00 Red run, green summary
 01:33 Hooks stay on your laptop
 03:24 The CI loop and the workflow file
-05:17 When does the pipeline wake up?
-06:53 Six jobs, one graph
-08:36 Push to a repo of your own
-10:28 Watch the run: six colours
+05:21 When does the pipeline wake up?
+06:57 Six jobs, one graph
+08:40 Push to a repo of your own
+10:46 Watch the run: six colours

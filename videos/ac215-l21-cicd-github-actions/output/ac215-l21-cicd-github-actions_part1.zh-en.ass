@@ -1,0 +1,235 @@
+[Script Info]
+Title: AC215 · L21, part 1: from local hooks to a pipeline on GitHub — read it, push it, watch it
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.59,Bilingual,,0,0,0,,你把课程自己的代码原封不动地 push 到一个你自己的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}You push the course's own code, untouched, to a repository of your own.
+Dialogue: 0,0:00:04.91,0:00:08.15,Bilingual,,0,0,0,,不久之后，有一份日志写着：unit tests，success\N{\fs33\c&H00C8C0B8&\bord1.4}Soon after, one log says: unit tests, success.
+Dialogue: 0,0:00:08.47,0:00:10.39,Bilingual,,0,0,0,,Integration tests，success\N{\fs33\c&H00C8C0B8&\bord1.4}Integration tests, success.
+Dialogue: 0,0:00:10.71,0:00:12.35,Bilingual,,0,0,0,,System tests，success\N{\fs33\c&H00C8C0B8&\bord1.4}System tests, success.
+Dialogue: 0,0:00:12.67,0:00:14.27,Bilingual,,0,0,0,,All tests passed\N{\fs33\c&H00C8C0B8&\bord1.4}All tests passed.
+Dialogue: 0,0:00:15.02,0:00:18.40,Bilingual,,0,0,0,,而同一个文件从头跑到尾，结尾是这样的\N{\fs33\c&H00C8C0B8&\bord1.4}And the same file, run end to end, ends like this:
+Dialogue: 0,0:00:18.40,0:00:20.63,Bilingual,,0,0,0,,job Lint and Format Check failed\N{\fs33\c&H00C8C0B8&\bord1.4}job Lint and Format Check failed.
+Dialogue: 0,0:00:20.95,0:00:24.30,Bilingual,,0,0,0,,五台机器绿，一台红，整个 run 是红的\N{\fs33\c&H00C8C0B8&\bord1.4}Five machines green, one red, and the whole run red.
+Dialogue: 0,0:00:24.62,0:00:28.37,Bilingual,,0,0,0,,这条 pipeline 说每个测试都通过了，而它自己失败了\N{\fs33\c&H00C8C0B8&\bord1.4}The pipeline says every test passed, and the pipeline failed.
+Dialogue: 0,0:00:28.69,0:00:30.02,Bilingual,,0,0,0,,两句都是真的\N{\fs33\c&H00C8C0B8&\bord1.4}Both are true.
+Dialogue: 0,0:00:30.07,0:00:33.37,Bilingual,,0,0,0,,那么，是哪台机器说了不，汇总又为什么没听见？\N{\fs33\c&H00C8C0B8&\bord1.4}So which machine said no, and why didn't the summary hear it?
+Dialogue: 0,0:00:33.69,0:00:36.96,Bilingual,,0,0,0,,到第一部分结束时，你会在自己的 push 上看到这一幕\N{\fs33\c&H00C8C0B8&\bord1.4}By the end of part 1 you will see this on your own push.
+Dialogue: 0,0:00:37.28,0:00:39.45,Bilingual,,0,0,0,,在第二部分，我们会打开每一份日志\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2 we open every log.
+Dialogue: 0,0:00:39.70,0:00:43.56,Bilingual,,0,0,0,,在第 9 讲，这些检查是在你的笔记本上跑的，在 commit 之前\N{\fs33\c&H00C8C0B8&\bord1.4}In lecture 9 these checks ran on your laptop, before a commit.
+Dialogue: 0,0:00:43.88,0:00:48.08,Bilingual,,0,0,0,,今天它们搬到 GitHub 上，每次 push 到 main 都会运行\N{\fs33\c&H00C8C0B8&\bord1.4}Today they move to GitHub, and they run on every push to main,
+Dialogue: 0,0:00:48.08,0:00:50.45,Bilingual,,0,0,0,,跑在不属于任何人的全新机器上\N{\fs33\c&H00C8C0B8&\bord1.4}on fresh machines that nobody owns.
+Dialogue: 0,0:00:50.70,0:00:52.75,Bilingual,,0,0,0,,第 21 讲分四节\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 21 has four sections:
+Dialogue: 0,0:00:52.75,0:00:58.76,Bilingual,,0,0,0,,远程 Git hook、GitHub webhook、持续集成，以及持续部署\N{\fs33\c&H00C8C0B8&\bord1.4}remote Git hooks, GitHub webhooks, continuous integration, and continuous deployment.
+Dialogue: 0,0:00:59.08,0:01:03.50,Bilingual,,0,0,0,,我们一页一页地跟着课件走，一步一步地做 README 的 Part 5\N{\fs33\c&H00C8C0B8&\bord1.4}We follow it slide by slide, and the README Part 5 step by step.
+Dialogue: 0,0:01:03.75,0:01:08.18,Bilingual,,0,0,0,,要跟着做，你需要课程 repo 的一个新 clone\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along, you need a fresh clone of the course's repository,
+Dialogue: 0,0:01:08.18,0:01:12.35,Bilingual,,0,0,0,,让 Docker 开着，一个 GitHub 账号，还有一个你自己的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}Docker running, a GitHub account, and a repository of your own.
+Dialogue: 0,0:01:12.67,0:01:16.98,Bilingual,,0,0,0,,不用云，也不用密钥；在公开 repo 上，也不会有账单\N{\fs33\c&H00C8C0B8&\bord1.4}No cloud and no keys, and on a public repository, no bill.
+Dialogue: 0,0:01:17.22,0:01:22.04,Bilingual,,0,0,0,,进度条标出 README 的哪一步，代码面板标出文件和行号\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker names the README step, code panels name their file and lines,
+Dialogue: 0,0:01:22.04,0:01:25.47,Bilingual,,0,0,0,,黄色的 your turn 标签表示暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}and a yellow tag, your turn, means pause and run it.
+Dialogue: 0,0:01:25.79,0:01:29.32,Bilingual,,0,0,0,,你会看到的 run，都是在这里的全新机器上真跑出来的\N{\fs33\c&H00C8C0B8&\bord1.4}The runs you will see ran right here on fresh machines;
+Dialogue: 0,0:01:29.32,0:01:32.34,Bilingual,,0,0,0,,GitHub 的页面是示意图，上面也都标明了\N{\fs33\c&H00C8C0B8&\bord1.4}the GitHub pages are drawings, and they say so.
+Dialogue: 0,0:01:33.48,0:01:36.62,Bilingual,,0,0,0,,课上先做了个回顾：本地 Git hook\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture opens with a recap: local Git hooks.
+Dialogue: 0,0:01:36.94,0:01:39.30,Bilingual,,0,0,0,,一个 pre-commit hook 在你的笔记本上运行\N{\fs33\c&H00C8C0B8&\bord1.4}A pre-commit hook runs on your laptop,
+Dialogue: 0,0:01:39.30,0:01:41.16,Bilingual,,0,0,0,,那时 commit 还根本不存在\N{\fs33\c&H00C8C0B8&\bord1.4}before the commit even exists.
+Dialogue: 0,0:01:41.48,0:01:44.33,Bilingual,,0,0,0,,一个 pre-push hook 会在你的 commit 离开之前运行\N{\fs33\c&H00C8C0B8&\bord1.4}A pre-push hook runs before your commits leave.
+Dialogue: 0,0:01:44.58,0:01:47.44,Bilingual,,0,0,0,,在第 9 讲，你装过这个 repo 的那一套\N{\fs33\c&H00C8C0B8&\bord1.4}In lecture 9 you installed this repo's set.
+Dialogue: 0,0:01:47.68,0:01:51.18,Bilingual,,0,0,0,,这里是那条链，换成了这个 repo 的方框\N{\fs33\c&H00C8C0B8&\bord1.4}Here is that chain, with this repo's boxes:
+Dialogue: 0,0:01:51.18,0:01:54.92,Bilingual,,0,0,0,,七项卫生检查，然后是 Black，然后是 Flake8\N{\fs33\c&H00C8C0B8&\bord1.4}seven hygiene checks, then Black, then Flake8,
+Dialogue: 0,0:01:54.92,0:01:58.99,Bilingual,,0,0,0,,都是 120 列，而且只查 src 下的文件\N{\fs33\c&H00C8C0B8&\bord1.4}both at 120 columns, and only on files under src/.
+Dialogue: 0,0:01:59.31,0:02:01.34,Bilingual,,0,0,0,,课上那条链最后是测试\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's chain ends with tests.
+Dialogue: 0,0:02:01.66,0:02:05.20,Bilingual,,0,0,0,,这个 repo 的 hook 一个测试都不跑：它把测试留给了 CI\N{\fs33\c&H00C8C0B8&\bord1.4}This repo's hooks run none: it leaves the tests to CI.
+Dialogue: 0,0:02:05.43,0:02:06.66,Bilingual,,0,0,0,,课上指出的问题是\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's catch:
+Dialogue: 0,0:02:06.66,0:02:10.62,Bilingual,,0,0,0,,hook 只在有人跑过 pre-commit install 的机器上运行\N{\fs33\c&H00C8C0B8&\bord1.4}hooks run only on a machine where someone ran pre-commit install.
+Dialogue: 0,0:02:10.94,0:02:14.78,Bilingual,,0,0,0,,队友的笔记本没装它们，commit 就没经过检查直接发出去了\N{\fs33\c&H00C8C0B8&\bord1.4}A teammate's laptop without them sends its commit through unchecked.
+Dialogue: 0,0:02:15.10,0:02:17.10,Bilingual,,0,0,0,,所以检查做不做，取决于是哪台笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}So the checks depend on the laptop.
+Dialogue: 0,0:02:17.35,0:02:21.66,Bilingual,,0,0,0,,这时就轮到远程 hook 了：它们运行在接收 push 的服务器上\N{\fs33\c&H00C8C0B8&\bord1.4}That's where remote hooks come in: they run on the server that receives the push.
+Dialogue: 0,0:02:21.98,0:02:24.98,Bilingual,,0,0,0,,一个 pre-receive hook 在 push 被接受之前运行\N{\fs33\c&H00C8C0B8&\bord1.4}A pre-receive hook runs before the push is accepted,
+Dialogue: 0,0:02:24.98,0:02:26.58,Bilingual,,0,0,0,,所以它可以拒绝这次 push\N{\fs33\c&H00C8C0B8&\bord1.4}so it can refuse it.
+Dialogue: 0,0:02:26.80,0:02:29.98,Bilingual,,0,0,0,,名叫 update 的 hook 也一样，只是一次一个分支\N{\fs33\c&H00C8C0B8&\bord1.4}The update hook does the same, one branch at a time.
+Dialogue: 0,0:02:30.22,0:02:33.34,Bilingual,,0,0,0,,一个 post-receive hook 在代码进来之后运行\N{\fs33\c&H00C8C0B8&\bord1.4}A post-receive hook runs after the code is in,
+Dialogue: 0,0:02:33.34,0:02:36.74,Bilingual,,0,0,0,,用来跑集成测试，发通知和清理\N{\fs33\c&H00C8C0B8&\bord1.4}for integration tests, notifications and clean-up.
+Dialogue: 0,0:02:37.06,0:02:39.77,Bilingual,,0,0,0,,它能报告，但已经没法说不了\N{\fs33\c&H00C8C0B8&\bord1.4}It can report, but it can no longer say no.
+Dialogue: 0,0:02:40.02,0:02:41.12,Bilingual,,0,0,0,,如实说一句\N{\fs33\c&H00C8C0B8&\bord1.4}One honest note:
+Dialogue: 0,0:02:41.12,0:02:44.69,Bilingual,,0,0,0,,GitHub.com 不会运行你自己写的 pre-receive 脚本\N{\fs33\c&H00C8C0B8&\bord1.4}GitHub.com doesn't run your own pre-receive scripts.
+Dialogue: 0,0:02:45.01,0:02:47.08,Bilingual,,0,0,0,,它给你的是另外两样东西\N{\fs33\c&H00C8C0B8&\bord1.4}It gives you two pieces instead:
+Dialogue: 0,0:02:47.08,0:02:52.01,Bilingual,,0,0,0,,Actions，在 push 之后运行；还有分支保护，它能说不\N{\fs33\c&H00C8C0B8&\bord1.4}Actions, which runs after the push, and branch protection, which can say no.
+Dialogue: 0,0:02:52.25,0:02:54.34,Bilingual,,0,0,0,,而且 hook 只在 Git 内部起作用\N{\fs33\c&H00C8C0B8&\bord1.4}And hooks act only inside Git.
+Dialogue: 0,0:02:54.66,0:02:58.22,Bilingual,,0,0,0,,要告诉聊天工具发生了什么，课上用的是 webhook\N{\fs33\c&H00C8C0B8&\bord1.4}To tell a chat what happened, the lecture reaches for webhooks.
+Dialogue: 0,0:02:58.47,0:03:01.45,Bilingual,,0,0,0,,接下来是课上的动机，用了三页课件\N{\fs33\c&H00C8C0B8&\bord1.4}Now the lecture's motivation, in three slides.
+Dialogue: 0,0:03:01.77,0:03:04.70,Bilingual,,0,0,0,,在你的笔记本上，每次 commit 都会触发检查\N{\fs33\c&H00C8C0B8&\bord1.4}On your laptop, the checks fire on every commit.
+Dialogue: 0,0:03:05.02,0:03:09.43,Bilingual,,0,0,0,,然后你 push 了，到了共享的 repo 上，根本没有东西去跑它们\N{\fs33\c&H00C8C0B8&\bord1.4}Then you push, and on the shared repository, nothing runs them at all.
+Dialogue: 0,0:03:09.67,0:03:15.02,Bilingual,,0,0,0,,所以检查搬到了服务器上：构建 container，检查代码，汇总测试\N{\fs33\c&H00C8C0B8&\bord1.4}So the checks move to the server: build a container, check the code, summarize the tests.
+Dialogue: 0,0:03:15.34,0:03:16.84,Bilingual,,0,0,0,,想法不变，只是换了个家\N{\fs33\c&H00C8C0B8&\bord1.4}Same idea, new home,
+Dialogue: 0,0:03:16.84,0:03:19.50,Bilingual,,0,0,0,,每台笔记本每次 push 到 main，都会跑\N{\fs33\c&H00C8C0B8&\bord1.4}for every push to main from every laptop.
+Dialogue: 0,0:03:19.82,0:03:22.15,Bilingual,,0,0,0,,这一步搬家，就是持续集成\N{\fs33\c&H00C8C0B8&\bord1.4}That move is continuous integration.
+Dialogue: 0,0:03:24.32,0:03:28.60,Bilingual,,0,0,0,,课上把持续集成定义为一系列脚本\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture defines continuous integration as a series of scripts
+Dialogue: 0,0:03:28.60,0:03:31.83,Bilingual,,0,0,0,,只要代码一变，它们就自动运行\N{\fs33\c&H00C8C0B8&\bord1.4}that run automatically whenever the code changes.
+Dialogue: 0,0:03:32.15,0:03:34.67,Bilingual,,0,0,0,,它们持续地集成变更\N{\fs33\c&H00C8C0B8&\bord1.4}They integrate changes continuously,
+Dialogue: 0,0:03:34.67,0:03:39.59,Bilingual,,0,0,0,,自动测试，强制执行编码规范，还做静态分析\N{\fs33\c&H00C8C0B8&\bord1.4}test automatically, enforce coding standards, and run static analysis.
+Dialogue: 0,0:03:39.83,0:03:45.25,Bilingual,,0,0,0,,在普通软件里，这换来的是发布更快、代码更好、协作更容易\N{\fs33\c&H00C8C0B8&\bord1.4}In ordinary software, that buys faster releases, better code, and easier teamwork.
+Dialogue: 0,0:03:45.57,0:03:49.16,Bilingual,,0,0,0,,机器学习会带来一个转折；我们最后再回来讲\N{\fs33\c&H00C8C0B8&\bord1.4}Machine learning adds a twist; we come back to it at the end.
+Dialogue: 0,0:03:49.40,0:03:51.72,Bilingual,,0,0,0,,课件第 21 页把它画成一个循环\N{\fs33\c&H00C8C0B8&\bord1.4}Slide 21 draws it as a loop.
+Dialogue: 0,0:03:52.04,0:03:55.91,Bilingual,,0,0,0,,开发者把代码 commit 到代码库\N{\fs33\c&H00C8C0B8&\bord1.4}Developers commit to the codebase; the codebase is built,
+Dialogue: 0,0:03:55.91,0:03:57.95,Bilingual,,0,0,0,,代码库先构建，再测试\N{\fs33\c&H00C8C0B8&\bord1.4}then tested; and notifications
+Dialogue: 0,0:03:57.95,0:03:59.85,Bilingual,,0,0,0,,通知再流回开发者\N{\fs33\c&H00C8C0B8&\bord1.4}flow back to the developers.
+Dialogue: 0,0:04:00.17,0:04:02.67,Bilingual,,0,0,0,,现在，回来的那条路还是个问号\N{\fs33\c&H00C8C0B8&\bord1.4}For now, the way back is a question mark.
+Dialogue: 0,0:04:02.92,0:04:05.28,Bilingual,,0,0,0,,课程的 pipeline 有五个阶段\N{\fs33\c&H00C8C0B8&\bord1.4}The course's pipeline has five stages.
+Dialogue: 0,0:04:05.60,0:04:07.86,Bilingual,,0,0,0,,一个 commit 触发它，构建 container\N{\fs33\c&H00C8C0B8&\bord1.4}A commit triggers it, the container
+Dialogue: 0,0:04:07.86,0:04:13.86,Bilingual,,0,0,0,,Black 和 Flake8 检查代码，跑测试，最后汇总报告通过还是失败\N{\fs33\c&H00C8C0B8&\bord1.4}is built, Black and Flake8 check the code, the tests run, and a summary reports pass or fail.
+Dialogue: 0,0:04:14.10,0:04:18.11,Bilingual,,0,0,0,,现在看 README 的 Part 5：GitHub Actions，Remote CI\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README, Part 5: GitHub Actions, remote CI.
+Dialogue: 0,0:04:18.43,0:04:23.06,Bilingual,,0,0,0,,它说所有 CI 测试都在 Docker container 里跑\N{\fs33\c&H00C8C0B8&\bord1.4}It says all CI tests run inside Docker containers using
+Dialogue: 0,0:04:23.06,0:04:26.09,Bilingual,,0,0,0,,用 Python 3.11，和生产环境一样\N{\fs33\c&H00C8C0B8&\bord1.4}Python 3.11, the same as production.
+Dialogue: 0,0:04:26.41,0:04:31.38,Bilingual,,0,0,0,,这个 repo 还没有生产环境：就把它理解成你要部署的那个 image\N{\fs33\c&H00C8C0B8&\bord1.4}This repo has no production yet: take it as the same image you would deploy.
+Dialogue: 0,0:04:31.62,0:04:35.78,Bilingual,,0,0,0,,这一步 README 里没有，是额外的：列出 workflows 目录\N{\fs33\c&H00C8C0B8&\bord1.4}This one isn't in the README, it's extra: list the workflows folder.
+Dialogue: 0,0:04:36.10,0:04:37.60,Bilingual,,0,0,0,,只有一个文件 ci.yml\N{\fs33\c&H00C8C0B8&\bord1.4}One file, ci.yml,
+Dialogue: 0,0:04:37.60,0:04:41.94,Bilingual,,0,0,0,,在 repo 根目录的 .github/workflows 里\N{\fs33\c&H00C8C0B8&\bord1.4}in .github/workflows, at the root of the repository.
+Dialogue: 0,0:04:42.26,0:04:46.32,Bilingual,,0,0,0,,GitHub 只看那里；放在子目录里的工作流永远不会运行\N{\fs33\c&H00C8C0B8&\bord1.4}GitHub looks only there; a workflow in a subfolder never runs.
+Dialogue: 0,0:04:46.55,0:04:51.01,Bilingual,,0,0,0,,打开它。文件给工作流起了个名字：CI Pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}Open it. The file gives the workflow a name, CI Pipeline.
+Dialogue: 0,0:04:51.33,0:04:54.21,Bilingual,,0,0,0,,接下来是名叫 on 的那个键，就是 on 这个词\N{\fs33\c&H00C8C0B8&\bord1.4}Next comes the key called on, just the word on.
+Dialogue: 0,0:04:54.53,0:04:56.87,Bilingual,,0,0,0,,它列出了启动这个工作流的事件\N{\fs33\c&H00C8C0B8&\bord1.4}It lists the events that start the workflow.
+Dialogue: 0,0:04:57.19,0:05:00.20,Bilingual,,0,0,0,,在 jobs 下面，每个 job 都有自己的机器\N{\fs33\c&H00C8C0B8&\bord1.4}Under jobs, each job gets its own machine,
+Dialogue: 0,0:05:00.20,0:05:03.06,Bilingual,,0,0,0,,叫作 runner：runs-on: ubuntu-latest\N{\fs33\c&H00C8C0B8&\bord1.4}called a runner: runs-on: ubuntu-latest.
+Dialogue: 0,0:05:03.30,0:05:05.73,Bilingual,,0,0,0,,在一个 job 里，步骤按顺序运行\N{\fs33\c&H00C8C0B8&\bord1.4}Inside a job, steps run in order.
+Dialogue: 0,0:05:06.05,0:05:09.09,Bilingual,,0,0,0,,步骤要么是 shell 脚本，在 run 下面\N{\fs33\c&H00C8C0B8&\bord1.4}A step is either a shell script, under run,
+Dialogue: 0,0:05:09.09,0:05:10.59,Bilingual,,0,0,0,,要么是可复用的 action\N{\fs33\c&H00C8C0B8&\bord1.4}or a reusable action,
+Dialogue: 0,0:05:10.59,0:05:13.01,Bilingual,,0,0,0,,在 uses 下面，比如 actions/checkout\N{\fs33\c&H00C8C0B8&\bord1.4}under uses, like actions/checkout,
+Dialogue: 0,0:05:13.01,0:05:16.27,Bilingual,,0,0,0,,它把你的 repo 拷到机器上\N{\fs33\c&H00C8C0B8&\bord1.4}which copies your repository onto the machine.
+Dialogue: 0,0:05:16.59,0:05:20.15,Bilingual,,0,0,0,,事件、工作流、job、步骤：这就是全部的语法\N{\fs33\c&H00C8C0B8&\bord1.4}Event, workflow, jobs, steps: that is the whole grammar.
+Dialogue: 0,0:05:21.30,0:05:23.09,Bilingual,,0,0,0,,这条 pipeline 什么时候会醒来？\N{\fs33\c&H00C8C0B8&\bord1.4}When does the pipeline wake up?
+Dialogue: 0,0:05:23.41,0:05:26.38,Bilingual,,0,0,0,,课件说每次 push 或 PR 都会\N{\fs33\c&H00C8C0B8&\bord1.4}The slide says on every push or pull request.
+Dialogue: 0,0:05:26.70,0:05:30.29,Bilingual,,0,0,0,,文件写得更精确：push 到 main 或 develop\N{\fs33\c&H00C8C0B8&\bord1.4}The file is more precise: pushes to main or develop,
+Dialogue: 0,0:05:30.29,0:05:32.99,Bilingual,,0,0,0,,以及合并进 main 或 develop 的 PR\N{\fs33\c&H00C8C0B8&\bord1.4}and pull requests into main or develop.
+Dialogue: 0,0:05:33.23,0:05:35.51,Bilingual,,0,0,0,,往 main 上 push，就有一台 runner 醒来\N{\fs33\c&H00C8C0B8&\bord1.4}Push to main, and a runner wakes up.
+Dialogue: 0,0:05:35.77,0:05:37.41,Bilingual,,0,0,0,,往 develop 上 push，也一样\N{\fs33\c&H00C8C0B8&\bord1.4}Push to develop, the same.
+Dialogue: 0,0:05:37.69,0:05:40.36,Bilingual,,0,0,0,,往 feature 分支上 push，什么也不会发生\N{\fs33\c&H00C8C0B8&\bord1.4}Push to a feature branch, and nothing happens:
+Dialogue: 0,0:05:40.36,0:05:43.96,Bilingual,,0,0,0,,在其他任何分支上，这条 pipeline 都会等你的 PR\N{\fs33\c&H00C8C0B8&\bord1.4}on any other branch, the pipeline waits for your pull request.
+Dialogue: 0,0:05:44.28,0:05:48.38,Bilingual,,0,0,0,,说明一点：文件顶上的注释说只有 main\N{\fs33\c&H00C8C0B8&\bord1.4}A small note: the comment at the top of the file says main only;
+Dialogue: 0,0:05:48.38,0:05:50.56,Bilingual,,0,0,0,,触发条件写的却是 main 和 develop\N{\fs33\c&H00C8C0B8&\bord1.4}the triggers say main and develop.
+Dialogue: 0,0:05:50.80,0:05:54.59,Bilingual,,0,0,0,,小测验。你往 feature/login 上 push 了三个 commit\N{\fs33\c&H00C8C0B8&\bord1.4}Quick test. You push three commits to feature/login.
+Dialogue: 0,0:05:54.75,0:05:56.34,Bilingual,,0,0,0,,会启动几个 run？\N{\fs33\c&H00C8C0B8&\bord1.4}How many runs start?
+Dialogue: 0,0:05:56.39,0:05:58.71,Bilingual,,0,0,0,,然后你开了一个合并进 main 的 PR\N{\fs33\c&H00C8C0B8&\bord1.4}Then you open a pull request into main.
+Dialogue: 0,0:05:59.03,0:06:00.63,Bilingual,,0,0,0,,现在呢？\N{\fs33\c&H00C8C0B8&\bord1.4}How many now?
+Dialogue: 0,0:06:08.88,0:06:11.72,Bilingual,,0,0,0,,那三次 push，一个 run 也不会启动：因为有分支过滤\N{\fs33\c&H00C8C0B8&\bord1.4}None for the three pushes: the branch filter.
+Dialogue: 0,0:06:11.98,0:06:17.07,Bilingual,,0,0,0,,PR 打开时一次，之后它开着的时候，每 push 一次再加一次\N{\fs33\c&H00C8C0B8&\bord1.4}One when the pull request opens, and one more for every later push while it stays open.
+Dialogue: 0,0:06:17.32,0:06:19.30,Bilingual,,0,0,0,,而且它测的不是你分支最新的 commit\N{\fs33\c&H00C8C0B8&\bord1.4}And it doesn't test your branch tip.
+Dialogue: 0,0:06:19.49,0:06:23.13,Bilingual,,0,0,0,,GitHub 会把你的分支临时合并进 main\N{\fs33\c&H00C8C0B8&\bord1.4}GitHub makes a temporary merge of your branch into main,
+Dialogue: 0,0:06:23.13,0:06:26.26,Bilingual,,0,0,0,,job 看到的 commit ID 指的就是这次合并\N{\fs33\c&H00C8C0B8&\bord1.4}and the commit ID the jobs see names that merge.
+Dialogue: 0,0:06:26.58,0:06:31.57,Bilingual,,0,0,0,,将要合进去的，就是被测试的：每次合并都会被测试，正如课上说的\N{\fs33\c&H00C8C0B8&\bord1.4}What will land is what gets tested: each merge is tested, as the lecture says.
+Dialogue: 0,0:06:31.82,0:06:35.14,Bilingual,,0,0,0,,课上提醒，频繁集成要花算力\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture warns that integrating often costs compute.
+Dialogue: 0,0:06:35.46,0:06:40.12,Bilingual,,0,0,0,,这个文件的回答是：分支过滤，所有 job 共用的一次构建\N{\fs33\c&H00C8C0B8&\bord1.4}This file answers with a branch filter, one build shared by every job,
+Dialogue: 0,0:06:40.12,0:06:41.84,Bilingual,,0,0,0,,还有只保留一天的 image\N{\fs33\c&H00C8C0B8&\bord1.4}and an image kept one day.
+Dialogue: 0,0:06:42.16,0:06:47.58,Bilingual,,0,0,0,,在私有 repo 上，每个 run 都计入你的套餐额度；公开的免费\N{\fs33\c&H00C8C0B8&\bord1.4}On private repositories every run counts against your plan; public ones run free.
+Dialogue: 0,0:06:47.82,0:06:49.07,Bilingual,,0,0,0,,而且时机很重要\N{\fs33\c&H00C8C0B8&\bord1.4}And timing matters:
+Dialogue: 0,0:06:49.07,0:06:52.45,Bilingual,,0,0,0,,run 是在 GitHub 接受了你的 push 之后才开始的\N{\fs33\c&H00C8C0B8&\bord1.4}the run starts after GitHub has accepted your push.
+Dialogue: 0,0:06:52.77,0:06:56.43,Bilingual,,0,0,0,,它是铃，不是门禁：一个红的 run 撤销不了这次 push\N{\fs33\c&H00C8C0B8&\bord1.4}It's the bell, not the gate: a red run doesn't undo the push.
+Dialogue: 0,0:06:57.58,0:07:02.81,Bilingual,,0,0,0,,接下来看 README：6 个并行运行的 job，有依赖的除外\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the README: 6 jobs that run in parallel, except for dependencies.
+Dialogue: 0,0:07:03.13,0:07:04.97,Bilingual,,0,0,0,,每个都有一个 ID 和一个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Each has an ID and a name:
+Dialogue: 0,0:07:04.97,0:07:08.79,Bilingual,,0,0,0,,Build Docker Image、Lint and Format Check、Unit Tests\N{\fs33\c&H00C8C0B8&\bord1.4}Build Docker Image, Lint and Format Check, Unit Tests,
+Dialogue: 0,0:07:08.79,0:07:12.32,Bilingual,,0,0,0,,Integration Tests、System Tests 和 Test Summary\N{\fs33\c&H00C8C0B8&\bord1.4}Integration Tests, System Tests, and Test Summary.
+Dialogue: 0,0:07:12.57,0:07:15.05,Bilingual,,0,0,0,,记住这些名字：GitHub 显示的是名字\N{\fs33\c&H00C8C0B8&\bord1.4}Remember the names: GitHub shows them,
+Dialogue: 0,0:07:15.05,0:07:18.26,Bilingual,,0,0,0,,不是 ID，而保护 main 的时候要用到它们\N{\fs33\c&H00C8C0B8&\bord1.4}not the IDs, and we'll need them to protect main.
+Dialogue: 0,0:07:18.50,0:07:20.55,Bilingual,,0,0,0,,从课上那一排五个方框开始\N{\fs33\c&H00C8C0B8&\bord1.4}Start from the lecture's row of five.
+Dialogue: 0,0:07:20.87,0:07:24.07,Bilingual,,0,0,0,,Commit 先退出：它是事件，不是 job\N{\fs33\c&H00C8C0B8&\bord1.4}Commit drops out first: it's the event, not a job.
+Dialogue: 0,0:07:24.39,0:07:27.76,Bilingual,,0,0,0,,Build Container 留在左边：它就是 build 这个 job\N{\fs33\c&H00C8C0B8&\bord1.4}Build Container stays on the left: it's the build job.
+Dialogue: 0,0:07:28.00,0:07:30.39,Bilingual,,0,0,0,,现在，每一行 needs 画出一条箭头\N{\fs33\c&H00C8C0B8&\bord1.4}Now each needs line draws one arrow.
+Dialogue: 0,0:07:30.71,0:07:32.83,Bilingual,,0,0,0,,先看 lint and format，它需要 build\N{\fs33\c&H00C8C0B8&\bord1.4}Lint and format needs build.
+Dialogue: 0,0:07:32.93,0:07:35.05,Bilingual,,0,0,0,,Unit tests、integration tests\N{\fs33\c&H00C8C0B8&\bord1.4}Unit tests, integration tests and system tests each need build too.
+Dialogue: 0,0:07:35.05,0:07:37.45,Bilingual,,0,0,0,,和 system tests 也各自需要 build\N{\fs33\c&H00C8C0B8&\bord1.4}Unit tests, integration tests and system tests each need build too.
+Dialogue: 0,0:07:37.77,0:07:42.70,Bilingual,,0,0,0,,所以 build 之后，四个 job 并排运行，各在自己的机器上\N{\fs33\c&H00C8C0B8&\bord1.4}So after the build, four jobs run side by side, each on its own machine.
+Dialogue: 0,0:07:42.93,0:07:45.56,Bilingual,,0,0,0,,Test Summary 需要三个测试 job\N{\fs33\c&H00C8C0B8&\bord1.4}Test summary needs the three test jobs.
+Dialogue: 0,0:07:45.88,0:07:48.84,Bilingual,,0,0,0,,仔细看：lint 这个 job 不在那张列表上\N{\fs33\c&H00C8C0B8&\bord1.4}Look closely: the lint job isn't on that list.
+Dialogue: 0,0:07:49.16,0:07:51.73,Bilingual,,0,0,0,,课上按顺序列出各个阶段\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture lists the stages in order;
+Dialogue: 0,0:07:51.73,0:07:57.40,Bilingual,,0,0,0,,在 GitHub 上，其中四个并排运行，而汇总只听测试 job 的\N{\fs33\c&H00C8C0B8&\bord1.4}on GitHub, four of them run side by side, and the summary listens only to the tests.
+Dialogue: 0,0:07:57.72,0:07:59.32,Bilingual,,0,0,0,,把这个缺口记在心里\N{\fs33\c&H00C8C0B8&\bord1.4}Keep that gap in mind.
+Dialogue: 0,0:07:59.45,0:08:02.92,Bilingual,,0,0,0,,一个额外检查，README 里没有：一个叫 act 的工具\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check, not in the README: a tool called act,
+Dialogue: 0,0:08:02.92,0:08:07.58,Bilingual,,0,0,0,,你用不着它，它拿同一个文件，把 job 按阶段列出来\N{\fs33\c&H00C8C0B8&\bord1.4}which you don't need, takes the same file and lists the jobs in stages.
+Dialogue: 0,0:08:07.90,0:08:09.50,Bilingual,,0,0,0,,第 0 阶段，build\N{\fs33\c&H00C8C0B8&\bord1.4}Stage 0, build.
+Dialogue: 0,0:08:09.67,0:08:11.50,Bilingual,,0,0,0,,第 1 阶段，四个检查\N{\fs33\c&H00C8C0B8&\bord1.4}Stage 1, the four checks.
+Dialogue: 0,0:08:11.82,0:08:13.42,Bilingual,,0,0,0,,第 2 阶段，汇总\N{\fs33\c&H00C8C0B8&\bord1.4}Stage 2, the summary.
+Dialogue: 0,0:08:13.58,0:08:15.18,Bilingual,,0,0,0,,然后是关键概念\N{\fs33\c&H00C8C0B8&\bord1.4}Then the key concepts.
+Dialogue: 0,0:08:15.31,0:08:19.57,Bilingual,,0,0,0,,Artifact 共享和唯一的 image tag 跟着 build 讲\N{\fs33\c&H00C8C0B8&\bord1.4}Artifact sharing and unique image tags come with the build job;
+Dialogue: 0,0:08:19.57,0:08:21.81,Bilingual,,0,0,0,,并行执行，你刚刚看到了\N{\fs33\c&H00C8C0B8&\bord1.4}parallel execution, you just saw;
+Dialogue: 0,0:08:21.81,0:08:26.34,Bilingual,,0,0,0,,条件执行和网络模式跟着系统测试讲\N{\fs33\c&H00C8C0B8&\bord1.4}conditional execution and network modes come with the system tests.
+Dialogue: 0,0:08:26.58,0:08:29.24,Bilingual,,0,0,0,,README 的截图给出了时间\N{\fs33\c&H00C8C0B8&\bord1.4}The README's screenshot gives the times:
+Dialogue: 0,0:08:29.24,0:08:33.09,Bilingual,,0,0,0,,实际大约 2 分钟，四个 job 并排运行\N{\fs33\c&H00C8C0B8&\bord1.4}about 2 minutes on the clock, with four jobs side by side.
+Dialogue: 0,0:08:33.41,0:08:38.15,Bilingual,,0,0,0,,在私有 repo 上，每个 job 都单独计费、单独取整\N{\fs33\c&H00C8C0B8&\bord1.4}On a private repository, each job is billed and rounded up separately:
+Dialogue: 0,0:08:38.15,0:08:39.75,Bilingual,,0,0,0,,大约 6 分钟的计费时间\N{\fs33\c&H00C8C0B8&\bord1.4}about 6 billed minutes.
+Dialogue: 0,0:08:40.85,0:08:42.21,Bilingual,,0,0,0,,该 push 了\N{\fs33\c&H00C8C0B8&\bord1.4}Time to push.
+Dialogue: 0,0:08:42.26,0:08:45.46,Bilingual,,0,0,0,,从一个新的 clone 开始，别用你第 9 讲的目录\N{\fs33\c&H00C8C0B8&\bord1.4}Start from a fresh clone, not your lecture 9 folder:
+Dialogue: 0,0:08:45.46,0:08:47.73,Bilingual,,0,0,0,,那个目录里已经 commit 了 Black 的修复\N{\fs33\c&H00C8C0B8&\bord1.4}that one has the Black fix committed,
+Dialogue: 0,0:08:47.73,0:08:50.19,Bilingual,,0,0,0,,你的第一个 run 会是绿的\N{\fs33\c&H00C8C0B8&\bord1.4}and your first run would come out green.
+Dialogue: 0,0:08:50.51,0:08:54.69,Bilingual,,0,0,0,,先 clone，进到目录里，git status 显示工作区是干净的\N{\fs33\c&H00C8C0B8&\bord1.4}Clone, change into the folder, and git status says the tree is clean.
+Dialogue: 0,0:08:58.60,0:09:00.43,Bilingual,,0,0,0,,你的提示符显示的是你自己的用户\N{\fs33\c&H00C8C0B8&\bord1.4}Your prompt shows your own user.
+Dialogue: 0,0:09:00.75,0:09:02.24,Bilingual,,0,0,0,,先做两个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Two extra checks first:
+Dialogue: 0,0:09:02.24,0:09:06.84,Bilingual,,0,0,0,,pin 住的 commit 仍然是课程 repo 上 main 的最新 commit\N{\fs33\c&H00C8C0B8&\bord1.4}the pinned commit is still the head of main on the course's repository,
+Dialogue: 0,0:09:06.84,0:09:10.33,Bilingual,,0,0,0,,而且最后两个 commit 都叫 demo class 1\N{\fs33\c&H00C8C0B8&\bord1.4}and the last two commits are both called demo class 1.
+Dialogue: 0,0:09:10.65,0:09:14.22,Bilingual,,0,0,0,,第二个撤销了课上埋下的一个 bug；我们后面会跑它\N{\fs33\c&H00C8C0B8&\bord1.4}The second undid a bug planted in class; we'll run it later.
+Dialogue: 0,0:09:14.45,0:09:16.79,Bilingual,,0,0,0,,现在是 README 的那一段：Push to GitHub\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README block, Push to GitHub.
+Dialogue: 0,0:09:17.09,0:09:18.91,Bilingual,,0,0,0,,先是 git add . —— 没有输出\N{\fs33\c&H00C8C0B8&\bord1.4}git add . — no output.
+Dialogue: 0,0:09:19.23,0:09:22.36,Bilingual,,0,0,0,,然后是 git commit -m "Add CI pipeline"\N{\fs33\c&H00C8C0B8&\bord1.4}Then git commit -m "Add CI pipeline".
+Dialogue: 0,0:09:22.68,0:09:26.14,Bilingual,,0,0,0,,而 Git 的回答是：nothing to commit, working tree clean\N{\fs33\c&H00C8C0B8&\bord1.4}And Git answers: nothing to commit, working tree clean.
+Dialogue: 0,0:09:26.38,0:09:29.86,Bilingual,,0,0,0,,有一个小疏漏，而且无害：在 clone 或 fork 里\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip, and a harmless one: in a clone or a fork,
+Dialogue: 0,0:09:29.86,0:09:33.79,Bilingual,,0,0,0,,pipeline 早就 commit 过了，所以没什么可加的\N{\fs33\c&H00C8C0B8&\bord1.4}the pipeline is already committed, so there is nothing to add.
+Dialogue: 0,0:09:34.03,0:09:36.15,Bilingual,,0,0,0,,在 README 的 git push 之前\N{\fs33\c&H00C8C0B8&\bord1.4}Before the README's git push,
+Dialogue: 0,0:09:36.15,0:09:38.34,Bilingual,,0,0,0,,先做一个额外检查：git remote -v\N{\fs33\c&H00C8C0B8&\bord1.4}an extra check: git remote -v.
+Dialogue: 0,0:09:38.66,0:09:42.84,Bilingual,,0,0,0,,这里的 origin 还是课程的 repo，你没有写权限\N{\fs33\c&H00C8C0B8&\bord1.4}Origin is still the course's repository, and you can't write to it.
+Dialogue: 0,0:09:43.16,0:09:46.45,Bilingual,,0,0,0,,GitHub 会拒绝从这里发出的 push：permission denied\N{\fs33\c&H00C8C0B8&\bord1.4}GitHub would refuse a push from here: permission denied.
+Dialogue: 0,0:09:46.68,0:09:49.58,Bilingual,,0,0,0,,所以把 origin 指向一个你自己的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}So point origin at a repository you own.
+Dialogue: 0,0:09:49.90,0:09:52.23,Bilingual,,0,0,0,,要么 fork 课程的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}Either fork the course's repository and enable workflows on its Actions tab, or create a new empty repository.
+Dialogue: 0,0:09:52.23,0:09:57.75,Bilingual,,0,0,0,,再到它的 Actions 标签页启用工作流，要么新建一个空 repo\N{\fs33\c&H00C8C0B8&\bord1.4}Either fork the course's repository and enable workflows on its Actions tab, or create a new empty repository.
+Dialogue: 0,0:09:58.07,0:09:59.31,Bilingual,,0,0,0,,不管选哪个，都运行\N{\fs33\c&H00C8C0B8&\bord1.4}Either way,
+Dialogue: 0,0:09:59.31,0:10:02.58,Bilingual,,0,0,0,,git remote set-url origin，后面跟你自己的地址\N{\fs33\c&H00C8C0B8&\bord1.4}run git remote set-url origin, with your own address.
+Dialogue: 0,0:10:02.90,0:10:04.50,Bilingual,,0,0,0,,暂停一下，把你的设置好\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and set yours up.
+Dialogue: 0,0:10:07.68,0:10:10.53,Bilingual,,0,0,0,,录制用的这台机器没法 push 到 GitHub\N{\fs33\c&H00C8C0B8&\bord1.4}This recording machine can't push to GitHub,
+Dialogue: 0,0:10:10.53,0:10:14.62,Bilingual,,0,0,0,,所以由同一台机器上的一个空 repo 代替你的\N{\fs33\c&H00C8C0B8&\bord1.4}so an empty repository on the same machine stands in for yours.
+Dialogue: 0,0:10:14.94,0:10:17.71,Bilingual,,0,0,0,,从现在起，我们就说你的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}From now on we just say your repository.
+Dialogue: 0,0:10:17.95,0:10:19.55,Bilingual,,0,0,0,,现在是 README 的 git push\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's git push.
+Dialogue: 0,0:10:19.87,0:10:21.71,Bilingual,,0,0,0,,显示 new branch，main 到 main\N{\fs33\c&H00C8C0B8&\bord1.4}New branch, main -> main.
+Dialogue: 0,0:10:21.85,0:10:24.73,Bilingual,,0,0,0,,这次 push 就是事件，run 1 现在开始\N{\fs33\c&H00C8C0B8&\bord1.4}This push is the event, and run 1 starts now.
+Dialogue: 0,0:10:25.05,0:10:26.65,Bilingual,,0,0,0,,暂停一下，push 你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and push yours.
+Dialogue: 0,0:10:27.30,0:10:30.03,Bilingual,,0,0,0,,在 fork 上，这个 commit 已经在 GitHub 上\N{\fs33\c&H00C8C0B8&\bord1.4}On a fork, that commit is already on GitHub,
+Dialogue: 0,0:10:30.03,0:10:33.64,Bilingual,,0,0,0,,所以 git push 显示 Everything up-to-date，什么也不启动\N{\fs33\c&H00C8C0B8&\bord1.4}so git push says Everything up-to-date and starts nothing.
+Dialogue: 0,0:10:33.96,0:10:37.14,Bilingual,,0,0,0,,想照样得到 run 1，就 push 一个空 commit\N{\fs33\c&H00C8C0B8&\bord1.4}To get run 1 anyway, push an empty commit:
+Dialogue: 0,0:10:37.14,0:10:41.38,Bilingual,,0,0,0,,git commit --allow-empty -m "Trigger CI"，然后 git push\N{\fs33\c&H00C8C0B8&\bord1.4}git commit --allow-empty -m "Trigger CI", then git push.
+Dialogue: 0,0:10:41.70,0:10:45.52,Bilingual,,0,0,0,,或者等一等，你的第一个 run 会跟着第二部分的修复到来\N{\fs33\c&H00C8C0B8&\bord1.4}Or wait, and your first run then comes with the fix in part 2.
+Dialogue: 0,0:10:46.87,0:10:51.71,Bilingual,,0,0,0,,看 GitHub Actions：打开你的 repo，点 Actions 标签页\N{\fs33\c&H00C8C0B8&\bord1.4}Watch GitHub Actions: go to your repository, and click the Actions tab.
+Dialogue: 0,0:10:52.03,0:10:56.77,Bilingual,,0,0,0,,你的 run 列在 commit 信息下面，带一个黄点：进行中\N{\fs33\c&H00C8C0B8&\bord1.4}Your run is listed under the commit message, with a yellow dot: in progress.
+Dialogue: 0,0:10:57.09,0:11:00.82,Bilingual,,0,0,0,,绿色的对勾表示成功；红叉表示失败\N{\fs33\c&H00C8C0B8&\bord1.4}A green checkmark means success; a red X means failure.
+Dialogue: 0,0:11:01.14,0:11:02.74,Bilingual,,0,0,0,,暂停一下，打开你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and open yours.
+Dialogue: 0,0:11:02.93,0:11:07.29,Bilingual,,0,0,0,,点开它，GitHub 会把这个 run 画成你刚搭出来的那张图\N{\fs33\c&H00C8C0B8&\bord1.4}Click it, and GitHub draws the run as the graph you just built:
+Dialogue: 0,0:11:07.29,0:11:11.02,Bilingual,,0,0,0,,先是 build，四个 job 并排，最后是汇总\N{\fs33\c&H00C8C0B8&\bord1.4}build first, four jobs side by side, the summary last.
+Dialogue: 0,0:11:11.27,0:11:12.87,Bilingual,,0,0,0,,说一下我们是怎么展示的\N{\fs33\c&H00C8C0B8&\bord1.4}A word on how we show it.
+Dialogue: 0,0:11:13.19,0:11:15.88,Bilingual,,0,0,0,,这个文件的每个 job，我们都在这里跑过\N{\fs33\c&H00C8C0B8&\bord1.4}We ran every job of this file right here,
+Dialogue: 0,0:11:15.88,0:11:20.16,Bilingual,,0,0,0,,每个都在一台 Docker 是空的全新机器上，和 GitHub 一样\N{\fs33\c&H00C8C0B8&\bord1.4}each on a brand-new machine with an empty Docker, as GitHub does.
+Dialogue: 0,0:11:20.48,0:11:25.01,Bilingual,,0,0,0,,还有一个叫 act 的工具，用第二种方式跑了整个文件，结论相同\N{\fs33\c&H00C8C0B8&\bord1.4}And a tool called act ran the whole file a second way, with the same verdict.
+Dialogue: 0,0:11:25.25,0:11:26.89,Bilingual,,0,0,0,,所以你看到的 GitHub 页面\N{\fs33\c&H00C8C0B8&\bord1.4}So the GitHub pages you see
+Dialogue: 0,0:11:26.89,0:11:30.71,Bilingual,,0,0,0,,是按工作流文件画的示意图，标着 illustration\N{\fs33\c&H00C8C0B8&\bord1.4}are drawings built from the workflow file, marked illustration.
+Dialogue: 0,0:11:31.03,0:11:32.97,Bilingual,,0,0,0,,里面每一行日志都是真的\N{\fs33\c&H00C8C0B8&\bord1.4}Every log line in them is real.
+Dialogue: 0,0:11:33.22,0:11:35.46,Bilingual,,0,0,0,,颜色出来之前，先问一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}A question, before the colors come in.
+Dialogue: 0,0:11:35.78,0:11:37.78,Bilingual,,0,0,0,,你已经知道这个 run 会变红\N{\fs33\c&H00C8C0B8&\bord1.4}You already know this run turns red.
+Dialogue: 0,0:11:38.10,0:11:40.98,Bilingual,,0,0,0,,你的 push 现在在你 repo 的 main 上吗\N{\fs33\c&H00C8C0B8&\bord1.4}Is your push on main in your repository now,
+Dialogue: 0,0:11:40.98,0:11:42.88,Bilingual,,0,0,0,,还是被这个红的 run 拒绝了？\N{\fs33\c&H00C8C0B8&\bord1.4}or did the red run refuse it?
+Dialogue: 0,0:11:51.72,0:11:55.85,Bilingual,,0,0,0,,在，它在 main 上：push 在任何 job 开始之前就落地了\N{\fs33\c&H00C8C0B8&\bord1.4}Yes, it's on main: the push landed before any job started,
+Dialogue: 0,0:11:55.85,0:11:57.84,Bilingual,,0,0,0,,一个红的 run 撤销不了它\N{\fs33\c&H00C8C0B8&\bord1.4}and a red run can't undo it.
+Dialogue: 0,0:11:58.16,0:11:59.73,Bilingual,,0,0,0,,Build：绿\N{\fs33\c&H00C8C0B8&\bord1.4}Build: green.
+Dialogue: 0,0:11:59.78,0:12:01.87,Bilingual,,0,0,0,,Lint and Format Check：红\N{\fs33\c&H00C8C0B8&\bord1.4}Lint and Format Check: red.
+Dialogue: 0,0:12:02.19,0:12:04.94,Bilingual,,0,0,0,,三个测试和 Test Summary：绿\N{\fs33\c&H00C8C0B8&\bord1.4}The three tests and Test Summary: green.
+Dialogue: 0,0:12:05.26,0:12:06.78,Bilingual,,0,0,0,,整个 run：红\N{\fs33\c&H00C8C0B8&\bord1.4}The run: red.
+Dialogue: 0,0:12:06.83,0:12:11.29,Bilingual,,0,0,0,,你 commit 旁边的那些对勾和叉，就是课上说的通知\N{\fs33\c&H00C8C0B8&\bord1.4}Those checks and crosses next to your commit are the lecture's notifications.
+Dialogue: 0,0:12:11.61,0:12:16.28,Bilingual,,0,0,0,,而第二个证人 act 也同意：五个 job 成功，一个失败\N{\fs33\c&H00C8C0B8&\bord1.4}And act, the second witness, agrees: five jobs succeeded, one failed.
+Dialogue: 0,0:12:16.53,0:12:19.73,Bilingual,,0,0,0,,提一句：README 的截图是全绿的\N{\fs33\c&H00C8C0B8&\bord1.4}A kind note: the README's screenshot is all green.
+Dialogue: 0,0:12:20.05,0:12:22.34,Bilingual,,0,0,0,,它拍的是早先版本的代码\N{\fs33\c&H00C8C0B8&\bord1.4}It shows an earlier version of the code.
+Dialogue: 0,0:12:22.66,0:12:25.98,Bilingual,,0,0,0,,你的第一个 run 是红的，在第二部分里，你会把它变绿\N{\fs33\c&H00C8C0B8&\bord1.4}Your first run is red, and in part 2 you turn it green.
+Dialogue: 0,0:12:26.23,0:12:28.76,Bilingual,,0,0,0,,开头那个谜题，就出现在你自己的 push 上\N{\fs33\c&H00C8C0B8&\bord1.4}And here is the hook, on your own push:
+Dialogue: 0,0:12:28.76,0:12:31.03,Bilingual,,0,0,0,,这六台机器里有两台意见不一\N{\fs33\c&H00C8C0B8&\bord1.4}two of these six machines disagree.
+Dialogue: 0,0:12:31.35,0:12:34.85,Bilingual,,0,0,0,,在第二部分，我们会打开每一份日志，一次一个 job\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2 we open every log, one job at a time.

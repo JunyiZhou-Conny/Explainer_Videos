@@ -27,10 +27,10 @@ Slide 21 draws it as a loop. Developers commit to the codebase; the codebase is 
 The course's pipeline has five stages. A commit triggers it, the container is built, Black and Flake8 check the code, the tests run, and a summary reports pass or fail.
 Now the README, Part 5: GitHub Actions, remote CI. It says all CI tests run inside Docker containers using Python 3.11, the same as production. This repo has no production yet: take it as the same image you would deploy.
 This one isn't in the README, it's extra: list the workflows folder. One file, C I dot yaml, in dot github, workflows, at the root of the repository. GitHub looks only there; a workflow in a subfolder never runs.
-Open it. The file gives the workflow a name, CI Pipeline. The key named on lists the events that start it. Under jobs, each job gets its own machine: runs on, ubuntu latest.
+Open it. The file gives the workflow a name, CI Pipeline. Next comes the key called on, just the word on. It lists the events that start the workflow. Under jobs, each job gets its own machine, called a runner: runs on, ubuntu latest.
 Inside a job, steps run in order. A step is either a shell script, under run, or a reusable action, under uses, like actions checkout, which copies your repository onto the machine. Event, workflow, jobs, steps: that is the whole grammar.
 
-## 05:17 — When does the pipeline wake up?
+## 05:21 — When does the pipeline wake up?
 When does the pipeline wake up? The slide says on every push or pull request. The file is more precise: pushes to main or develop, and pull requests into main or develop.
 Push to main, and a runner wakes up. Push to develop, the same. Push to a feature branch, and nothing happens: on any other branch, the pipeline waits for your pull request. A small note: the comment at the top of the file says main only; the triggers say main and develop.
 Quick test. You push three commits to feature login. How many runs start? Then you open a pull request into main. How many now?
@@ -39,7 +39,7 @@ And it doesn't test your branch tip. GitHub makes a temporary merge of your bran
 The lecture warns that integrating often costs compute. This file answers with a branch filter, one build shared by every job, and an image kept one day. On private repositories every run counts against your plan; public ones run free.
 And timing matters: the run starts after GitHub has accepted your push. It's the bell, not the gate: a red run doesn't undo the push.
 
-## 06:53 — Six jobs, one graph
+## 06:57 — Six jobs, one graph
 Next, the README: 6 jobs that run in parallel, except for dependencies. Each has an ID and a name: Build Docker Image, Lint and Format Check, Unit Tests, Integration Tests, System Tests, and Test Summary.
 Remember the names: GitHub shows them, not the IDs, and we'll need them to protect main.
 Start from the lecture's row of five. Commit drops out first: it's the event, not a job. Build Container stays on the left: it's the build job.
@@ -49,7 +49,7 @@ An extra check, not in the README: a tool called act, which you don't need, take
 Then the key concepts. Artifact sharing and unique image tags come with the build job; parallel execution, you just saw; conditional execution and network modes come with the system tests.
 The README's screenshot gives the times: about 2 minutes on the clock, with four jobs side by side. On a private repository, each job is billed and rounded up separately: about 6 billed minutes.
 
-## 08:36 — Push to a repo of your own
+## 08:40 — Push to a repo of your own
 Time to push. Start from a fresh clone, not your lecture 9 folder: that one has the Black fix committed, and your first run would come out green. Clone, change into the folder, and git status says the tree is clean.
 Your prompt shows your own user. Two extra checks first: the pinned commit is still the head of main on the course's repository, and the last two commits are both called demo class 1. The second undid a bug planted in class; we'll run it later.
 Now the README block, Push to GitHub. Git add dot: no output. Then git commit, dash m, Add CI pipeline. And Git answers: nothing to commit, working tree clean.
@@ -58,9 +58,9 @@ Before the README's git push, an extra check: git remote, dash v. Origin is stil
 So point origin at a repository you own. Either fork the course's repository and enable workflows on its Actions tab, or create a new empty repository. Either way, run git remote set-url origin, with your own address. Pause and set yours up.
 This recording machine can't push to GitHub, so an empty repository on the same machine stands in for yours. From now on we just say your repository.
 Now the README's git push. New branch, main to main. This push is the event, and run 1 starts now. Pause and push yours.
-On a fork, that commit is already on GitHub, so git push says everything up to date and starts nothing. Your first run then comes with the fix in part 2.
+On a fork, that commit is already on GitHub, so git push says everything up to date and starts nothing. To get run 1 anyway, push an empty commit: git commit, allow empty, dash m, Trigger CI, then git push. Or wait, and your first run then comes with the fix in part 2.
 
-## 10:28 — Watch the run: six colours
+## 10:46 — Watch the run: six colours
 Watch GitHub Actions: go to your repository, and click the Actions tab. Your run is listed under the commit message, with a yellow dot: in progress. A green checkmark means success; a red X means failure. Pause and open yours.
 Click it, and GitHub draws the run as the graph you just built: build first, four jobs side by side, the summary last.
 A word on how we show it. We ran every job of this file right here, each on a brand-new machine with an empty Docker, as GitHub does. And a tool called act ran the whole file a second way, with the same verdict.
@@ -71,7 +71,7 @@ Those checks and crosses next to your commit are the lecture's notifications. An
 A kind note: the README's screenshot is all green. It shows an earlier version of the code. Your first run is red, and in part 2 you turn it green.
 And here is the hook, on your own push: two of these six machines disagree. In part 2 we open every log, one job at a time.
 
-## 12:17 — Build once; every job starts empty
+## 12:36 — Build once; every job starts empty
 Part 2, job by job. First, build container: the lecture builds it first, so every check runs in the same environment, and build problems show up early.
 The lecture speaks of one remote CI server. GitHub gives you a new one for every job: runs on, ubuntu latest, six times in this file. Each job starts on an empty machine.
 The README's build job builds the image once, tagged with the commit ID. It saves it as a tar file and uploads it as an artifact, so every other job gets the exact same image.
@@ -83,7 +83,7 @@ So every check job downloads the artifact and runs docker load, dash i, on the t
 Your turn to predict. Delete the load docker image step from the unit tests job. Which step fails, and with what error?
 The run unit tests step. Docker looks for the image on the machine and finds nothing, then asks Docker Hub, where no such image exists: pull access denied. Exit code 125: the step fails, so the job fails.
 
-## 14:31 — Gates speak in exit codes
+## 14:49 — Gates speak in exit codes
 Next, lint and format. The lecture's coding standards are Black here, and its static code analysis is Flake8. Remember lecture 9: a formatter rewrites your code; a linter only reports.
 Both run inside the image, on the api folder, at 120 columns. The Black step says continue on error, false: it blocks. The Flake8 step says true: it's advisory, a warning that never fails the job.
 How does a step fail? Every command ends with an exit code. Zero opens the gate. Anything else shuts it, and the red climbs from the step to the job to the whole run.
@@ -93,7 +93,7 @@ The cause is the mess you met in lecture 9, still in the repository on purpose: 
 What would the skipped Flake8 have said? An extra run shows two warnings on those same lines. But even then it's advisory: only Black decides the job.
 So that's the whole rule: a step fails when its command exits with anything but zero. It's the only thing CI listens to.
 
-## 15:58 — Three test jobs, three altitudes
+## 16:17 — Three test jobs, three altitudes
 Now the tests. The lecture's one test box is three jobs here, side by side, each at a different altitude.
 Unit tests check one function at a time, with no outside dependencies. The log collects 11 tests, and 11 pass.
 Then the coverage step runs them again, and all 11 pass again. But pytest hits an internal error: permission denied, writing into the coverage folder. Exit code 3.
@@ -106,19 +106,19 @@ A second container runs the tests with network host: it shares the runner's netw
 Two steps marked if always come last, even after a failure: show the server log, where every test request arrives, then stop and remove the container. That's the README's conditional execution.
 In lecture 9, a missing server made these tests skip quietly. Here the curl gate makes it fail loudly instead.
 
-## 18:02 — The summary listens only to tests
+## 18:21 — The summary listens only to tests
 Last job: the summary, which the lecture says collects the results and reports pass or fail. Its needs line names the three test jobs. And if always lets it run even when one of them failed: it runs, which isn't the same as passing.
 Its script prints each job's result, writes a status to GitHub output for later steps, and exits with 1 if any result isn't success.
 In run 1, three success tokens arrive: unit, integration, system. All tests passed.
 And here is the hook, answered. Lint isn't in needs, so its failure never reaches the summary. The run is still red, because any failed job turns the whole run red.
 The README says the summary checks the results of all test jobs, and that's literally true: lint isn't a test job. Add lint and format to needs and to the check if you want it counted.
-Now the bug from class. In the demo commit, the distance function takes the square root of 2 times z, instead of z.
+Now the bug from class. In the demo commit, the distance function takes the square root of 2 times z, instead of z. We ran this one for you: just watch.
 Predict before the run. Which jobs turn red now, and what does Test Summary say?
 Integration: red, 1 failed and 9 passed. The distance for 3 and 4 came back as about 7, not 5.
 System: red, 2 failed and 3 passed: 3 and 4 again, and the default point, 1 and 2, which came back too large as well. Unit: green, because only the power function has unit tests. Lint: red anyway, for utils dot py.
 And the summary now says some tests failed, and exits with 1. This time the summary heard it.
 
-## 19:48 — Fix, push, green: one turn of the loop
+## 20:09 — Fix, push, green: one turn of the loop
 Back to run 1 and the lecture's loop. The notification came back red, so now the developer fixes the code and commits again, and the loop goes around once more.
 The fix is the tool from lecture 9, Part 4 of the same README, so these steps are extras here. Pip install pre-commit, then pre-commit install, which puts the hook into dot git, hooks.
 Then pre-commit run, all files. The hygiene checks pass; Black fails, because it modified a file: reformatted utils dot py. Flake8 then passes. Pause and run it.
@@ -128,21 +128,21 @@ Now git add dot, and git commit with a message: Format utils dot py with Black. 
 Run 2: all six green. In the lint job, Black is happy, and this time Flake8 runs too, and passes. On a fork, this is your first run, and it's green.
 Now your run matches the README's screenshot. One turn of the loop: a red notification, a fix, a commit, and a green run.
 
-## 21:08 — The local conundrum: --no-verify
+## 21:29 — The local conundrum: --no-verify
 The lecture calls this one the local conundrum. If the hooks already ran on your laptop, why run the same checks again on a server?
 These steps are extras, and you can just watch. A quick edit squeezes the spaces out of one line in service dot py, and git diff shows it.
 Git add dot, then git commit, dash m, quick fix. The Black hook fails and reformats the file, so the hook stopped the commit.
-Git status, short, shows M twice. Black fixed your working copy, but the staged copy is still the messy one.
+Git status, short, shows the letter M, for modified, twice. Black fixed your working copy, but the staged copy is still the messy one.
 Now the lecture's command: git commit, no verify, dash m, quick fix. No hook ran, and the commit exists: no verify skips every pre-commit check.
-Push it. Run 3: lint and format, red, on service dot py. The tests and the summary all pass.
+We push it. Run 3: lint and format, red, on service dot py. The tests and the summary all pass.
 The skipped Flake8 would have flagged that line three times. CI caught what no verify let through: slide 31, at your terminal.
-Clean up the experiment: git restore puts the file back. If you pushed it too, your main is now red: run pre-commit run, all files, then add, commit and push, before part 6.
+Clean up the experiment. Here, git restore only throws away Black's fix in the working copy. If you followed along, the messy commit is on your main now, pushed or not. Not pushed yet? Git reset, hard, head tilde 1, drops it. Pushed? Run pre-commit run, all files, then add, commit and push, before part 6.
 But CI repeats only Black and Flake8, and only on the api folder. The seven hygiene hooks never run in CI: trailing whitespace, end of file, YAML, large files, JSON, merge markers, and private keys.
 One more gap: the hooks pin an older Black than the image installs. At the time of recording they agreed, but they can drift apart.
 A teammate commits a private key file with no verify and pushes to main. Which job of this pipeline catches it?
 None. Detect private key is a local hook only. The fix is one CI step, pre-commit run, all files: the very step that fails on the lecture's imagined Slack message. And rotate that key; it's already on GitHub.
 
-## 23:17 — Webhooks, secrets and the Slack bell
+## 23:50 — Webhooks, secrets and the Slack bell
 That imagined message brings us back to the lecture's webhooks. A webhook is GitHub calling an outside address when something happens: to start an outside CI system such as Jenkins, to deploy, or to post to a chat.
 This part is optional: it needs your own Slack workspace. And this webhook works the other way round. Slack gives you an incoming webhook, an address, and the last steps of the test summary job call it. GitHub doesn't ring this bell; your workflow does.
 The lecture imagines a Slack channel told about every push, failures included, with the failed step, counts and duration. This workflow sends less: passed or failed, the repository, branch, commit and author, one mark per test job, and two links.
@@ -152,7 +152,7 @@ In run 1 there's no secret, so enabled is false, and the Slack step is skipped, 
 Now the demo run. Check test results fails. The check step has no if always, so it's skipped too, enabled stays empty, and the Slack step's condition is false.
 As written, the bell only rings for good news. The fix is one line: if always, on the check step. The exercises have a hardened version.
 
-## 25:07 — Branch protection: from report to gate
+## 25:40 — Branch protection: from report to gate
 Part 6 of the README is optional, and it's the lecture's gate. A push-triggered run is the post-receive bell. On GitHub dot com, the gate that refuses is branch protection, with required status checks.
 Go to Settings, Branches, and add a rule for main. Tick the boxes Require a pull request before merging, and Require status checks to pass. Today's page may call it a classic rule, or offer rulesets instead.
 Then pick the checks. A small slip: the picker lists jobs by their names, like Lint and Format Check and Unit Tests, not the README's IDs. They appear only after a recent run. On a private repository this needs a paid plan.
@@ -161,7 +161,7 @@ The README breaks the tests by appending def broken, assert False. An extra run 
 So name it test broken instead, an extra fix. Now 1 failed and 11 passed. That's the one that turns the pull request red, and with protection on, the merge button stays locked.
 Then git add dot, git commit, dash m, Intentionally break tests, and git push origin feature, test protection. Open the pull request on GitHub: the merge stays locked until the tests pass. Pause and try it on yours. Here, git checkout puts the test file back.
 
-## 26:44 — Non-determinism, CD next, and recap
+## 27:18 — Non-determinism, CD next, and recap
 The twist the lecture promised: non-determinism enters every stage when the code trains a model. Its answers: version everything; automate retraining and testing, which Milestone 5 asks for; monitor; and roll out with care.
 Continuous deployment, the lecture's last section, automates the release: that's lecture 23.
 Clean up: switch to main, and delete the test protection branch here and on GitHub; that closes its pull request. Remove the branch rule, and the Slack secret and webhook, if you made them. Disable the workflow on a private repository, and run the Docker cleanup from lecture 9.
