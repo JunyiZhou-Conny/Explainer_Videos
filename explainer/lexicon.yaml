@@ -468,3 +468,8 @@ heredoc: {ipa: "hˈɪɹ dˌɑːk", say: "here doc"}
 Formaggio: {ipa: "fɔːɹmˈɑːdʒoʊ", say: "for-MAH-joh"}
 db cli: {ipa: "dˌiːbˈiː sˌiːˌɛlˈaɪ", say: "D B C L I"}
 inventory dot yml: {ipa: "ˈɪnvəntˌɔːɹi dˈɑːt jˈæməl", say: "inventory dot yammel"}
+# AC215 L21 (spoken review of videos/ac215-l21-cicd-github-actions). Only lower-case buildx existed,
+# so "Buildx" was read "bildks"; "under uses" names the YAML key (verb, "yoo-ziz", not the noun).
+# Both occur in no other video's SAY (grep -w videos/*/script.md, 2026-11-06).
+Buildx: {ipa: "bˈɪld ˈɛks", say: "build-ex"}
+under uses: {ipa: "ˌʌndɚ jˈuːzᵻz", say: "under yoo-ziz"}
