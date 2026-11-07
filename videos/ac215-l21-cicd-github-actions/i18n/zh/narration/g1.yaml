@@ -77,7 +77,7 @@ S02:
   - "名叫 update 的 hook 也一样，只是一次一个分支。"
 - en: "A post-receive hook runs after the code is in, for integration tests, notifications and clean-up. It can report, but it can no longer say no."
   zh:
-  - "一个 post-receive hook 在代码进来之后运行，用来跑集成测试、发通知和做清理。"
+  - "一个 post-receive hook 在代码进来之后运行，用来跑集成测试、发通知和清理。"
   - "它能报告，但已经没法说不了。"
 - en: "One honest note: GitHub dot com doesn't run your own pre-receive scripts. It gives you two pieces instead: Actions, which runs after the push, and branch protection, which can say no."
   zh:
@@ -121,7 +121,7 @@ S03:
 - en: "Now the README, Part 5: GitHub Actions, remote CI. It says all CI tests run inside Docker containers using Python 3.11, the same as production. This repo has no production yet: take it as the same image you would deploy."
   zh:
   - "现在看 README 的 Part 5：GitHub Actions，Remote CI。"
-  - "它说所有 CI 测试都在用 Python 3.11 的 Docker container 里运行，和生产环境一样。"
+  - "它说所有 CI 测试都在 Docker container 里跑，用 Python 3.11，和生产环境一样。"
   - "这个 repo 还没有生产环境：就把它理解成你要部署的那个 image。"
 - en: "This one isn't in the README, it's extra: list the workflows folder. One file, C I dot yaml, in dot github, workflows, at the root of the repository. GitHub looks only there; a workflow in a subfolder never runs."
   zh:
@@ -146,7 +146,7 @@ S03:
 - en: "Inside a job, steps run in order. A step is either a shell script, under run, or a reusable action, under uses, like actions checkout, which copies your repository onto the machine. Event, workflow, jobs, steps: that is the whole grammar."
   zh:
   - "在一个 job 里，步骤按顺序运行。"
-  - "一个步骤要么是 shell 脚本，写在 run 下面；要么是可复用的 action，写在 uses 下面，比如 actions/checkout，它把你的 repo 拷到这台机器上。"
+  - "步骤要么是 shell 脚本，在 run 下面；要么是可复用的 action，在 uses 下面，比如 actions/checkout，它把你的 repo 拷到机器上。"
   - "事件、工作流、job、步骤：这就是全部的语法。"
   en_display:
   - null
@@ -291,7 +291,7 @@ S06:
   - null
 - en: "On a fork, that commit is already on GitHub, so git push says everything up to date and starts nothing. Your first run then comes with the fix in part 2."
   zh:
-  - "在 fork 上，那个 commit 已经在 GitHub 上了，所以 git push 显示 Everything up-to-date，什么也不会启动。"
+  - "在 fork 上，这个 commit 已经在 GitHub 上，所以 git push 显示 Everything up-to-date，什么也不启动。"
   - "那你的第一个 run 要等到第二部分的修复才来。"
   en_display:
   - "On a fork, that commit is already on GitHub, so git push says Everything up-to-date and starts nothing."
@@ -313,7 +313,7 @@ S07:
   - "还有一个叫 act 的工具，用第二种方式跑了整个文件，结论相同。"
 - en: "So the GitHub pages you see are drawings built from the workflow file, marked illustration. Every log line in them is real."
   zh:
-  - "所以你看到的 GitHub 页面，是根据工作流文件画的示意图，标着 illustration。"
+  - "所以你看到的 GitHub 页面，是按工作流文件画的示意图，标着 illustration。"
   - "里面每一行日志都是真的。"
 - en: "A question, before the colors come in. You already know this run turns red. Is your push on main in your repository now, or did the red run refuse it?"
   zh:
