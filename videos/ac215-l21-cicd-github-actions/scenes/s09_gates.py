@@ -16,7 +16,7 @@ Beats (script.md "## S09", one voiceover block each):
    badge; the gates below grey out, dashed.
 3. The demo's codes go and the column morphs into run 1's lint job (Checkout, Download, Load,
    Black, Flake8), moved left; Checkout, Download, Load hold up `0`. LOG(run1/lint-and-format/04: 4, 6, 7) right (blank line
-   5 dropped; line 7 soft-wrapped): line 4 RED, `Oh no! 💥 💔 💥` drawn emoji-safe; badge "exit 1". The
+   5 dropped; line 7 soft-wrapped): line 4 RED, `Oh no! 💥 💔 💥` with the emoji drawn (star burst, broken heart); badge "exit 1". The
    Black gate holds up `1` and shuts.
 4. The log gives way to STEPS(run1/lint-and-format: 2–7) (illustration): Black ✗ lights, the red
    climbs on V6 (job, run); Flake8 ⊘ lights and V6's Flake8 gate greys out, dashed. On "unless they
@@ -134,6 +134,47 @@ def span(panel, n: int, sub: str):
     raise ValueError(f"{sub!r} not in line {n}")
 
 
+def burst(h: float) -> VGroup:
+    """💥 as a small ORANGE star burst with a YELLOW core, about one emoji tall."""
+    outer = Star(n=8, outer_radius=h * 0.55, inner_radius=h * 0.26, stroke_width=0) \
+        .set_fill(S.ORANGE, 1)
+    core = Star(n=8, outer_radius=h * 0.3, inner_radius=h * 0.15, stroke_width=0) \
+        .set_fill(S.YELLOW, 1).rotate(PI / 8)
+    return VGroup(outer, core)
+
+
+def broken_heart(h: float) -> VGroup:
+    """💔 as a RED heart with a dark zigzag crack down its middle."""
+    def pt(t):
+        x = 16 * np.sin(t) ** 3
+        y = 13 * np.cos(t) - 5 * np.cos(2 * t) - 2 * np.cos(3 * t) - np.cos(4 * t)
+        return np.array([x, y, 0]) / 32
+    heart = ParametricFunction(pt, t_range=[0, TAU], stroke_width=0).set_fill(ERR, 1)
+    heart.scale_to_fit_height(h * 0.95)
+    top, bot = heart.get_top()[1] - h * 0.18, heart.get_bottom()[1] + h * 0.05
+    cx, dx = heart.get_center()[0], h * 0.1
+    ys = np.linspace(top, bot, 5)
+    crack = VMobject(stroke_color=TERM_BG, stroke_width=3).set_points_as_corners(
+        [[cx + (dx if k % 2 else -dx * 0.4), y, 0] for k, y in enumerate(ys)])
+    return VGroup(heart, crack)
+
+
+def draw_emoji(row, chars: str):
+    """Swap emo_line's GREY placeholder boxes in `row` (in the order of `chars`) for drawn glyphs, so
+    'Oh no! 💥 💔 💥' does not read as missing-font tofu. Shared fix requested in common.emo_line."""
+    assert len(row.emoji) == len(chars), (len(row.emoji), chars)
+    new = VGroup()
+    for box_, ch in zip(list(row.emoji), chars):
+        h = box_.height * 1.05
+        g = burst(h) if ch == "💥" else broken_heart(h)
+        g.move_to(box_)
+        row.remove(box_)
+        row.add(g)
+        new.add(g)
+    row.emoji = new
+    return row
+
+
 class ExitCodes(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S09"] == 8, len(SAY)
@@ -247,6 +288,7 @@ class ExitCodes(VoiceScene):
         zl = GATES_LEFT + ExitGates(GATE_NAMES).width + 0.25          # the right-hand zone: [zl, RIGHT_X]
         zw = RIGHT_X - zl - 0.01
         log = run_log(L04, (4, 6, 7), colors={4: ERR}, wrap=True, max_w=zw)
+        draw_emoji(log.row(6), "💥💔💥")
         demo = eg
         eg = ExitGates(GATE_NAMES).move_to([0, -0.65, 0])
         eg.shift(RIGHT * (GATES_LEFT - eg.get_left()[0]))

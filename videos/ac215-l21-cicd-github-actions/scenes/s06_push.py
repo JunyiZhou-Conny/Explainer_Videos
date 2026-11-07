@@ -7,10 +7,12 @@ Beats (script.md "## S06", one voiceover block each):
    the Black fix committed"; on "would come out green" a GREEN dashed chip "your L09 folder: first
    run green" beside it. `git clone https://github.com/dlops-io/cheese-app-ci-cd.git` (extra,
    folds) → laptop/02:2; `cd cheese-app-ci-cd` (no output) → the prompt changes, its path flashes
-   YELLOW; `git status` (extra) → laptop/14:2–5, line 5 GREEN.
+   YELLOW; `git status` (extra) → laptop/14:2–5, line 5 GREEN. `▶ your turn` on the clone's first row,
+   held ~2 s (the viewer's first command).
 1. GREY chip "your prompt shows your own user" over the terminal, the user@host of the prompt
    flashes. `git ls-remote …` (extra, folds) → laptop/01:3 crop7, GREEN; `git log -3 --format='%h %ci
-   %s'` (extra) → laptop/03:2–4, lines 2–3 YELLOW; GREY chip "→ part 2" beside line 3 (c3b227f).
+   %s'` (extra) → laptop/03:2–4, lines 2–3 YELLOW; GREY chips "undid it" beside line 2 (b8458ff) and "planted it · → part 2" beside
+   line 3 (c3b227f planted math.sqrt(2 * z), b8458ff reverted it: digest.md:781).
 2. TRACKER P5 4. The terminal clears to 6 rows; README(344–348) card top right ("Push to GitHub"
    and its three commands; each row flashes as typed). `git add .` → the prompt returns. TRACKER P5
    5. `git commit -m "Add CI pipeline"` → laptop/11:2–5, line 5 RED, an "exit 1" badge beside it.
@@ -27,7 +29,8 @@ Beats (script.md "## S06", one voiceover block each):
    "new empty repo" (chips "empty: no README · no license · no .gitignore", "HTTPS + token? it needs
    the workflow scope"). Under both, a GREY code card `git remote set-url origin \\ <YOUR_REPO_URL>`
    (tag "shown, not run"), `<you>` YELLOW on "your own address"; YELLOW `▶ your turn` beside it and
-   the GREY chip "asked to sign in? a personal access token or gh auth login · never your password".
+   the GREY chip "asked to sign in? a personal access token or gh auth login · never your password",
+   held ~4.5 s after the narration (it is not spoken).
 6. The two BLUE boxes merge into one BLUE "your repository" box, top right; the rest leaves. The
    terminal returns (7 rows, ~/cheese-app-ci-cd): `git init --bare -b main …` (extra, folds) →
    laptop/20:2 wrap; `git remote set-url origin /home/student/…` (extra, folds) → no output. GREY
@@ -199,6 +202,12 @@ class PushIt(VoiceScene):
             rows = out(self, t, [C14.line(2), C14.line(3), (C14.line(5), PASS)], run_time=0.5)
             vo.wait_until("says the tree is clean")
             self.play(Indicate(rows[-1], color=PASS, scale_factor=1.04), run_time=0.7)
+            # the clone is the viewer's first command: mark it and hold it before it scrolls away
+            head_row = ln.rows[0] if hasattr(ln, "rows") else ln      # 'git clone \\' (folded): room there
+            cl_turn = beside(turn_row(), head_row, buff=0.4)
+            pin(self, head_row, cl_turn)
+            flash_tag(self, cl_turn)
+            self.wait(1.8)
 
         # ========================================================== 1. two extra checks
         own = grey_chip("your prompt shows your own user").next_to(t.box, UP, buff=0.25).align_to(t.box, LEFT)
@@ -222,12 +231,16 @@ class PushIt(VoiceScene):
             self.play(Indicate(VGroup(substring(logs[0], "demo class 1"), substring(logs[1], "demo class 1")),
                                color=TURN, scale_factor=1.08), run_time=0.6)
             vo.wait_until("The second undid a bug")
+            # newest first: b8458ff (row 0) undid the bug that c3b227f (row 1) planted (digest.md:781)
+            undid = beside(row_tag("undid it"), logs[0], buff=0.4)
+            planted = beside(row_tag("planted it · → part 2"), logs[1], buff=0.4)
+            assert planted.get_right()[0] <= t.box.get_right()[0] - 0.12, planted.get_right()
             self.play(Circumscribe(logs[0], color=TURN, buff=0.06), run_time=0.8)
-            later = beside(row_tag("→ part 2"), logs[1], buff=0.4)
-            pin(self, logs[1], later, anim=FadeIn(later, shift=LEFT * 0.1))
+            pin(self, logs[0], undid, anim=FadeIn(undid, shift=LEFT * 0.1))
+            pin(self, logs[1], planted, anim=FadeIn(planted, shift=LEFT * 0.1))
             self.play(Indicate(substring(logs[1], C03.line(3)[:7]), color=TURN, scale_factor=1.1), run_time=0.6)
             vo.wait_until("we'll run it later")
-            flash_tag(self, later)
+            flash_tag(self, planted)
 
         # ========================================================== 2. the README's block
         card = readme_panel(344, 348)
@@ -364,6 +377,9 @@ class PushIt(VoiceScene):
             vo.wait_until("Pause and set yours up")
             self.play(FadeIn(turn, shift=LEFT * 0.1), FadeIn(sign, shift=UP * 0.15), run_time=0.5)
             flash_tag(self, turn)
+            self.wait(1.2)
+            self.play(Indicate(sign.text, color=INK, scale_factor=1.04), run_time=0.8)   # unspoken advice: hold it
+            self.wait(1.5)
 
         # ========================================================== 6. the stand-in
         yours = repo_box("your repository", None, GITHUB, mono_top=False).move_to([4.3, 1.75, 0])

@@ -422,8 +422,8 @@ class BuildOnce(VoiceScene):
         bash = grey_chip("needs only bash", size=20)
         share = grey_chip("Artifact Sharing", size=22)
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(x1), FadeIn(c49), run_time=0.5)
-            self.remove(x1, *x1.get_family())
+            self.play(FadeOut(x1), FadeOut(xt), FadeIn(c49), run_time=0.5)
+            self.remove(x1, *x1.get_family(), xt, *xt.get_family())
             vo.wait_until("downloads the artifact")
             pk = span_bar(c49.code, 0, 4, ROUTE, 0.25)
             self.play(FadeIn(pk), run_time=0.3)
@@ -441,8 +441,8 @@ class BuildOnce(VoiceScene):
             vo.wait_until("That's artifact sharing")
             # zoom out in two clean steps: the log leaves, then the big room shrinks back into its
             # place (frame, shelf and cube each become the small one) while the other rooms return
-            self.play(FadeOut(VGroup(lf03, big_t, xt)), run_time=0.35)
-            self.remove(lf03, *lf03.get_family(), big_t, xt)
+            self.play(FadeOut(VGroup(lf03, big_t)), run_time=0.35)
+            self.remove(lf03, *lf03.get_family(), big_t)
             lc = cube_glyph(0.3).next_to(lint.shelf.board, UP, buff=0.03)
             g_frame, g_shelf = lint.frame.copy(), lint.shelf.copy()
             self.play(ReplacementTransform(big, g_frame), ReplacementTransform(big_shelf, g_shelf),

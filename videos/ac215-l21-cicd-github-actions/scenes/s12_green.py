@@ -11,7 +11,8 @@ Beats (script.md "## S12", one voiceover block each):
    corner (no text is ever scaled). TRACKER P5 8 · Part 4 · L09 (the caption flashes on "extras").
    An 11-row `laptop` terminal: `pip install pre-commit` → TERM(laptop/30: 2, …, 39 wrap) with
    `pre-commit-4.7.0` YELLOW and "at the time of recording" on the title bar; `pre-commit install`
-   → TERM(laptop/31: 2), `.git/hooks/pre-commit` ringed.
+   → TERM(laptop/31: 2), `.git/hooks/pre-commit` ringed. A GREY tag pinned on pip's `…` row (QA, PEP 668):
+   "externally-managed-environment? use a venv, or pipx install pre-commit" (cleared with the terminal).
 2. The terminal clears: `pre-commit run --all-files` (README.md:262) → TERM(laptop/32: …, 15–22,
    24, 26, 29, 31): the `[INFO]`/`[WARNING]` lines 2–14 as one `…` row with the GREY chip "first
    run: a few minutes (downloads the hook environments)"; the hygiene lines GREEN (19 `Skipped`
@@ -207,6 +208,7 @@ class RedToGreen(VoiceScene):
         assert t.box.get_top()[1] < PIC_TOP2, t.box.get_top()
         icon = corner_copy(loop)
         rec_tag = on_bar(t, time_row())
+        pep668 = row_tag("externally-managed-environment? use a venv, or pipx install pre-commit")
         with self.voiceover(SAY[1]) as vo:
             words = VGroup(loop_texts(loop), fix)
             self.play(FadeOut(ref), FadeOut(words), run_time=0.5)
@@ -224,7 +226,10 @@ class RedToGreen(VoiceScene):
             type_capture(self, t, C30, type_time=0.8)
             rows = out(self, t, [(C30.line(2), OUTPUT), ("…", S.GREY)] + [(s, OUTPUT) for s in soft([C30.line(39)], t.max_chars)])
             ver = next(r for r in rows if "pre-commit-4.7.0" in r.text)
+            beside(pep668, rows[1], buff=0.3)            # the "…" row: where pip's PEP 668 error would print
+            assert pep668.get_right()[0] < t.box.get_right()[0] - 0.1, (pep668.get_right(), t.box.get_right())
             self.play(substring(ver, "pre-commit-4.7.0").animate.set_color(TURN), FadeIn(rec_tag), run_time=0.5)
+            pin(self, rows[1], pep668)
             vo.wait_until("then pre-commit install")
             type_capture(self, t, C31, type_time=0.6)
             (hook_ln,) = out(self, t, [C31.line(2)])

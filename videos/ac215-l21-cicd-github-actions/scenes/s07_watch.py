@@ -5,10 +5,11 @@ Beats (script.md "## S07", one voiceover block each):
 0. TRACKER P5 7. README(353–357) as a five-line card (left; each row flashes as said). Right, the
    schematic Actions tab (BLUE frame, tag `illustration`): tabs with "Actions" YELLOW, one run row
    "demo class 1 · CI Pipeline · main" with a YELLOW dot; a legend row under it (YELLOW "in
-   progress", GREEN ✓ "success", RED ✗ "failure") appears on its phrases. On "Pause and open
-   yours": YELLOW `▶ your turn` beside the Actions tab and two GREY cards at the bottom: "no run?"
+   progress", GREEN ✓ "success", RED ✗ "failure") appears on its phrases; with the yellow dot, two GREY
+   cards at the bottom (up ~10 s): "no run?"
    (ci.yml at the repo root · S03, branch main/develop · S04, fork: enable workflows · S06) and
-   "yellow annotations? deprecation notices, the run still counts".
+   "yellow annotations? deprecation notices, the run still counts". On "Pause and open yours":
+   YELLOW `▶ your turn` beside the Actions tab. Short-label graphs write Lint as "Lint and Format".
 1. A GREY cursor dot clicks the run row. The README card shrinks into the tracker caption, the tab
    and the cards go; GRAPH(run1) at its start state (six GREY nodes, names), `Build Docker Image`
    turns YELLOW (running), then the four middle nodes and the summary pulse on their phrases.
@@ -67,6 +68,8 @@ PONDER_Q = ("This run turns red, as in the opening.\nIs your push on main in you
             "or did the red run refuse it?")
 
 GRAPH_Y = -0.3          # the names graph, centred (12.4 wide)
+# short-label graphs keep the red node's spoken name (S05: "GitHub shows them, not the IDs")
+LINT_TEXT = {"lint-and-format": "Lint and Format"}
 
 
 # ------------------------------------------------------------------ local helpers
@@ -193,7 +196,8 @@ class WatchTheRun(VoiceScene):
         leg = VGroup(legend_item("running", "in progress"), legend_item("success", "success"),
                      legend_item("failure", "failure")).arrange(RIGHT, buff=0.45)
         leg.next_to(ill, DOWN, buff=0.25).align_to(tab, LEFT).shift(RIGHT * 0.25)
-        turn = your_turn().next_to(tab.frame, UP, buff=0.1).align_to(tab.frame, RIGHT)
+        turn = your_turn().next_to(tab.tabs["Actions"], UP, buff=0.12).align_to(tab.tabs["Actions"], RIGHT)
+        # (right of the tab it would leave the frame: the tab row ends ~1.0 from the page edge)
         norun = note_card(["ci.yml not at the repo root · S03", "branch not main / develop · S04",
                            "fork: workflows not enabled · S06"], "no run?")
         notes = note_card(["deprecation notices", "the run still counts"], "yellow annotations?")
@@ -213,6 +217,8 @@ class WatchTheRun(VoiceScene):
             vo.wait_until("with a yellow dot")
             self.play(FadeIn(leg[0], shift=UP * 0.15), Indicate(tab.mark, color=TURN, scale_factor=1.4),
                       run_time=0.7)
+            self.play(LaggedStart(FadeIn(norun, shift=UP * 0.15), FadeIn(notes, shift=UP * 0.15), lag_ratio=0.4),
+                      run_time=0.8)
             vo.wait_until("A green checkmark means success")
             self.play(FadeIn(leg[1], shift=UP * 0.15), Indicate(card.rows[356], color=PASS, scale_factor=1.05),
                       run_time=0.7)
@@ -222,8 +228,6 @@ class WatchTheRun(VoiceScene):
             vo.wait_until("Pause and open yours")
             self.play(FadeIn(turn, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, turn)
-            self.play(LaggedStart(FadeIn(norun, shift=UP * 0.15), FadeIn(notes, shift=UP * 0.15), lag_ratio=0.4),
-                      run_time=0.8)
 
         # ========================================================== 1. click: the graph
         cur = cursor_dot().move_to(tab.row_box.get_right() + LEFT * 0.45)
@@ -249,7 +253,7 @@ class WatchTheRun(VoiceScene):
             self.play(g.pulse("test-summary", GITHUB), run_time=0.7)
 
         # ========================================================== 2. how we show it
-        gs = JobGraph(states={"build": "running"}, labels="short", col_gap=0.6)
+        gs = JobGraph(states={"build": "running"}, labels="short", col_gap=0.3, texts=LINT_TEXT)  # narrow: inset left
         gs.shift(np.array([6.45 - gs.get_right()[0], -0.15 - VGroup(*gs.nodes.values()).get_center()[1], 0]))
         boxes = {}
         cx = {"build": -5.75, "test-summary": -2.05}
@@ -259,7 +263,7 @@ class WatchTheRun(VoiceScene):
             boxes[j] = stand_in_box().move_to([cx[j], 2.25 - 0.68 * 1.5, 0])
         mach = VGroup(*[boxes[j] for j in JOB_IDS])
         mcap = label("each: a fresh machine · empty Docker", 20, GITHUB).next_to(mach, DOWN, buff=0.3)
-        mcap.set_x(mach.get_center()[0])
+        mcap.align_to(np.array([-6.45, 0, 0]), LEFT)      # left edge: its tick stays clear of the graph
         lap = laptop_icon(1.0).move_to([-5.6, -1.35, 0])
         act_c = tool_chip("act").next_to(lap, RIGHT, buff=0.3)
         wit = label("second witness", 20, S.GREY).next_to(act_c, RIGHT, buff=0.25)
@@ -347,8 +351,8 @@ class WatchTheRun(VoiceScene):
             self.play(Circumscribe(g.badge, color=ERR, buff=0.06), run_time=0.6)
 
         # ========================================================== 6. notifications; act agrees
-        gs = run_graph("run1", labels="short", col_gap=0.6)
-        gs.shift(np.array([-6.45 - gs.get_left()[0], 0.35 - VGroup(*gs.nodes.values()).get_center()[1], 0]))
+        gs = run_graph("run1", labels="short", col_gap=0.3, texts=LINT_TEXT)   # narrow and low: the loop's
+        gs.shift(np.array([-6.45 - gs.get_left()[0], -0.6 - VGroup(*gs.nodes.values()).get_center()[1], 0]))  # developer
         lp = mini_loop()
         lp.move_to([0, 0, 0]).align_to(np.array([6.45, 0, 0]), RIGHT).align_to(np.array([0, 2.4, 0]), UP)
         ref = lref("21")
@@ -389,7 +393,7 @@ class WatchTheRun(VoiceScene):
             self.play(Indicate(bad, color=ERR, scale_factor=1.04), run_time=0.7)
 
         # ========================================================== 7. the README's screenshot
-        gs = run_graph("run1", labels="short", col_gap=0.6)
+        gs = run_graph("run1", labels="short", col_gap=0.6, texts=LINT_TEXT)
         gs.shift(np.array([-6.45 - gs.get_left()[0], 0.2 - VGroup(*gs.nodes.values()).get_center()[1], 0]))
         rec = recorded_graph()
         rec.shift(np.array([6.4 - rec.get_right()[0], 0.2 - VGroup(*rec.graph.nodes.values()).get_center()[1], 0]))

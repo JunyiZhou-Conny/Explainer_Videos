@@ -188,11 +188,11 @@ def file_card(title: str, code_line: str, color) -> VGroup:
 
 
 def not_in_ci() -> VGroup:
-    """A GREY dashed 'not in CI' chip sized for a 0.42 table row. .box .text"""
+    """GREY 'not in CI' with a GREY dashed underline (fits a 0.42 table row). .box (the underline) .text"""
     t = label("not in CI", 20, S.GREY)
-    ob = outline_box(t.width + 0.34, 0.32, S.GREY, solid=False, radius=0.16)
-    t.move_to(ob)
-    g = VGroup(ob, t)
+    ob = DashedLine(t.get_corner(DL) + DOWN * 0.07, t.get_corner(DR) + DOWN * 0.07, color=S.GREY,
+                    stroke_width=2, dash_length=0.08)
+    g = VGroup(t, ob)
     g.box, g.text = ob, t
     return g
 
@@ -325,7 +325,8 @@ class NoVerify(VoiceScene):
             vo.wait_until("and the commit exists")
             self.play(Indicate(substring(r_main, "[main 2892b1b] quick fix"), color=INK, scale_factor=1.06),
                       run_time=0.5)
-            resize(self, t, 3, run_time=0.5)
+            nv_rows = list(nv.rows) if hasattr(nv, "rows") else [nv]
+            resize(self, t, 3, keep=[*nv_rows, r_main], run_time=0.5)
             vo.wait_until("no verify skips every pre-commit check")
             self.play(FadeIn(hc4, shift=UP * 0.15), run_time=0.4)
             d4 = hc4.commit(self, color=PASS)

@@ -18,7 +18,8 @@ Beats (script.md "## S11", one voiceover block each):
    the run is red" top right.
 4. The log leaves. README(328) card with the plain GREY note "true · lint is not a test job" (no
    erratum tag). The gap becomes a GREY dashed arrow "after the fix" (tip at Summary); GREY chip
-   "exercises.md: add lint-and-format to needs + the check".
+   "exercises.md: add lint-and-format to needs + the check". On "if you want it counted" Summary turns
+   RED (what it would report with lint in needs) and pulses; it turns back GREEN as beat 5 clears.
 5. The graph shrinks into a text-free graph glyph (top right). CODE(history/c3b227f-service.py
    38–44) at 20 pt: the docstring's `sqrt(x^2 + y^2)` WHITE, underlined; line 44 RED, `2 * z`
    ringed. GREY chip "demo class 1 · 2025-11-13" above, GREY chip "unit tests → utils.py ·
@@ -372,6 +373,11 @@ class TheSummary(VoiceScene):
             vo.wait_until("and to the check")
             self.play(FadeIn(ex_chip, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(ex_chip, color=INK, scale_factor=1.04), run_time=0.6)
+            vo.wait_until("if you want it counted")
+            # with lint in needs (and failed), the summary would report failure: show it on the fixed wiring
+            self.play(g.set_state("test-summary", "failure"), run_time=0.4)
+            self.add(g)
+            self.play(g.pulse("test-summary", ERR), Indicate(fix_arrow, color=ERR, scale_factor=1.0), run_time=0.8)
 
         # ========================================================== 5. the bug from class
         icon = graph_icon(0.9)
@@ -387,8 +393,10 @@ class TheSummary(VoiceScene):
         two = code_span(sp.code, 6, "2 * z")
         with self.voiceover(SAY[5]) as vo:
             rest = VGroup(card4, note4, ex_chip, after, fix_arrow, tip, red_chip)
-            self.play(FadeOut(rest), run_time=0.5)
+            # the fix was hypothetical: run 1's summary goes back to green as its arrow leaves
+            self.play(FadeOut(rest), g.set_state("test-summary", "success"), run_time=0.5)
             self.remove(rest, *rest.get_family())
+            self.add(g)
             self.play(FadeOut(g, target_position=icon.get_center(), scale=0.12),
                       FadeIn(icon, scale=1.6), run_time=0.8)
             self.remove(g, *g.get_family())

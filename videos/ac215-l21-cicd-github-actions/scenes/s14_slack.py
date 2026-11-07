@@ -348,8 +348,14 @@ class SlackBell(VoiceScene):
             b204 = line_bar(p4.code, 10, TURN)
             self.play(FadeIn(b204), Indicate(code_span(p4.code, 10, "steps.slack-check.outputs.enabled"),
                                              color=TURN, scale_factor=1.06), run_time=0.7)
+            vo.wait_until("GitHub doesn't allow secrets there")
+            nosec = err_chip("no secrets in if:")
+            nosec.next_to(p4.code.code_lines[11], RIGHT, buff=0.45).shift(DOWN * 0.12)
+            assert nosec.get_right()[0] < p4.get_right()[0] - 0.15, (nosec.get_right(), p4.get_right())
+            self.play(FadeIn(nosec, shift=LEFT * 0.15),
+                      Indicate(code_span(p4.code, 10, "if:"), color=ERR, scale_factor=1.15), run_time=0.7)
             vo.wait_until("the repository's own history tried it")
-            self.play(FadeOut(VGroup(b197, b198, b200, b204)), run_time=0.3)
+            self.play(FadeOut(VGroup(b197, b198, b200, b204, nosec)), run_time=0.3)
             self.play(ReplacementTransform(p4, p4b), run_time=0.8)
             b19 = line_bar(p4b.code, 10, ERR, opacity=0.22)
             self.play(FadeIn(b19), Indicate(code_span(p4b.code, 10, "secrets.SLACK_WEBHOOK_URL != ''"), color=ERR,

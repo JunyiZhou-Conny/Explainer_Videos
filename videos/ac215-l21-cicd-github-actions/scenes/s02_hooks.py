@@ -99,7 +99,7 @@ class LocalHooks(VoiceScene):
         p2 = code(CFG, 37, 44, font_size=20)
         p2.move_to(p1).align_to(p1, UP)
         rev = code_span(p1.code, 1, "24.1.1")
-        rec = recording_tag().next_to(rev, RIGHT, buff=0.45)
+        rec = time_row().next_to(rev, RIGHT, buff=0.45)
         bars1 = VGroup(line_bar(p1.code, 5), line_bar(p1.code, 6))
         bar43, bar44 = line_bar(p2.code, 6), line_bar(p2.code, 7)
         title_row = pre_c.copy().next_to(hc.title, RIGHT, buff=0.3)
@@ -169,7 +169,8 @@ class LocalHooks(VoiceScene):
         icon.move_to([sd.start[0] - 1.25, sd.start[1], 0])
         laptops = VGroup(hc, mate, d1, d2, door, pre_c, pre_p)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(lr), FadeIn(lr2), FadeTransform(laptops, icon), run_time=0.9)
+            self.play(FadeOut(lr), FadeTransform(laptops, icon), run_time=0.9)
+            self.play(FadeIn(lr2), run_time=0.3)
             self.remove(*laptops)
             vo.wait_until("they run on the server")
             self.play(FadeIn(sd, shift=LEFT * 0.3), run_time=0.7)
@@ -239,7 +240,8 @@ class LocalHooks(VoiceScene):
         hook_ar = route(a, b, arc=-0.7, dashed=True)
         q = label("?", 28, ROUTE).move_to(hook_ar.get_center() + RIGHT * 0.45 + UP * 0.2)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(lr2), FadeIn(lr3), run_time=0.5)
+            self.play(FadeOut(lr2), run_time=0.25)
+            self.play(FadeIn(lr3), run_time=0.3)
             self.play(Circumscribe(sd.server, color=GITHUB, buff=0.05), run_time=0.8)
             vo.wait_until("To tell a chat what happened")
             self.play(FadeIn(chat, shift=LEFT * 0.3), run_time=0.6)
@@ -255,7 +257,8 @@ class LocalHooks(VoiceScene):
         top_in = np.array([sr.landing[0], sr.frame.get_center()[1] + 0.38, 0])      # above Build Container
         top_mid = np.array([sr.title.get_right()[0] + 0.5, top_in[1], 0])          # right of the title
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(sd, chat, hook_ar, q, cap)), FadeOut(lr3), FadeIn(lr4), run_time=0.6)
+            self.play(FadeOut(VGroup(sd, chat, hook_ar, q, cap)), FadeOut(lr3), run_time=0.5)
+            self.play(FadeIn(lr4), run_time=0.3)
             self.remove(sd, chat, hook_ar, q, cap)
             self.play(ReplacementTransform(icon, hc2), run_time=0.9)
             vo.wait_until("On your laptop")

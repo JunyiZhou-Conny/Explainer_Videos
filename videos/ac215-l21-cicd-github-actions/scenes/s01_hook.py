@@ -5,11 +5,11 @@ Beats (script.md "## S01", one voiceover block each):
 0. Black frame. GRAPH(run1) builds with every node GREY (tag 'illustration · colors from our live
    runs'). On "Soon after" the Test Summary node expands (the log grows out of it) into LOG(run1/test-summary/01:
    13–16), title "Test Summary › Check test results", the multi-line heading collapsed into one GREY
-   row "Check test results", tag 'live · stand-in runner'; the graph dims to 20 % behind it.
+   row "Check test results", tag 'live · our fresh machine' (QA: 'stand-in runner' is explained only in S07); the graph dims to 20 % behind it.
    The three `success` words light GREEN one by one, then line 16 `✅ All tests passed!` grows GREEN
    (✅ drawn as a check mark). The log collapses back into its node, which turns GREEN.
 1. A 1-row laptop strip along the bottom (no typing in this scene) prints act's last line
-   ACT(750) `Error: Job 'Lint and Format Check' failed` in RED, GREY tag 'act · same file' on its
+   ACT(750) `Error: Job 'Lint and Format Check' failed` in RED, GREY tag 'act (a local runner) · same file' on its
    bar. "Five machines green": Build and the three tests turn GREEN; "one red": Lint and Format
    Check turns RED; "and the whole run red": the run badge flips RED. Then the GREEN summary and the
    RED badge pulse in turn ("every test passed" / "the pipeline failed").
@@ -97,7 +97,7 @@ class Hook(VoiceScene):
         graph = run_graph(None)
         graph.shift(UP * (GRAPH_Y - graph.get_center()[1]))
         summ = graph.nodes["test-summary"]
-        log = run_log(SUMMARY, lines=((13, 16),)).move_to([0, GRAPH_Y, 0])
+        log = run_log(SUMMARY, lines=((13, 16),), tag_text="live · our fresh machine").move_to([0, GRAPH_Y, 0])
         with self.voiceover(SAY[0]) as vo:
             mid = VGroup(*[graph.nodes[j] for j in MIDDLE])
             self.play(FadeIn(graph.badge, shift=DOWN * 0.15), FadeIn(graph.nodes["build"], shift=RIGHT * 0.2),
@@ -131,7 +131,7 @@ class Hook(VoiceScene):
 
         # ========================================================== 1. act: the same file fails
         strip = term(rows=1)
-        bar_tag = on_bar(strip, row_tag("act · same file"))
+        bar_tag = on_bar(strip, row_tag("act (a local runner) · same file"))
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(strip, shift=UP * 0.3), FadeIn(bar_tag, shift=UP * 0.3), run_time=0.5)
             strip.add(bar_tag)

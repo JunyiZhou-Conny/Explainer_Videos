@@ -386,8 +386,9 @@ class SixJobs(VoiceScene):
             vo.wait_until("each job is billed")
             self.play(LaggedStart(*[Indicate(b, color=COST, scale_factor=1.08) for b in row[0]], lag_ratio=0.12),
                       run_time=1.0)
-            ctag = cost_tag("private repos · public: free · digest §2, not measured here")
+            ctag = cost_tag("private repos · public: free · per GitHub's billing docs, not measured here")
             ctag.next_to(row, DOWN, buff=0.25).align_to(row, LEFT)
+            ctag.shift(LEFT * max(0.0, ctag.get_right()[0] - 6.3))  # longer source note: keep inside x 6.6
             vo.wait_until("about 6 billed minutes")
             self.play(FadeIn(ctag, shift=UP * 0.1), Indicate(row[1], color=COST, scale_factor=1.08), run_time=0.7)
 

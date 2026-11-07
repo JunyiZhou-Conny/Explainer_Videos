@@ -489,7 +489,7 @@ class ProtectMain(VoiceScene):
             self.play(FadeOut(pr_all, shift=DOWN * 0.2), run_time=0.5)
             self.remove(pr_all, *pr_all.get_family())
             t3 = laptop_term(3)
-            self.play(FadeIn(t3, shift=UP * 0.2), run_time=0.4)
+            self.play(FadeIn(t3, shift=UP * 0.2), track(tr, 6, True), run_time=0.4)
             ln = type_capture(self, t3, C58, type_time=1.4)[-1]
             t3_tag = extra_pin(self, t3, ln)
             bare_prompt(self, t3)

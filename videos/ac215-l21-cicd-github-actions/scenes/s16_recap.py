@@ -15,7 +15,7 @@ Beats (script.md "## S16", one voiceover block each):
 2. LECTURE off. The loop goes; a GREY teardown card with four items, each ticking GREEN on its
    phrase (item 1's four rows light one by one: git checkout main · git branch -D … · git push origin
    --delete … (closes the PR) · Settings → Branches: delete the rule; then Slack; private repo: Disable
-   workflow; local: git restore · L09's Docker cleanup (README 568–574) · act's images).
+   workflow; local: L09's Docker cleanup (README 568–574) · act's images).
 3. The card fades; V2 CiLoop one last time, a part per phrase: the PINK Commits arrow ("event"); six
    BLUE rooms flash under Build (1) and Test (5) ("fresh machine"); a TEAL suitcase rides from
    Build's room to Test's ("artifact"); above Test a gate holds a GREEN 0 (opens) then a RED 1
@@ -103,7 +103,7 @@ TEAR = (
      parts_row("Settings → Branches: delete the rule")],
     [parts_row("Slack: delete the secret + the incoming webhook")],
     [parts_row("private repo: Actions → CI Pipeline → ⋯ → Disable workflow")],
-    [parts_row("local:", ("git restore", "m"), "· L09's Docker cleanup (README 568–574) · act's images")],
+    [parts_row("local: L09's Docker cleanup (README 568–574) · act's images")],
 )
 
 
