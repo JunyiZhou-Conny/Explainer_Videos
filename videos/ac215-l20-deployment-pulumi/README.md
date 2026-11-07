@@ -53,10 +53,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l20-deployment-pulumi.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l20-deployment-pulumi.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:09.8 (1869.8 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l20-deployment-pulumi.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l20-deployment-pulumi_part1.mp4` | part 1, DURATION_P1: deploy by hand — Docker Hub, a VM, five containers and nginx (S01–S08). Release asset, not in Git |
-| `output/ac215-l20-deployment-pulumi_part2.mp4` | part 2, DURATION_P2: the same deployment as code — Pulumi, two stacks, one destroy (S09–S16). Release asset, not in Git |
+| `output/ac215-l20-deployment-pulumi_part1.mp4` | part 1, 13:30.1 (810.1 s): deploy by hand — Docker Hub, a VM, five containers and nginx (S01–S08). Release asset, not in Git |
+| `output/ac215-l20-deployment-pulumi_part2.mp4` | part 2, 17:39.8 (1059.8 s): the same deployment as code — Pulumi, two stacks, one destroy (S09–S16). Release asset, not in Git |
 | `output/ac215-l20-deployment-pulumi.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l20-deployment-pulumi.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l20-deployment-pulumi.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -75,7 +75,26 @@ video and the two part cuts) are release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts). Part 1 (13:30) is chapters 00:00–12:19 below; part 2 (17:39) restarts at 00:00 with "Pulumi: desired state, not steps", its chapters at 00:00, 02:16, 03:54, 06:14, 07:42, 09:58, 12:32, 15:24.
+
+```
+00:00 One container stops, the site goes dark
+01:24 From your laptop to one VM
+02:50 Images to Docker Hub
+04:37 A VM with Docker, folders and a network
+06:32 The vector DB and its loader
+08:16 The API and the frontend
+09:44 nginx: one public door
+12:19 Twenty-one commands: repeat, review, undo?
+13:30 Pulumi: desired state, not steps
+15:46 Setup: four APIs, two keys
+17:24 The deployment toolbox, fixed twice
+19:44 SSH keys and OS Login
+21:12 Step 2: images with timestamps
+23:28 Steps 3–4: the VM, its fences, provisioning
+26:02 Steps 5–6: containers over SSH, then test
+28:54 Destroy, recap, and what's next
+```
 
 ## What you'll learn
 
