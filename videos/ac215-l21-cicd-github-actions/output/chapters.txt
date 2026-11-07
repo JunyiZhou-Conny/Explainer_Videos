@@ -1,0 +1,16 @@
+00:00 Red run, green summary
+01:33 Hooks stay on your laptop
+03:24 The CI loop and the workflow file
+05:17 When does the pipeline wake up?
+06:53 Six jobs, one graph
+08:36 Push to a repo of your own
+10:28 Watch the run: six colours
+12:17 Build once; every job starts empty
+14:31 Gates speak in exit codes
+15:58 Three test jobs, three altitudes
+18:02 The summary listens only to tests
+19:48 Fix, push, green: one turn of the loop
+21:08 The local conundrum: --no-verify
+23:17 Webhooks, secrets and the Slack bell
+25:07 Branch protection: from report to gate
+26:44 Non-determinism, CD next, and recap
