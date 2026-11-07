@@ -1,0 +1,31 @@
+$ pulumi stack ls --all; ls ~/.pulumi/stacks/*; ls /app/pulumi-plugins
+NAME                            LAST UPDATE     RESOURCE COUNT
+organization/deploy-images/dev  26 seconds ago  0
+organization/deploy-k8s/dev     now             0
+/root/.pulumi/stacks/deploy-images:
+dev.json
+dev.json.attrs
+dev.json.bak
+dev.json.bak.attrs
+
+/root/.pulumi/stacks/deploy-k8s:
+dev.json
+dev.json.attrs
+dev.json.bak
+dev.json.bak.attrs
+resource-command-v1.1.3
+resource-command-v1.1.3.lastused
+resource-command-v1.1.3.lock
+resource-docker-build-v0.0.15
+resource-docker-build-v0.0.15.lastused
+resource-docker-build-v0.0.15.lock
+resource-docker-v4.9.0
+resource-docker-v4.9.0.lastused
+resource-docker-v4.9.0.lock
+resource-gcp-v9.3.0
+resource-gcp-v9.3.0.lastused
+resource-gcp-v9.3.0.lock
+resource-kubernetes-v4.23.0
+resource-kubernetes-v4.23.0.lastused
+resource-kubernetes-v4.23.0.lock
+[exit 0]

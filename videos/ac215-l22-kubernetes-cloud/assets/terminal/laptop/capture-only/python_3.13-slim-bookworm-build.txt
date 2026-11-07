@@ -1,0 +1,3 @@
+$ docker build -q -t python:3.13-slim-bookworm /tmp/tmp.OPgcmC
+sha256:2bcb8e1e50800e4b77fcbbabcd9bb35408e21c9ecb616ab113b934431afba83e
+[exit 0]

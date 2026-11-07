@@ -1,0 +1,3 @@
+$ kubectl logs job/vector-db-loader -n cheese-app-cluster-namespace --previous
+error: error from server (NotFound): namespaces "cheese-app-cluster-namespace" not found in namespace "cheese-app-cluster-namespace"
+[exit 1]

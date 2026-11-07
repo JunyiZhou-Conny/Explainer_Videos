@@ -1,0 +1,3 @@
+$ docker build -q -t python:3.13-slim-bullseye /tmp/tmp.CAdkLk
+sha256:86046c4d86df45b18da1f9f3ad39fb8b2a1dcac1b0eec8e2f7955151f92aae90
+[exit 0]

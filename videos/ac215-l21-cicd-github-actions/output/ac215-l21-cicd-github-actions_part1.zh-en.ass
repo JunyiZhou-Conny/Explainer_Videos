@@ -143,8 +143,7 @@ Dialogue: 0,0:07:20.87,0:07:24.07,Bilingual,,0,0,0,,Commit 先退出：它是事
 Dialogue: 0,0:07:24.39,0:07:27.76,Bilingual,,0,0,0,,Build Container 留在左边：它就是 build 这个 job\N{\fs33\c&H00C8C0B8&\bord1.4}Build Container stays on the left: it's the build job.
 Dialogue: 0,0:07:28.00,0:07:30.39,Bilingual,,0,0,0,,现在，每一行 needs 画出一条箭头\N{\fs33\c&H00C8C0B8&\bord1.4}Now each needs line draws one arrow.
 Dialogue: 0,0:07:30.71,0:07:32.83,Bilingual,,0,0,0,,先看 lint and format，它需要 build\N{\fs33\c&H00C8C0B8&\bord1.4}Lint and format needs build.
-Dialogue: 0,0:07:32.93,0:07:35.05,Bilingual,,0,0,0,,Unit tests、integration tests\N{\fs33\c&H00C8C0B8&\bord1.4}Unit tests, integration tests and system tests each need build too.
-Dialogue: 0,0:07:35.05,0:07:37.45,Bilingual,,0,0,0,,和 system tests 也各自需要 build\N{\fs33\c&H00C8C0B8&\bord1.4}Unit tests, integration tests and system tests each need build too.
+Dialogue: 0,0:07:32.93,0:07:37.45,Bilingual,,0,0,0,,三个测试 job 也各自需要 build\N{\fs33\c&H00C8C0B8&\bord1.4}Unit tests, integration tests and system tests each need build too.
 Dialogue: 0,0:07:37.77,0:07:42.70,Bilingual,,0,0,0,,所以 build 之后，四个 job 并排运行，各在自己的机器上\N{\fs33\c&H00C8C0B8&\bord1.4}So after the build, four jobs run side by side, each on its own machine.
 Dialogue: 0,0:07:42.93,0:07:45.56,Bilingual,,0,0,0,,Test Summary 需要三个测试 job\N{\fs33\c&H00C8C0B8&\bord1.4}Test summary needs the three test jobs.
 Dialogue: 0,0:07:45.88,0:07:48.84,Bilingual,,0,0,0,,仔细看：lint 这个 job 不在那张列表上\N{\fs33\c&H00C8C0B8&\bord1.4}Look closely: the lint job isn't on that list.
@@ -185,8 +184,8 @@ Dialogue: 0,0:09:36.15,0:09:38.34,Bilingual,,0,0,0,,先做一个额外检查：g
 Dialogue: 0,0:09:38.66,0:09:42.84,Bilingual,,0,0,0,,这里的 origin 还是课程的 repo，你没有写权限\N{\fs33\c&H00C8C0B8&\bord1.4}Origin is still the course's repository, and you can't write to it.
 Dialogue: 0,0:09:43.16,0:09:46.45,Bilingual,,0,0,0,,GitHub 会拒绝从这里发出的 push：permission denied\N{\fs33\c&H00C8C0B8&\bord1.4}GitHub would refuse a push from here: permission denied.
 Dialogue: 0,0:09:46.68,0:09:49.58,Bilingual,,0,0,0,,所以把 origin 指向一个你自己的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}So point origin at a repository you own.
-Dialogue: 0,0:09:49.90,0:09:52.23,Bilingual,,0,0,0,,要么 fork 课程的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}Either fork the course's repository and enable workflows on its Actions tab, or create a new empty repository.
-Dialogue: 0,0:09:52.23,0:09:57.75,Bilingual,,0,0,0,,再到它的 Actions 标签页启用工作流，要么新建一个空 repo\N{\fs33\c&H00C8C0B8&\bord1.4}Either fork the course's repository and enable workflows on its Actions tab, or create a new empty repository.
+Dialogue: 0,0:09:49.90,0:09:55.38,Bilingual,,0,0,0,,要么 fork 课程的 repo 再到它的 Actions 标签页启用工作流\N{\fs33\c&H00C8C0B8&\bord1.4}Either fork the course's repository and enable workflows on its Actions tab,
+Dialogue: 0,0:09:55.38,0:09:57.75,Bilingual,,0,0,0,,要么新建一个空 repo\N{\fs33\c&H00C8C0B8&\bord1.4}or create a new empty repository.
 Dialogue: 0,0:09:58.07,0:09:59.31,Bilingual,,0,0,0,,不管选哪个，都运行\N{\fs33\c&H00C8C0B8&\bord1.4}Either way,
 Dialogue: 0,0:09:59.31,0:10:02.58,Bilingual,,0,0,0,,git remote set-url origin，后面跟你自己的地址\N{\fs33\c&H00C8C0B8&\bord1.4}run git remote set-url origin, with your own address.
 Dialogue: 0,0:10:02.90,0:10:04.50,Bilingual,,0,0,0,,暂停一下，把你的设置好\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and set yours up.

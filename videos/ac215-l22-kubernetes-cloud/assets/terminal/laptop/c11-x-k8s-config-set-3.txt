@@ -1,0 +1,2 @@
+$ pulumi config set security:gcp_ksa_service_account_email gcp-service@ac215-project.iam.gserviceaccount.com --stack dev
+[exit 0]

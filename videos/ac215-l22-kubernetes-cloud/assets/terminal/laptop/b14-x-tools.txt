@@ -1,0 +1,41 @@
+$ which -a kubectl; ls -la /usr/bin/kubectl; dpkg -S /usr/bin/kubectl; dpkg-query -W kubectl google-cloud-cli google-cloud-cli-gke-gcloud-auth-plugin; gke-gcloud-auth-plugin --version; helm version --short; pulumi version; uv --version; python --version; env | grep -E '^(GCP_|GOOGLE_|PULUMI_|USE_GKE)' | sort; ls -la /secrets; ls /app
+/usr/bin/kubectl
+/bin/kubectl
+lrwxrwxrwx 1 root root 35 Oct 30 08:49 /usr/bin/kubectl -> ../lib/google-cloud-sdk/bin/kubectl
+kubectl: /usr/bin/kubectl
+google-cloud-cli	592.0.0-0
+google-cloud-cli-gke-gcloud-auth-plugin	592.0.0-0
+kubectl	1:592.0.0-0
+Kubernetes v37.0.0-22-gb501ae55e
+v3.22.1+gd6c1a0e
+v3.274.1
+uv 0.13.7 (x86_64-unknown-linux-gnu)
+Python 3.13.18
+GCP_PROJECT=your-gcp-project
+GCP_REGION=us-central1
+GCP_ZONE=us-central1-a
+GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json
+PULUMI_BUCKET=gs://your-gcp-project-pulumi-state-bucket
+PULUMI_CONFIG_PASSPHRASE=
+USE_GKE_GCLOUD_AUTH_PLUGIN=True
+total 16
+drwxr-sr-x 3 app  app  4096 Nov  7 20:49 .
+drwxr-xr-x 1 root root 4096 Nov  7 20:49 ..
+drwxr-sr-x 2 root root 4096 Nov  7 20:49 .ssh
+-rw-r--r-- 1 app  app  2110 Nov  7 20:47 deployment.json
+Dockerfile
+README.md
+deploy-k8s-tic-tac-toe.yml
+deploy_images
+deploy_k8s
+deploy_single_vm
+docker-entrypoint.sh
+docker-shell.sh
+docker_config.json
+emoji.yaml
+nginx-conf
+pulumi-plugins
+pyproject.toml
+uv.lock
+visualizer.yaml
+[exit 0]

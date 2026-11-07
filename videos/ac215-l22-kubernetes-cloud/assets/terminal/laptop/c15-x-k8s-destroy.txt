@@ -1,0 +1,14 @@
+$ pulumi destroy --stack dev --refresh -y
+Previewing destroy (dev):
+
+Resources:
+
+Destroying (dev):
+
+Resources:
+
+Duration: 1s
+
+The resources in the stack have been deleted, but the history and configuration associated with the stack are still maintained. 
+If you want to remove the stack completely, run `pulumi stack rm dev`.
+[exit 0]

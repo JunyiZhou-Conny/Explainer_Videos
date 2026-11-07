@@ -1,0 +1,6 @@
+$ kubectl get nodes
+NAME                         STATUS   ROLES           AGE   VERSION
+test-cluster-control-plane   Ready    control-plane   12m   v1.34.11
+test-cluster-worker          Ready    <none>          11m   v1.34.11
+test-cluster-worker2         Ready    <none>          11m   v1.34.11
+[exit 0]

@@ -1,0 +1,8 @@
+$ kubectl rollout status deployment/web --timeout=300s; kubectl get pods -o wide
+Waiting for deployment "web" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "web" rollout to finish: 1 of 2 updated replicas are available...
+deployment "web" successfully rolled out
+NAME                   READY   STATUS    RESTARTS   AGE   IP           NODE                   NOMINATED NODE   READINESS GATES
+web-5cd9789488-5h48s   1/1     Running   0          12s   10.244.1.2   test-cluster-worker2   <none>           <none>
+web-5cd9789488-bmkj5   1/1     Running   0          12s   10.244.2.2   test-cluster-worker    <none>           <none>
+[exit 0]

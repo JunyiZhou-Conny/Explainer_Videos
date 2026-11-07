@@ -1,0 +1,5 @@
+$ kubectl version
+Client Version: v1.34.12-gke.300.1+a8b9abb5a77ce6
+Kustomize Version: v5.7.1
+Server Version: v1.34.11
+[exit 0]

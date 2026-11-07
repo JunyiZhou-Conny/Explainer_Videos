@@ -1,0 +1,5 @@
+$ kubectl version
+Client Version: v1.35.9-dispatcher
+Kustomize Version: v5.7.1
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+[exit 1]

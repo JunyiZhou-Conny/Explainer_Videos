@@ -1,0 +1,4 @@
+$ kubectl apply -f deploy-k8s-tic-tac-toe.yml
+deployment.apps/web created
+service/web created
+[exit 0]

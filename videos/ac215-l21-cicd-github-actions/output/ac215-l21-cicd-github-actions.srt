@@ -1056,7 +1056,7 @@ then a step, to open its log.
 
 232
 00:13:15,472 --> 00:13:22,128
-Docker builds the image from the Dockerfile
+Docker builds the image from the Dockerfile,
 and names it cheese-app-api:<commit ID>.
 
 233

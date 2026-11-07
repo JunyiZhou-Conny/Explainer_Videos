@@ -1,0 +1,3 @@
+$ kubectl get pods --namespace=cheese-app-namespace
+No resources found in cheese-app-namespace namespace.
+[exit 0]

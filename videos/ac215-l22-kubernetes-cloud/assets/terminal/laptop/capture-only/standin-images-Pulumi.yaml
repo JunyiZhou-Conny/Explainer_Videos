@@ -1,0 +1,7 @@
+# capture-only stand-in for deploy_images outputs (placeholder tags, nothing is built)
+name: deploy-images
+runtime: yaml
+outputs:
+  cheese-app-api-service-tags: ["us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-api-service:placeholder"]
+  cheese-app-frontend-react-tags: ["us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:placeholder"]
+  cheese-app-vector-db-cli-tags: ["us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-vector-db-cli:placeholder"]

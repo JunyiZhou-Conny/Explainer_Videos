@@ -1,0 +1,8 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; uname -sm; docker version --format 'Docker client {{.Client.Version}}, engine {{.Server.Version}}'; git --version; kind version; docker images
+2026-11-07 20:47 UTC
+Linux x86_64
+Docker client 29.8.2, engine 29.8.2
+git version 2.54.0
+kind v0.31.0 go1.25.5 linux/amd64
+IMAGE   ID             DISK USAGE   CONTENT SIZE   EXTRA
+[exit 0]

@@ -1,0 +1,16 @@
+$ kubectl get pods --all-namespaces
+NAMESPACE            NAME                                                 READY   STATUS    RESTARTS   AGE
+kube-system          coredns-66bc5c9577-bcrjr                             1/1     Running   0          10m
+kube-system          coredns-66bc5c9577-lggkj                             1/1     Running   0          10m
+kube-system          etcd-test-cluster-control-plane                      1/1     Running   0          10m
+kube-system          kindnet-8sfjc                                        1/1     Running   0          10m
+kube-system          kindnet-kkxf4                                        1/1     Running   0          10m
+kube-system          kindnet-x47cq                                        1/1     Running   0          10m
+kube-system          kube-apiserver-test-cluster-control-plane            1/1     Running   0          10m
+kube-system          kube-controller-manager-test-cluster-control-plane   1/1     Running   0          10m
+kube-system          kube-proxy-5nxfz                                     1/1     Running   0          10m
+kube-system          kube-proxy-b9s6b                                     1/1     Running   0          10m
+kube-system          kube-proxy-l4glt                                     1/1     Running   0          10m
+kube-system          kube-scheduler-test-cluster-control-plane            1/1     Running   0          10m
+local-path-storage   local-path-provisioner-57f858859-qhfgh               1/1     Running   0          10m
+[exit 0]

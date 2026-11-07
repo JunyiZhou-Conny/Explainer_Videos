@@ -1,0 +1,4 @@
+$ kubectl logs -n cheese-app-cluster-namespace <pod-name>
+bash: -c: line 1: syntax error near unexpected token `newline'
+bash: -c: line 1: `kubectl logs -n cheese-app-cluster-namespace <pod-name>'
+[exit 2]

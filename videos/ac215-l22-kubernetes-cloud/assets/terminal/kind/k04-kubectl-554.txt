@@ -1,0 +1,32 @@
+$ kubectl get all --all-namespaces
+NAMESPACE            NAME                                                     READY   STATUS    RESTARTS   AGE
+kube-system          pod/coredns-66bc5c9577-bcrjr                             1/1     Running   0          10m
+kube-system          pod/coredns-66bc5c9577-lggkj                             1/1     Running   0          10m
+kube-system          pod/etcd-test-cluster-control-plane                      1/1     Running   0          10m
+kube-system          pod/kindnet-8sfjc                                        1/1     Running   0          10m
+kube-system          pod/kindnet-kkxf4                                        1/1     Running   0          10m
+kube-system          pod/kindnet-x47cq                                        1/1     Running   0          10m
+kube-system          pod/kube-apiserver-test-cluster-control-plane            1/1     Running   0          10m
+kube-system          pod/kube-controller-manager-test-cluster-control-plane   1/1     Running   0          10m
+kube-system          pod/kube-proxy-5nxfz                                     1/1     Running   0          10m
+kube-system          pod/kube-proxy-b9s6b                                     1/1     Running   0          10m
+kube-system          pod/kube-proxy-l4glt                                     1/1     Running   0          10m
+kube-system          pod/kube-scheduler-test-cluster-control-plane            1/1     Running   0          10m
+local-path-storage   pod/local-path-provisioner-57f858859-qhfgh               1/1     Running   0          10m
+
+NAMESPACE     NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+default       service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  10m
+kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   10m
+
+NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/kindnet      3         3         3       3            3           kubernetes.io/os=linux   10m
+kube-system   daemonset.apps/kube-proxy   3         3         3       3            3           kubernetes.io/os=linux   10m
+
+NAMESPACE            NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system          deployment.apps/coredns                  2/2     2            2           10m
+local-path-storage   deployment.apps/local-path-provisioner   1/1     1            1           10m
+
+NAMESPACE            NAME                                               DESIRED   CURRENT   READY   AGE
+kube-system          replicaset.apps/coredns-66bc5c9577                 2         2         2       10m
+local-path-storage   replicaset.apps/local-path-provisioner-57f858859   1         1         1       10m
+[exit 0]

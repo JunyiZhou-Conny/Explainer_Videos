@@ -1,0 +1,65 @@
+$ pulumi preview --stack dev
+Previewing update (dev):
+Downloading plugin docker-4.9.0: starting
+Downloading plugin gcp-9.3.0: starting
+Downloading plugin docker-build-0.0.15: starting
+Downloading plugin command-1.1.3: starting
+Downloading plugin kubernetes-4.23.0: starting
+@ previewing update....
+Downloading plugin command-1.1.3: done
+Installing plugin command-1.1.3: starting
+Installing plugin command-1.1.3: done
+Downloading plugin docker-4.9.0: done
+Installing plugin docker-4.9.0: starting
+@ previewing update....
+Installing plugin docker-4.9.0: done
+Downloading plugin gcp-9.3.0: done
+Installing plugin gcp-9.3.0: starting
+Downloading plugin kubernetes-4.23.0: done
+Installing plugin kubernetes-4.23.0: starting
+@ previewing update....
+Installing plugin gcp-9.3.0: done
+Installing plugin kubernetes-4.23.0: done
+@ previewing update............
+Downloading plugin docker-build-0.0.15: done
+Installing plugin docker-build-0.0.15: starting
+Installing plugin docker-build-0.0.15: done
+
+@ previewing update....
+ +  pulumi:pulumi:Stack deploy-images-dev create 
+@ previewing update....
+ +  docker-build:index:Image build-cheese-app-vector-db-cli create 
+ +  docker-build:index:Image build-cheese-app-frontend-react create 
+ +  docker-build:index:Image build-cheese-app-api-service create 
+ +  docker-build:index:Image build-cheese-app-frontend-react create warning: Skipping preview build because some inputs are unknown.
+ +  docker-build:index:Image build-cheese-app-vector-db-cli create warning: Skipping preview build because some inputs are unknown.
+ +  docker-build:index:Image build-cheese-app-api-service create warning: Skipping preview build because some inputs are unknown.
+ +  pulumi:pulumi:Stack deploy-images-dev create 
+Diagnostics:
+  docker-build:index:Image (build-cheese-app-api-service):
+    warning: Skipping preview build because some inputs are unknown.
+
+  docker-build:index:Image (build-cheese-app-vector-db-cli):
+    warning: Skipping preview build because some inputs are unknown.
+
+  docker-build:index:Image (build-cheese-app-frontend-react):
+    warning: Skipping preview build because some inputs are unknown.
+
+Outputs:
+    cheese-app-api-service-ref    : [unknown]
+    cheese-app-api-service-tags   : [
+        [0]: "us-docker.pkg.dev/ac215-project/cheese-app-repository/cheese-app-api-service:20261107205032"
+    ]
+    cheese-app-frontend-react-ref : [unknown]
+    cheese-app-frontend-react-tags: [
+        [0]: "us-docker.pkg.dev/ac215-project/cheese-app-repository/cheese-app-frontend-react:20261107205032"
+    ]
+    cheese-app-vector-db-cli-ref  : [unknown]
+    cheese-app-vector-db-cli-tags : [
+        [0]: "us-docker.pkg.dev/ac215-project/cheese-app-repository/cheese-app-vector-db-cli:20261107205032"
+    ]
+
+Resources:
+    + 4 to create
+
+[exit 0]
