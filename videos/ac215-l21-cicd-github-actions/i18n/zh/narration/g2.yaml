@@ -34,7 +34,7 @@ S08:
 - en: "The lecture speaks of one remote CI server. GitHub gives you a new one for every job: runs on, ubuntu latest, six times in this file. Each job starts on an empty machine."
   zh:
   - "课上说的是一台远程 CI 服务器。"
-  - "GitHub 给每个 job 一台新的：runs-on: ubuntu-latest，这个文件里出现了六次。"
+  - "GitHub 给每个 job 一台新的：这个文件里六次写着 runs-on: ubuntu-latest。"
   - "每个 job 都从一台空机器开始。"
   en_display:
   - null
@@ -107,7 +107,7 @@ S09:
 - en: "Both run inside the image, on the api folder, at 120 columns. The Black step says continue on error, false: it blocks. The Flake8 step says true: it's advisory, a warning that never fails the job."
   zh:
   - "两个都在 image 里运行，查 api 目录，都是 120 列。"
-  - "Black 这一步写着 continue-on-error: false：它会阻断。"
+  - "Black 这一步的 continue-on-error 写着 false：它会阻断。"
   - "Flake8 这一步写的是 true：它只提示，是一个永远不会让 job 失败的警告。"
   en_display:
   - "Both run inside the image, on the api/ folder, at 120 columns."
@@ -126,7 +126,7 @@ S09:
   - "退出码 1，门禁关上了。"
   en_display:
   - "Run 1, the Black step: would reformat utils.py."
-  - null
+  - "1 file would be reformatted."
   - null
 - en: "The step list shows what happened next. Black, failure. Flake8, skipped. The steps below a failed step don't run, unless they ask to run always."
   zh:
@@ -231,16 +231,17 @@ S11:
 - en: "And here is the hook, answered. Lint isn't in needs, so its failure never reaches the summary. The run is still red, because any failed job turns the whole run red."
   zh:
   - "开头那个谜题，现在有答案了。"
-  - "lint 不在 needs 里，所以它的失败永远到不了汇总。"
+  - "这个 lint 不在 needs 里，所以它的失败永远到不了汇总。"
   - "这个 run 还是红的，因为任何一个失败的 job 都会让整个 run 变红。"
 - en: "The README says the summary checks the results of all test jobs, and that's literally true: lint isn't a test job. Add lint and format to needs and to the check if you want it counted."
   zh:
   - "README 说汇总检查所有测试 job 的结果，字面上这没错：lint 不是测试 job。"
   - "把 lint and format 加进 needs 和检查里，如果你想让它算数的话。"
-- en: "Now the bug from class. In the demo commit, the distance function takes the square root of 2 times z, instead of z."
+- en: "Now the bug from class. In the demo commit, the distance function takes the square root of 2 times z, instead of z. We ran this one for you: just watch."
   zh:
   - "现在来看课上那个 bug。"
   - "在演示 commit 里，距离函数取的是 2 乘 z 的平方根，而不是 z 的。"
+  - "这次我们替你跑过了：你只看就行。"
 - en: "Predict before the run. Which jobs turn red now, and what does Test Summary say?"
   zh:
   - "先预测，再看 run。"
@@ -335,12 +336,12 @@ S13:
   en_display:
   - "git add ., then git commit -m \"quick fix\"."
   - null
-- en: "Git status, short, shows M twice. Black fixed your working copy, but the staged copy is still the messy one."
+- en: "Git status, short, shows the letter M, for modified, twice. Black fixed your working copy, but the staged copy is still the messy one."
   zh:
-  - "用 git status --short 看，显示两个 M。"
+  - "用 git status --short 看，显示两个字母 M，表示已修改。"
   - "Black 修好了你工作区里的文件，但暂存的那份还是乱的。"
   en_display:
-  - "git status --short shows M twice."
+  - "git status --short shows the letter M, for modified, twice."
   - null
 - en: "Now the lecture's command: git commit, no verify, dash m, quick fix. No hook ran, and the commit exists: no verify skips every pre-commit check."
   zh:
@@ -349,9 +350,9 @@ S13:
   en_display:
   - "Now the lecture's command: git commit --no-verify -m \"quick fix\"."
   - "No hook ran, and the commit exists: --no-verify skips every pre-commit check."
-- en: "Push it. Run 3: lint and format, red, on service dot py. The tests and the summary all pass."
+- en: "We push it. Run 3: lint and format, red, on service dot py. The tests and the summary all pass."
   zh:
-  - "把它 push 上去。"
+  - "我们把它 push 上去。"
   - "再看 run 3：lint and format 红了，因为 service.py。"
   - "测试和汇总全都通过。"
   en_display:
@@ -361,17 +362,27 @@ S13:
 - en: "The skipped Flake8 would have flagged that line three times. CI caught what no verify let through: slide 31, at your terminal."
   zh:
   - "被跳过的 Flake8 本来会把那一行标出三次。"
-  - "--no-verify 放过去的，CI 抓住了：课件第 31 页，就在你的终端里。"
+  - "被 --no-verify 放过去的，CI 抓住了：课件第 31 页，就在你的终端里。"
   en_display:
   - null
   - "CI caught what --no-verify let through: slide 31, at your terminal."
-- en: "Clean up the experiment: git restore puts the file back. If you pushed it too, your main is now red: run pre-commit run, all files, then add, commit and push, before part 6."
+- en: "Clean up the experiment. Here, git restore only throws away Black's fix in the working copy. If you followed along, the messy commit is on your main now, pushed or not. Not pushed yet? Git reset, hard, head tilde 1, drops it. Pushed? Run pre-commit run, all files, then add, commit and push, before part 6."
   zh:
-  - "收拾一下这个实验：用 git restore 把文件还原。"
-  - "如果你也 push 了，你的 main 现在是红的：先跑 pre-commit run --all-files，再 add、commit、push，然后再做 Part 6。"
+  - "收拾一下这个实验。"
+  - "在这里，git restore 只是扔掉了工作区里 Black 的修复。"
+  - "如果你跟着做了，那个乱的 commit 现在就在你的 main 上，不管 push 了没有。"
+  - "还没 push？"
+  - "用 git reset --hard HEAD~1 把它去掉。"
+  - "已经 push 了？"
+  - "先跑 pre-commit run --all-files，再 add、commit、push，然后再做 Part 6。"
   en_display:
   - null
-  - "If you pushed it too, your main is now red: run pre-commit run --all-files, then add, commit and push, before part 6."
+  - null
+  - null
+  - null
+  - "git reset --hard HEAD~1 drops it."
+  - null
+  - "Run pre-commit run --all-files, then add, commit and push, before part 6."
 - en: "But CI repeats only Black and Flake8, and only on the api folder. The seven hygiene hooks never run in CI: trailing whitespace, end of file, YAML, large files, JSON, merge markers, and private keys."
   zh:
   - "但 CI 只重复 Black 和 Flake8，而且只查 api 目录。"
@@ -398,14 +409,14 @@ S13:
   - "还要轮换那个密钥；它已经在 GitHub 上了。"
   en_display:
   - null
-  - "detect-private-key is a local hook only."
+  - "The detect-private-key hook is a local hook only."
   - "The fix is one CI step, pre-commit run --all-files: the very step that fails on the lecture's imagined Slack message."
   - null
 S14:
 - en: "That imagined message brings us back to the lecture's webhooks. A webhook is GitHub calling an outside address when something happens: to start an outside CI system such as Jenkins, to deploy, or to post to a chat."
   zh:
   - "那条设想中的消息，把我们带回课上的 webhook。"
-  - "所谓 webhook，就是在发生某件事时，GitHub 去调用一个外部地址：用来启动像 Jenkins 这样的外部 CI 系统，用来部署，或者往聊天工具里发消息。"
+  - "所谓 webhook，就是 GitHub 去调用一个外部地址，在发生某件事的时候：用来启动像 Jenkins 这样的外部 CI 系统，用来部署，或者往聊天工具里发消息。"
 - en: "This part is optional: it needs your own Slack workspace. And this webhook works the other way round. Slack gives you an incoming webhook, an address, and the last steps of the test summary job call it. GitHub doesn't ring this bell; your workflow does."
   zh:
   - "这部分是可选的：需要你自己的 Slack 工作区。"
@@ -468,11 +479,11 @@ S15:
 - en: "Go to Settings, Branches, and add a rule for main. Tick the boxes Require a pull request before merging, and Require status checks to pass. Today's page may call it a classic rule, or offer rulesets instead."
   zh:
   - "打开 Settings 里的 Branches，给 main 加一条规则。"
-  - "勾上这两项：Require a pull request before merging，还有 Require status checks to pass。"
+  - "勾上这两项：Require a pull request before merging，还有 Require status checks to pass before merging。"
   - "现在的页面可能叫它 classic 规则，或者改成提供 rulesets。"
   en_display:
   - "Go to Settings → Branches, and add a rule for main."
-  - "Tick the boxes \"Require a pull request before merging\", and \"Require status checks to pass\"."
+  - "Tick the boxes \"Require a pull request before merging\", and \"Require status checks to pass before merging\"."
   - null
 - en: "Then pick the checks. A small slip: the picker lists jobs by their names, like Lint and Format Check and Unit Tests, not the README's IDs. They appear only after a recent run. On a private repository this needs a paid plan."
   zh:
@@ -508,7 +519,7 @@ S15:
   - "然后 git add .，git commit -m \"Intentionally break tests\"，再 git push origin feature/test-protection。"
   - "在 GitHub 上打开 PR：测试通过之前，合并一直是锁着的。"
   - "暂停一下，在你自己的 repo 上试一试。"
-  - "在这里，用 git checkout 把测试文件还原。"
+  - "在这里，用 git checkout -- 把测试文件还原。"
   en_display:
   - "Then git add ., git commit -m \"Intentionally break tests\", and git push origin feature/test-protection."
   - null
@@ -524,8 +535,8 @@ S16:
   - "持续部署是课上最后一节，它把发布自动化：那是第 23 讲。"
 - en: "Clean up: switch to main, and delete the test protection branch here and on GitHub; that closes its pull request. Remove the branch rule, and the Slack secret and webhook, if you made them. Disable the workflow on a private repository, and run the Docker cleanup from lecture 9."
   zh:
-  - "收尾清理：切回 main，在这里和 GitHub 上都删掉 feature/test-protection 分支；这样它的 PR 也就关闭了。"
-  - "删掉分支规则，还有 Slack 的 secret 和 webhook，如果你建了的话。"
+  - "收尾清理：切回 main，删掉 feature/test-protection 分支，这里和 GitHub 上都要删；这样它的 PR 也就关闭了。"
+  - "把分支规则删掉，还有 Slack 的 secret 和 webhook，如果你建了的话。"
   - "在私有 repo 上就停用这个工作流，再跑一遍第 9 讲的 Docker 清理。"
   en_display:
   - "Clean up: switch to main, and delete the feature/test-protection branch here and on GitHub; that closes its pull request."

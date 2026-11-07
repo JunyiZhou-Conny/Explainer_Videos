@@ -39,7 +39,7 @@ S01:
   - "今天它们搬到 GitHub 上，每次 push 到 main 都会运行，跑在不属于任何人的全新机器上。"
 - en: "Lecture 21 has four sections: remote Git hooks, GitHub webhooks, continuous integration, and continuous deployment. We follow it slide by slide, and the README Part 5 step by step."
   zh:
-  - "第 21 讲分四节：远程 Git hook、GitHub webhook、持续集成和持续部署。"
+  - "第 21 讲分四节：远程 Git hook、GitHub webhook、持续集成，以及持续部署。"
   - "我们一页一页地跟着课件走，一步一步地做 README 的 Part 5。"
 - en: "To follow along, you need a fresh clone of the course's repository, Docker running, a GitHub account, and a repository of your own. No cloud and no keys, and on a public repository, no bill."
   zh:
@@ -77,7 +77,7 @@ S02:
   - "名叫 update 的 hook 也一样，只是一次一个分支。"
 - en: "A post-receive hook runs after the code is in, for integration tests, notifications and clean-up. It can report, but it can no longer say no."
   zh:
-  - "一个 post-receive hook 在代码进来之后运行，用来跑集成测试、发通知和清理。"
+  - "一个 post-receive hook 在代码进来之后运行，用来跑集成测试，发通知和清理。"
   - "它能报告，但已经没法说不了。"
 - en: "One honest note: GitHub dot com doesn't run your own pre-receive scripts. It gives you two pieces instead: Actions, which runs after the push, and branch protection, which can say no."
   zh:
@@ -104,7 +104,7 @@ S03:
 - en: "The lecture defines continuous integration as a series of scripts that run automatically whenever the code changes. They integrate changes continuously, test automatically, enforce coding standards, and run static analysis."
   zh:
   - "课上把持续集成定义为一系列脚本，只要代码一变，它们就自动运行。"
-  - "它们持续地集成变更，自动测试，强制执行编码规范，还做静态分析。"
+  - "它们持续地集成变更；自动测试，强制执行编码规范，还做静态分析。"
 - en: "In ordinary software, that buys faster releases, better code, and easier teamwork. Machine learning adds a twist; we come back to it at the end."
   zh:
   - "在普通软件里，这换来的是发布更快、代码更好、协作更容易。"
@@ -132,17 +132,19 @@ S03:
   - null
   - "One file, ci.yml, in .github/workflows, at the root of the repository."
   - null
-- en: "Open it. The file gives the workflow a name, CI Pipeline. The key named on lists the events that start it. Under jobs, each job gets its own machine: runs on, ubuntu latest."
+- en: "Open it. The file gives the workflow a name, CI Pipeline. Next comes the key called on, just the word on. It lists the events that start the workflow. Under jobs, each job gets its own machine, called a runner: runs on, ubuntu latest."
   zh:
   - "打开它。"
   - "文件给工作流起了个名字：CI Pipeline。"
-  - "名叫 on 的那个键，列出了启动它的事件。"
-  - "在 jobs 下面，每个 job 都有自己的机器：runs-on: ubuntu-latest。"
+  - "接下来是名叫 on 的那个键，就是 on 这个词。"
+  - "它列出了启动这个工作流的事件。"
+  - "在 jobs 下面，每个 job 都有自己的机器，叫作 runner：runs-on: ubuntu-latest。"
   en_display:
   - null
   - null
   - null
-  - "Under jobs, each job gets its own machine: runs-on: ubuntu-latest."
+  - null
+  - "Under jobs, each job gets its own machine, called a runner: runs-on: ubuntu-latest."
 - en: "Inside a job, steps run in order. A step is either a shell script, under run, or a reusable action, under uses, like actions checkout, which copies your repository onto the machine. Event, workflow, jobs, steps: that is the whole grammar."
   zh:
   - "在一个 job 里，步骤按顺序运行。"
@@ -229,11 +231,11 @@ S05:
 - en: "Then the key concepts. Artifact sharing and unique image tags come with the build job; parallel execution, you just saw; conditional execution and network modes come with the system tests."
   zh:
   - "然后是关键概念。"
-  - "Artifact 共享和唯一的 image tag 跟着 build 这个 job 讲；并行执行，你刚刚看到了；条件执行和网络模式跟着系统测试讲。"
+  - "Artifact 共享和唯一的 image tag 跟着 build 讲；并行执行，你刚刚看到了；条件执行和网络模式跟着系统测试讲。"
 - en: "The README's screenshot gives the times: about 2 minutes on the clock, with four jobs side by side. On a private repository, each job is billed and rounded up separately: about 6 billed minutes."
   zh:
   - "README 的截图给出了时间：实际大约 2 分钟，四个 job 并排运行。"
-  - "在私有 repo 上，每个 job 分别计费、分别向上取整：大约 6 分钟的计费时间。"
+  - "在私有 repo 上，每个 job 都单独计费、单独取整：大约 6 分钟的计费时间。"
 S06:
 - en: "Time to push. Start from a fresh clone, not your lecture 9 folder: that one has the Black fix committed, and your first run would come out green. Clone, change into the folder, and git status says the tree is clean."
   zh:
@@ -248,12 +250,12 @@ S06:
 - en: "Now the README block, Push to GitHub. Git add dot: no output. Then git commit, dash m, Add CI pipeline. And Git answers: nothing to commit, working tree clean."
   zh:
   - "现在是 README 的那一段：Push to GitHub。"
-  - "先 git add .：没有输出。"
+  - "先是 git add . —— 没有输出。"
   - '然后是 git commit -m "Add CI pipeline"。'
   - "而 Git 的回答是：nothing to commit, working tree clean。"
   en_display:
   - null
-  - "git add .: no output."
+  - "git add . — no output."
   - 'Then git commit -m "Add CI pipeline".'
   - null
 - en: "A small slip, and a harmless one: in a clone or a fork, the pipeline is already committed, so there is nothing to add."
@@ -272,7 +274,7 @@ S06:
   zh:
   - "所以把 origin 指向一个你自己的 repo。"
   - "要么 fork 课程的 repo，再到它的 Actions 标签页启用工作流，要么新建一个空 repo。"
-  - "不管选哪个，都运行 git remote set-url origin，后面跟你自己的地址。"
+  - "不管选哪个，都运行：git remote set-url origin，后面跟你自己的地址。"
   - "暂停一下，把你的设置好。"
 - en: "This recording machine can't push to GitHub, so an empty repository on the same machine stands in for yours. From now on we just say your repository."
   zh:
@@ -289,12 +291,14 @@ S06:
   - "New branch, main -> main."
   - null
   - null
-- en: "On a fork, that commit is already on GitHub, so git push says everything up to date and starts nothing. Your first run then comes with the fix in part 2."
+- en: "On a fork, that commit is already on GitHub, so git push says everything up to date and starts nothing. To get run 1 anyway, push an empty commit: git commit, allow empty, dash m, Trigger CI, then git push. Or wait, and your first run then comes with the fix in part 2."
   zh:
   - "在 fork 上，这个 commit 已经在 GitHub 上，所以 git push 显示 Everything up-to-date，什么也不启动。"
-  - "那你的第一个 run 要等到第二部分的修复才来。"
+  - "想照样得到 run 1，就 push 一个空 commit：git commit --allow-empty -m \"Trigger CI\"，然后 git push。"
+  - "或者等一等，你的第一个 run 会跟着第二部分的修复到来。"
   en_display:
   - "On a fork, that commit is already on GitHub, so git push says Everything up-to-date and starts nothing."
+  - "To get run 1 anyway, push an empty commit: git commit --allow-empty -m \"Trigger CI\", then git push."
   - null
 S07:
 - en: "Watch GitHub Actions: go to your repository, and click the Actions tab. Your run is listed under the commit message, with a yellow dot: in progress. A green checkmark means success; a red X means failure. Pause and open yours."

@@ -28,7 +28,7 @@ Beats (script.md "## S03", one voiceover block each):
    dashed ghost "my-project/subfolder/.github/workflows/" with a RED ✗ "never runs", and the GREY
    chip "fix: move to the root .github/workflows/ + defaults: run: working-directory: · study guide".
 6. TRACKER P5 1. The strip and the tree go. CODE(ci.yml 5–11): line 5 YELLOW on "a name", lines
-   7–11 PINK on "The key named on". Transform to CODE(ci.yml 13–20): lines 13 and 15 YELLOW on
+   7–11 PINK on "the key called on". Transform to CODE(ci.yml 13–20): lines 13 and 15 YELLOW on
    "Under jobs", line 17 BLUE on "its own machine".
 7. V4 WorkflowTree (S03 form): the panel's `jobs:` line becomes the column of six BLUE job ids,
    the PINK root "on: push · pull_request" and "workflow: CI Pipeline" fade in above it. The build
@@ -326,7 +326,7 @@ class CiPipeline(VoiceScene):
             bar_name = line_bar(p1.code, 0, TURN)
             self.play(FadeIn(bar_name), Indicate(p1.code.code_lines[0], color=TURN, scale_factor=1.05),
                       run_time=0.6)
-            vo.wait_until("The key named on")
+            vo.wait_until("the key called on")
             bars_on = VGroup(*[line_bar(p1.code, k, ROUTE) for k in range(2, 7)])
             self.play(LaggedStart(*[FadeIn(bb) for bb in bars_on], lag_ratio=0.15), run_time=0.7)
             self.play(Indicate(p1.code.code_lines[2], color=ROUTE, scale_factor=1.1), run_time=0.6)

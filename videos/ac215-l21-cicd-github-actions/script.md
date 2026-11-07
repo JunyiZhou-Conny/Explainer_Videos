@@ -436,7 +436,7 @@ SHOW: TRACKER P5 1. The terminal shrinks away. CODE(.github/workflows/ci.yml: 5�
 CI Pipeline` YELLOW on "a name", lines 7–11 (`on:`) PINK on "events". Then a Transform to
 CODE(.github/workflows/ci.yml: 13–20): line 13 `jobs:` and line 15 `build:` YELLOW, line 17
 `runs-on: ubuntu-latest` BLUE on "its own machine".
-SAY: Open it. The file gives the workflow a name, CI Pipeline. The key named on lists the events that start it. Under jobs, each job gets its own machine: runs on, ubuntu latest.
+SAY: Open it. The file gives the workflow a name, CI Pipeline. Next comes the key called on, just the word on. It lists the events that start the workflow. Under jobs, each job gets its own machine, called a runner: runs on, ubuntu latest.
 
 SHOW: **V4 `JobGraph`, S03 form**: the code panel transforms into the tree (its `on:` line becomes
 the PINK root, `jobs:` becomes the column). Layout: top-left the PINK root "on: push · pull_request"
@@ -606,7 +606,7 @@ SAY: Now the README's git push. New branch, main to main. This push is the event
 
 SHOW: The fork box from block 6 returns small with a GREY chip "Everything up-to-date · no run" and a
 dashed GREY arrow to "first run: part 2 (S12)". Fade; empty frame.
-SAY: On a fork, that commit is already on GitHub, so git push says everything up to date and starts nothing. Your first run then comes with the fix in part 2.
+SAY: On a fork, that commit is already on GitHub, so git push says everything up to date and starts nothing. To get run 1 anyway, push an empty commit: git commit, allow empty, dash m, Trigger CI, then git push. Or wait, and your first run then comes with the fix in part 2.
 
 ---
 
@@ -883,7 +883,7 @@ SHOW: The graph shrinks. CODE(history/c3b227f-service.py: 38–44), header `c3b2
 lines 38–44`: line 40's docstring `sqrt(x^2 + y^2)` WHITE, line 44 `result = math.sqrt(2 * z)` RED. A
 GREY chip "demo class 1 · 2025-11-13". A GREY chip under the panel: "unit tests → utils.py ·
 /euclidean_distance/ → integration + system".
-SAY: Now the bug from class. In the demo commit, the distance function takes the square root of 2 times z, instead of z.
+SAY: Now the bug from class. In the demo commit, the distance function takes the square root of 2 times z, instead of z. We ran this one for you: just watch.
 
 SHOW: Beside the panel, GRAPH(run-demo) at the start state: six GREY nodes, a GREY chip "the demo
 commit". On "Which jobs" the six GREY nodes pulse left to right; on "Test Summary" the summary node
@@ -977,7 +977,7 @@ SAY: Git add dot, then git commit, dash m, quick fix. The Black hook fails and r
 
 SHOW: It types `git status --short` → TERM(laptop/43: 2) `MM src/api-service/api/service.py`; the
 two M's label two small file icons: "staged: messy" (RED) and "working copy: reformatted" (GREEN).
-SAY: Git status, short, shows M twice. Black fixed your working copy, but the staged copy is still the messy one.
+SAY: Git status, short, shows the letter M, for modified, twice. Black fixed your working copy, but the staged copy is still the messy one.
 
 SHOW: Slide 30's command: it types `git commit --no-verify -m "quick fix"` (extra; `--no-verify` RED) →
 TERM(laptop/44: 2–3) `[main 2892b1b] quick fix`. Then the terminal shrinks to a 3-row strip, and V1
@@ -990,7 +990,7 @@ into the BLUE server; the strip leaves as GRAPH(run3) arrives and colors from
 `runner/run3/results.txt`: lint ✗ RED, the tests ✓, summary ✓, run badge ✗. The graph shrinks left and
 LOG(run3/lint-and-format/04: 4–7, crop7) takes its right half: line 4 `would reformat
 /app/api/service.py` RED; badge "exit 1".
-SAY: Push it. Run 3: lint and format, red, on service dot py. The tests and the summary all pass.
+SAY: We push it. Run 3: lint and format, red, on service dot py. The tests and the summary all pass.
 
 SHOW: LOG(run3/lint-and-format/x4: 4–6) (tag `extra`, title "Lint and Format Check · extra: Flake8,
 if it had run"): `api/service.py:43:6: E225 …`, `api/service.py:43:14: E231 …`, `api/service.py:43:25:
@@ -1002,7 +1002,7 @@ src/api-service/api/service.py`; then `git restore src/api-service/api/service.p
 --short` → TERM(laptop/49: → (no output)). Beside it a GREY code card (tag "shown, not run"), headed
 "pushed it too?": `pre-commit run --all-files` · `git add .` · `git commit -m "Format service.py"` ·
 `git push`.
-SAY: Clean up the experiment: git restore puts the file back. If you pushed it too, your main is now red: run pre-commit run, all files, then add, commit and push, before part 6.
+SAY: Clean up the experiment. Here, git restore only throws away Black's fix in the working copy. If you followed along, the messy commit is on your main now, pushed or not. Not pushed yet? Git reset, hard, head tilde 1, drops it. Pushed? Run pre-commit run, all files, then add, commit and push, before part 6.
 
 SHOW: Two columns: left "local hooks" (GREY) lists nine rows (`trailing-whitespace`, `end-of-file`,
 `check-yaml`, `large files`, `check-json`, `merge conflicts`, `detect-private-key`, `Black`,
