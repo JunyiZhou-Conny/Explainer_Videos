@@ -98,6 +98,15 @@ def skeleton(m) -> VGroup:
     return c
 
 
+def light(g, color=TURN):
+    """ANIM: a script glyph lights (frame and '>_' in `color`) and goes back, as one group (animating
+    only its filled frame would hide the text)."""
+    lit = g.copy()
+    lit[0].set_stroke(color, 3)
+    lit[1].set_color(color)
+    return Transform(g, lit, rate_func=there_and_back)
+
+
 def texts_of(m) -> list:
     return [s for s in m.get_family() if isinstance(s, (Text, MarkupText))]
 
@@ -121,7 +130,8 @@ class CiPipeline(VoiceScene):
         cbox.shift(UP * (GLYPH_Y - cbox.frame.get_center()[1]))
         glyphs = VGroup(*[script_glyph(0.62) for _ in range(3)]).arrange(RIGHT, buff=1.05)
         glyphs.move_to([0.9, GLYPH_Y, 0])
-        links = VGroup(arrow(cbox.frame, glyphs[0]), arrow(glyphs[0], glyphs[1]), arrow(glyphs[1], glyphs[2]))
+        links = VGroup(*[arrow(a.get_right() + RIGHT * 0.1, b.get_left() + LEFT * 0.1)
+                         for a, b in ((cbox.frame, glyphs[0]), (glyphs[0], glyphs[1]), (glyphs[1], glyphs[2]))])
         chips = [ok_chip(s, size=22) for s, _ in CI_PHRASES]
         row1 = VGroup(chips[0], chips[1]).arrange(RIGHT, buff=0.35)
         row2 = VGroup(chips[2], chips[3]).arrange(RIGHT, buff=0.35)
@@ -137,7 +147,7 @@ class CiPipeline(VoiceScene):
             commits.append(d)
             for ln, g in zip(links, glyphs):
                 self.play(ShowPassingFlash(ln.copy().set_stroke(TURN, 6), time_width=0.6),
-                          Indicate(g, color=TURN, scale_factor=1.15), run_time=0.4)
+                          light(g, TURN), run_time=0.4)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), FadeIn(cbox, shift=UP * 0.2), run_time=0.6)
@@ -154,7 +164,7 @@ class CiPipeline(VoiceScene):
                 self.play(Transform(start, c), run_time=0.45)
                 self.remove(start)
                 self.add(c)
-                self.play(Indicate(glyphs, color=PASS, scale_factor=1.06), run_time=0.35)
+                self.play(*[light(g, PASS) for g in glyphs], run_time=0.35)
 
         # ========================================================== 1. what it buys
         ref2 = lref("17")
@@ -166,17 +176,16 @@ class CiPipeline(VoiceScene):
         caps = []
         for ic, x, s in zip(icons, xs, PAYOFF_TEXT):
             ic.move_to([x, icon_y, 0])
-            caps.append(label(s, 22, S.GREY).next_to(ic, DOWN, buff=0.25).set_x(x))
+            caps.append(label(s, 22, S.GREY).move_to([x, icon_y - 0.75, 0]))
         ml = dashed_chip("+ machine learning: at the end", size=22).move_to([0.9, -2.55, 0])
         with self.voiceover(SAY[1]) as vo:
-            self.play(ReplacementTransform(ref, ref2), *[FadeOut(c) for c in chips], run_time=0.5)
+            self.play(FadeOut(ref), FadeIn(ref2), *[FadeOut(c) for c in chips], run_time=0.5)
             self.remove(*chips)
             for g, ic, cp, cue in zip(glyphs, icons, caps, PAYOFF_CUES):
                 vo.wait_until(cue)
                 tgt = ic.get_center().copy()
                 ic.move_to(g)
-                self.play(ic.animate.move_to(tgt), FadeIn(ic), Indicate(g, color=TURN, scale_factor=1.1),
-                          run_time=0.55)
+                self.play(ic.animate.move_to(tgt), FadeIn(ic), light(g, TURN), run_time=0.55)
                 self.play(FadeIn(cp, shift=UP * 0.15), run_time=0.3)
             vo.wait_until("Machine learning adds a twist")
             self.play(FadeIn(ml, shift=UP * 0.2), run_time=0.4)
@@ -188,7 +197,7 @@ class CiPipeline(VoiceScene):
         b = loop.boxes
         beat01 = VGroup(cbox, glyphs, links, *commits, *icons, *caps, ml)
         with self.voiceover(SAY[2]) as vo:
-            self.play(ReplacementTransform(ref2, ref3), FadeOut(beat01), run_time=0.6)
+            self.play(FadeOut(ref2), FadeIn(ref3), FadeOut(beat01), run_time=0.6)
             self.remove(beat01, *beat01.get_family())
             self.play(Create(loop.row_frame), run_time=0.6)
             vo.wait_until("Developers commit to the codebase")
@@ -219,8 +228,8 @@ class CiPipeline(VoiceScene):
             self.add(skel, words)
             mini_w = skel.width * 0.26
             corner = [-6.45 + mini_w / 2, 3.45 - skel.height * 0.26 / 2, 0]
-            self.play(ReplacementTransform(ref3, ref4), FadeOut(words, run_time=0.3),
-                      skel.animate.scale(0.26).move_to(corner), run_time=0.8)
+            self.play(FadeOut(ref3), FadeIn(ref4), FadeOut(words), run_time=0.35)
+            self.play(skel.animate.scale(0.26).move_to(corner), run_time=0.8)
             self.remove(words)
             vo.wait_until("has five stages")
             self.play(LaggedStart(*[FadeIn(bx, shift=RIGHT * 0.15) for bx in fs.boxes], lag_ratio=0.15),
