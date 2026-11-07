@@ -1,0 +1,47 @@
+$ pulumi preview --stack dev --refresh
+Previewing update (dev):
+
+@ previewing update.......
+ +  pulumi:pulumi:Stack deploy-single-vm-dev create 
+ +  gcp:compute:Disk cheese-app-demo-disk create 
+ +  gcp:compute:Network cheese-app-network create 
+ +  gcp:compute:Firewall allow-http create 
+ +  gcp:compute:Firewall allow-https create 
+ +  gcp:compute:Firewall allow-ssh create 
+ +  pulumi:pulumi:Stack deploy-single-vm-dev create error: Program failed with an unhandled exception:
+@ previewing update....
+ +  pulumi:pulumi:Stack deploy-single-vm-dev create 1 error
+Diagnostics:
+  pulumi:pulumi:Stack (deploy-single-vm-dev):
+    error: Program failed with an unhandled exception:
+    Traceback (most recent call last):
+      File "/app/deploy_single_vm/__main__.py", line 15, in <module>
+        instance, instance_ip, connection, persistent_disk, network = create_instance()
+                                                                      ~~~~~~~~~~~~~~~^^
+      File "/app/deploy_single_vm/create_instance.py", line 100, in create_instance
+        ubuntu_image = gcp.compute.get_image(
+            family="ubuntu-2204-lts",
+            project="ubuntu-os-cloud",
+        )
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi_gcp/compute/get_image.py", line 335, in get_image
+        __ret__ = pulumi.runtime.invoke('gcp:compute/getImage:getImage', __args__, opts=opts, typ=GetImageResult).value
+                  ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/invoke.py", line 123, in invoke
+        return _sync_await(awaitableInvokeResult)
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/sync_await.py", line 67, in _sync_await
+        return fut.result()
+               ~~~~~~~~~~^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/invoke.py", line 398, in wait_for_fut
+        return await asyncio.ensure_future(do_rpc())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/invoke.py", line 394, in do_rpc
+        raise error
+    Exception: invoke of gcp:compute/getImage:getImage failed: invocation of gcp:compute/getImage:getImage returned an error: invoking gcp:compute/getImage:getImage: 1 error occurred:
+    	* error retrieving image information: Get "https://compute.googleapis.com/compute/beta/projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts?alt=json&prettyPrint=false": oauth2: cannot fetch token: 400 Bad Request
+    Response: {"error":"invalid_grant","error_description":"Invalid grant: account not found"}
+
+Resources:
+    + 6 to create
+    1 errored
+
+[exit 1]

@@ -1,0 +1,10 @@
+$ wc -l conf/nginx/nginx.conf; sed -n '7,13p' conf/nginx/nginx.conf | cat -A | cut -c1-90
+58 conf/nginx/nginx.conf
+http {$
+    include       /etc/nginx/mime.types;$
+    default_type  application/octet-stream;$
+    log_format  main   - []  $
+                        $
+                       ;$
+    access_log  /var/log/nginx/access.log  main;$
+[exit 0]

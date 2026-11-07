@@ -1,0 +1,28 @@
+$ sudo docker pull chromadb/chroma:latest
+latest: Pulling from chromadb/chroma
+342ce2461d56: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+3c4c083c1d6b: Pulling fs layer
+95ebd62fd043: Pulling fs layer
+80c0cfe87a89: Pulling fs layer
+95ebd62fd043: Waiting
+80c0cfe87a89: Waiting
+4f4fb700ef54: Verifying Checksum
+4f4fb700ef54: Download complete
+3c4c083c1d6b: Verifying Checksum
+3c4c083c1d6b: Download complete
+95ebd62fd043: Verifying Checksum
+95ebd62fd043: Download complete
+342ce2461d56: Verifying Checksum
+342ce2461d56: Download complete
+342ce2461d56: Pull complete
+4f4fb700ef54: Pull complete
+3c4c083c1d6b: Pull complete
+95ebd62fd043: Pull complete
+80c0cfe87a89: Verifying Checksum
+80c0cfe87a89: Download complete
+80c0cfe87a89: Pull complete
+Digest: sha256:1e0b73a187a28757c572acba508c46f48c9e8b0acaf5c20e6d95cdedce1acdf6
+Status: Downloaded newer image for chromadb/chroma:latest
+docker.io/chromadb/chroma:latest
+[exit 0]

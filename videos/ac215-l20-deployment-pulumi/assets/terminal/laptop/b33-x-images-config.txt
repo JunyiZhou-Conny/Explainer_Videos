@@ -1,0 +1,10 @@
+$ pulumi config; cat Pulumi.dev.yaml; pulumi stack ls
+KEY          VALUE
+gcp:project  ac215-project
+pulumi:tags  {"pulumi:template":"python"}
+encryptionsalt: v1:lITUIKZbQv4=:v1:tJ2A5yMJu9qBqSX3:JHmG6erppPUF0MbgFwfYS8syhwlv1Q==
+config:
+  gcp:project: ac215-project
+NAME  LAST UPDATE  RESOURCE COUNT
+dev*  now          0
+[exit 0]

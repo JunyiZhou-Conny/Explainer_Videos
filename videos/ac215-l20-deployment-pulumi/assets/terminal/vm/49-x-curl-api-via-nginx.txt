@@ -1,0 +1,18 @@
+$ curl -s -i http://localhost/api-service/; echo; curl -s -i http://localhost/api-service/status; echo
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 05 Nov 2026 22:14:17 GMT
+Content-Type: application/json
+Content-Length: 30
+Connection: keep-alive
+
+{"message":"Welcome to AC215"}
+HTTP/1.1 404 Not Found
+Server: nginx
+Date: Thu, 05 Nov 2026 22:14:17 GMT
+Content-Type: application/json
+Content-Length: 22
+Connection: keep-alive
+
+{"detail":"Not Found"}
+[exit 0]

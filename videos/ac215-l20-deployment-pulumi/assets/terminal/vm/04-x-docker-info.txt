@@ -1,0 +1,4 @@
+$ sudo docker info --format 'Server Version: {{.ServerVersion}} / Storage Driver: {{.Driver}} / OS: {{.OperatingSystem}}'; sudo docker images
+Server Version: 29.9.3 / Storage Driver: overlay2 / OS: Debian GNU/Linux 12 (bookworm) (containerized)
+IMAGE   ID             DISK USAGE   CONTENT SIZE   EXTRA
+[exit 0]

@@ -1,0 +1,5 @@
+$ docker exec cheese-app-deployment sh -c 'for b in $(docker buildx ls --format "{{.Name}}" | grep -v "^default$"); do docker buildx rm $b; done'
+priceless_almeida removed
+failed to remove priceless_almeida0: no builder "priceless_almeida0" found
+ERROR: failed to remove one or more builders
+[exit 1]

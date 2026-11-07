@@ -1,0 +1,2 @@
+$ sudo chmod 0777 secrets
+[exit 0]

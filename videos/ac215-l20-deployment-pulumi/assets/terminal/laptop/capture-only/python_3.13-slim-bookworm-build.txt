@@ -1,0 +1,3 @@
+$ docker build -q -t python:3.13-slim-bookworm /tmp/tmp.IpAdGd
+sha256:221dbd83ea630ee8fbcec12058017359e1ded42006b554a75152972ced126300
+[exit 0]

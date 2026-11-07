@@ -1,0 +1,10 @@
+$ pulumi stack ls; pulumi stack output; docker images | head -4
+NAME  LAST UPDATE  RESOURCE COUNT
+dev*  now          2
+Current stack outputs (0):
+    No output values currently in this stack
+IMAGE                                             ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-deployment:latest                      c1615f237c07       2.61GB             0B   U    
+docker/dockerfile:1.6                             a17ee7fff8f5       23.6MB             0B        
+localhost:5000/library/node:20-alpine             fd3e86bef9e4        136MB             0B        
+[exit 0]

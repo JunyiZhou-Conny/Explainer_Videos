@@ -1,0 +1,8 @@
+$ sudo docker ps; sudo docker images
+CONTAINER ID   IMAGE                          COMMAND                  CREATED          STATUS          PORTS                    NAMES
+433a46beec04   dlops/cheese-app-api-service   "/bin/bash docker-en…"   15 seconds ago   Up 15 seconds   0.0.0.0:9000->9000/tcp   api-service
+6eb3a99fc218   chromadb/chroma                "dumb-init -- chroma…"   4 minutes ago    Up 4 minutes    0.0.0.0:8000->8000/tcp   cheese-app-vector-db
+IMAGE                                 ID             DISK USAGE   CONTENT SIZE   EXTRA
+chromadb/chroma:latest                a221f3391b5e        640MB             0B   U    
+dlops/cheese-app-api-service:latest   63d9a315d9f5       5.07GB             0B   U    
+[exit 0]

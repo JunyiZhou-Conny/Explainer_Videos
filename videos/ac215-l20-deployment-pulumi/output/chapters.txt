@@ -1,0 +1,16 @@
+00:00 One container stops, the site goes dark
+01:24 From your laptop to one VM
+02:50 Images to Docker Hub
+04:37 A VM with Docker, folders and a network
+06:32 The vector DB and its loader
+08:16 The API and the frontend
+09:44 nginx: one public door
+12:19 Twenty-one commands: repeat, review, undo?
+13:30 Pulumi: desired state, not steps
+15:46 Setup: four APIs, two keys
+17:24 The deployment toolbox, fixed twice
+19:44 SSH keys and OS Login
+21:12 Step 2: images with timestamps
+23:28 Steps 3–4: the VM, its fences, provisioning
+26:02 Steps 5–6: containers over SSH, then test
+28:54 Destroy, recap, and what's next

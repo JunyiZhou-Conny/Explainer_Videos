@@ -1,0 +1,10 @@
+# expected (recorded in the tutorial): README.md:306-314 of dlops-io/cheese-app-v3 @ 3ecef56, the README's "snippet of the output" of README.md:302 `gcloud compute os-login ssh-keys add --key-file=/secrets/ssh-key-deployment.pub` (its "..." is the README's own elision). Unchanged except the account number and uid/gid, replaced by 0s (series rule: no real-looking ids). Not captured here: no GCP account (see laptop/b12).
+- accountId: ac215-project
+    gid: '0000000000'
+    homeDirectory: /home/sa_000000000000000000000
+    name: users/deployment@ac215-project.iam.gserviceaccount.com/projects/ac215-project
+    operatingSystemType: LINUX
+    primary: true
+    uid: '0000000000'
+	...
+    username: sa_000000000000000000000

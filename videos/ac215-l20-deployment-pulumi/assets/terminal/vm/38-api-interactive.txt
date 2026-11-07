@@ -1,0 +1,16 @@
+$ sudo docker run --rm -ti --name api-service \
+-v "$(pwd)/persistent-folder/":/persistent \
+-v "$(pwd)/secrets/":/secrets \
+-p 9000:9000 \
+-e GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-service.json \
+-e GCP_PROJECT=ac215-project \
+-e GCP_PROJECT_ID=ac215-project \
+-e CHROMADB_HOST=cheese-app-vector-db \
+-e CHROMADB_PORT=8000 \
+-e GCS_BUCKET_NAME=cheese-app-models \
+-e DEV=1 \
+--network cheese-app-network dlops/cheese-app-api-service
+docker: Error response from daemon: Conflict. The container name "/api-service" is already in use by container "433a46beec04041675312d9728cb0f0b77744436eef6661f31ff07037b0e1471". You have to remove (or rename) that container to be able to reuse that name.
+
+Run 'docker run --help' for more information
+[exit 125]

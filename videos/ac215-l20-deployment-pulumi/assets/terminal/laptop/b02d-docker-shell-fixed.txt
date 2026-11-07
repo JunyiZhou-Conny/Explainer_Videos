@@ -1,0 +1,79 @@
+$ sh docker-shell.sh
+Container 'cheese-app-deployment' is not running. Building and starting new container...
+[+] Building 91.9s (21/21) FINISHED                                                  docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 2.77kB                                                         0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bookworm                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => [ 1/16] FROM docker.io/library/python:3.13-slim-bookworm                                   0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 64B                                                               0.0s
+ => CACHED [ 2/16] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-c  0.0s
+ => CACHED [ 3/16] RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://pac  0.0s
+ => CACHED [ 4/16] RUN install -m 0755 -d /etc/apt/keyrings                                    0.0s
+ => CACHED [ 5/16] RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmo  0.0s
+ => CACHED [ 6/16] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                  0.0s
+ => CACHED [ 7/16] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyr  0.0s
+ => [ 8/16] RUN apt-get update &&     apt-get install -y google-cloud-cli google-cloud-cli-g  50.8s
+ => [ 9/16] RUN install -m 0755 -d /etc/apt/keyrings     && curl -fsSL "https://pkgs.k8s.io/  13.9s
+ => [10/16] RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-  3.6s
+ => [11/16] RUN curl -fsSL https://get.pulumi.com | sh                                         8.3s
+ => [12/16] RUN pip install uv                                                                 4.3s
+ => [13/16] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0  0.3s
+ => [14/16] WORKDIR /app                                                                       0.0s
+ => [15/16] COPY --chown=app:app pyproject.toml uv.lock* ./                                    0.0s
+ => [16/16] RUN uv sync --frozen                                                               3.8s
+ => exporting to image                                                                         6.8s
+ => => exporting layers                                                                        6.7s
+ => => writing image sha256:c1615f237c07d5c2234903371a02fb01aecb2a6ea0c4e9f7ed7b2c7aff610eec   0.0s
+ => => naming to docker.io/library/cheese-app-deployment                                       0.0s
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.13.18
+UV version: uv 0.13.7 (x86_64-unknown-linux-gnu)
+ERROR: (gcloud.auth.activate-service-account) There was a problem refreshing auth tokens for account deployment@your-gcp-project.iam.gserviceaccount.com: ('invalid_grant: Invalid grant: account not found', {'error': 'invalid_grant', 'error_description': 'Invalid grant: account not found'})
+Please run:
+
+  $ gcloud auth activate-service-account --key-file=SERVICE_ACCOUNT_FILE_PATH
+
+Or:
+
+  $ gcloud auth login --cred-file=SERVICE_ACCOUNT_FILE_PATH
+
+to obtain new credentials.
+
+If you have already logged in with a different account, run:
+
+  $ gcloud config set account ACCOUNT
+
+to select an already authenticated account to use.
+Updated property [core/project].
+WARNING: Your config file at [/root/.docker/config.json] contains these credential helper entries:
+
+{
+  "credHelpers": {
+    "gcr.io": "gcloud",
+    "us-docker.pkg.dev": "gcloud"
+  }
+}
+Adding credentials for: us-docker.pkg.dev
+gcloud credential helpers already registered correctly.
+Bucket does not exist. Creating...
+Google recommends using Gcloud storage CLI (https://docs.cloud.google.com/storage/docs/discover-object-storage-gcloud) instead of gsutil. Please refer to migration guide (https://docs.cloud.google.com/storage/docs/gsutil-transition-to-gcloud) for assistance.
+Creating gs://your-gcp-project-pulumi-state-bucket/...
+You are attempting to access protected data with no configured
+credentials. Please visit https://cloud.google.com/console#/project
+and sign up for an account, and then run the "gcloud auth login"
+command to configure gsutil to use these credentials.
+Logging into Pulumi using GCS bucket: gs://your-gcp-project-pulumi-state-bucket
+error: could not log in to the state backend "gs://your-gcp-project-pulumi-state-bucket": read ".pulumi/meta.yaml": blob (key ".pulumi/meta.yaml") (code=Unknown): Get "https://storage.googleapis.com/your-gcp-project-pulumi-state-bucket/.pulumi%2Fmeta.yaml": oauth2: cannot fetch token: 400 Bad Request
+Response: {"error":"invalid_grant","error_description":"Invalid grant: account not found"}
+Available Pulumi stacks in GCS:
+Google recommends using Gcloud storage CLI (https://docs.cloud.google.com/storage/docs/discover-object-storage-gcloud) instead of gsutil. Please refer to migration guide (https://docs.cloud.google.com/storage/docs/gsutil-transition-to-gcloud) for assistance.
+BucketNotFoundException: 404 gs://your-gcp-project-pulumi-state-bucket bucket does not exist.
+No stacks found.
+root@3e978a898fa8:/app#
+[ptyrun: timed out waiting for /file:/tmp/l20-cue-shell/]
+[exit 137]

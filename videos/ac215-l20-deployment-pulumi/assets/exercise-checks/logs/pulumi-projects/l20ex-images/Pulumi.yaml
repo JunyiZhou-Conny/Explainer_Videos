@@ -1,0 +1,3 @@
+name: l20ex-images
+description: Exercise stand-in for deploy_images (no build, no registry)
+runtime: python

@@ -1,0 +1,413 @@
+# zh narration for S01-S08 (part 1, group g1: the puzzle, the goal and the README's check, Docker Hub, a VM with
+# Docker, folders, the key and the network, the vector DB and its loader, the API and the frontend, nginx as the one
+# public door and the puzzle's answer, twenty-one commands and the manual teardown), sentence-aligned to script.md
+# v2 (2026-11-06): one zh sentence per English sentence (explainer.voice.split_sentences; 70 SAY lines,
+# 152 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (D9).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (A6, B3):
+# log_format -> log format; the README's <...> -> 占位符 / 尖括号.
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4); null = the SAY text.
+# The instructor rule (A16): the narration of S01-S08 names no instructor (the lecture -> 课上, the slides -> 课件).
+S01:
+- en: "We stopped one container, the frontend, and restarted the web server in front of it. The API container is still up, and so is the vector database."
+  zh:
+  - "我们停掉了一个 container，也就是前端，又重启了它前面的 Web 服务器。"
+  - "API 的 container 还在运行，向量数据库也是。"
+- en: "Yet the whole site answers nothing, the address of the API included."
+  zh:
+  - "可整个网站什么都不响应，连 API 的地址也一样。"
+- en: "Today's puzzle: the API is running, so why is its address dead too? We answer it once we have built this by hand."
+  zh:
+  - "今天的谜题：API 明明在运行，为什么它的地址也不通了？"
+  - "我们会在手动把它建出来以后回答。"
+- en: "Here is the goal, the lecture's picture of deployment: the containers from your laptop move to one virtual machine in Google Cloud, with port 80 the only door. We build it twice: by hand, then as code."
+  zh:
+  - "目标在这里，也就是课上画的部署图：你笔记本上的 container 搬到 Google Cloud 里的一台虚拟机上，port 80 是唯一的入口。"
+  - "我们把它建两遍：先手动，再写成代码。"
+- en: "On the course roadmap, the marker has moved to deployment, scaling and automation. Everything so far ran on your own computer. Users need a server."
+  zh:
+  - "在课程路线图上，标记已经移到了部署、扩展和自动化。"
+  - "到目前为止，一切都跑在你自己的电脑上。"
+  - "用户需要的是一台服务器。"
+- en: "You need cheese app version 3 with your secrets folder beside it, a Google Cloud project with billing, and a Docker Hub account. This costs real money, so each part ends by deleting everything."
+  zh:
+  - "你需要 cheese-app-v3，旁边放着你的 secrets 目录，还要一个开通了结算的 Google Cloud 项目，和一个 Docker Hub 账号。"
+  - "这会花真钱，所以每个部分最后都会把所有东西删掉。"
+  en_display:
+  - "You need cheese-app-v3 with your secrets folder beside it, a Google Cloud project with billing, and a Docker Hub account."
+  - null
+- en: "The tracker in the corner names the README step, code panels name their file and lines, and a yellow tag, your turn, means pause and run it."
+  zh:
+  - "角落里的进度条标出 README 的哪一步，代码面板标出文件和行号，黄色的 your turn 标签表示暂停一下，自己跑一遍。"
+- en: "One honest note: our recording machine has no Google account and no Docker Hub login. What runs on a machine you own is real; every cloud step stops at its first honest error, and we say what yours prints."
+  zh:
+  - "如实说一句：我们录制用的机器没有 Google 账号，也没有登录 Docker Hub。"
+  - "在自己的机器上能跑的都是真的；每个云端步骤都停在它第一个真实的报错处，我们会说你的会输出什么。"
+S02:
+- en: "Let's draw the goal properly. A browser sends a request to port 80, where nginx passes pages to the frontend on port 3000 and data calls to the API on 9000. The API asks the vector database on 8000."
+  zh:
+  - "我们把目标好好画一遍。"
+  - "浏览器把请求发到 port 80，nginx 在那里把页面交给 port 3000 上的前端，把数据请求交给 9000 上的 API。"
+  - "API 去问 8000 上的向量数据库。"
+- en: "The slide draws its arrowheads the other way; we draw requests the way they travel. The slide shows four containers. There is a fifth: a loader that fills the vector database once and then leaves."
+  zh:
+  - "课件上的箭头方向是反的；我们按请求实际走的方向画。"
+  - "课件上画了四个 container。"
+  - "还有第五个：一个加载器，它把向量数据库填满一次，然后就退出。"
+- en: "The lecture splits the manual route into four stages: push the images, set up the VM, deploy the containers, and put a web server in front. That is our map for part 1."
+  zh:
+  - "课上把手动部署分成四个阶段：push image、配置 VM、部署 container，再在前面放一台 Web 服务器。"
+  - "这就是我们第 1 部分的地图。"
+- en: "The README starts with a check, not a command: your containers run locally. The vector database is up, the API shows its docs on port 9000, and the frontend its home page on 3000."
+  zh:
+  - "README 一开头是一个检查，不是命令：你的 container 都在本地跑着。"
+  - "向量数据库已经起来了，API 在 port 9000 上显示文档页，前端在 3000 上显示首页。"
+- en: "A small note: on this code, slash status is a better API check than the docs page. It answers version three point zero, so you know which code runs."
+  zh:
+  - "说明一点：在这份代码上，/status 比文档页更适合用来检查 API。"
+  - "它返回版本 3.0，所以你知道跑的是哪份代码。"
+  en_display:
+  - "A small note: on this code, /status is a better API check than the docs page."
+  - "It answers version 3.0, so you know which code runs."
+- en: "If you followed lecture 18 lately, it now teaches a refactored version 2; here you run version 3, with this repository's scripts."
+  zh:
+  - "如果你最近跟过第 18 讲，它现在讲的是重构过的 v2；这里你跑的是 v3，用的是这个 repo 自己的脚本。"
+- en: "We follow main, the branch the course site links; on recording day it was this November 2025 commit. READMEs change; git log shows which one you have."
+  zh:
+  - "我们跟着 main 分支走，也就是课程网站链接的那个分支；录制当天，它停在 2025 年 11 月的这个 commit 上。"
+  - "README 会变；git log 能告诉你手上的是哪一版。"
+S03:
+- en: "Stage 1: push the images. Create an access token in your Docker Hub account settings; it is a password for scripts, so never show it."
+  zh:
+  - "第 1 阶段：push image。"
+  - "在你的 Docker Hub 账号设置里创建一个访问令牌；它是给脚本用的密码，所以千万别给人看。"
+- en: "Typed exactly as the README prints it, the login fails: syntax error near unexpected token newline. Angle brackets are redirections to the shell, so replace the whole placeholder, brackets included."
+  zh:
+  - "照 README 印的原样敲，登录会失败：syntax error near unexpected token newline。"
+  - "尖括号对 shell 来说是重定向，所以要把整个占位符换掉，连尖括号一起。"
+  en_display:
+  - "Typed exactly as the README prints it, the login fails: syntax error near unexpected token `newline'."
+  - null
+- en: "Better: the flag password standard in keeps the token out of your shell history."
+  zh:
+  - "更好的做法：--password-stdin 参数让令牌不会进到你的 shell 历史记录里。"
+  en_display:
+  - "Better: the flag --password-stdin keeps the token out of your shell history."
+- en: "Now the Docker Hub script, one in each service folder. Line 11 sets the user name to dlops, the course account: change it to yours."
+  zh:
+  - "现在是 Docker Hub 脚本，每个服务目录里各有一个。"
+  - "第 11 行把用户名设成 dlops，也就是课程的账号：改成你自己的。"
+- en: "Line 27 creates and selects a new BuildKit builder; the script builds, then builds again to push. The API script builds for A M D 64 and ARM 64; the frontend script, A M D 64 only."
+  zh:
+  - "第 27 行创建并选中一个新的 BuildKit 构建器；脚本先构建一遍，再构建一遍来 push。"
+  - "API 的脚本为 AMD64 和 ARM64 构建；前端的脚本只构建 AMD64。"
+  en_display:
+  - null
+  - "The API script builds for AMD64 and ARM64; the frontend script, AMD64 only."
+- en: "Inside frontend react, outside any docker shell, run it. It prints dlops, creates the builder, and builds: compiled successfully. The warning says this build stays in the builder cache."
+  zh:
+  - "在 frontend-react 里、在任何 docker shell 之外运行它。"
+  - "它打印出 dlops，创建构建器，然后构建：Compiled successfully。"
+  - "这条警告是说，这次构建的结果只留在构建器的缓存里。"
+  en_display:
+  - "Inside frontend-react, outside any docker shell, run it."
+  - "It prints dlops, creates the builder, and builds: Compiled successfully."
+  - null
+- en: "Then the push: access denied. We are not dlops, and not logged in; with your name and login, this is where it says pushed."
+  zh:
+  - "接着是 push：access denied。"
+  - "我们不是 dlops，也没有登录；换成你的用户名并登录后，这里会显示 pushed。"
+- en: "Run the same script in api service and vector db; we did not capture those two-platform builds. Those two build for two chip types, one of them emulated: expect a long api service build, and on Linux register Q E M U first. Pause, run all three, and check Docker Hub."
+  zh:
+  - "在 api-service 和 vector-db 里跑同一个脚本；那两个双平台构建我们没有录。"
+  - "这两个要为两种芯片构建，其中一种靠模拟：api-service 会构建很久；在 Linux 上，先注册 QEMU。"
+  - "暂停一下，三个都跑一遍，再去 Docker Hub 上看看。"
+  en_display:
+  - "Run the same script in api-service and vector-db; we did not capture those two-platform builds."
+  - "Those two build for two chip types, one of them emulated: expect a long api-service build, and on Linux register QEMU first."
+  - null
+- en: "Skip this stage and part 1 still works, using the public dlops images, which are a little older than the code. If you pushed yours, replace dlops with your user name in the VM commands."
+  zh:
+  - "跳过这个阶段，第 1 部分也照样能跑，用的是公开的 dlops image，比代码稍微旧一点。"
+  - "如果你 push 了自己的，就在 VM 的命令里把 dlops 换成你的用户名。"
+S04:
+- en: "Stage 2: set up the VM. In the console, create a VM instance with the defaults, except machine type N 2 D, a 50 gigabyte disk, and HTTP and HTTPS allowed."
+  zh:
+  - "第 2 阶段：配置 VM。"
+  - "在控制台里用默认值创建一个 VM 实例，只是机器类型改成 N2D、磁盘 50 GB，并允许 HTTP 和 HTTPS 流量。"
+  en_display:
+  - null
+  - "In the console, create a VM instance with the defaults, except machine type N2D, a 50 GB disk, and HTTP and HTTPS allowed."
+- en: "Those two ticks add network tags, http server and https server; the default firewall opens 80 and 443 only to VMs with them. The VM now bills while it runs, its disk while it exists."
+  zh:
+  - "这两个勾会加上网络标记 http-server 和 https-server；默认防火墙只对带这两个标记的 VM 开放 80 和 443。"
+  - "从现在起，VM 运行时计费，磁盘只要存在就计费。"
+  en_display:
+  - "Those two ticks add network tags, http-server and https-server; the default firewall opens 80 and 443 only to VMs with them."
+  - null
+- en: "Pause, create yours, and SSH in with the SSH button in the VM instances list. Our VM is a stand-in we can capture end to end: a fresh Debian 12 machine without Docker. Every command is the same on yours."
+  zh:
+  - "暂停一下，创建你自己的 VM，然后在 VM 实例列表里点 SSH 按钮连进去。"
+  - "我们的 VM 是一个能从头录到尾的替身：一台全新的、没装 Docker 的 Debian 12 机器。"
+  - "每条命令在你的 VM 上都一样。"
+- en: "Install Docker with the official script: download it with curl, run it with sudo. It adds the Docker repository for bookworm and installs the engine, buildx and compose."
+  zh:
+  - "用官方脚本安装 Docker：用 curl 下载，再用 sudo 运行。"
+  - "它为 bookworm 加上 Docker 的软件源，装好引擎、buildx 和 compose。"
+- en: "Then check it with sudo docker, dash dash version. Pause here and install Docker on your VM."
+  zh:
+  - "然后用 sudo docker --version 检查一下。"
+  - "在这里暂停一下，在你的 VM 上装好 Docker。"
+  en_display:
+  - "Then check it with sudo docker --version."
+  - null
+- en: "Next, create folders: persistent folder, secrets and conf nginx, writable by anyone. The README lists these six commands twice: run them once, from your home directory."
+  zh:
+  - "接下来建目录：persistent-folder、secrets 和 conf/nginx，任何人都能写。"
+  - "README 把这六条命令列了两遍：在你的 home 目录下跑一遍就够了。"
+  en_display:
+  - "Next, create folders: persistent-folder, secrets and conf/nginx, writable by anyone."
+  - null
+- en: "An extra check: the folders belong to root, but anyone may write there: fine for a demo VM only. Stay in your home directory: later mounts use the current folder."
+  zh:
+  - "一个额外检查：这些目录属于 root，但任何人都能往里写：只适合演示用的 VM。"
+  - "留在你的 home 目录里：后面的挂载用的都是当前目录。"
+- en: "Now the app's key, gcp service dot json, written with echo; ours holds just the placeholder. Paste in the gcp service key from your laptop's secrets folder; part 2 shows how to make one. Never show or commit it."
+  zh:
+  - "现在是应用的密钥 gcp-service.json，用 echo 写进去；我们的只有占位符。"
+  - "把你笔记本 secrets 目录里的 gcp-service 密钥粘贴进去；第 2 部分会讲怎么生成。"
+  - "千万别给人看，也别 commit。"
+  en_display:
+  - "Now the app's key, gcp-service.json, written with echo; ours holds just the placeholder."
+  - "Paste in the gcp-service key from your laptop's secrets folder; part 2 shows how to make one."
+  - null
+- en: "Last, create the Docker network, cheese app network: a private network where our containers find each other by name. Pause and run these three steps."
+  zh:
+  - "最后，创建 Docker 网络 cheese-app-network：一个私有网络，我们的 container 在里面按名字找到彼此。"
+  - "暂停一下，把这三步跑一遍。"
+  en_display:
+  - "Last, create the Docker network, cheese-app-network: a private network where our containers find each other by name."
+  - null
+S05:
+- en: "Stage 3: the containers. Pull the Chroma image, then stop and remove any old vector database. The error, no such container, is harmless here: or true makes the step safe to run again."
+  zh:
+  - "第 3 阶段：container。"
+  - "先 pull Chroma 的 image，再停掉并删除旧的向量数据库。"
+  - "No such container 这个报错在这里是无害的：|| true 让这一步可以放心重跑。"
+  en_display:
+  - null
+  - null
+  - "The error, No such container, is harmless here: || true makes the step safe to run again."
+- en: "Then run it detached on cheese app network, publishing port 8000, restarting always, with a data folder mounted. Its name goes into the phone book."
+  zh:
+  - "然后在 cheese-app-network 上以后台方式运行它，发布 port 8000，restart always，并挂载一个数据目录。"
+  - "它的名字会记进电话簿。"
+  en_display:
+  - "Then run it detached on cheese-app-network, publishing port 8000, restarting always, with a data folder mounted."
+  - null
+- en: "An extra check: the port is published, the heartbeat answers, Chroma version one at the time of recording."
+  zh:
+  - "一个额外检查：port 已经发布，心跳有回应，录制时是 Chroma 版本 1。"
+- en: "Now the loader, run vector db cli. It finds the database by name, cheese app vector db, not by address. The project is the README's default; change it to yours."
+  zh:
+  - "现在是加载器，Run vector db cli 这一节。"
+  - "它按名字找到数据库，也就是 cheese-app-vector-db，而不是按地址。"
+  - "项目用的是 README 的默认值；改成你自己的。"
+  en_display:
+  - null
+  - "It finds the database by name, cheese-app-vector-db, not by address."
+  - null
+- en: "It downloads, creates the collection, and loads eleven files: 14,356 chunks in all. The embeddings come precomputed, so our placeholder key never mattered."
+  zh:
+  - "它下载数据，创建 collection，载入 11 个文件：一共 14,356 个 chunk。"
+  - "这些 embedding 是预先算好的，所以我们的占位密钥根本没用上。"
+- en: "The loader ran with the remove flag, so it exits and is gone. Pause and run both containers now."
+  zh:
+  - "加载器带着 --rm 运行，所以它退出后就没了。"
+  - "暂停一下，现在把两个 container 都跑起来。"
+  en_display:
+  - "The loader ran with the --rm flag, so it exits and is gone."
+  - null
+- en: "A question. The loader is gone. Are the 14,356 chunks gone too?"
+  zh:
+  - "想一想。"
+  - "加载器没了。"
+  - "那 14,356 个 chunk 也没了吗？"
+- en: "No. The loader only sent them; they sit in the vector database container, which keeps running. Remove it, and the loader must fill a new one."
+  zh:
+  - "不会。"
+  - "加载器只是把它们发过去；它们待在向量数据库的 container 里，而那个 container 一直在跑。"
+  - "删掉它，加载器就得重新填一个新的。"
+- en: "But where inside that container? A small slip: Chroma saves to slash data, so the folder the README mounts stays empty. To keep the data on the VM disk, mount slash data instead, rerun the stop, remove and run lines, then the loader."
+  zh:
+  - "那存在里面的哪儿？"
+  - "有一个小疏漏：Chroma 存到 /data，所以 README 挂载的目录一直是空的。"
+  - "要把数据留在 VM 的磁盘上，就改为挂载 /data，重跑停止、删除和运行这几行，再跑加载器。"
+  en_display:
+  - null
+  - "A small slip: Chroma saves to /data, so the folder the README mounts stays empty."
+  - "To keep the data on the VM disk, mount /data instead, rerun the stop, remove and run lines, then the loader."
+S06:
+- en: "Next, run api service. The image is not on the VM yet, so docker run pulls it first."
+  zh:
+  - "接下来运行 api-service。"
+  - "VM 上还没有这个 image，所以 docker run 会先把它 pull 下来。"
+  en_display:
+  - "Next, run api-service."
+  - null
+- en: "Two mounts, persistent folder and secrets; port 9000; the key path; and the database by name. The project is the README's default, and the bucket name is passed but never used."
+  zh:
+  - "两个挂载，persistent-folder 和 secrets；port 9000；密钥路径；还有按名字找的数据库。"
+  - "项目是 README 的默认值，bucket 名传了进去，但从来没用到。"
+  en_display:
+  - "Two mounts, persistent-folder and secrets; port 9000; the key path; and the database by name."
+  - null
+- en: "The logs show loading CNN model, then uvicorn running on port 9000. The model comes from a GitHub release, not a bucket, so our picture grays out the slide's bucket."
+  zh:
+  - "日志显示 loading CNN model，然后是 uvicorn 在 port 9000 上运行。"
+  - "模型来自 GitHub 的一个 release，不是 bucket，所以我们的图把课件上的 bucket 画成了灰色。"
+- en: "And the image is big, about five gigabytes on disk, with TensorFlow inside."
+  zh:
+  - "而且这个 image 很大，在磁盘上大约 5 GB，里面装着 TensorFlow。"
+- en: "Three extra curl checks: the root says welcome to AC215, and slash docs shows the docs page. Slash status says 404: the public image is older than your clone."
+  zh:
+  - "三个额外的 curl 检查：根路径返回 Welcome to AC215，/docs 显示文档页。"
+  - "/status 返回 404：公开的 image 比你的 clone 旧。"
+  en_display:
+  - "Three extra curl checks: the root says Welcome to AC215, and /docs shows the docs page."
+  - "/status says 404: the public image is older than your clone."
+- en: "The README then offers an interactive variant. Run as written, it fails: the name api service is in use, because the detached container still runs."
+  zh:
+  - "README 接着给了一个交互式的版本。"
+  - "照原样运行会失败：api-service 这个名字已经被占用了，因为后台的那个 container 还在跑。"
+  en_display:
+  - null
+  - "Run as written, it fails: the name api-service is in use, because the detached container still runs."
+- en: "Remove the running one with docker rm dash f, and the variant opens a shell. It is optional: we exit and start the detached one again."
+  zh:
+  - "用 docker rm -f 删掉正在运行的那个，交互式版本就会打开一个 shell。"
+  - "这一步是可选的：我们 exit 出来，再把后台的那个启动起来。"
+  en_display:
+  - "Remove the running one with docker rm -f, and the variant opens a shell."
+  - null
+- en: "Then the frontend, on port 3000. The extra check shows the title, Formaggio, and the base API URL, slash api service, which the page calls on its own address. Pause and start both."
+  zh:
+  - "然后是前端，在 port 3000 上。"
+  - "额外检查显示了标题 Formaggio 和 API 的基础 URL /api-service，页面就在它自己的地址上调用它。"
+  - "暂停一下，两个都启动起来。"
+  en_display:
+  - null
+  - "The extra check shows the title, Formaggio, and the base API URL, /api-service, which the page calls on its own address."
+  - null
+S07:
+- en: "Stage 4: a web server in front. A reverse proxy gives the browser one address: nginx listens on port 80 and forwards each request inside the VM."
+  zh:
+  - "第 4 阶段：在前面放一台 Web 服务器。"
+  - "反向代理给浏览器一个地址：nginx 监听 port 80，把每个请求转发到 VM 内部。"
+- en: "In the repository's nginx dot conf, the location block on line 35 catches paths that start with slash api service. It passes them to api service on port 9000."
+  zh:
+  - "在 repo 的 nginx.conf 里，第 35 行的 location 块接住以 /api-service 开头的路径。"
+  - "它把这些请求交给 port 9000 上的 api-service。"
+  en_display:
+  - "In the repository's nginx.conf, the location block on line 35 catches paths that start with /api-service."
+  - "It passes them to api-service on port 9000."
+- en: "Look at the end of that address: one slash. With it, nginx swaps the matched prefix for that slash, so slash api service slash status reaches the API as just slash status."
+  zh:
+  - "看那个地址的结尾：一个斜杠。"
+  - "有了它，nginx 就把匹配到的前缀换成这个斜杠，所以 /api-service/status 到了 API 那里就只是 /status。"
+  en_display:
+  - null
+  - "With it, nginx swaps the matched prefix for that slash, so /api-service/status reaches the API as just /status."
+- en: "Everything else goes to the next block, the frontend on 3000. Both targets are container names on cheese app network."
+  zh:
+  - "其余的请求都交给下一个块，也就是 3000 上的前端。"
+  - "两个目标都是 cheese-app-network 上的 container 名字。"
+  en_display:
+  - null
+  - "Both targets are container names on cheese-app-network."
+- en: "The README writes this file with one long echo in single quotes. But the file holds single quotes too, so the shell eats the log format and leaves a dash and two brackets."
+  zh:
+  - "README 用一条很长的 echo 加单引号来写这个文件。"
+  - "可文件里也有单引号，所以 shell 把 log format 吃掉了，只剩下一个短横线和两个括号。"
+  en_display:
+  - null
+  - "But the file holds single quotes too, so the shell eats the log_format and leaves a dash and two brackets."
+- en: "Routing still works, but the access logs are useless. Write it with a quoted heredoc instead: cat, the same text, then E O F."
+  zh:
+  - "路由还能用，但访问日志就没用了。"
+  - "改用带引号的 heredoc 来写：cat，同样的内容，最后是 EOF。"
+  en_display:
+  - null
+  - "Write it with a quoted heredoc instead: cat, the same text, then EOF."
+- en: "If you used the echo, rewrite the file this way first. Then run nginx with that file mounted, publishing port 80. The container list shows four: ports 80, 3000, 9000 and 8000."
+  zh:
+  - "如果你用的是 echo，先用这种方式把文件重写一遍。"
+  - "然后运行 nginx，挂载这个文件，发布 port 80。"
+  - "container 列表显示四个：port 80、3000、9000 和 8000。"
+- en: "Open the external IP of your VM, from the VM instances list, in a browser, and the home page appears. On the VM, curl agrees: 200 OK, served by nginx, title Formaggio."
+  zh:
+  - "在 VM 实例列表里找到你的 VM 的外部 IP，在浏览器里打开，首页就出来了。"
+  - "在 VM 上，curl 也一样：200 OK，由 nginx 提供，标题是 Formaggio。"
+- en: "Slash api service says welcome to AC215: the prefix was cut on the way. Pause and open your site."
+  zh:
+  - "/api-service 返回 Welcome to AC215：前缀在路上被剪掉了。"
+  - "暂停一下，打开你的网站。"
+  en_display:
+  - "/api-service says Welcome to AC215: the prefix was cut on the way."
+  - null
+- en: "A question. Port 9000 is published on the VM. Does it answer from your laptop?"
+  zh:
+  - "想一想。"
+  - "VM 上发布了 port 9000。"
+  - "从你的笔记本能访问到它吗？"
+- en: "No. The two ticks opened only 80 and 443; no rule opens 9000. Port 9000 is open on the VM but shut at the network edge: one public door."
+  zh:
+  - "不能。"
+  - "那两个勾只开了 80 和 443；没有规则开放 9000。"
+  - "VM 上的 port 9000 是开着的，但在网络边界上是关着的：唯一的公共入口。"
+- en: "Now the puzzle. The web server looks up frontend and api service once, at start. With the frontend stopped, the restart fails that lookup and exits, taking the API route with it."
+  zh:
+  - "现在回答开头的谜题。"
+  - "Web 服务器只在启动时查一次 frontend 和 api-service 的地址。"
+  - "前端停了，重启时这次查找失败并直接退出，API 的路由也跟着没了。"
+  en_display:
+  - null
+  - "The web server looks up frontend and api-service once, at start."
+  - null
+- en: "Start the frontend, then nginx, and the site answers 200 again. Start order matters, and so does a restart policy, which only the vector database command has."
+  zh:
+  - "先启动前端，再启动 nginx，网站又返回 200 了。"
+  - "启动顺序很重要，重启策略也很重要，而只有向量数据库那条命令带了重启策略。"
+S08:
+- en: "Let's count what we typed. Twenty-one commands on the VM, plus console clicks, plus three Docker Hub scripts on the laptop. Each one added a block to the VM."
+  zh:
+  - "我们来数一数敲了什么。"
+  - "VM 上 21 条命令，加上控制台里的点击，再加上笔记本上的三个 Docker Hub 脚本。"
+  - "每一条都给 VM 加了一块积木。"
+- en: "Now three questions. Repeat: can you build the same thing for a staging copy tomorrow? Review: what exactly is on that VM? Undo: how do you delete every piece?"
+  zh:
+  - "现在有三个问题。"
+  - "重复：明天你能为一个 staging 副本建出一模一样的东西吗？"
+  - "审查：那台 VM 上到底有什么？"
+  - "撤销：怎么把每一块都删掉？"
+- en: "The lecture answers with one idea: too many steps to keep track of, so let a tool do them."
+  zh:
+  - "课上用一个想法来回答：步骤太多，记不过来，所以让工具去做。"
+- en: "That is infrastructure as code. You describe the servers, the networks and the software in a real programming language, Python here, and keep it in Git to share. No YAML file, no special language."
+  zh:
+  - "这就是基础设施即代码。"
+  - "你描述服务器、网络和软件，用的是一门真正的编程语言，这里是 Python，并放进 Git 里共享。"
+  - "没有 YAML 文件，也没有专门的语言。"
+- en: "An earlier version of the course did these same stages as Ansible playbooks, written in YAML. This version does them with Pulumi, one to one."
+  zh:
+  - "课程早先的一个版本用 Ansible playbook 做这几个阶段，是用 YAML 写的。"
+  - "这个版本用 Pulumi 来做，一一对应。"
+- en: "One more thing the README never says: delete this VM now, before part 2. In the console, open VM instances, select it, and delete it with its boot disk. Pause and delete yours; the list should be empty."
+  zh:
+  - "还有一件 README 从来没说的事：现在就删掉这台 VM，在第 2 部分之前。"
+  - "在控制台里打开 VM instances，选中它，连同启动磁盘一起删除。"
+  - "暂停一下，删掉你的；列表应该是空的。"
+- en: "Part 2 builds it all again, as code, and lets a tool remember every piece."
+  zh:
+  - "第 2 部分把这些全部用代码再建一遍，并让工具记住每一块。"

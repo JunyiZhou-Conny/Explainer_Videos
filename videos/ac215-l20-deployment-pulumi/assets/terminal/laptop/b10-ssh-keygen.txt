@@ -1,0 +1,23 @@
+$ cd /secrets
+ssh-keygen -f ssh-key-deployment
+cd /app
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in ssh-key-deployment
+Your public key has been saved in ssh-key-deployment.pub
+The key fingerprint is:
+SHA256:hby4NZHl8IBq0jxMeub1SmnolRhQE3B6GPjY9SY/eYU root@3e978a898fa8
+The key's randomart image is:
++---[RSA 3072]----+
+| .oo=. .o .      |
+|. .=o... O       |
+| +oO.o  =.+      |
+|. =.% +.E+.      |
+|   * X.=S.       |
+|    + Xoo.       |
+|   . +.+         |
+|    . .          |
+|                 |
++----[SHA256]-----+
+[exit 0]

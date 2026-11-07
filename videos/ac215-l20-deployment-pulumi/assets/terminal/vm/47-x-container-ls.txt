@@ -1,0 +1,7 @@
+$ sudo docker container ls
+CONTAINER ID   IMAGE                             COMMAND                  CREATED          STATUS          PORTS                    NAMES
+225928af4aee   nginx:stable                      "/docker-entrypoint.…"   3 seconds ago    Up 3 seconds    0.0.0.0:80->80/tcp       nginx
+f6ddb0d7038d   dlops/cheese-app-frontend-react   "docker-entrypoint.s…"   11 seconds ago   Up 10 seconds   0.0.0.0:3000->3000/tcp   frontend
+a18ad0b0f412   dlops/cheese-app-api-service      "/bin/bash docker-en…"   31 seconds ago   Up 31 seconds   0.0.0.0:9000->9000/tcp   api-service
+6eb3a99fc218   chromadb/chroma                   "dumb-init -- chroma…"   6 minutes ago    Up 6 minutes    0.0.0.0:8000->8000/tcp   cheese-app-vector-db
+[exit 0]

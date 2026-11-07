@@ -1,0 +1,10 @@
+$ sudo docker container logs frontend -f
+   ▲ Next.js 15.0.2
+   - Local:        http://localhost:3000
+   - Network:      http://0.0.0.0:3000
+
+ ✓ Starting...
+ ✓ Ready in 67ms
+BASE_API_URL: /api-service
+^C
+[exit 130]

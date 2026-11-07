@@ -1,0 +1,8 @@
+$ sudo docker logs nginx 2>&1 | tail -6
+/docker-entrypoint.sh: Configuration complete; ready for start up
+-[]
+-[]
+-[]
+-[]
+-[]
+[exit 0]

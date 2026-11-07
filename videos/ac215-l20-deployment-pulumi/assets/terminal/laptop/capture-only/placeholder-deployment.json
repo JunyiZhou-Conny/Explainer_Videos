@@ -1,0 +1,10 @@
+{
+  "type": "service_account",
+  "project_id": "your-gcp-project",
+  "private_key_id": "0000000000000000000000000000000000000000",
+  "private_key": "<a throwaway RSA key generated at capture time for no account; not committed>",
+  "client_email": "deployment@your-gcp-project.iam.gserviceaccount.com",
+  "client_id": "000000000000000000000",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token"
+}

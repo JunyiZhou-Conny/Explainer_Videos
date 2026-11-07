@@ -1,0 +1,57 @@
+$ sed -n 29p <assets/source>/src/deployment/deploy_single_vm/provision_instance.py
+            sudo sh -c 'blkid -o value -s TYPE /dev/disk/by-id/google-persistent-disk-1 || mkfs.ext4 /dev/disk/by-id/google-persistent-disk-1'
+[exit 0]
+
+$ docker run --rm --network none -v <logs>/disk-inner.sh:/disk-inner.sh:ro debian:12 bash /disk-inner.sh
+$ truncate -s 64M disk.img && echo 'a blank 64 MB disk image'
+a blank 64 MB disk image
+[exit 0]
+
+## first run: no filesystem yet
+$ blkid -o value -s TYPE disk.img || mkfs.ext4 -q disk.img
+[exit 0]
+
+$ blkid -o value -s TYPE disk.img
+ext4
+[exit 0]
+
+## the app writes data (a chat history file, written with debugfs)
+$ echo 'chat history' > history.txt && debugfs -w -R 'write history.txt history.txt' disk.img && debugfs -R 'ls -l' disk.img 2>/dev/null | grep history
+debugfs 1.47.0 (5-Feb-2023)
+Allocated inode: 12
+     12  100644 (1)      0      0      13  6-Nov-2026 01:00 history.txt
+[exit 0]
+
+## second run of the guarded command (a new trigger, a replaced resource...)
+$ blkid -o value -s TYPE disk.img || mkfs.ext4 -q disk.img
+ext4
+[exit 0]
+
+$ debugfs -R 'cat history.txt' disk.img
+debugfs 1.47.0 (5-Feb-2023)
+chat history
+[exit 0]
+
+## the same second run without the guard (no terminal, as over a Pulumi SSH session)
+$ mkfs.ext4 disk.img < /dev/null
+mke2fs 1.47.0 (5-Feb-2023)
+Discarding device blocks:     0/65536           done                            
+Creating filesystem with 65536 1k blocks and 16384 inodes
+Filesystem UUID: 5fe121ba-620b-4cb0-916c-3a361c63adf8
+Superblock backups stored on blocks: 
+	8193, 24577, 40961, 57345
+
+Allocating group tables: 0/8   done                            
+Writing inode tables: 0/8   done                            
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: 0/8   done
+
+[exit 0]
+
+$ debugfs -R 'cat history.txt' disk.img
+debugfs 1.47.0 (5-Feb-2023)
+history.txt: File not found by ext2_lookup 
+[exit 0]
+
+[exit 0]
+

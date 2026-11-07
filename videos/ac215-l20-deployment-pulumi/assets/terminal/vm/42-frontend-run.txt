@@ -1,0 +1,58 @@
+$ sudo docker run -d --name frontend -p 3000:3000 --network cheese-app-network dlops/cheese-app-frontend-react
+Unable to find image 'dlops/cheese-app-frontend-react:latest' locally
+latest: Pulling from dlops/cheese-app-frontend-react
+2d35ebdb57d9: Pulling fs layer
+60e45a9660cf: Pulling fs layer
+e74e4ed823e9: Pulling fs layer
+da04d522c98f: Pulling fs layer
+b809b3b32cd0: Pulling fs layer
+70995b10d2e9: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+0480081a2332: Pulling fs layer
+a1fea9e5200e: Pulling fs layer
+f4deb1be17c1: Pulling fs layer
+8258320bb2a7: Pulling fs layer
+b809b3b32cd0: Waiting
+70995b10d2e9: Waiting
+4f4fb700ef54: Waiting
+0480081a2332: Waiting
+a1fea9e5200e: Waiting
+da04d522c98f: Waiting
+f4deb1be17c1: Waiting
+8258320bb2a7: Waiting
+e74e4ed823e9: Verifying Checksum
+e74e4ed823e9: Download complete
+2d35ebdb57d9: Download complete
+da04d522c98f: Verifying Checksum
+da04d522c98f: Download complete
+2d35ebdb57d9: Pull complete
+b809b3b32cd0: Verifying Checksum
+b809b3b32cd0: Download complete
+70995b10d2e9: Verifying Checksum
+70995b10d2e9: Download complete
+4f4fb700ef54: Verifying Checksum
+4f4fb700ef54: Download complete
+0480081a2332: Verifying Checksum
+0480081a2332: Download complete
+a1fea9e5200e: Verifying Checksum
+a1fea9e5200e: Download complete
+8258320bb2a7: Verifying Checksum
+8258320bb2a7: Download complete
+60e45a9660cf: Verifying Checksum
+60e45a9660cf: Download complete
+f4deb1be17c1: Verifying Checksum
+f4deb1be17c1: Download complete
+60e45a9660cf: Pull complete
+e74e4ed823e9: Pull complete
+da04d522c98f: Pull complete
+b809b3b32cd0: Pull complete
+70995b10d2e9: Pull complete
+4f4fb700ef54: Pull complete
+0480081a2332: Pull complete
+a1fea9e5200e: Pull complete
+f4deb1be17c1: Pull complete
+8258320bb2a7: Pull complete
+Digest: sha256:255a23b2ba4f6396c9dbbac20a60bac1809bedd0c8e24a56da55a4df5d06c07a
+Status: Downloaded newer image for dlops/cheese-app-frontend-react:latest
+f6ddb0d7038de12b5dc2c89f4a931bd7b9f58d52f2c2b90f8630c11cdf1189e5
+[exit 0]

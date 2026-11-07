@@ -1,0 +1,7 @@
+$ pulumi config
+KEY                                 VALUE
+gcp:project                         ac215-project
+pulumi:tags                         {"pulumi:template":"python"}
+security:gcp_service_account_email  deployment@ac215-project.iam.gserviceaccount.com
+security:ssh_user                   sa_100110341521630214262
+[exit 0]
