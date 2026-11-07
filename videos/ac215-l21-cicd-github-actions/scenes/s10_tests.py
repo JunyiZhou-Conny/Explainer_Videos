@@ -281,12 +281,13 @@ class TestJobs(VoiceScene):
             vo.wait_until("The lecture's one test box")
             self.play(FadeIn(ref), Indicate(strip.boxes[3], color=TURN, scale_factor=1.15), run_time=0.7)
             vo.wait_until("is three jobs here")
-            seeds = VGroup(*[strip.boxes[3].copy() for _ in range(3)])
-            self.add(seeds)
-            self.play(LaggedStart(*[ReplacementTransform(seeds[i], big[i]) for i in range(3)], lag_ratio=0.25),
-                      run_time=1.4)
+            self.play(LaggedStart(*[AnimationGroup(TransformFromCopy(strip.boxes[3].frame, big[i].frame),
+                                                   FadeIn(big[i].text, run_time=0.9)) for i in range(3)],
+                                  lag_ratio=0.25), run_time=1.4)
+            self.remove(*big)
+            self.add(big)
             vo.wait_until("side by side")
-            self.play(Create(ground), LaggedStart(*[Indicate(b, color=INK, scale_factor=1.05) for b in big],
+            self.play(Create(ground), LaggedStart(*[Indicate(b.text, color=INK, scale_factor=1.08) for b in big],
                                                   lag_ratio=0.2), run_time=0.9)
             vo.wait_until("each at a different altitude")
             self.play(GrowArrow(alt), FadeIn(alt_t, shift=UP * 0.15), run_time=0.8)
@@ -406,14 +407,14 @@ class TestJobs(VoiceScene):
         err = erratum_tag().next_to(card4, RIGHT, buff=0.25).align_to(card4, UP).shift(DOWN * 0.1)
         x3 = run_log(UX3, (3, 7), title="Unit Tests · extra: who owns coverage/", size=20, max_w=8.7,
                      colors={3: SHARED, 7: IMAGE})
-        x3.next_to(card4, DOWN, buff=0.3).align_to(card4, LEFT)
+        top_at(x3, -0.05, left=LEFT_X)
         xt = extra_tag().next_to(x3.frame, DOWN, buff=0.12).align_to(x3.frame, LEFT)
         fix = grey_chip("fix: exercises.md", size=22).next_to(xt, RIGHT, buff=0.4)
         # the drawing: the runner's folder, mounted into the container
         dx = x3.get_right()[0] + 0.3
         cx = (dx + 6.45) / 2
-        ctn = box(6.45 - dx, 1.55, IMAGE, fill_opacity=0.1, radius=0.12)
-        ctn.move_to([cx, -2.45, 0])
+        ctn = box(6.45 - dx, 1.75, IMAGE, fill_opacity=0.1, radius=0.12)
+        ctn.move_to([cx, -2.5, 0])
         ctn_t = label("test container", 20, IMAGE).next_to(ctn.get_corner(UL), DR, buff=0.12)
         user = person_icon(IMAGE, 0.42)
         user_t = label("app", 20, IMAGE)
@@ -422,7 +423,7 @@ class TestJobs(VoiceScene):
         fold_t = mono("coverage/", 20, SHARED)
         own_t = label("owner: root", 20, SHARED)
         fold_g = VGroup(fold, VGroup(fold_t, own_t).arrange(DOWN, aligned_edge=LEFT, buff=0.06)) \
-            .arrange(RIGHT, buff=0.2).move_to([cx, -0.55, 0])
+            .arrange(RIGHT, buff=0.2).move_to([cx, -0.6, 0])
         mount = DashedLine(fold.get_bottom() + DOWN * 0.05, ctn.get_top(), dash_length=0.08, color=S.GREY)
         mount_t = mono("-v", 20, S.GREY).next_to(mount, LEFT, buff=0.1)
         x_mark = cross_mark(0.3, ERR).next_to(fold, LEFT, buff=0.2)
@@ -438,7 +439,7 @@ class TestJobs(VoiceScene):
             vo.wait_until("it promises terminal")
             hb7 = hl_bar(card4.rows[307], S.GREY, 0.3)
             self.play(FadeIn(hb7), FadeIn(err, shift=LEFT * 0.2), run_time=0.5)
-            self.play(Indicate(err, color=INK, scale_factor=1.1), run_time=0.6)
+            self.play(Circumscribe(err, color=INK, buff=0.06), run_time=0.6)
             vo.wait_until("Docker creates the missing coverage folder")
             self.play(FadeIn(x3, shift=UP * 0.15), FadeIn(xt), FadeIn(ctn), FadeIn(ctn_t), run_time=0.6)
             self.play(FadeIn(fold_g, shift=DOWN * 0.15), Create(mount), FadeIn(mount_t), run_time=0.6)
@@ -452,11 +453,11 @@ class TestJobs(VoiceScene):
             self.play(FadeIn(x_mark, scale=1.4), Indicate(fold, color=ERR), run_time=0.5)
             vo.wait_until("Create the folder writable first")
             ok_ring = ring(fold, PASS, buff=0.1, dashed=True)
-            ok_t = label("writable first", 20, PASS).next_to(fold_g, UP, buff=0.12)
+            ok_t = label("writable first", 20, PASS).next_to(fold_g, UP, buff=0.3)
             self.play(FadeOut(x_mark), Create(ok_ring), FadeIn(ok_t, shift=DOWN * 0.1), run_time=0.7)
             vo.wait_until("the exercises have the fix")
             self.play(FadeIn(fix, shift=LEFT * 0.2), run_time=0.5)
-            self.play(Indicate(fix, color=INK, scale_factor=1.08), run_time=0.6)
+            self.play(Circumscribe(fix, color=INK, buff=0.06), run_time=0.6)
 
         # ========================================================== 5. integration: the test client, in-process
         card5 = top_at(readme_panel(310, 314), left=LEFT_X)
@@ -494,7 +495,7 @@ class TestJobs(VoiceScene):
             self.play(GrowArrow(call), run_time=0.6)
             pdot = Dot(radius=0.08, color=ROUTE).move_to(call.get_start())
             self.play(MoveAlongPath(pdot, call), run_time=0.8)
-            self.play(FadeOut(pdot), Indicate(app_b, color=ROUTE, scale_factor=1.08), run_time=0.5)
+            self.play(FadeOut(pdot), Circumscribe(app_b, color=ROUTE, buff=0.08), run_time=0.5)
             self.remove(pdot)
             vo.wait_until("No server, no port")
             self.play(FadeIn(noport, shift=UP * 0.15), FadeIn(log_i, shift=UP * 0.15), run_time=0.6)
@@ -680,14 +681,15 @@ class TestJobs(VoiceScene):
             self.play(LaggedStart(*[GrowArrow(a) for a in ce_arrows], lag_ratio=0.3), run_time=0.7)
 
         # ========================================================== 10. L09's quiet skip vs CI's loud gate
-        td = CompactRig().trapdoor()
-        td.move_to([-2.6, 0.2, 0])
-        l09 = dashed_chip("L09", size=20).next_to(td, LEFT, buff=0.4)
-        tdot = Dot(radius=0.11, color=S.GREY).move_to(td[0].get_top() + UP * 0.9)
-        cg = gate_glyph(1.0, 1.1, ROUTE).move_to([2.4, 0.2, 0])
-        cg_t = mono("curl -f", 22, ROUTE).next_to(cg, UP, buff=0.2)
-        e1 = exit_badge(1).next_to(cg, RIGHT, buff=0.35)
-        capt = label("in CI: a missing server fails loudly", 26, S.GREY).move_to([0, -1.7, 0])
+        td = CompactRig().trapdoor().scale(1.6)
+        td.move_to([-2.8, 0.3, 0])
+        l09 = dashed_chip("L09", size=22).next_to(td, LEFT, buff=0.5)
+        td_t = label("skips quietly", 24, S.GREY).next_to(td, DOWN, buff=1.1)
+        tdot = Dot(radius=0.14, color=S.GREY).move_to(td[0].get_top() + UP * 1.0)
+        cg = gate_glyph(1.3, 1.5, ROUTE).move_to([2.6, 0.3, 0])
+        cg_t = mono("curl -f", 26, ROUTE).next_to(cg, UP, buff=0.25)
+        e1 = exit_badge(1, size=22).next_to(cg, RIGHT, buff=0.4)
+        capt = label("in CI: a missing server fails loudly", 28, S.GREY).move_to([0, -2.2, 0])
         with self.voiceover(SAY[10]) as vo:
             gone = VGroup(c4, a161, a166, ce, ce_arrows)
             self.play(FadeOut(gone), run_time=0.5)
@@ -698,16 +700,16 @@ class TestJobs(VoiceScene):
             self.play(FadeIn(tdot), run_time=0.3)
             hinge = td[1].get_center()
             self.play(Rotate(td[0], -PI / 3, about_point=hinge), run_time=0.4)
-            self.play(tdot.animate.shift(DOWN * 1.6).set_opacity(0), run_time=0.8)
+            self.play(tdot.animate.shift(DOWN * 1.4).set_opacity(0), run_time=0.8)
             self.remove(tdot)
-            self.play(Rotate(td[0], PI / 3, about_point=hinge), run_time=0.4)
+            self.play(Rotate(td[0], PI / 3, about_point=hinge), FadeIn(td_t, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Here the curl gate")
             self.play(FadeIn(cg), FadeIn(cg_t), run_time=0.5)
             self.play(Indicate(VGroup(cg, cg_t), color=ROUTE, scale_factor=1.1), run_time=0.7)
             vo.wait_until("makes it fail loudly instead")
             self.play(cg.bar.animate.set_color(ERR), cg.posts.animate.set_color(ERR), FadeIn(e1, shift=LEFT * 0.2),
                       run_time=0.5)
-            self.play(FadeIn(capt, shift=UP * 0.15), Indicate(e1, color=ERR, scale_factor=1.15), run_time=0.7)
+            self.play(FadeIn(capt, shift=UP * 0.15), Circumscribe(e1, color=ERR, buff=0.06), run_time=0.7)
 
         self.wait(0.4)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)

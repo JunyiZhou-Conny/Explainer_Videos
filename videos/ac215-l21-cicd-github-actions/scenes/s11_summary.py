@@ -180,14 +180,17 @@ def line_glyphs(panel, n: int):
 def summary_graph(run=None) -> JobGraph:
     """GRAPH(run) in this scene's layout: short labels, nodes top-left (top TOP, left LEFT_X), the
     run badge above the Build node, the illustration tag under the middle column."""
-    g = JobGraph(states=results(run) if run else None, labels="short", col_gap=0.9, pitch=PITCH)
+    g = JobGraph(states=results(run) if run else None, labels="short", col_gap=1.0, pitch=PITCH)
     nodes = VGroup(*g.nodes.values())
-    g.shift(np.array([LEFT_X - nodes.get_left()[0], TOP - nodes.get_top()[1], 0]))
+    v = np.array([LEFT_X - nodes.get_left()[0], TOP - nodes.get_top()[1], 0])
+    g.shift(v)
+    g.gap.shift(v)             # not members until show_gap(): move them with the graph
+    g.gap_q.shift(v)
     b = g.nodes["build"]
     g.badge.next_to(b, UP, buff=0.2).align_to(b, LEFT)
     g.tag.move_to([LEFT_X + g.tag.width / 2, nodes.get_bottom()[1] - 0.14 - g.tag.height / 2, 0])
     unit = g.nodes["unit-tests"]
-    assert g.badge.get_right()[0] < unit.get_left()[0] - 0.05, (g.badge.get_right(), unit.get_left())
+    assert g.badge.get_right()[0] < unit.get_left()[0] - 0.15, (g.badge.get_right(), unit.get_left())
     return g
 
 
@@ -219,7 +222,7 @@ class TheSummary(VoiceScene):
         p0 = wrapped_code(CI, 172, 183)
         assert p0.width <= 12.6, p0.width
         top_at(p0, TOP - 0.05)
-        runs = label("runs ≠ passes", 22, S.GREY).next_to(span(p0, 176, "if: always()"), RIGHT, buff=0.6)
+        runs = label("runs ≠ passes", 22, INK).next_to(span(p0, 176, "if: always()"), RIGHT, buff=0.6)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=RIGHT * 0.2), FadeIn(strip, shift=RIGHT * 0.3), run_time=0.6)
             self.play(strip.set_current("Summary"), run_time=0.6)
@@ -347,7 +350,7 @@ class TheSummary(VoiceScene):
 
         # ========================================================== 4. the README is literally true; the fix
         card4 = readme_panel(328, 328)
-        card4.move_to([LEFT_X + card4.width / 2, -1.0 - card4.height / 2, 0])
+        card4.move_to([LEFT_X + card4.width / 2, -1.25 - card4.height / 2, 0])
         note4 = label("← true · lint is not a test job", 22, S.GREY).next_to(card4, RIGHT, buff=0.3)
         ex_chip = grey_chip("exercises.md: add lint-and-format to needs + the check", size=20)
         ex_chip.next_to(card4, DOWN, buff=0.35).align_to(card4, LEFT)
@@ -446,8 +449,9 @@ class TheSummary(VoiceScene):
         lg8 = run_log(ruler(SYSD, 51), (27, 35, 51), heading=False, size=CODE_SIZE,
                       colors={27: ERR, 35: ERR, 51: ERR})
         log_at_bottom(lg8)
-        c35 = grey_chip("x=3, y=4", size=20).next_to(lg8.frame, LEFT, buff=0.3).set_y(lg8.row(35).get_center()[1])
-        c27 = grey_chip("default x=1, y=2", size=20).next_to(lg8.frame, LEFT, buff=0.3).set_y(lg8.row(27).get_center()[1])
+        # labels, not chips: a chip is taller than a 20 pt log row and the two rows are adjacent
+        c35 = label("x=3, y=4 →", 20, S.GREY).next_to(lg8.frame, LEFT, buff=0.25).set_y(lg8.row(35).get_center()[1])
+        c27 = label("default x=1, y=2 →", 20, S.GREY).next_to(lg8.frame, LEFT, buff=0.25).set_y(lg8.row(27).get_center()[1])
         assert c27.get_left()[0] >= LEFT_X, c27.get_left()
         unit_chip = grey_chip("Unit: only power() has unit tests", size=20)
         right_of_graph(gd, unit_chip, "unit-tests")
@@ -473,10 +477,10 @@ class TheSummary(VoiceScene):
             self.play(FadeIn(unit_chip, shift=LEFT * 0.2), run_time=0.5)
             vo.wait_until("Lint: red anyway")
             self.play(gd.set_state("lint-and-format", "running"), run_time=0.25)
-            self.play(gd.set_state("lint-and-format", "failure"), run_time=0.35)
+            self.play(gd.set_state("lint-and-format", "failure"), FadeIn(lint_chip, shift=LEFT * 0.2), run_time=0.45)
             self.add(gd)
             vo.wait_until("for utils dot py")
-            self.play(FadeIn(lint_chip, shift=LEFT * 0.2), run_time=0.5)
+            self.play(Indicate(lint_chip, color=INK, scale_factor=1.06), gd.pulse("lint-and-format", ERR), run_time=0.7)
 
         # ========================================================== 9. the summary hears it
         lg9 = run_log(SUMD, ((13, 16),), heading=False, size=CODE_SIZE, colors={13: PASS, 14: ERR, 15: ERR, 16: ERR})
