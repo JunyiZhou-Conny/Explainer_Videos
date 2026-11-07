@@ -1,0 +1,4 @@
+$ docker login -u <USER NAME> -p <ACCESS TOKEN>
+bash: -c: line 1: syntax error near unexpected token `newline'
+bash: -c: line 1: `docker login -u <USER NAME> -p <ACCESS TOKEN>'
+[exit 2]

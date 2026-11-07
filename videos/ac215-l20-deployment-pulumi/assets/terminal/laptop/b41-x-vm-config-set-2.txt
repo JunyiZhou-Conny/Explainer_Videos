@@ -1,0 +1,2 @@
+$ pulumi config set security:ssh_user sa_100110341521630214262
+[exit 0]

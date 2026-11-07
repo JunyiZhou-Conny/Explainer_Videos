@@ -1,0 +1,3 @@
+$ gcloud compute project-info add-metadata --project <YOUR GCP_PROJECT> --metadata enable-oslogin=TRUE
+bash: line 1: YOUR: No such file or directory
+[exit 1]

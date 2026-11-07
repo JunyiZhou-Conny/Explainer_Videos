@@ -1,0 +1,39 @@
+$ sudo docker run -d --name nginx -v $(pwd)/conf/nginx/nginx.conf:/etc/nginx/nginx.conf -p 80:80 --network cheese-app-network nginx:stable
+Unable to find image 'nginx:stable' locally
+stable: Pulling from library/nginx
+37fb86c2a767: Pulling fs layer
+b532f9701850: Pulling fs layer
+f7214361b33f: Pulling fs layer
+cbbdc282ecf5: Pulling fs layer
+9c0452afd4ee: Pulling fs layer
+89e2dd8a6236: Pulling fs layer
+2fc2bc44a8d3: Pulling fs layer
+9c0452afd4ee: Waiting
+89e2dd8a6236: Waiting
+2fc2bc44a8d3: Waiting
+cbbdc282ecf5: Waiting
+f7214361b33f: Verifying Checksum
+f7214361b33f: Download complete
+cbbdc282ecf5: Verifying Checksum
+cbbdc282ecf5: Download complete
+9c0452afd4ee: Verifying Checksum
+9c0452afd4ee: Download complete
+89e2dd8a6236: Verifying Checksum
+89e2dd8a6236: Download complete
+2fc2bc44a8d3: Verifying Checksum
+2fc2bc44a8d3: Download complete
+37fb86c2a767: Verifying Checksum
+37fb86c2a767: Download complete
+b532f9701850: Verifying Checksum
+b532f9701850: Download complete
+37fb86c2a767: Pull complete
+b532f9701850: Pull complete
+f7214361b33f: Pull complete
+cbbdc282ecf5: Pull complete
+9c0452afd4ee: Pull complete
+89e2dd8a6236: Pull complete
+2fc2bc44a8d3: Pull complete
+Digest: sha256:42c68eab6f7e22611786a9fe1d1c019e275c50185bd54b8f75dc2b9184322703
+Status: Downloaded newer image for nginx:stable
+225928af4aee1a9d1bdb0a5b9d9739a4afcbf127498dd800bd47251c515404cf
+[exit 0]

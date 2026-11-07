@@ -1,7 +1,7 @@
 # L20 lecture slides — Deployment: Pulumi
 
 Source: one deck, `L20_deployment_pulumi_updated` (30 slides), titled "Lecture 20: Deployment:
-Pulumi" (AC215/E115, Pavlos Protopapas, SEAS/Harvard). These are the instructor's lecture slides
+Pulumi" (AC215/E115, the course staff, SEAS/Harvard). These are the instructor's lecture slides
 (PDF), provided by the student for study; the PDFs are not in this repository; slide numbers are PDF
 page numbers. This digest was written from the deck's extracted text, from every contact sheet, and
 from enlarged single slides for 4, 7, 8, 12, 14, 17, 21–24, 26 and 27. The link targets on slides 8

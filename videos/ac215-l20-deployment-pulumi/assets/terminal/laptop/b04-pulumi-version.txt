@@ -1,0 +1,3 @@
+$ pulumi version
+v3.274.0
+[exit 0]

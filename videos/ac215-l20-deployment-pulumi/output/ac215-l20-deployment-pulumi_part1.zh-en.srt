@@ -1,0 +1,1114 @@
+1
+00:00:01,800 --> 00:00:04,076
+我们停掉了一个 container，也就是前端
+We stopped one container, the frontend,
+
+2
+00:00:04,076 --> 00:00:06,643
+又重启了它前面的 Web 服务器
+and restarted the web server in front of it.
+
+3
+00:00:06,963 --> 00:00:11,293
+API 的 container 还在运行，向量数据库也是
+The API container is still up, and so is the vector database.
+
+4
+00:00:11,533 --> 00:00:15,800
+可整个网站什么都不响应，连 API 的地址也一样
+Yet the whole site answers nothing, the address of the API included.
+
+5
+00:00:16,033 --> 00:00:20,534
+今天的谜题：API 明明在运行，为什么它的地址也不通了？
+Today's puzzle: the API is running, so why is its address dead too?
+
+6
+00:00:20,854 --> 00:00:23,543
+我们会在手动把它建出来以后回答
+We answer it once we have built this by hand.
+
+7
+00:00:23,783 --> 00:00:27,371
+目标在这里，也就是课上画的部署图
+Here is the goal, the lecture's picture of deployment:
+
+8
+00:00:27,371 --> 00:00:32,421
+你笔记本上的 container 搬到 Google Cloud 里的一台虚拟机上
+the containers from your laptop move to one virtual machine in Google Cloud,
+
+9
+00:00:32,421 --> 00:00:34,215
+port 80 是唯一的入口
+with port 80 the only door.
+
+10
+00:00:34,535 --> 00:00:37,138
+我们把它建两遍：先手动，再写成代码
+We build it twice: by hand, then as code.
+
+11
+00:00:37,383 --> 00:00:42,354
+在课程路线图上，标记已经移到了部署、扩展和自动化
+On the course roadmap, the marker has moved to deployment, scaling and automation.
+
+12
+00:00:42,674 --> 00:00:45,362
+到目前为止，一切都跑在你自己的电脑上
+Everything so far ran on your own computer.
+
+13
+00:00:45,682 --> 00:00:47,282
+用户需要的是一台服务器
+Users need a server.
+
+14
+00:00:47,367 --> 00:00:51,194
+你需要 cheese-app-v3，旁边放着你的 secrets 目录
+You need cheese-app-v3 with your secrets folder beside it,
+
+15
+00:00:51,194 --> 00:00:53,569
+还要一个开通了结算的 Google Cloud 项目
+a Google Cloud project with billing,
+
+16
+00:00:53,569 --> 00:00:55,218
+和一个 Docker Hub 账号
+and a Docker Hub account.
+
+17
+00:00:55,538 --> 00:00:59,825
+这会花真钱，所以每个部分最后都会把所有东西删掉
+This costs real money, so each part ends by deleting everything.
+
+18
+00:01:00,067 --> 00:01:05,675
+角落里的进度条标出 README 的哪一步，代码面板标出文件和行号
+The tracker in the corner names the README step, code panels name their file and lines,
+
+19
+00:01:05,675 --> 00:01:09,027
+黄色的 your turn 标签表示暂停一下，自己跑一遍
+and a yellow tag, your turn, means pause and run it.
+
+20
+00:01:09,267 --> 00:01:13,336
+如实说一句：我们录制用的机器没有 Google 账号
+One honest note: our recording machine has no Google account
+
+21
+00:01:13,336 --> 00:01:14,963
+也没有登录 Docker Hub
+and no Docker Hub login.
+
+22
+00:01:15,283 --> 00:01:17,822
+在自己的机器上能跑的都是真的
+What runs on a machine you own is real;
+
+23
+00:01:17,822 --> 00:01:21,011
+每个云端步骤都停在它第一个真实的报错处
+every cloud step stops at its first honest error,
+
+24
+00:01:21,011 --> 00:01:22,899
+我们会说你的会输出什么
+and we say what yours prints.
+
+25
+00:01:24,033 --> 00:01:25,697
+我们把目标好好画一遍
+Let's draw the goal properly.
+
+26
+00:01:26,017 --> 00:01:29,194
+浏览器把请求发到 port 80
+A browser sends a request to port 80,
+
+27
+00:01:29,194 --> 00:01:33,744
+nginx 在那里把页面交给 port 3000 上的前端
+where nginx passes pages to the frontend on port 3000
+
+28
+00:01:33,744 --> 00:01:36,662
+把数据请求交给 9000 上的 API
+and data calls to the API on 9000.
+
+29
+00:01:36,982 --> 00:01:40,502
+API 去问 8000 上的向量数据库
+The API asks the vector database on 8000.
+
+30
+00:01:40,750 --> 00:01:45,657
+课件上的箭头方向是反的；我们按请求实际走的方向画
+The slide draws its arrowheads the other way; we draw requests the way they travel.
+
+31
+00:01:45,977 --> 00:01:47,982
+课件上画了四个 container
+The slide shows four containers.
+
+32
+00:01:48,302 --> 00:01:53,187
+还有第五个：一个加载器，它把向量数据库填满一次，然后就退出
+There is a fifth: a loader that fills the vector database once and then leaves.
+
+33
+00:01:53,433 --> 00:01:57,032
+课上把手动部署分成四个阶段
+The lecture splits the manual route into four stages:
+
+34
+00:01:57,032 --> 00:02:00,698
+push image、配置 VM、部署 container
+push the images, set up the VM, deploy the containers,
+
+35
+00:02:00,698 --> 00:02:02,734
+再在前面放一台 Web 服务器
+and put a web server in front.
+
+36
+00:02:03,054 --> 00:02:04,868
+这就是我们第 1 部分的地图
+That is our map for part 1.
+
+37
+00:02:05,116 --> 00:02:07,981
+README 一开头是一个检查，不是命令
+The README starts with a check, not a command:
+
+38
+00:02:07,981 --> 00:02:09,724
+你的 container 都在本地跑着
+your containers run locally.
+
+39
+00:02:10,044 --> 00:02:15,197
+向量数据库已经起来了，API 在 port 9000 上显示文档页
+The vector database is up, the API shows its docs on port 9000,
+
+40
+00:02:15,197 --> 00:02:18,386
+前端在 3000 上显示首页
+and the frontend its home page on 3000.
+
+41
+00:02:18,633 --> 00:02:24,329
+说明一点：在这份代码上，/status 比文档页更适合用来检查 API
+A small note: on this code, /status is a better API check than the docs page.
+
+42
+00:02:24,649 --> 00:02:28,532
+它返回版本 3.0，所以你知道跑的是哪份代码
+It answers version 3.0, so you know which code runs.
+
+43
+00:02:28,766 --> 00:02:34,035
+如果你最近跟过第 18 讲，它现在讲的是重构过的 v2
+If you followed lecture 18 lately, it now teaches a refactored version 2;
+
+44
+00:02:34,035 --> 00:02:38,004
+这里你跑的是 v3，用的是这个 repo 自己的脚本
+here you run version 3, with this repository's scripts.
+
+45
+00:02:38,250 --> 00:02:41,893
+我们跟着 main 分支走，也就是课程网站链接的那个分支
+We follow main, the branch the course site links;
+
+46
+00:02:41,893 --> 00:02:45,610
+录制当天，它停在 2025 年 11 月的这个 commit 上
+on recording day it was this November 2025 commit.
+
+47
+00:02:45,930 --> 00:02:49,066
+README 会变；git log 能告诉你手上的是哪一版
+READMEs change; git log shows which one you have.
+
+48
+00:02:50,200 --> 00:02:52,248
+第 1 阶段：push image
+Stage 1: push the images.
+
+49
+00:02:52,568 --> 00:02:56,249
+在你的 Docker Hub 账号设置里创建一个访问令牌
+Create an access token in your Docker Hub account settings;
+
+50
+00:02:56,249 --> 00:02:59,181
+它是给脚本用的密码，所以千万别给人看
+it is a password for scripts, so never show it.
+
+51
+00:02:59,417 --> 00:03:03,336
+照 README 印的原样敲，登录会失败
+Typed exactly as the README prints it, the login fails:
+
+52
+00:03:03,336 --> 00:03:06,542
+syntax error near unexpected token newline
+syntax error near unexpected token `newline'.
+
+53
+00:03:06,862 --> 00:03:09,712
+尖括号对 shell 来说是重定向
+Angle brackets are redirections to the shell,
+
+54
+00:03:09,712 --> 00:03:13,806
+所以要把整个占位符换掉，连尖括号一起。更好的做法
+so replace the whole placeholder, brackets included. Better:
+
+55
+00:03:13,806 --> 00:03:17,666
+--password-stdin 参数让令牌不会进到你的 shell 历史记录里
+the flag --password-stdin keeps the token out of your shell history.
+
+56
+00:03:17,900 --> 00:03:21,207
+现在是 Docker Hub 脚本，每个服务目录里各有一个
+Now the Docker Hub script, one in each service folder.
+
+57
+00:03:21,527 --> 00:03:27,159
+第 11 行把用户名设成 dlops，也就是课程的账号：改成你自己的
+Line 11 sets the user name to dlops, the course account: change it to yours.
+
+58
+00:03:27,400 --> 00:03:30,925
+第 27 行创建并选中一个新的 BuildKit 构建器
+Line 27 creates and selects a new BuildKit builder;
+
+59
+00:03:30,925 --> 00:03:34,035
+脚本先构建一遍，再构建一遍来 push
+the script builds, then builds again to push.
+
+60
+00:03:34,355 --> 00:03:42,803
+API 的脚本为 AMD64 和 ARM64 构建；前端的脚本只构建 AMD64
+The API script builds for AMD64 and ARM64; the frontend script, AMD64 only.
+
+61
+00:03:43,050 --> 00:03:46,805
+在 frontend-react 里、在任何 docker shell 之外运行它
+Inside frontend-react, outside any docker shell, run it.
+
+62
+00:03:47,125 --> 00:03:50,275
+它打印出 dlops，创建构建器，然后构建
+It prints dlops, creates the builder, and builds:
+
+63
+00:03:50,275 --> 00:03:51,875
+Compiled successfully
+Compiled successfully.
+
+64
+00:03:52,010 --> 00:03:54,788
+这条警告是说，这次构建的结果只留在构建器的缓存里
+The warning says this build stays in the builder cache.
+
+65
+00:03:54,967 --> 00:03:56,972
+接着是 push：access denied
+Then the push: access denied.
+
+66
+00:03:57,292 --> 00:03:59,588
+我们不是 dlops，也没有登录
+We are not dlops, and not logged in;
+
+67
+00:03:59,588 --> 00:04:03,095
+换成你的用户名并登录后，这里会显示 pushed
+with your name and login, this is where it says pushed.
+
+68
+00:04:03,333 --> 00:04:06,703
+在 api-service 和 vector-db 里跑同一个脚本
+Run the same script in api-service and vector-db;
+
+69
+00:04:06,703 --> 00:04:09,797
+那两个双平台构建我们没有录
+we did not capture those two-platform builds.
+
+70
+00:04:10,117 --> 00:04:14,862
+这两个要为两种芯片构建，其中一种靠模拟
+Those two build for two chip types, one of them emulated:
+
+71
+00:04:14,862 --> 00:04:17,525
+api-service 会构建很久
+expect a long api-service build,
+
+72
+00:04:17,525 --> 00:04:20,272
+在 Linux 上，先注册 QEMU
+and on Linux register QEMU first.
+
+73
+00:04:20,592 --> 00:04:23,325
+暂停一下，三个都跑一遍，再去 Docker Hub 上看看
+Pause, run all three, and check Docker Hub.
+
+74
+00:04:23,550 --> 00:04:26,237
+跳过这个阶段，第 1 部分也照样能跑
+Skip this stage and part 1 still works,
+
+75
+00:04:26,237 --> 00:04:31,059
+用的是公开的 dlops image，比代码稍微旧一点
+using the public dlops images, which are a little older than the code.
+
+76
+00:04:31,379 --> 00:04:32,879
+如果你 push 了自己的
+If you pushed yours,
+
+77
+00:04:32,879 --> 00:04:36,201
+就在 VM 的命令里把 dlops 换成你的用户名
+replace dlops with your user name in the VM commands.
+
+78
+00:04:37,350 --> 00:04:39,441
+第 2 阶段：配置 VM
+Stage 2: set up the VM.
+
+79
+00:04:39,761 --> 00:04:44,796
+在控制台里用默认值创建一个 VM 实例
+In the console, create a VM instance with the defaults,
+
+80
+00:04:44,796 --> 00:04:48,275
+只是机器类型改成 N2D、磁盘 50 GB
+except machine type N2D, a 50 GB disk,
+
+81
+00:04:48,275 --> 00:04:50,747
+并允许 HTTP 和 HTTPS 流量
+and HTTP and HTTPS allowed.
+
+82
+00:04:50,983 --> 00:04:56,851
+这两个勾会加上网络标记 http-server 和 https-server
+Those two ticks add network tags, http-server and https-server;
+
+83
+00:04:56,851 --> 00:05:02,439
+默认防火墙只对带这两个标记的 VM 开放 80 和 443
+the default firewall opens 80 and 443 only to VMs with them.
+
+84
+00:05:02,759 --> 00:05:06,557
+从现在起，VM 运行时计费，磁盘只要存在就计费
+The VM now bills while it runs, its disk while it exists.
+
+85
+00:05:06,800 --> 00:05:08,344
+暂停一下，创建你自己的 VM
+Pause, create yours,
+
+86
+00:05:08,344 --> 00:05:12,667
+然后在 VM 实例列表里点 SSH 按钮连进去
+and SSH in with the SSH button in the VM instances list.
+
+87
+00:05:12,987 --> 00:05:16,599
+我们的 VM 是一个能从头录到尾的替身
+Our VM is a stand-in we can capture end to end:
+
+88
+00:05:16,599 --> 00:05:19,749
+一台全新的、没装 Docker 的 Debian 12 机器
+a fresh Debian 12 machine without Docker.
+
+89
+00:05:20,069 --> 00:05:22,352
+每条命令在你的 VM 上都一样
+Every command is the same on yours.
+
+90
+00:05:22,600 --> 00:05:27,677
+用官方脚本安装 Docker：用 curl 下载，再用 sudo 运行
+Install Docker with the official script: download it with curl, run it with sudo.
+
+91
+00:05:27,997 --> 00:05:30,841
+它为 bookworm 加上 Docker 的软件源
+It adds the Docker repository for bookworm
+
+92
+00:05:30,841 --> 00:05:33,821
+装好引擎、buildx 和 compose
+and installs the engine, buildx and compose.
+
+93
+00:05:34,633 --> 00:05:37,812
+然后用 sudo docker --version 检查一下
+Then check it with sudo docker --version.
+
+94
+00:05:38,132 --> 00:05:40,841
+在这里暂停一下，在你的 VM 上装好 Docker
+Pause here and install Docker on your VM.
+
+95
+00:05:41,083 --> 00:05:42,729
+接下来建目录
+Next, create folders:
+
+96
+00:05:42,729 --> 00:05:47,590
+persistent-folder、secrets 和 conf/nginx，任何人都能写
+persistent-folder, secrets and conf/nginx, writable by anyone.
+
+97
+00:05:47,910 --> 00:05:50,500
+README 把这六条命令列了两遍
+The README lists these six commands twice:
+
+98
+00:05:50,500 --> 00:05:52,966
+在你的 home 目录下跑一遍就够了
+run them once, from your home directory.
+
+99
+00:05:55,667 --> 00:05:58,699
+一个额外检查：这些目录属于 root
+An extra check: the folders belong to root,
+
+100
+00:05:58,699 --> 00:06:02,366
+但任何人都能往里写：只适合演示用的 VM
+but anyone may write there: fine for a demo VM only.
+
+101
+00:06:02,686 --> 00:06:06,461
+留在你的 home 目录里：后面的挂载用的都是当前目录
+Stay in your home directory: later mounts use the current folder.
+
+102
+00:06:06,700 --> 00:06:12,041
+现在是应用的密钥 gcp-service.json，用 echo 写进去
+Now the app's key, gcp-service.json, written with echo; ours holds
+
+103
+00:06:12,041 --> 00:06:13,740
+我们的只有占位符
+just the placeholder.
+
+104
+00:06:14,060 --> 00:06:18,384
+把你笔记本 secrets 目录里的 gcp-service 密钥粘贴进去
+Paste in the gcp-service key from your laptop's secrets folder;
+
+105
+00:06:18,384 --> 00:06:20,375
+第 2 部分会讲怎么生成
+part 2 shows how to make one.
+
+106
+00:06:20,695 --> 00:06:22,295
+千万别给人看，也别 commit
+Never show or commit it.
+
+107
+00:06:22,500 --> 00:06:25,703
+最后，创建 Docker 网络 cheese-app-network
+Last, create the Docker network, cheese-app-network:
+
+108
+00:06:25,703 --> 00:06:29,583
+一个私有网络，我们的 container 在里面按名字找到彼此
+a private network where our containers find each other by name.
+
+109
+00:06:29,903 --> 00:06:31,823
+暂停一下，把这三步跑一遍
+Pause and run these three steps.
+
+110
+00:06:32,967 --> 00:06:34,844
+第 3 阶段：container
+Stage 3: the containers.
+
+111
+00:06:35,164 --> 00:06:39,538
+先 pull Chroma 的 image，再停掉并删除旧的向量数据库
+Pull the Chroma image, then stop and remove any old vector database.
+
+112
+00:06:39,858 --> 00:06:42,934
+No such container 这个报错在这里是无害的
+The error, No such container, is harmless here:
+
+113
+00:06:42,934 --> 00:06:45,618
+|| true 让这一步可以放心重跑
+|| true makes the step safe to run again.
+
+114
+00:06:45,867 --> 00:06:49,015
+然后在 cheese-app-network 上以后台方式运行它
+Then run it detached on cheese-app-network,
+
+115
+00:06:49,015 --> 00:06:53,995
+发布 port 8000，restart always，并挂载一个数据目录
+publishing port 8000, restarting always, with a data folder mounted.
+
+116
+00:06:54,315 --> 00:06:56,384
+它的名字会记进电话簿
+Its name goes into the phone book.
+
+117
+00:06:56,750 --> 00:07:00,431
+一个额外检查：port 已经发布，心跳有回应
+An extra check: the port is published, the heartbeat answers,
+
+118
+00:07:00,431 --> 00:07:03,086
+录制时是 Chroma 版本 1
+Chroma version one at the time of recording.
+
+119
+00:07:03,334 --> 00:07:06,150
+现在是加载器，Run vector db cli 这一节
+Now the loader, run vector db cli.
+
+120
+00:07:06,470 --> 00:07:08,542
+它按名字找到数据库
+It finds the database by name,
+
+121
+00:07:08,542 --> 00:07:11,099
+也就是 cheese-app-vector-db，而不是按地址
+cheese-app-vector-db, not by address.
+
+122
+00:07:11,419 --> 00:07:15,003
+项目用的是 README 的默认值；改成你自己的
+The project is the README's default; change it to yours.
+
+123
+00:07:15,250 --> 00:07:18,782
+它下载数据，创建 collection
+It downloads, creates the collection,
+
+124
+00:07:18,782 --> 00:07:23,079
+载入 11 个文件：一共 14,356 个 chunk
+and loads eleven files: 14,356 chunks in all.
+
+125
+00:07:23,399 --> 00:07:27,474
+这些 embedding 是预先算好的，所以我们的占位密钥根本没用上
+The embeddings come precomputed, so our placeholder key never mattered.
+
+126
+00:07:27,717 --> 00:07:31,472
+加载器带着 --rm 运行，所以它退出后就没了
+The loader ran with the --rm flag, so it exits and is gone.
+
+127
+00:07:31,792 --> 00:07:34,131
+暂停一下，现在把两个 container 都跑起来
+Pause and run both containers now.
+
+128
+00:07:34,250 --> 00:07:35,523
+想一想
+A question.
+
+129
+00:07:35,573 --> 00:07:37,165
+加载器没了
+The loader is gone.
+
+130
+00:07:37,215 --> 00:07:40,970
+那 14,356 个 chunk 也没了吗？
+Are the 14,356 chunks gone too?
+
+131
+00:07:50,117 --> 00:07:52,691
+不会。加载器只是把它们发过去
+No. The loader only sent them;
+
+132
+00:07:52,691 --> 00:07:54,889
+它们待在向量数据库的 container 里
+they sit in the vector database container,
+
+133
+00:07:54,889 --> 00:07:56,489
+而那个 container 一直在跑
+which keeps running.
+
+134
+00:07:56,709 --> 00:07:59,226
+删掉它，加载器就得重新填一个新的
+Remove it, and the loader must fill a new one.
+
+135
+00:07:59,467 --> 00:08:01,387
+那存在里面的哪儿？
+But where inside that container?
+
+136
+00:08:01,707 --> 00:08:04,337
+有一个小疏漏：Chroma 存到 /data
+A small slip: Chroma saves to /data,
+
+137
+00:08:04,337 --> 00:08:07,552
+所以 README 挂载的目录一直是空的
+so the folder the README mounts stays empty.
+
+138
+00:08:07,872 --> 00:08:11,665
+要把数据留在 VM 的磁盘上，就改为挂载 /data
+To keep the data on the VM disk, mount /data instead,
+
+139
+00:08:11,665 --> 00:08:15,531
+重跑停止、删除和运行这几行，再跑加载器
+rerun the stop, remove and run lines, then the loader.
+
+140
+00:08:16,667 --> 00:08:18,608
+接下来运行 api-service
+Next, run api-service.
+
+141
+00:08:18,928 --> 00:08:23,046
+VM 上还没有这个 image，所以 docker run 会先把它 pull 下来
+The image is not on the VM yet, so docker run pulls it first.
+
+142
+00:08:23,284 --> 00:08:26,361
+两个挂载，persistent-folder 和 secrets
+Two mounts, persistent-folder and secrets;
+
+143
+00:08:26,361 --> 00:08:30,025
+port 9000；密钥路径；还有按名字找的数据库
+port 9000; the key path; and the database by name.
+
+144
+00:08:30,345 --> 00:08:35,337
+项目是 README 的默认值，bucket 名传了进去，但从来没用到
+The project is the README's default, and the bucket name is passed but never used.
+
+145
+00:08:38,450 --> 00:08:40,942
+日志显示 loading CNN model
+The logs show loading CNN model,
+
+146
+00:08:40,942 --> 00:08:43,591
+然后是 uvicorn 在 port 9000 上运行
+then uvicorn running on port 9000.
+
+147
+00:08:43,911 --> 00:08:47,112
+模型来自 GitHub 的一个 release，不是 bucket
+The model comes from a GitHub release, not a bucket,
+
+148
+00:08:47,112 --> 00:08:49,821
+所以我们的图把课件上的 bucket 画成了灰色
+so our picture grays out the slide's bucket.
+
+149
+00:08:50,067 --> 00:08:53,551
+而且这个 image 很大，在磁盘上大约 5 GB
+And the image is big, about five gigabytes on disk,
+
+150
+00:08:53,551 --> 00:08:55,151
+里面装着 TensorFlow
+with TensorFlow inside.
+
+151
+00:08:55,367 --> 00:08:57,415
+三个额外的 curl 检查
+Three extra curl checks:
+
+152
+00:08:57,415 --> 00:09:02,706
+根路径返回 Welcome to AC215，/docs 显示文档页
+the root says Welcome to AC215, and /docs shows the docs page.
+
+153
+00:09:03,026 --> 00:09:07,612
+/status 返回 404：公开的 image 比你的 clone 旧
+/status says 404: the public image is older than your clone.
+
+154
+00:09:07,850 --> 00:09:10,794
+README 接着给了一个交互式的版本
+The README then offers an interactive variant.
+
+155
+00:09:11,114 --> 00:09:15,253
+照原样运行会失败：api-service 这个名字已经被占用了
+Run as written, it fails: the name api-service is in use,
+
+156
+00:09:15,253 --> 00:09:18,304
+因为后台的那个 container 还在跑
+because the detached container still runs.
+
+157
+00:09:18,550 --> 00:09:21,383
+用 docker rm -f 删掉正在运行的那个
+Remove the running one with docker rm -f,
+
+158
+00:09:21,383 --> 00:09:23,457
+交互式版本就会打开一个 shell
+and the variant opens a shell.
+
+159
+00:09:23,777 --> 00:09:27,553
+这一步是可选的：我们 exit 出来，再把后台的那个启动起来
+It is optional: we exit and start the detached one again.
+
+160
+00:09:28,850 --> 00:09:31,453
+然后是前端，在 port 3000 上
+Then the frontend, on port 3000.
+
+161
+00:09:31,773 --> 00:09:34,411
+额外检查显示了标题
+The extra check shows the title,
+
+162
+00:09:34,411 --> 00:09:38,203
+Formaggio 和 API 的基础 URL /api-service
+Formaggio, and the base API URL, /api-service,
+
+163
+00:09:38,203 --> 00:09:41,501
+页面就在它自己的地址上调用它
+which the page calls on its own address.
+
+164
+00:09:41,821 --> 00:09:43,421
+暂停一下，两个都启动起来
+Pause and start both.
+
+165
+00:09:44,400 --> 00:09:46,747
+第 4 阶段：在前面放一台 Web 服务器
+Stage 4: a web server in front.
+
+166
+00:09:47,067 --> 00:09:50,691
+反向代理给浏览器一个地址
+A reverse proxy gives the browser one address:
+
+167
+00:09:50,691 --> 00:09:55,813
+nginx 监听 port 80，把每个请求转发到 VM 内部
+nginx listens on port 80 and forwards each request inside the VM.
+
+168
+00:09:56,050 --> 00:09:58,803
+在 repo 的 nginx.conf 里
+In the repository's nginx.conf,
+
+169
+00:09:58,803 --> 00:10:05,287
+第 35 行的 location 块接住以 /api-service 开头的路径
+the location block on line 35 catches paths that start with /api-service.
+
+170
+00:10:05,607 --> 00:10:09,255
+它把这些请求交给 port 9000 上的 api-service
+It passes them to api-service on port 9000.
+
+171
+00:10:09,500 --> 00:10:12,103
+看那个地址的结尾：一个斜杠
+Look at the end of that address: one slash.
+
+172
+00:10:12,423 --> 00:10:17,159
+有了它，nginx 就把匹配到的前缀换成这个斜杠
+With it, nginx swaps the matched prefix for that slash,
+
+173
+00:10:17,159 --> 00:10:21,895
+所以 /api-service/status 到了 API 那里就只是 /status
+so /api-service/status reaches the API as just /status.
+
+174
+00:10:22,133 --> 00:10:26,293
+其余的请求都交给下一个块，也就是 3000 上的前端
+Everything else goes to the next block, the frontend on 3000.
+
+175
+00:10:26,613 --> 00:10:30,219
+两个目标都是 cheese-app-network 上的 container 名字
+Both targets are container names on cheese-app-network.
+
+176
+00:10:30,467 --> 00:10:34,414
+README 用一条很长的 echo 加单引号来写这个文件
+The README writes this file with one long echo in single quotes.
+
+177
+00:10:34,734 --> 00:10:39,057
+可文件里也有单引号，所以 shell 把 log format 吃掉了
+But the file holds single quotes too, so the shell eats the log_format
+
+178
+00:10:39,057 --> 00:10:41,219
+只剩下一个短横线和两个括号
+and leaves a dash and two brackets.
+
+179
+00:10:41,517 --> 00:10:44,760
+路由还能用，但访问日志就没用了
+Routing still works, but the access logs are useless.
+
+180
+00:10:45,080 --> 00:10:49,965
+改用带引号的 heredoc 来写：cat，同样的内容，最后是 EOF
+Write it with a quoted heredoc instead: cat, the same text, then EOF.
+
+181
+00:10:50,200 --> 00:10:53,443
+如果你用的是 echo，先用这种方式把文件重写一遍
+If you used the echo, rewrite the file this way first.
+
+182
+00:10:53,763 --> 00:10:57,752
+然后运行 nginx，挂载这个文件，发布 port 80
+Then run nginx with that file mounted, publishing port 80.
+
+183
+00:10:58,072 --> 00:11:03,960
+container 列表显示四个：port 80、3000、9000 和 8000
+The container list shows four: ports 80, 3000, 9000 and 8000.
+
+184
+00:11:04,200 --> 00:11:08,693
+在 VM 实例列表里找到你的 VM 的外部 IP
+Open the external IP of your VM, from the VM instances list,
+
+185
+00:11:08,693 --> 00:11:11,688
+在浏览器里打开，首页就出来了
+in a browser, and the home page appears.
+
+186
+00:11:12,008 --> 00:11:14,239
+在 VM 上，curl 也一样
+On the VM, curl agrees:
+
+187
+00:11:14,239 --> 00:11:18,216
+200 OK，由 nginx 提供，标题是 Formaggio
+200 OK, served by nginx, title Formaggio.
+
+188
+00:11:18,450 --> 00:11:24,381
+/api-service 返回 Welcome to AC215：前缀在路上被剪掉了
+/api-service says Welcome to AC215: the prefix was cut on the way.
+
+189
+00:11:24,701 --> 00:11:26,322
+暂停一下，打开你的网站
+Pause and open your site.
+
+190
+00:11:26,567 --> 00:11:27,840
+想一想
+A question.
+
+191
+00:11:27,890 --> 00:11:30,770
+VM 上发布了 port 9000
+Port 9000 is published on the VM.
+
+192
+00:11:31,090 --> 00:11:32,839
+从你的笔记本能访问到它吗？
+Does it answer from your laptop?
+
+193
+00:11:41,683 --> 00:11:47,934
+不能。那两个勾只开了 80 和 443；没有规则开放 9000
+No. The two ticks opened only 80 and 443; no rule opens 9000.
+
+194
+00:11:48,254 --> 00:11:50,361
+VM 上的 port 9000 是开着的
+Port 9000 is open on the VM
+
+195
+00:11:50,361 --> 00:11:53,950
+但在网络边界上是关着的：唯一的公共入口
+but shut at the network edge: one public door.
+
+196
+00:11:54,617 --> 00:11:55,975
+现在回答开头的谜题
+Now the puzzle.
+
+197
+00:11:56,025 --> 00:12:00,377
+Web 服务器只在启动时查一次 frontend 和 api-service 的地址
+The web server looks up frontend and api-service once, at start.
+
+198
+00:12:00,697 --> 00:12:05,104
+前端停了，重启时这次查找失败并直接退出
+With the frontend stopped, the restart fails that lookup and exits,
+
+199
+00:12:05,104 --> 00:12:07,011
+API 的路由也跟着没了
+taking the API route with it.
+
+200
+00:12:07,250 --> 00:12:11,943
+先启动前端，再启动 nginx，网站又返回 200 了
+Start the frontend, then nginx, and the site answers 200 again.
+
+201
+00:12:12,263 --> 00:12:15,509
+启动顺序很重要，重启策略也很重要
+Start order matters, and so does a restart policy,
+
+202
+00:12:15,509 --> 00:12:18,301
+而只有向量数据库那条命令带了重启策略
+which only the vector database command has.
+
+203
+00:12:19,700 --> 00:12:21,300
+我们来数一数敲了什么
+Let's count what we typed.
+
+204
+00:12:21,535 --> 00:12:24,959
+VM 上 21 条命令，加上控制台里的点击
+Twenty-one commands on the VM, plus console clicks,
+
+205
+00:12:24,959 --> 00:12:27,913
+再加上笔记本上的三个 Docker Hub 脚本
+plus three Docker Hub scripts on the laptop.
+
+206
+00:12:28,233 --> 00:12:30,324
+每一条都给 VM 加了一块积木
+Each one added a block to the VM.
+
+207
+00:12:30,567 --> 00:12:32,167
+现在有三个问题
+Now three questions.
+
+208
+00:12:32,252 --> 00:12:35,964
+重复：明天你能为一个 staging 副本建出一模一样的东西吗？
+Repeat: can you build the same thing for a staging copy tomorrow?
+
+209
+00:12:36,284 --> 00:12:38,674
+审查：那台 VM 上到底有什么？
+Review: what exactly is on that VM?
+
+210
+00:12:38,994 --> 00:12:41,255
+撤销：怎么把每一块都删掉？
+Undo: how do you delete every piece?
+
+211
+00:12:41,500 --> 00:12:47,153
+课上用一个想法来回答：步骤太多，记不过来，所以让工具去做
+The lecture answers with one idea: too many steps to keep track of, so let a tool do them.
+
+212
+00:12:47,567 --> 00:12:49,402
+这就是基础设施即代码
+That is infrastructure as code.
+
+213
+00:12:49,722 --> 00:12:55,750
+你描述服务器、网络和软件，用的是一门真正的编程语言
+You describe the servers, the networks and the software in a real programming language, Python here,
+
+214
+00:12:55,750 --> 00:12:57,594
+这里是 Python，并放进 Git 里共享
+and keep it in Git to share.
+
+215
+00:12:57,914 --> 00:13:00,409
+没有 YAML 文件，也没有专门的语言
+No YAML file, no special language.
+
+216
+00:13:00,650 --> 00:13:05,193
+课程早先的一个版本用 Ansible playbook 做这几个阶段
+An earlier version of the course did these same stages as Ansible playbooks,
+
+217
+00:13:05,193 --> 00:13:06,744
+是用 YAML 写的
+written in YAML.
+
+218
+00:13:06,794 --> 00:13:09,589
+这个版本用 Pulumi 来做，一一对应
+This version does them with Pulumi, one to one.
+
+219
+00:13:09,950 --> 00:13:12,529
+还有一件 README 从来没说的事
+One more thing the README never says:
+
+220
+00:13:12,529 --> 00:13:14,899
+现在就删掉这台 VM，在第 2 部分之前
+delete this VM now, before part 2.
+
+221
+00:13:15,219 --> 00:13:20,617
+在控制台里打开 VM instances，选中它，连同启动磁盘一起删除
+In the console, open VM instances, select it, and delete it with its boot disk.
+
+222
+00:13:20,937 --> 00:13:23,838
+暂停一下，删掉你的；列表应该是空的
+Pause and delete yours; the list should be empty.
+
+223
+00:13:24,083 --> 00:13:28,883
+第 2 部分把这些全部用代码再建一遍，并让工具记住每一块
+Part 2 builds it all again, as code, and lets a tool remember every piece.

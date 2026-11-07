@@ -1,0 +1,6 @@
+# capture-only, NOT part of the tutorial (see ASSETS.md)
+[registry."docker.io"]
+  mirrors = ["localhost:5000"]
+  ca = ["/home/student/.docker/buildx/capture-ca.crt"]
+[registry."localhost:5000"]
+  http = true

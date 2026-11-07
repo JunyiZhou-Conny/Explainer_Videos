@@ -1,0 +1,16 @@
+$ curl -s http://localhost:9000/docs | head -12; curl -s http://localhost:9000/openapi.json | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["info"]); print(sorted(d["paths"]))'
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+    <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+    <title>API Server - Swagger UI</title>
+    </head>
+    <body>
+    <div id="swagger-ui">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+{'title': 'API Server', 'description': 'API Server', 'version': 'v1'}
+['/', '/llm-agent/chats', '/llm-agent/chats/{chat_id}', '/llm-cnn/chats', '/llm-cnn/chats/{chat_id}', '/llm-cnn/images/{chat_id}/{message_id}.png', '/llm-rag/chats', '/llm-rag/chats/{chat_id}', '/llm-rag/images/{chat_id}/{message_id}.png', '/llm/chats', '/llm/chats/{chat_id}', '/llm/images/{chat_id}/{message_id}.png', '/newsletters/', '/newsletters/image/{image_name}', '/newsletters/{newsletter_id}', '/podcasts/', '/podcasts/audio/{audio_name}', '/podcasts/{podcast_id}', '/square_root/']
+[exit 0]

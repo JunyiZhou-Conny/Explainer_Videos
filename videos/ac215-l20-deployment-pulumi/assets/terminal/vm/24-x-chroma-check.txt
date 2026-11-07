@@ -1,0 +1,6 @@
+$ sudo docker ps; curl -s http://localhost:8000/api/v2/heartbeat; echo; curl -s http://localhost:8000/api/v2/version; echo
+CONTAINER ID   IMAGE             COMMAND                  CREATED         STATUS        PORTS                    NAMES
+6eb3a99fc218   chromadb/chroma   "dumb-init -- chroma…"   2 seconds ago   Up 1 second   0.0.0.0:8000->8000/tcp   cheese-app-vector-db
+{"nanosecond heartbeat":1793916466290521280}
+"1.0.0"
+[exit 0]

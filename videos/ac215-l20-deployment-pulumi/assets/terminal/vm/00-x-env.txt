@@ -1,0 +1,11 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; hostname; head -4 /etc/os-release; uname -m; which docker; echo which-docker-exit:$?; pwd
+2026-11-05 22:07 UTC
+cheese-app-vm
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+x86_64
+which-docker-exit:1
+/home/student
+[exit 0]

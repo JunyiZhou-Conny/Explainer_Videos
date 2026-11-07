@@ -1,0 +1,16 @@
+$ sudo docker exec api-service sh -c 'grep -c "ROOT_PATH\\|mount\\|/status" api/service.py; grep -n "@app.get\\|include_router" api/service.py; grep -n "GENERATIVE_MODEL =" api/utils/*.py'
+0
+25:@app.get("/")
+30:@app.get("/square_root/")
+37:app.include_router(newsletter.router, prefix="/newsletters")
+38:app.include_router(podcast.router, prefix="/podcasts")
+39:app.include_router(llm_chat.router, prefix="/llm")
+40:app.include_router(llm_cnn_chat.router, prefix="/llm-cnn")
+41:app.include_router(llm_rag_chat.router, prefix="/llm-rag")
+42:app.include_router(llm_agent_chat.router, prefix="/llm-agent")
+43:# app.include_router(test_router.router, prefix="/test")
+api/utils/llm_agent_utils.py:21:GENERATIVE_MODEL = "gemini-2.0-flash-001"
+api/utils/llm_cnn_utils.py:30:GENERATIVE_MODEL = "gemini-2.0-flash-001"
+api/utils/llm_rag_utils.py:23:GENERATIVE_MODEL = "gemini-2.0-flash-001"
+api/utils/llm_utils.py:22:GENERATIVE_MODEL = "gemini-2.0-flash-001"
+[exit 0]

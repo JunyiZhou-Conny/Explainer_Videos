@@ -1,0 +1,8 @@
+$ git -C cheese-app-v3 log -1 --format='%H %ci %s'; git -C cheese-app-v3 branch -r | sed 's|work/[a-z]*|work/‹staff›|'
+3ecef56fea879ac480d260c0906cd95baf05179a 2025-11-28 16:00:06 -0500 v4->v3
+  origin/HEAD -> origin/main
+  origin/cluster-updates
+  origin/main
+  origin/pipenv
+  origin/work/‹staff›
+[exit 0]

@@ -1,0 +1,35 @@
+$ ls -la; ls -la secrets; ls cheese-app-v3/src cheese-app-v3/src/deployment
+total 20
+drwxr-sr-x    5 student  student       4096 Nov  5 22:26 .
+drwxr-xr-x    1 root     root          4096 Nov  5 22:26 ..
+drwxrwsrwx    2 student  student       4096 Nov  5 22:26 .docker
+drwxr-sr-x    4 student  student       4096 Nov  5 22:26 cheese-app-v3
+drwxr-sr-x    2 student  student       4096 Nov  5 22:26 secrets
+total 16
+drwxr-sr-x    2 student  student       4096 Nov  5 22:26 .
+drwxr-sr-x    5 student  student       4096 Nov  5 22:26 ..
+-rw-r--r--    1 student  student       2110 Nov  5 22:26 deployment.json
+-rw-r--r--    1 student  student       2115 Nov  5 22:26 gcp-service.json
+cheese-app-v3/src:
+api-service
+deployment
+frontend-react
+frontend-simple
+vector-db
+
+cheese-app-v3/src/deployment:
+Dockerfile
+README.md
+deploy-k8s-tic-tac-toe.yml
+deploy_images
+deploy_k8s
+deploy_single_vm
+docker-entrypoint.sh
+docker-shell.sh
+docker_config.json
+emoji.yaml
+nginx-conf
+pyproject.toml
+uv.lock
+visualizer.yaml
+[exit 0]

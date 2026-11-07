@@ -1,0 +1,4 @@
+$ sed -i 's/"ac215-project" # Change/"your-gcp-project" # Change/' docker-shell.sh; grep -n 'GCP_PROJECT=' docker-shell.sh
+13:export GCP_PROJECT="your-gcp-project" # Change to your GCP Project
+46:    -e GCP_PROJECT=$GCP_PROJECT \
+[exit 0]

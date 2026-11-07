@@ -1,0 +1,64 @@
+id: ac215-l20-deployment-pulumi
+title: "AC215 · Lecture 20 — Deployment: by hand, then Pulumi to a single VM (follow-along: cheese-app-v3)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 20
+  lecture_title: "Deployment: Pulumi"
+  ed: https://edstem.org/us/courses/97373/lessons/166045/
+  repos:
+    # main, unchanged since 2025-11-28 (git ls-remote on the recording day, 2026-11-05); the course
+    # site links main. See ASSETS.md "Which commit".
+    - {repo: dlops-io/cheese-app-v3, branch: main, commit: 3ecef56fea879ac480d260c0906cd95baf05179a,
+       sections: ["Deployment to GCP (Manual)", "Deployment to GCP (Single VM Instance)",
+                  "Delete the Compute Instance / Persistent disk"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L20-deployment-pulumi.md
+audience: "AC215 student who has done L1-L18 (cloud VMs and SSH, Docker images and containers, -p HOST:CONTAINER, bind mounts and docker-shell.sh, Docker networks and container names, service-account keys in secrets/, Cloud Run, the cheese app's API, frontend and vector DB running locally), new to deploying to a VM, reverse proxies, infrastructure as code, Pulumi stacks and state, OS Login; watching with their own clone of cheese-app-v3 next to secrets/, Docker running, a GCP project with billing and a Docker Hub account, pausing to run each command — the VM, its disks and the registry cost money (GOLD tags; teardown at the end of each part)"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,          cls: Hook,              title: "One container stops, the site goes dark"}
+  - {file: scenes/s02_goal.py,          cls: TheGoal,           title: "From your laptop to one VM"}
+  - {file: scenes/s03_docker_hub.py,    cls: DockerHub,         title: "Images to Docker Hub"}
+  - {file: scenes/s04_vm.py,            cls: VmWithDocker,      title: "A VM with Docker, folders and a network"}
+  - {file: scenes/s05_vector_db.py,     cls: VectorDb,          title: "The vector DB and its loader"}
+  - {file: scenes/s06_api_frontend.py,  cls: ApiAndFrontend,    title: "The API and the frontend"}
+  - {file: scenes/s07_nginx.py,         cls: OnePublicDoor,     title: "nginx: one public door"}
+  - {file: scenes/s08_by_hand.py,       cls: ByHand,            title: "Twenty-one commands: repeat, review, undo?"}
+  - {file: scenes/s09_desired_state.py, cls: DesiredState,      title: "Pulumi: desired state, not steps"}
+  - {file: scenes/s10_setup.py,         cls: TwoKeys,           title: "Setup: four APIs, two keys"}
+  - {file: scenes/s11_toolbox.py,       cls: Toolbox,           title: "The deployment toolbox, fixed twice"}
+  - {file: scenes/s12_ssh.py,           cls: SshKeys,           title: "SSH keys and OS Login"}
+  - {file: scenes/s13_images.py,        cls: ImagesStack,       title: "Step 2: images with timestamps"}
+  - {file: scenes/s14_vm_stack.py,      cls: VmStack,           title: "Steps 3–4: the VM, its fences, provisioning"}
+  - {file: scenes/s15_containers.py,    cls: ContainersOverSsh, title: "Steps 5–6: containers over SSH, then test"}
+  - {file: scenes/s16_recap.py,         cls: Recap,             title: "Destroy, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L20, part 1: deploy by hand — Docker Hub, a VM, five containers and nginx"
+    scenes: [s01_hook, s02_goal, s03_docker_hub, s04_vm, s05_vector_db, s06_api_frontend, s07_nginx, s08_by_hand]
+  - id: part2
+    title: "AC215 · L20, part 2: the same deployment as code — Pulumi, two stacks, one destroy"
+    scenes: [s09_desired_state, s10_setup, s11_toolbox, s12_ssh, s13_images, s14_vm_stack, s15_containers, s16_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第20讲跟练 · 部署：先手动把奶酪 App 部署到一台 GCP VM，再用 Pulumi 把同样的部署写成代码"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 20 讲教程的逐条命令跟练，照着 dlops-io/cheese-app-v3 的 README 一步一步做：
+    上半场（手动部署）：把镜像推到 Docker Hub，在 VM 上安装 Docker，建好目录、secret 和 Docker network，
+    依次启动 vector DB、一次性的 loader（载入 14,356 个 chunk）、API 和前端，最后用 nginx 作为唯一的公网入口；
+    看懂 nginx 的 location 和去掉 /api-service 前缀的那一个字符，以及为什么停掉前端整个网站都会挂掉。
+    下半场（Pulumi）：desired state、state 与 reality 的对比，preview / up / --refresh / -y / destroy；
+    启用 API、两个 service account 各自的权限、部署工具箱容器（录制当天 Dockerfile 需要两处一行修改才能构建）、
+    OS Login 与 SSH key；两个 Pulumi 项目对应课件的六个步骤：带时间戳的镜像、VM 与防火墙、provisioning、通过 SSH 部署容器、nginx。
+    对照课件逐页讲解：部署目标架构、Pulumi 的工作方式、stack、两个 service account 的分工，以及“别忘了删除”。
+    录制环境没有 Google 账号：每个云端步骤都展示到它真实的第一个报错为止，并说明你的输出应是什么。边看边暂停，在自己的项目里跑每一条命令；VM、磁盘和镜像存储会产生费用，视频结尾有完整的清理清单。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/cheese-app-v3
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L20-deployment-pulumi.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 部署, Pulumi, 基础设施即代码, GCP, Docker, nginx, 哈佛, 教程跟练]
+  tid: 231

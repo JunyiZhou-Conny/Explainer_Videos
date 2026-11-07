@@ -1,0 +1,14 @@
+$ gcloud compute project-info add-metadata --project ac215-project --metadata enable-oslogin=TRUE
+ERROR: (gcloud.compute.project-info.add-metadata) You do not currently have an active account selected.
+Please run:
+
+  $ gcloud auth login
+
+to obtain new credentials.
+
+If you have already logged in with a different account, run:
+
+  $ gcloud config set account ACCOUNT
+
+to select an already authenticated account to use.
+[exit 1]

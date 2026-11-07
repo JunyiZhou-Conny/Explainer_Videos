@@ -1,0 +1,22 @@
+$ env | grep -E '^(GCP_|GOOGLE_|PULUMI_|USE_GKE)' | sort; ls -la /secrets; python --version; uv --version; which docker ssh; docker ps --format '{{.Names}}'
+GCP_PROJECT=your-gcp-project
+GCP_REGION=us-central1
+GCP_ZONE=us-central1-a
+GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json
+PULUMI_BUCKET=gs://your-gcp-project-pulumi-state-bucket
+PULUMI_CONFIG_PASSPHRASE=
+USE_GKE_GCLOUD_AUTH_PLUGIN=True
+total 20
+drwxr-sr-x 3 app  app  4096 Nov  5 23:05 .
+drwxr-xr-x 1 root root 4096 Nov  5 23:05 ..
+drwxr-sr-x 2 root root 4096 Nov  5 23:05 .ssh
+-rw-r--r-- 1 app  app  2110 Nov  5 22:26 deployment.json
+-rw-r--r-- 1 app  app  2115 Nov  5 22:26 gcp-service.json
+Python 3.13.18
+uv 0.13.7 (x86_64-unknown-linux-gnu)
+/usr/bin/docker
+/usr/bin/ssh
+cheese-app-deployment
+buildx_buildkit_multi-arch0
+l20-mirror
+[exit 0]

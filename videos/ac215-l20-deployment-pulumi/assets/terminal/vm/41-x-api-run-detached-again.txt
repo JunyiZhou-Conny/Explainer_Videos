@@ -1,0 +1,12 @@
+$ sudo docker run -d --name api-service \
+-v "$(pwd)/persistent-folder/":/persistent \
+-v "$(pwd)/secrets/":/secrets \
+-p 9000:9000 \
+-e GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-service.json \
+-e GCS_BUCKET_NAME=cheese-app-models \
+-e GCP_PROJECT=ac215-project \
+-e CHROMADB_HOST=cheese-app-vector-db \
+-e CHROMADB_PORT=8000 \
+--network cheese-app-network dlops/cheese-app-api-service
+a18ad0b0f41276fae6bcd7cff8e5ff76fee67145b8ff6e88d2b7bf746a5f0ffc
+[exit 0]

@@ -1,0 +1,5 @@
+$ docker buildx use default; docker buildx ls | head -3
+NAME/NODE         DRIVER/ENDPOINT                   STATUS    BUILDKIT   PLATFORMS
+multi-arch        docker-container                                       
+ \_ multi-arch0    \_ unix:///var/run/docker.sock   running   v0.34.2    linux/amd64 (+4), linux/386
+[exit 0]

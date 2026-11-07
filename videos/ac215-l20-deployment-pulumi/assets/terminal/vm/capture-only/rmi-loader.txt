@@ -1,0 +1,4 @@
+$ sudo docker rmi dlops/cheese-app-vector-db-cli
+Untagged: dlops/cheese-app-vector-db-cli:latest
+Deleted: sha256:733a5a10d60682a2396002fba85d430a2a6f5064b1c4730efe895d15902a0ab8
+[exit 0]

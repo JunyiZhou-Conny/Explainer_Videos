@@ -1,0 +1,24 @@
+$ ls -la docker-volumes/ docker-volumes/chromadb; sudo docker exec cheese-app-vector-db sh -c 'ls -la /data /chroma 2>&1 | head -20'
+docker-volumes/:
+total 12
+drwxr-xr-x 3 root    root    4096 Nov  5 22:07 .
+drwxr-xr-x 6 student student 4096 Nov  5 22:07 ..
+drwxr-xr-x 2 root    root    4096 Nov  5 22:07 chromadb
+
+docker-volumes/chromadb:
+total 8
+drwxr-xr-x 2 root root 4096 Nov  5 22:07 .
+drwxr-xr-x 3 root root 4096 Nov  5 22:07 ..
+/chroma:
+total 12
+drwxr-xr-x 3 root root 4096 Nov  5 22:07 .
+drwxr-xr-x 1 root root 4096 Nov  5 22:07 ..
+drwxr-xr-x 2 root root 4096 Nov  5 22:07 chroma
+
+/data:
+total 35432
+drwxr-xr-x 3 root root     4096 Nov  5 22:08 .
+drwxr-xr-x 1 root root     4096 Nov  5 22:07 ..
+drwxr-xr-x 2 root root     4096 Nov  5 22:08 c30c4d26-a1c3-4283-94ef-c1ad95809777
+-rw-r--r-- 1 root root 36474880 Nov  5 22:08 chroma.sqlite3
+[exit 0]

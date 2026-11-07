@@ -1,0 +1,14 @@
+$ cd deploy_images
+pulumi stack init dev
+Connect to Pulumi Cloud for state storage, config management, team collaboration, and more.
+
+Run `pulumi login --help` for alternative login options.
+
+Press <ENTER> to log in with your browser, or
+We couldn't launch your web browser for some reason. Please visit:
+
+https://app.pulumi.com/cli-login?cliCommand=pulumi+stack+new&cliSessionDescription=Generated+by+pulumi+login+on+3e978a898fa8+at+05+Nov+26+23%3A14+UTC&cliSessionNonce=3750986b457f16c767b13faf9593e8866100c98b4d6a4a78551f367a24dd24af&cliSessionPort=38473
+
+to finish the login process.
+Waiting for login to complete...
+[exit 143]

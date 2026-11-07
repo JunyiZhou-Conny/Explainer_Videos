@@ -1,0 +1,30 @@
+$ sudo docker logs cheese-app-vector-db 2>&1 | head -30
+==========
+persist_path: "/data"
+
+==========
+
+
+
+                (((((((((    (((((####
+             ((((((((((((((((((((((#########
+           ((((((((((((((((((((((((###########
+         ((((((((((((((((((((((((((############
+        (((((((((((((((((((((((((((#############
+        (((((((((((((((((((((((((((#############
+         (((((((((((((((((((((((((##############
+         ((((((((((((((((((((((((##############
+           (((((((((((((((((((((#############
+             ((((((((((((((((##############
+                (((((((((    #########
+
+Saving data to: /data
+Connect to Chroma at: http://localhost:8000
+Getting started guide: https://docs.trychroma.com/docs/overview/getting-started
+
+☁️ To deploy your DB - try Chroma Cloud!
+- Sign up: https://trychroma.com/signup
+- Copy your data to Cloud: chroma copy --to-cloud --all
+
+No telemetry is configured.
+[exit 0]

@@ -1,0 +1,7 @@
+$ sudo docker exec -it api-service /bin/bash
+app@a18ad0b0f412:/app$ ls
+Dockerfile  api                   docker-hub.sh    news-letters  pyproject.toml
+_test.py    docker-entrypoint.sh  docker-shell.sh  podcasts      uv.lock
+app@a18ad0b0f412:/app$ exit
+exit
+[exit 0]

@@ -1,0 +1,3 @@
+$ docker build -q -t node:20-alpine /tmp/tmp.HmcFDl
+sha256:fd3e86bef9e4d64bbf83d677783017aed6588d301bff6c52e508872bc0ae3423
+[exit 0]

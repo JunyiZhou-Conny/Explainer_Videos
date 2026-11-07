@@ -1,0 +1,16 @@
+$ sudo docker ps -a --filter name=api-service; sudo docker logs api-service 2>&1 | tail -12
+CONTAINER ID   IMAGE                          COMMAND                  CREATED              STATUS                      PORTS     NAMES
+fa0c5ab73b5e   dlops/cheese-app-api-service   "/bin/bash docker-en…"   About a minute ago   Exited (1) 49 seconds ago             api-service
+  File "/home/app/.venv/lib/python3.12/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/requests/adapters.py", line 675, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='github.com', port=443): Max retries exceeded with url: /dlops-io/models/releases/download/v4.0/experiment_1760994796.zip (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)')))
+[exit 0]

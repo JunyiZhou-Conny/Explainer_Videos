@@ -1,0 +1,2 @@
+$ pulumi config set security:gcp_service_account_email deployment@ac215-project.iam.gserviceaccount.com
+[exit 0]
