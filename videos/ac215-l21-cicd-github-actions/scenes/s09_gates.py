@@ -133,11 +133,6 @@ def span(panel, n: int, sub: str):
     raise ValueError(f"{sub!r} not in line {n}")
 
 
-def row_bar(panel, n: int, color, opacity: float = 0.22):
-    """A translucent bar over every row of file line n of a wrapped_code panel."""
-    return VGroup(*[line_bar(panel.code, k, color, opacity) for k in panel.rows[n]])
-
-
 class ExitCodes(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S09"] == 8, len(SAY)
@@ -214,14 +209,15 @@ class ExitCodes(VoiceScene):
             self.play(flags.animate.set_color(TURN), run_time=0.4)
             self.play(Indicate(flags, color=TURN, scale_factor=1.08), run_time=0.6)
             vo.wait_until("The Black step says")
-            b62 = row_bar(cp, 62, ERR, 0.22)
-            self.play(FadeIn(b62), span(cp, 62, "continue-on-error: false").animate.set_color(ERR), run_time=0.5)
+            s62 = span(cp, 62, "continue-on-error: false")
+            b62 = hl_bar(s62, ERR, 0.2)
+            self.play(FadeIn(b62), s62.animate.set_color(ERR), run_time=0.5)
             vo.wait_until("it blocks")
             self.play(FadeIn(blk, shift=LEFT * 0.2), run_time=0.4)
             vo.wait_until("The Flake8 step says true")
-            b67 = row_bar(cp, 67, S.GREY, 0.25)
-            self.play(FadeIn(b67), span(cp, 67, "continue-on-error: true").animate.set_color(S.GREY),
-                      run_time=0.5)
+            s67 = span(cp, 67, "continue-on-error: true")
+            b67 = hl_bar(s67, S.GREY, 0.25)
+            self.play(FadeIn(b67), s67.animate.set_color(S.GREY), run_time=0.5)
             vo.wait_until("it's advisory")
             self.play(FadeIn(adv, shift=LEFT * 0.2), run_time=0.4)
             vo.wait_until("a warning that never fails the job")
@@ -328,9 +324,8 @@ class ExitCodes(VoiceScene):
         xt = extra_tag().next_to(xlog.frame, DOWN, buff=0.15).align_to(xlog.frame, LEFT)
         ghost = eg.extras[-1] if len(eg.extras) else eg.gates[4]
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(up, mess, rc, blanks)), run_time=0.5)
+            self.play(FadeOut(VGroup(up, mess, rc, blanks)), FadeIn(eg, shift=RIGHT * 0.3), run_time=0.6)
             self.remove(up, mess, rc, blanks)
-            self.play(FadeIn(eg, shift=RIGHT * 0.3), run_time=0.5)
             self.play(Indicate(VGroup(ghost, eg.names[4]), color=S.GREY, scale_factor=1.12), run_time=0.8)
             vo.wait_until("An extra run shows two warnings")
             self.play(FadeIn(xlog, shift=LEFT * 0.2), FadeIn(xt), run_time=0.6)

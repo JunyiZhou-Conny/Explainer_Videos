@@ -1,8 +1,8 @@
 00:00 One container stops, the site goes dark
-01:23 From your laptop to one VM
-02:49 Images to Docker Hub
-04:26 A VM with Docker, folders and a network
-06:17 The vector DB and its loader
-07:59 The API and the frontend
-09:28 nginx: one public door
-12:00 Twenty-one commands: repeat, review, undo?
+01:24 From your laptop to one VM
+02:50 Images to Docker Hub
+04:37 A VM with Docker, folders and a network
+06:32 The vector DB and its loader
+08:16 The API and the frontend
+09:44 nginx: one public door
+12:19 Twenty-one commands: repeat, review, undo?

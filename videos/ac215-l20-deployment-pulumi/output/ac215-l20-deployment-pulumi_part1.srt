@@ -1,0 +1,971 @@
+1
+00:00:01,800 --> 00:00:06,643
+We stopped one container, the frontend,
+and restarted the web server in front of it.
+
+2
+00:00:06,963 --> 00:00:11,293
+The API container is still up,
+and so is the vector database.
+
+3
+00:00:11,533 --> 00:00:15,800
+Yet the whole site answers nothing,
+the address of the API included.
+
+4
+00:00:16,033 --> 00:00:20,534
+Today's puzzle: the API is running,
+so why is its address dead too?
+
+5
+00:00:20,854 --> 00:00:23,543
+We answer it once
+we have built this by hand.
+
+6
+00:00:23,783 --> 00:00:27,371
+Here is the goal,
+the lecture's picture of deployment:
+
+7
+00:00:27,371 --> 00:00:32,421
+the containers from your laptop move
+to one virtual machine in Google Cloud,
+
+8
+00:00:32,421 --> 00:00:34,215
+with port 80 the only door.
+
+9
+00:00:34,535 --> 00:00:37,138
+We build it twice: by hand, then as code.
+
+10
+00:00:37,383 --> 00:00:42,354
+On the course roadmap, the marker has moved
+to deployment, scaling and automation.
+
+11
+00:00:42,674 --> 00:00:45,362
+Everything so far ran on your own computer.
+
+12
+00:00:45,682 --> 00:00:47,133
+Users need a server.
+
+13
+00:00:47,367 --> 00:00:51,162
+You need cheese-app-v3
+with your secrets folder beside it,
+
+14
+00:00:51,162 --> 00:00:55,218
+a Google Cloud project with billing,
+and a Docker Hub account.
+
+15
+00:00:55,538 --> 00:00:59,825
+This costs real money,
+so each part ends by deleting everything.
+
+16
+00:01:00,067 --> 00:01:03,184
+The tracker in the corner
+names the README step,
+
+17
+00:01:03,184 --> 00:01:05,651
+code panels name their file and lines,
+
+18
+00:01:05,651 --> 00:01:09,027
+and a yellow tag,
+your turn, means pause and run it.
+
+19
+00:01:09,267 --> 00:01:10,352
+One honest note:
+
+20
+00:01:10,352 --> 00:01:14,963
+our recording machine has no Google account
+and no Docker Hub login.
+
+21
+00:01:15,283 --> 00:01:17,822
+What runs on a machine you own is real;
+
+22
+00:01:17,822 --> 00:01:21,011
+every cloud step stops
+at its first honest error,
+
+23
+00:01:21,011 --> 00:01:22,899
+and we say what yours prints.
+
+24
+00:01:24,033 --> 00:01:25,697
+Let's draw the goal properly.
+
+25
+00:01:26,017 --> 00:01:31,297
+A browser sends a request to port 80,
+where nginx passes pages
+
+26
+00:01:31,297 --> 00:01:36,662
+to the frontend on port 3000
+and data calls to the API on 9000.
+
+27
+00:01:36,982 --> 00:01:40,502
+The API asks the vector database on 8000.
+
+28
+00:01:40,750 --> 00:01:43,443
+The slide draws
+its arrowheads the other way;
+
+29
+00:01:43,443 --> 00:01:45,657
+we draw requests the way they travel.
+
+30
+00:01:45,977 --> 00:01:47,982
+The slide shows four containers.
+
+31
+00:01:48,302 --> 00:01:49,367
+There is a fifth:
+
+32
+00:01:49,367 --> 00:01:53,187
+a loader that fills the vector database once
+and then leaves.
+
+33
+00:01:53,433 --> 00:01:58,151
+The lecture splits the manual route
+into four stages: push the images,
+
+34
+00:01:58,151 --> 00:02:02,734
+set up the VM, deploy the containers,
+and put a web server in front.
+
+35
+00:02:03,054 --> 00:02:04,868
+That is our map for part 1.
+
+36
+00:02:05,116 --> 00:02:09,724
+The README starts with a check,
+not a command: your containers run locally.
+
+37
+00:02:10,044 --> 00:02:15,197
+The vector database is up,
+the API shows its docs on port 9000,
+
+38
+00:02:15,197 --> 00:02:18,386
+and the frontend its home page on 3000.
+
+39
+00:02:18,633 --> 00:02:24,329
+A small note: on this code, /status
+is a better API check than the docs page.
+
+40
+00:02:24,649 --> 00:02:28,532
+It answers version 3.0,
+so you know which code runs.
+
+41
+00:02:28,766 --> 00:02:34,035
+If you followed lecture 18 lately,
+it now teaches a refactored version 2;
+
+42
+00:02:34,035 --> 00:02:38,004
+here you run version 3,
+with this repository's scripts.
+
+43
+00:02:38,250 --> 00:02:41,893
+We follow main,
+the branch the course site links;
+
+44
+00:02:41,893 --> 00:02:45,610
+on recording day it was this
+November 2025 commit.
+
+45
+00:02:45,930 --> 00:02:49,066
+READMEs change;
+git log shows which one you have.
+
+46
+00:02:50,200 --> 00:02:52,248
+Stage 1: push the images.
+
+47
+00:02:52,568 --> 00:02:56,249
+Create an access token
+in your Docker Hub account settings;
+
+48
+00:02:56,249 --> 00:02:59,181
+it is a password for scripts,
+so never show it.
+
+49
+00:02:59,417 --> 00:03:03,336
+Typed exactly as the README prints it,
+the login fails:
+
+50
+00:03:03,336 --> 00:03:06,542
+syntax error near
+unexpected token `newline'.
+
+51
+00:03:06,862 --> 00:03:09,712
+Angle brackets
+are redirections to the shell,
+
+52
+00:03:09,712 --> 00:03:13,006
+so replace the whole placeholder,
+brackets included.
+
+53
+00:03:13,250 --> 00:03:17,666
+Better: the flag --password-stdin keeps
+the token out of your shell history.
+
+54
+00:03:17,900 --> 00:03:21,207
+Now the Docker Hub script,
+one in each service folder.
+
+55
+00:03:21,527 --> 00:03:27,159
+Line 11 sets the user name to dlops,
+the course account: change it to yours.
+
+56
+00:03:27,400 --> 00:03:30,925
+Line 27 creates
+and selects a new BuildKit builder;
+
+57
+00:03:30,925 --> 00:03:34,035
+the script builds,
+then builds again to push.
+
+58
+00:03:34,355 --> 00:03:42,803
+The API script builds for AMD64 and ARM64;
+the frontend script, AMD64 only.
+
+59
+00:03:43,050 --> 00:03:46,805
+Inside frontend-react,
+outside any docker shell, run it.
+
+60
+00:03:47,125 --> 00:03:51,690
+It prints dlops, creates the builder,
+and builds: Compiled successfully.
+
+61
+00:03:52,010 --> 00:03:54,719
+The warning says this build
+stays in the builder cache.
+
+62
+00:03:54,967 --> 00:03:56,972
+Then the push: access denied.
+
+63
+00:03:57,292 --> 00:03:59,588
+We are not dlops, and not logged in;
+
+64
+00:03:59,588 --> 00:04:03,095
+with your name and login,
+this is where it says pushed.
+
+65
+00:04:03,333 --> 00:04:06,703
+Run the same script
+in api-service and vector-db;
+
+66
+00:04:06,703 --> 00:04:09,797
+we did not capture
+those two-platform builds.
+
+67
+00:04:10,117 --> 00:04:14,823
+Those two build for two chip types,
+one of them emulated:
+
+68
+00:04:14,823 --> 00:04:20,272
+expect a long api-service build,
+and on Linux register QEMU first.
+
+69
+00:04:20,592 --> 00:04:23,301
+Pause, run all three, and check Docker Hub.
+
+70
+00:04:23,550 --> 00:04:26,237
+Skip this stage and part 1 still works,
+
+71
+00:04:26,237 --> 00:04:31,059
+using the public dlops images,
+which are a little older than the code.
+
+72
+00:04:31,379 --> 00:04:36,201
+If you pushed yours, replace dlops
+with your user name in the VM commands.
+
+73
+00:04:37,350 --> 00:04:39,441
+Stage 2: set up the VM.
+
+74
+00:04:39,761 --> 00:04:44,755
+In the console,
+create a VM instance with the defaults,
+
+75
+00:04:44,755 --> 00:04:50,747
+except machine type N2D, a 50 GB disk,
+and HTTP and HTTPS allowed.
+
+76
+00:04:50,983 --> 00:04:56,851
+Those two ticks add
+network tags, http-server and https-server;
+
+77
+00:04:56,851 --> 00:05:02,439
+the default firewall
+opens 80 and 443 only to VMs with them.
+
+78
+00:05:02,759 --> 00:05:06,557
+The VM now bills while it runs,
+its disk while it exists.
+
+79
+00:05:06,800 --> 00:05:08,344
+Pause, create yours,
+
+80
+00:05:08,344 --> 00:05:12,667
+and SSH in with the SSH button
+in the VM instances list.
+
+81
+00:05:12,987 --> 00:05:16,599
+Our VM is a stand-in
+we can capture end to end:
+
+82
+00:05:16,599 --> 00:05:19,749
+a fresh Debian 12 machine without Docker.
+
+83
+00:05:20,069 --> 00:05:22,352
+Every command is the same on yours.
+
+84
+00:05:22,600 --> 00:05:27,677
+Install Docker with the official script:
+download it with curl, run it with sudo.
+
+85
+00:05:27,997 --> 00:05:33,821
+It adds the Docker repository for bookworm
+and installs the engine, buildx and compose.
+
+86
+00:05:34,633 --> 00:05:37,812
+Then check it with sudo docker --version.
+
+87
+00:05:38,132 --> 00:05:40,841
+Pause here and install Docker on your VM.
+
+88
+00:05:41,083 --> 00:05:42,729
+Next, create folders:
+
+89
+00:05:42,729 --> 00:05:47,590
+persistent-folder, secrets and conf/nginx,
+writable by anyone.
+
+90
+00:05:47,910 --> 00:05:52,966
+The README lists these six commands twice:
+run them once, from your home directory.
+
+91
+00:05:55,667 --> 00:05:58,699
+An extra check: the folders belong to root,
+
+92
+00:05:58,699 --> 00:06:02,366
+but anyone may write there:
+fine for a demo VM only.
+
+93
+00:06:02,686 --> 00:06:06,461
+Stay in your home directory:
+later mounts use the current folder.
+
+94
+00:06:06,700 --> 00:06:11,151
+Now the app's key,
+gcp-service.json, written with echo;
+
+95
+00:06:11,151 --> 00:06:13,740
+ours holds just the placeholder.
+
+96
+00:06:14,060 --> 00:06:18,384
+Paste in the gcp-service key
+from your laptop's secrets folder;
+
+97
+00:06:18,384 --> 00:06:20,375
+part 2 shows how to make one.
+
+98
+00:06:20,695 --> 00:06:22,252
+Never show or commit it.
+
+99
+00:06:22,500 --> 00:06:25,703
+Last, create the Docker network,
+cheese-app-network:
+
+100
+00:06:25,703 --> 00:06:29,583
+a private network where our containers
+find each other by name.
+
+101
+00:06:29,903 --> 00:06:31,823
+Pause and run these three steps.
+
+102
+00:06:32,967 --> 00:06:34,844
+Stage 3: the containers.
+
+103
+00:06:35,164 --> 00:06:39,538
+Pull the Chroma image, then stop
+and remove any old vector database.
+
+104
+00:06:39,858 --> 00:06:42,934
+The error,
+No such container, is harmless here:
+
+105
+00:06:42,934 --> 00:06:45,618
+|| true makes the step safe to run again.
+
+106
+00:06:45,867 --> 00:06:50,626
+Then run it detached
+on cheese-app-network, publishing port 8000,
+
+107
+00:06:50,626 --> 00:06:53,995
+restarting always,
+with a data folder mounted.
+
+108
+00:06:54,315 --> 00:06:56,384
+Its name goes into the phone book.
+
+109
+00:06:56,750 --> 00:07:00,431
+An extra check: the port is published,
+the heartbeat answers,
+
+110
+00:07:00,431 --> 00:07:03,086
+Chroma version one at the time of recording.
+
+111
+00:07:03,334 --> 00:07:06,150
+Now the loader, run vector db cli.
+
+112
+00:07:06,470 --> 00:07:11,099
+It finds the database by name,
+cheese-app-vector-db, not by address.
+
+113
+00:07:11,419 --> 00:07:15,003
+The project is the README's default;
+change it to yours.
+
+114
+00:07:15,250 --> 00:07:21,074
+It downloads, creates the collection,
+and loads eleven files:
+
+115
+00:07:21,074 --> 00:07:23,079
+14,356 chunks in all.
+
+116
+00:07:23,399 --> 00:07:27,474
+The embeddings come precomputed,
+so our placeholder key never mattered.
+
+117
+00:07:27,717 --> 00:07:31,472
+The loader ran with the --rm flag,
+so it exits and is gone.
+
+118
+00:07:31,792 --> 00:07:34,010
+Pause and run both containers now.
+
+119
+00:07:34,250 --> 00:07:35,253
+A question.
+
+120
+00:07:35,573 --> 00:07:36,895
+The loader is gone.
+
+121
+00:07:37,215 --> 00:07:40,970
+Are the 14,356 chunks gone too?
+
+122
+00:07:50,117 --> 00:07:52,674
+No. The loader only sent them;
+
+123
+00:07:52,674 --> 00:07:56,389
+they sit in the vector database container,
+which keeps running.
+
+124
+00:07:56,709 --> 00:07:59,226
+Remove it,
+and the loader must fill a new one.
+
+125
+00:07:59,467 --> 00:08:01,387
+But where inside that container?
+
+126
+00:08:01,707 --> 00:08:07,552
+A small slip: Chroma saves to /data,
+so the folder the README mounts stays empty.
+
+127
+00:08:07,872 --> 00:08:11,665
+To keep the data on the VM disk,
+mount /data instead,
+
+128
+00:08:11,665 --> 00:08:15,531
+rerun the stop, remove and run lines,
+then the loader.
+
+129
+00:08:16,667 --> 00:08:18,608
+Next, run api-service.
+
+130
+00:08:18,928 --> 00:08:23,046
+The image is not on the VM yet,
+so docker run pulls it first.
+
+131
+00:08:23,284 --> 00:08:26,361
+Two mounts, persistent-folder and secrets;
+
+132
+00:08:26,361 --> 00:08:30,025
+port 9000; the key path;
+and the database by name.
+
+133
+00:08:30,345 --> 00:08:32,563
+The project is the README's default,
+
+134
+00:08:32,563 --> 00:08:35,337
+and the bucket name is passed
+but never used.
+
+135
+00:08:38,450 --> 00:08:43,591
+The logs show loading CNN model,
+then uvicorn running on port 9000.
+
+136
+00:08:43,911 --> 00:08:47,112
+The model comes from a GitHub release,
+not a bucket,
+
+137
+00:08:47,112 --> 00:08:49,821
+so our picture grays out the slide's bucket.
+
+138
+00:08:50,067 --> 00:08:53,551
+And the image is big,
+about five gigabytes on disk,
+
+139
+00:08:53,551 --> 00:08:55,123
+with TensorFlow inside.
+
+140
+00:08:55,367 --> 00:08:57,415
+Three extra curl checks:
+
+141
+00:08:57,415 --> 00:09:02,706
+the root says Welcome to AC215,
+and /docs shows the docs page.
+
+142
+00:09:03,026 --> 00:09:07,612
+/status says 404:
+the public image is older than your clone.
+
+143
+00:09:07,850 --> 00:09:10,794
+The README then offers
+an interactive variant.
+
+144
+00:09:11,114 --> 00:09:15,253
+Run as written, it fails:
+the name api-service is in use,
+
+145
+00:09:15,253 --> 00:09:18,304
+because the detached container still runs.
+
+146
+00:09:18,550 --> 00:09:23,457
+Remove the running one with docker rm -f,
+and the variant opens a shell.
+
+147
+00:09:23,777 --> 00:09:27,553
+It is optional:
+we exit and start the detached one again.
+
+148
+00:09:28,850 --> 00:09:31,453
+Then the frontend, on port 3000.
+
+149
+00:09:31,773 --> 00:09:37,086
+The extra check shows the title, Formaggio,
+and the base API URL,
+
+150
+00:09:37,086 --> 00:09:41,501
+/api-service,
+which the page calls on its own address.
+
+151
+00:09:41,821 --> 00:09:43,250
+Pause and start both.
+
+152
+00:09:44,400 --> 00:09:46,747
+Stage 4: a web server in front.
+
+153
+00:09:47,067 --> 00:09:50,691
+A reverse proxy gives
+the browser one address:
+
+154
+00:09:50,691 --> 00:09:55,813
+nginx listens on port 80 and forwards
+each request inside the VM.
+
+155
+00:09:56,050 --> 00:09:58,803
+In the repository's nginx.conf,
+
+156
+00:09:58,803 --> 00:10:05,287
+the location block on line 35 catches paths
+that start with /api-service.
+
+157
+00:10:05,607 --> 00:10:09,255
+It passes them to api-service on port 9000.
+
+158
+00:10:09,500 --> 00:10:12,103
+Look at the end of that address: one slash.
+
+159
+00:10:12,423 --> 00:10:17,159
+With it, nginx swaps the matched prefix
+for that slash,
+
+160
+00:10:17,159 --> 00:10:21,895
+so /api-service/status reaches the API
+as just /status.
+
+161
+00:10:22,133 --> 00:10:26,293
+Everything else goes to the next block,
+the frontend on 3000.
+
+162
+00:10:26,613 --> 00:10:30,219
+Both targets are container names
+on cheese-app-network.
+
+163
+00:10:30,467 --> 00:10:34,414
+The README writes this file
+with one long echo in single quotes.
+
+164
+00:10:34,734 --> 00:10:37,019
+But the file holds single quotes too,
+
+165
+00:10:37,019 --> 00:10:41,219
+so the shell eats the log_format
+and leaves a dash and two brackets.
+
+166
+00:10:41,517 --> 00:10:44,760
+Routing still works,
+but the access logs are useless.
+
+167
+00:10:45,080 --> 00:10:49,965
+Write it with a quoted heredoc instead:
+cat, the same text, then EOF.
+
+168
+00:10:50,200 --> 00:10:53,443
+If you used the echo,
+rewrite the file this way first.
+
+169
+00:10:53,763 --> 00:10:57,752
+Then run nginx with that file mounted,
+publishing port 80.
+
+170
+00:10:58,072 --> 00:11:03,960
+The container list shows four:
+ports 80, 3000, 9000 and 8000.
+
+171
+00:11:04,200 --> 00:11:08,693
+Open the external IP of your VM,
+from the VM instances list,
+
+172
+00:11:08,693 --> 00:11:11,688
+in a browser, and the home page appears.
+
+173
+00:11:12,008 --> 00:11:18,216
+On the VM, curl agrees:
+200 OK, served by nginx, title Formaggio.
+
+174
+00:11:18,450 --> 00:11:24,381
+/api-service says Welcome to AC215:
+the prefix was cut on the way.
+
+175
+00:11:24,701 --> 00:11:26,322
+Pause and open your site.
+
+176
+00:11:26,567 --> 00:11:27,570
+A question.
+
+177
+00:11:27,890 --> 00:11:30,770
+Port 9000 is published on the VM.
+
+178
+00:11:31,090 --> 00:11:32,839
+Does it answer from your laptop?
+
+179
+00:11:41,683 --> 00:11:47,934
+No. The two ticks opened only 80 and 443;
+no rule opens 9000.
+
+180
+00:11:48,254 --> 00:11:52,702
+Port 9000 is open on the VM
+but shut at the network edge:
+
+181
+00:11:52,702 --> 00:11:53,950
+one public door.
+
+182
+00:11:54,617 --> 00:11:55,705
+Now the puzzle.
+
+183
+00:11:56,025 --> 00:12:00,377
+The web server looks up frontend
+and api-service once, at start.
+
+184
+00:12:00,697 --> 00:12:05,104
+With the frontend stopped,
+the restart fails that lookup and exits,
+
+185
+00:12:05,104 --> 00:12:07,011
+taking the API route with it.
+
+186
+00:12:07,250 --> 00:12:11,943
+Start the frontend, then nginx,
+and the site answers 200 again.
+
+187
+00:12:12,263 --> 00:12:15,509
+Start order matters,
+and so does a restart policy,
+
+188
+00:12:15,509 --> 00:12:18,301
+which only the vector database command has.
+
+189
+00:12:19,700 --> 00:12:21,215
+Let's count what we typed.
+
+190
+00:12:21,535 --> 00:12:24,959
+Twenty-one commands on the VM,
+plus console clicks,
+
+191
+00:12:24,959 --> 00:12:27,913
+plus three Docker Hub scripts on the laptop.
+
+192
+00:12:28,233 --> 00:12:30,324
+Each one added a block to the VM.
+
+193
+00:12:30,567 --> 00:12:31,932
+Now three questions.
+
+194
+00:12:32,252 --> 00:12:35,964
+Repeat: can you build the same thing
+for a staging copy tomorrow?
+
+195
+00:12:36,284 --> 00:12:38,674
+Review: what exactly is on that VM?
+
+196
+00:12:38,994 --> 00:12:41,255
+Undo: how do you delete every piece?
+
+197
+00:12:41,500 --> 00:12:43,660
+The lecture answers with one idea:
+
+198
+00:12:43,660 --> 00:12:47,153
+too many steps to keep track of,
+so let a tool do them.
+
+199
+00:12:47,567 --> 00:12:49,402
+That is infrastructure as code.
+
+200
+00:12:49,722 --> 00:12:51,272
+You describe the servers,
+
+201
+00:12:51,272 --> 00:12:55,858
+the networks and the software
+in a real programming language, Python here,
+
+202
+00:12:55,858 --> 00:12:57,594
+and keep it in Git to share.
+
+203
+00:12:57,914 --> 00:13:00,409
+No YAML file, no special language.
+
+204
+00:13:00,650 --> 00:13:05,461
+An earlier version of the course
+did these same stages as Ansible playbooks,
+
+205
+00:13:05,461 --> 00:13:06,474
+written in YAML.
+
+206
+00:13:06,794 --> 00:13:09,589
+This version does them with Pulumi,
+one to one.
+
+207
+00:13:09,950 --> 00:13:14,899
+One more thing the README never says:
+delete this VM now, before part 2.
+
+208
+00:13:15,219 --> 00:13:20,617
+In the console, open VM instances,
+select it, and delete it with its boot disk.
+
+209
+00:13:20,937 --> 00:13:23,838
+Pause and delete yours;
+the list should be empty.
+
+210
+00:13:24,083 --> 00:13:28,883
+Part 2 builds it all again, as code,
+and lets a tool remember every piece.
+

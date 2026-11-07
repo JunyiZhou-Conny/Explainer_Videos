@@ -1,0 +1,1325 @@
+1
+00:00:00,000 --> 00:00:01,000
+Part 2.
+
+2
+00:00:01,237 --> 00:00:04,779
+Each Pulumi program says what should exist,
+not what to do.
+
+3
+00:00:05,099 --> 00:00:11,494
+One firewall rule from this repository:
+a constructor, compute.Firewall;
+
+4
+00:00:11,494 --> 00:00:13,893
+a logical name, allow-http;
+
+5
+00:00:13,893 --> 00:00:19,755
+and arguments: port 80, from anywhere,
+for VMs tagged http-server.
+
+6
+00:00:20,000 --> 00:00:22,923
+The lecture's bucket example
+has the same shape.
+
+7
+00:00:23,243 --> 00:00:28,341
+Running this line creates nothing:
+the constructor only registers the resource.
+
+8
+00:00:28,583 --> 00:00:34,062
+This is the lecture's picture of Pulumi:
+the command line tool runs your program,
+
+9
+00:00:34,062 --> 00:00:37,714
+which produces the desired state,
+a tree of resources.
+
+10
+00:00:37,950 --> 00:00:42,451
+Pulumi also loads its state,
+what it created last time, from your bucket.
+
+11
+00:00:42,771 --> 00:00:46,803
+The --refresh flag first checks
+that state against what really exists.
+
+12
+00:00:47,050 --> 00:00:53,089
+Then it compares desired with current,
+and each difference becomes a plan line:
+
+13
+00:00:53,089 --> 00:00:57,141
++ to create, ~ to update,
+- to delete, +- to replace.
+
+14
+00:00:57,383 --> 00:00:59,561
+Finally it calls the providers,
+
+15
+00:00:59,561 --> 00:01:04,338
+plugins for Google Cloud, Docker and more,
+which make the API calls.
+
+16
+00:01:04,658 --> 00:01:06,348
+The banner on the slide:
+
+17
+00:01:06,348 --> 00:01:09,799
+Pulumi manages infrastructure
+through cloud APIs.
+
+18
+00:01:10,033 --> 00:01:11,846
+The lecture lists seven commands.
+
+19
+00:01:12,166 --> 00:01:13,886
+The tutorial uses five:
+
+20
+00:01:13,886 --> 00:01:18,972
+stack, config, preview, up and destroy,
+with refresh only as a flag.
+
+21
+00:01:19,292 --> 00:01:23,303
+The command new stays gray,
+because both projects already exist.
+
+22
+00:01:23,550 --> 00:01:28,073
+Now the README's command:
+pulumi up --stack dev --refresh -y.
+
+23
+00:01:28,393 --> 00:01:30,483
+Up previews, asks, then applies.
+
+24
+00:01:30,803 --> 00:01:32,723
+Stack dev picks the environment.
+
+25
+00:01:33,043 --> 00:01:35,774
+Refresh syncs the state with reality first.
+
+26
+00:01:36,017 --> 00:01:40,238
+-y answers yes to the question,
+do you want to perform this update,
+
+27
+00:01:40,238 --> 00:01:42,758
+and skips your chance to check the plan.
+
+28
+00:01:43,078 --> 00:01:44,998
+Step 3 shows when that matters.
+
+29
+00:01:45,318 --> 00:01:47,643
+Preview stops before anything changes.
+
+30
+00:01:47,883 --> 00:01:48,886
+A question.
+
+31
+00:01:49,206 --> 00:01:51,830
+You run pulumi up again and changed nothing.
+
+32
+00:01:52,150 --> 00:01:53,537
+What should the plan show?
+
+33
+00:02:02,383 --> 00:02:03,450
+Nothing to do.
+
+34
+00:02:03,770 --> 00:02:08,030
+Desired equals state equals reality,
+so there is no difference,
+
+35
+00:02:08,030 --> 00:02:10,938
+and nothing is created, changed or deleted.
+
+36
+00:02:11,258 --> 00:02:12,361
+Hold that thought:
+
+37
+00:02:12,361 --> 00:02:15,119
+one stack in this repository
+breaks the rule.
+
+38
+00:02:16,267 --> 00:02:20,587
+The lecture splits the automated deployment
+into six steps:
+
+39
+00:02:20,587 --> 00:02:24,907
+setup, images,
+VM, provisioning, containers and web server.
+
+40
+00:02:25,227 --> 00:02:28,043
+Each maps to a file; we start with step 1.
+
+41
+00:02:28,284 --> 00:02:32,613
+First, enable four APIs:
+Compute Engine, Service Usage,
+
+42
+00:02:32,613 --> 00:02:36,156
+Cloud Resource Manager
+and Artifact Registry.
+
+43
+00:02:36,476 --> 00:02:40,337
+The app's chat also needs Vertex AI,
+from earlier lectures.
+
+44
+00:02:40,584 --> 00:02:42,568
+Then create two service accounts.
+
+45
+00:02:42,888 --> 00:02:48,015
+Deployment gets six roles,
+among them Compute Admin, Compute OS Login,
+
+46
+00:02:48,015 --> 00:02:51,677
+Artifact Registry Administrator
+and Storage Admin.
+
+47
+00:02:51,997 --> 00:02:55,986
+Create a JSON key,
+and rename it deployment.json.
+
+48
+00:02:56,234 --> 00:03:01,287
+The second, gcp-service, gets three roles:
+Storage Object Viewer,
+
+49
+00:03:01,287 --> 00:03:05,407
+Vertex AI Administrator
+and Artifact Registry Reader.
+
+50
+00:03:05,727 --> 00:03:08,863
+Its key becomes gcp-service.json.
+
+51
+00:03:09,100 --> 00:03:10,100
+Why two?
+
+52
+00:03:10,295 --> 00:03:11,831
+Deployment builds things.
+
+53
+00:03:12,151 --> 00:03:15,193
+It needs admin rights
+on your group's project,
+
+54
+00:03:15,193 --> 00:03:18,764
+not the README's default,
+to create the VM and log in.
+
+55
+00:03:19,084 --> 00:03:21,772
+The narrow account only runs things:
+
+56
+00:03:21,772 --> 00:03:25,655
+it reads images
+and stored files and uses Vertex AI.
+
+57
+00:03:25,900 --> 00:03:30,252
+Both keys go into a secrets folder next
+to your clone, not inside it.
+
+58
+00:03:30,572 --> 00:03:34,348
+The deployment script of the next step
+looks three folders up
+
+59
+00:03:34,348 --> 00:03:36,268
+from src/deployment to find it.
+
+60
+00:03:36,588 --> 00:03:38,210
+Pause and place your keys.
+
+61
+00:03:38,450 --> 00:03:40,962
+One step is missing from the README:
+
+62
+00:03:40,962 --> 00:03:44,381
+nothing creates
+the Artifact Registry repository.
+
+63
+00:03:44,701 --> 00:03:48,570
+We create it with one extra
+gcloud line in the next step,
+
+64
+00:03:48,570 --> 00:03:52,914
+once the deployment container runs;
+skip it, and the push fails.
+
+65
+00:03:54,050 --> 00:03:57,173
+Rather than each of you
+installing different tools,
+
+66
+00:03:57,173 --> 00:04:01,154
+the README packs them into one container,
+the deployment toolbox.
+
+67
+00:04:01,474 --> 00:04:06,253
+Lines 9 to 17 of docker-shell.sh set
+its environment.
+
+68
+00:04:06,900 --> 00:04:10,356
+Lines 34 to 43 wire it to your laptop.
+
+69
+00:04:10,676 --> 00:04:12,550
+They mount the Docker socket,
+
+70
+00:04:12,550 --> 00:04:15,976
+so it builds on your Docker,
+then deployment as /app,
+
+71
+00:04:15,976 --> 00:04:19,743
+the secrets, a Docker config
+and the three service folders.
+
+72
+00:04:20,517 --> 00:04:22,586
+Change into src/deployment.
+
+73
+00:04:22,906 --> 00:04:27,737
+In docker-shell.sh,
+set GCP_PROJECT to your project ID;
+
+74
+00:04:27,737 --> 00:04:29,669
+ours is a placeholder.
+
+75
+00:04:29,917 --> 00:04:32,882
+Now run docker-shell.sh, as committed.
+
+76
+00:04:33,202 --> 00:04:36,762
+Downloads answer 404 Not Found,
+the build stops,
+
+77
+00:04:36,762 --> 00:04:41,287
+and the script runs the container anyway:
+pull access denied.
+
+78
+00:04:41,533 --> 00:04:45,099
+The cause is line 4:
+the base image is Debian 11,
+
+79
+00:04:45,099 --> 00:04:48,957
+bullseye,
+whose security updates moved to an archive.
+
+80
+00:04:49,277 --> 00:04:52,563
+Fix 1:
+change bullseye to bookworm, Debian 12.
+
+81
+00:04:53,167 --> 00:04:54,167
+Run it again.
+
+82
+00:04:54,468 --> 00:04:56,538
+Now it stops at line 29:
+
+83
+00:04:56,538 --> 00:05:00,591
+google-cloud-sdk
+has no installation candidate.
+
+84
+00:05:00,911 --> 00:05:02,231
+Google renamed it,
+
+85
+00:05:02,231 --> 00:05:06,116
+and apt even names the replacement,
+google-cloud-cli.
+
+86
+00:05:06,350 --> 00:05:08,611
+Fix 2: rename both packages.
+
+87
+00:05:08,931 --> 00:05:12,259
+Here is the real diff of the two fixes,
+one line each.
+
+88
+00:05:12,579 --> 00:05:14,307
+Pause and make both edits.
+
+89
+00:05:15,033 --> 00:05:19,598
+The third run builds in about 92 seconds,
+and the entrypoint starts.
+
+90
+00:05:19,918 --> 00:05:23,033
+First error: invalid_grant:
+Invalid grant: account not found.
+
+91
+00:05:23,353 --> 00:05:27,919
+Our key belongs to no account;
+yours activates the deployment account.
+
+92
+00:05:28,167 --> 00:05:30,492
+The project and registry helper pass.
+
+93
+00:05:30,812 --> 00:05:32,202
+Then the state bucket:
+
+94
+00:05:32,202 --> 00:05:35,676
+ours could not be created,
+and Pulumi could not log in.
+
+95
+00:05:35,996 --> 00:05:40,305
+Yours creates the bucket the first time,
+logs in, and leaves you here.
+
+96
+00:05:40,550 --> 00:05:44,006
+Check the tools: gcloud, Pulumi and kubectl.
+
+97
+00:05:44,326 --> 00:05:48,426
+One surprise:
+kubectl is newer than the Dockerfile pins,
+
+98
+00:05:48,426 --> 00:05:52,746
+because Google's apt repository
+has its own kubectl package
+
+99
+00:05:52,746 --> 00:05:55,675
+with a higher version, and apt picks it.
+
+100
+00:05:55,917 --> 00:05:58,157
+Last check: gcloud auth list.
+
+101
+00:05:58,477 --> 00:06:00,589
+Ours says No credentialed accounts.
+
+102
+00:06:00,909 --> 00:06:03,972
+Yours lists the deployment
+account as active;
+
+103
+00:06:03,972 --> 00:06:06,626
+if not, check the file name in secrets.
+
+104
+00:06:06,946 --> 00:06:11,362
+Then create the registry repository
+with the extra line from earlier.
+
+105
+00:06:11,682 --> 00:06:12,983
+Pause and run both.
+
+106
+00:06:14,217 --> 00:06:16,393
+This is the one setup the slides skip.
+
+107
+00:06:16,713 --> 00:06:21,982
+Pulumi will log in to the VM over SSH
+to run scripts and drive Docker.
+
+108
+00:06:22,302 --> 00:06:23,390
+Who logs in?
+
+109
+00:06:23,710 --> 00:06:27,247
+The deployment service account,
+through OS Login:
+
+110
+00:06:27,247 --> 00:06:31,867
+the VM accepts a key registered
+to that account's login profile,
+
+111
+00:06:31,867 --> 00:06:35,188
+under a Linux username
+Google derives from it.
+
+112
+00:06:35,434 --> 00:06:38,207
+First, turn OS Login on for the project.
+
+113
+00:06:38,527 --> 00:06:41,962
+Typed as printed,
+the template fails with no such file.
+
+114
+00:06:42,282 --> 00:06:46,420
+It is the angle bracket lesson again:
+replace the whole placeholder.
+
+115
+00:06:46,667 --> 00:06:51,040
+The README example uses its own project,
+which you change to yours.
+
+116
+00:06:51,360 --> 00:06:54,752
+Ours says no active account;
+yours prints Updated.
+
+117
+00:06:55,000 --> 00:07:01,372
+Next, the key: in /secrets, run ssh-keygen
+with the name ssh-key-deployment,
+
+118
+00:07:01,372 --> 00:07:04,643
+press Enter twice, and go back to /app.
+
+119
+00:07:04,963 --> 00:07:07,608
+No passphrase: Pulumi cannot type one.
+
+120
+00:07:07,867 --> 00:07:11,856
+The two files now sit
+in the secrets folder on your laptop:
+
+121
+00:07:11,856 --> 00:07:15,846
+the private key, readable only by you,
+and the public half.
+
+122
+00:07:16,084 --> 00:07:19,220
+Then upload the public half
+to the OS Login profile.
+
+123
+00:07:19,540 --> 00:07:21,526
+Ours stops at the same error;
+
+124
+00:07:21,526 --> 00:07:26,047
+the README shows yours,
+ending in a username that starts with sa_.
+
+125
+00:07:26,367 --> 00:07:28,990
+Copy it: the VM stack's config needs it.
+
+126
+00:07:29,234 --> 00:07:33,586
+A small slip: the next heading asks you
+to edit inventory.yml.
+
+127
+00:07:33,906 --> 00:07:35,253
+No such file exists;
+
+128
+00:07:35,253 --> 00:07:39,026
+it belongs to an earlier,
+Ansible version of the course.
+
+129
+00:07:39,346 --> 00:07:41,372
+The Pulumi config replaces it.
+
+130
+00:07:42,617 --> 00:07:44,942
+Step 2: build and push the images.
+
+131
+00:07:45,262 --> 00:07:51,104
+Your laptop's arrow lands on the registry;
+slide 21 still calls it GCR,
+
+132
+00:07:51,104 --> 00:07:55,054
+its retired name:
+today it is Artifact Registry.
+
+133
+00:07:55,300 --> 00:07:59,300
+Pulumi keeps environments apart
+as stacks of one program,
+
+134
+00:07:59,300 --> 00:08:03,791
+dev, staging and production,
+each with its own state and config.
+
+135
+00:08:04,111 --> 00:08:07,076
+The tutorial has one stack,
+dev, per project.
+
+136
+00:08:07,317 --> 00:08:10,967
+Its full name,
+organization/deploy-images/dev,
+
+137
+00:08:10,967 --> 00:08:14,698
+is used by the VM project,
+so do not rename it.
+
+138
+00:08:15,018 --> 00:08:17,152
+Every stack state sits in your bucket.
+
+139
+00:08:17,400 --> 00:08:21,261
+Change into deploy_images
+and run pulumi stack init dev.
+
+140
+00:08:21,581 --> 00:08:23,066
+Without a bucket login,
+
+141
+00:08:23,066 --> 00:08:26,424
+Pulumi offers its own cloud
+and waits for a browser.
+
+142
+00:08:26,744 --> 00:08:31,139
+If yours says the stack already exists,
+use pulumi stack select dev.
+
+143
+00:08:31,384 --> 00:08:36,291
+Config set, preview and up all print:
+PULUMI_ACCESS_TOKEN must be set.
+
+144
+00:08:36,611 --> 00:08:39,592
+To show them anyway, we use a local folder,
+
+145
+00:08:39,592 --> 00:08:42,712
+pulumi login --local:
+extra, and not for you.
+
+146
+00:08:42,950 --> 00:08:45,770
+Stack init answers Created stack 'dev',
+
+147
+00:08:45,770 --> 00:08:49,820
+and config set writes your project
+into Pulumi.dev.yaml.
+
+148
+00:08:50,067 --> 00:08:51,240
+Now the program.
+
+149
+00:08:51,560 --> 00:08:55,073
+Line 13 makes a timestamp,
+down to the second,
+
+150
+00:08:55,073 --> 00:08:58,664
+and lines 14 and 15 build
+the registry address.
+
+151
+00:08:58,900 --> 00:09:02,534
+Each image is one
+docker_build.Image resource:
+
+152
+00:09:02,534 --> 00:09:06,300
+a timestamped tag,
+push true, retain_on_delete,
+
+153
+00:09:06,300 --> 00:09:08,223
+and one platform, AMD64.
+
+154
+00:09:08,543 --> 00:09:11,529
+An Apple silicon Mac emulates that slowly.
+
+155
+00:09:11,849 --> 00:09:16,415
+Lines 34 and 35 export the tag
+for the other project.
+
+156
+00:09:16,650 --> 00:09:19,000
+The extra preview, frontend only:
+
+157
+00:09:19,000 --> 00:09:23,842
+five provider plugins, one image
+to create with its timestamped tag,
+
+158
+00:09:23,842 --> 00:09:26,549
+and a warning: Skipping preview build.
+
+159
+00:09:26,869 --> 00:09:28,362
+A preview never builds.
+
+160
+00:09:28,684 --> 00:09:32,612
+Up does build:
+the npm install, the Next.js build,
+
+161
+00:09:32,612 --> 00:09:36,620
+then the push,
+which fails here with 403 Forbidden.
+
+162
+00:09:36,940 --> 00:09:41,932
+Yours builds all three images, slowly,
+and ends with each tag in the outputs.
+
+163
+00:09:42,252 --> 00:09:43,404
+Pause and run it.
+
+164
+00:09:44,517 --> 00:09:46,224
+Remember the earlier question?
+
+165
+00:09:46,544 --> 00:09:50,266
+This stack breaks the rule:
+each up rebuilds the images,
+
+166
+00:09:50,266 --> 00:09:52,858
+because the timestamp is new every run.
+
+167
+00:09:53,178 --> 00:09:56,094
+Each run can add image layers
+to the registry,
+
+168
+00:09:56,094 --> 00:09:57,616
+and storage costs money.
+
+169
+00:09:58,950 --> 00:10:00,827
+Step 3: create the VM.
+
+170
+00:10:01,147 --> 00:10:04,048
+The slide draws a network share beside it;
+
+171
+00:10:04,048 --> 00:10:08,123
+in this code that is a second disk,
+mounted at /mnt/disk-1.
+
+172
+00:10:08,867 --> 00:10:12,040
+Change into deploy_single_vm,
+then stack init,
+
+173
+00:10:12,040 --> 00:10:14,385
+three config sets, preview and up:
+
+174
+00:10:14,385 --> 00:10:18,040
+without the bucket login,
+each prints the same error.
+
+175
+00:10:18,667 --> 00:10:20,142
+On the local backend,
+
+176
+00:10:20,142 --> 00:10:23,723
+the config shows the project,
+your masked username,
+
+177
+00:10:23,723 --> 00:10:25,898
+and the account the VM runs as:
+
+178
+00:10:25,898 --> 00:10:29,334
+deployment at your own project,
+not the README's.
+
+179
+00:10:29,654 --> 00:10:33,195
+Pause, set all three,
+and check them with pulumi config.
+
+180
+00:10:33,933 --> 00:10:37,401
+The main file makes four calls,
+in the lecture's order:
+
+181
+00:10:37,401 --> 00:10:41,040
+create the instance,
+provision it, set up the containers,
+
+182
+00:10:41,040 --> 00:10:42,445
+set up the web server.
+
+183
+00:10:43,183 --> 00:10:45,807
+Create instance builds the fences first.
+
+184
+00:10:46,127 --> 00:10:50,823
+There is a cloud network,
+also called cheese-app-network,
+
+185
+00:10:50,823 --> 00:10:52,911
+and three firewall gates:
+
+186
+00:10:52,911 --> 00:10:56,837
+80 and 443 for the tagged VMs,
+22 for every VM.
+
+187
+00:10:57,083 --> 00:11:02,032
+Then a 50 GB data disk,
+and a lookup of the newest Ubuntu image.
+
+188
+00:11:02,352 --> 00:11:04,404
+The VM address is an output,
+
+189
+00:11:04,404 --> 00:11:07,921
+a sealed envelope
+that opens once the VM exists.
+
+190
+00:11:08,167 --> 00:11:14,151
+The real preview plans a disk, a network
+and three firewalls, then stops at line 100,
+
+191
+00:11:14,151 --> 00:11:18,727
+invalid_grant: the image lookup
+is the first call needing Google.
+
+192
+00:11:19,047 --> 00:11:21,671
+Yours goes on to about thirty resources.
+
+193
+00:11:21,917 --> 00:11:23,864
+Check the plan before -y:
+
+194
+00:11:23,864 --> 00:11:28,850
+a newer Ubuntu image can turn the next up
+into a VM replacement.
+
+195
+00:11:29,170 --> 00:11:30,578
+Then pause and run up.
+
+196
+00:11:30,898 --> 00:11:33,588
+From here it costs
+roughly two dollars a day,
+
+197
+00:11:33,588 --> 00:11:35,143
+plus disks and an address.
+
+198
+00:11:35,883 --> 00:11:42,304
+Step 4, provisioning, has no slide picture:
+it happens inside the VM, over SSH.
+
+199
+00:11:42,624 --> 00:11:48,683
+Nine remote commands run in a chain: format
+and mount the disk, update, install Docker.
+
+200
+00:11:49,233 --> 00:11:52,582
+Pulumi remembers that a command ran,
+not what it changed.
+
+201
+00:11:52,902 --> 00:11:56,981
+Look at the first one:
+blkid checks for a filesystem,
+
+202
+00:11:56,981 --> 00:12:00,753
+and only if there is none,
+mkfs formats the disk.
+
+203
+00:12:01,000 --> 00:12:02,003
+A question.
+
+204
+00:12:02,323 --> 00:12:06,355
+Why check with blkid first,
+instead of just formatting the disk?
+
+205
+00:12:15,200 --> 00:12:16,992
+Because formatting erases.
+
+206
+00:12:17,312 --> 00:12:21,973
+If this step ever ran again,
+after a new trigger or a replaced resource,
+
+207
+00:12:21,973 --> 00:12:26,763
+plain formatting would wipe the data disk:
+the chat history and the model.
+
+208
+00:12:27,083 --> 00:12:30,837
+Scripts Pulumi cannot inspect
+must be safe to run twice.
+
+209
+00:12:32,083 --> 00:12:33,875
+Step 5: the containers.
+
+210
+00:12:34,195 --> 00:12:37,899
+The VM program asks the images stack
+for its tags,
+
+211
+00:12:37,899 --> 00:12:42,344
+through a stack reference
+to organization/deploy-images/dev.
+
+212
+00:12:42,664 --> 00:12:44,968
+So run up in deploy_images first.
+
+213
+00:12:45,716 --> 00:12:49,782
+Then a Docker provider whose host is SSH,
+with your key,
+
+214
+00:12:49,782 --> 00:12:55,082
+so each container on the VM is a resource
+Pulumi can compare and replace.
+
+215
+00:12:55,816 --> 00:12:57,963
+Three containers appear:
+
+216
+00:12:57,963 --> 00:13:03,240
+the frontend, the vector database on 8000,
+the API on 9000.
+
+217
+00:13:03,560 --> 00:13:07,848
+The slide puts the frontend on 80;
+the code, on 3000.
+
+218
+00:13:09,683 --> 00:13:11,496
+Step 6: the web server.
+
+219
+00:13:11,816 --> 00:13:16,275
+The nginx container appears on top,
+and port 80 moves onto it.
+
+220
+00:13:19,200 --> 00:13:22,741
+Its config file is uploaded
+with a checksum as a trigger.
+
+221
+00:13:23,061 --> 00:13:26,880
+Change nginx.conf,
+and only these steps run again.
+
+222
+00:13:27,616 --> 00:13:29,941
+No successful pulumi up was captured.
+
+223
+00:13:30,261 --> 00:13:33,056
+So here is what it builds,
+drawn from the code.
+
+224
+00:13:33,376 --> 00:13:36,918
+It ends on six outputs,
+among them the instance_ip.
+
+225
+00:13:37,166 --> 00:13:41,262
+A small slip:
+the exported SSH command leaves out the key.
+
+226
+00:13:41,582 --> 00:13:45,102
+Add -i /secrets/ssh-key-deployment.
+
+227
+00:13:45,850 --> 00:13:48,527
+The lecture marks the job of each key:
+
+228
+00:13:48,527 --> 00:13:54,020
+deployment creates the VM and logs in,
+the narrow key reads images and models.
+
+229
+00:13:54,266 --> 00:13:55,269
+A question.
+
+230
+00:13:55,589 --> 00:13:57,338
+The running app needs one key.
+
+231
+00:13:57,658 --> 00:14:00,560
+Which would you hand the VM,
+and why not the other?
+
+232
+00:14:09,400 --> 00:14:15,618
+The gcp-service key: it reads images
+and stored objects and uses Vertex AI;
+
+233
+00:14:15,618 --> 00:14:18,851
+it cannot create VMs, disks or buckets.
+
+234
+00:14:19,171 --> 00:14:22,968
+Deployment can,
+which a compromised VM should never hold.
+
+235
+00:14:23,216 --> 00:14:24,283
+Two footnotes.
+
+236
+00:14:24,603 --> 00:14:29,279
+This repository pulls the images
+with your deployment credentials
+
+237
+00:14:29,279 --> 00:14:31,940
+and runs the VM itself as deployment,
+
+238
+00:14:31,940 --> 00:14:35,824
+capped only by scopes,
+a list of what the VM may call.
+
+239
+00:14:36,144 --> 00:14:39,771
+And the API calls Vertex AI
+with the narrow key.
+
+240
+00:14:40,091 --> 00:14:42,352
+Try the narrow one as an exercise.
+
+241
+00:14:42,600 --> 00:14:45,011
+The lecture's last step: test the app.
+
+242
+00:14:45,331 --> 00:14:47,029
+Open your instance_ip;
+
+243
+00:14:47,029 --> 00:14:50,578
+the footer shows the API
+version from /status.
+
+244
+00:14:53,650 --> 00:14:59,006
+On the VM, through the console's SSH button
+or the fixed SSH command,
+
+245
+00:14:59,006 --> 00:15:04,594
+the README checks: list the containers,
+follow each log, Ctrl+C to stop.
+
+246
+00:15:04,914 --> 00:15:08,562
+Our stand-in names the database
+cheese-app-vector-db.
+
+247
+00:15:10,150 --> 00:15:13,457
+Exec into api-service and into nginx.
+
+248
+00:15:13,777 --> 00:15:18,318
+One note: chat needs a Gemini model
+Vertex AI still serves;
+
+249
+00:15:18,318 --> 00:15:23,398
+change it in the API's helper files,
+then run up in both projects.
+
+250
+00:15:24,633 --> 00:15:28,580
+The lecture ends with a slide of its own:
+don't forget to delete.
+
+251
+00:15:28,816 --> 00:15:34,299
+In deploy_single_vm,
+run pulumi destroy --stack dev --refresh -y.
+
+252
+00:15:34,619 --> 00:15:36,091
+Pause and run yours.
+
+253
+00:15:36,411 --> 00:15:38,163
+Ours shows the login error;
+
+254
+00:15:38,163 --> 00:15:41,125
+on the local backend,
+with nothing to delete,
+
+255
+00:15:41,125 --> 00:15:42,704
+it finishes in a second.
+
+256
+00:15:42,950 --> 00:15:47,119
+Destroy plays the graph backwards:
+the containers over SSH,
+
+257
+00:15:47,119 --> 00:15:50,864
+then the VM,
+the disk, the firewalls and the network.
+
+258
+00:15:51,100 --> 00:15:56,470
+Run it in deploy_single_vm;
+in deploy_images it only forgets the images,
+
+259
+00:15:56,470 --> 00:15:59,825
+which stay in the registry,
+retain_on_delete.
+
+260
+00:16:00,066 --> 00:16:01,559
+Your teardown checklist.
+
+261
+00:16:01,879 --> 00:16:06,146
+One: destroy the VM stack,
+and check the VM list is empty.
+
+262
+00:16:06,466 --> 00:16:09,879
+Two:
+delete the registry repository with gcloud.
+
+263
+00:16:10,199 --> 00:16:14,125
+Three: the state bucket,
+last, once no stack holds anything.
+
+264
+00:16:14,366 --> 00:16:17,203
+Four: the part 1 VM, if it still runs.
+
+265
+00:16:17,523 --> 00:16:20,830
+Five:
+your Docker Hub images, free and optional.
+
+266
+00:16:21,150 --> 00:16:24,521
+Six: when the course ends,
+both service account keys.
+
+267
+00:16:24,766 --> 00:16:28,596
+The recap is the lecture's six steps,
+each with its file:
+
+268
+00:16:28,596 --> 00:16:32,023
+docker-shell.sh,
+deploy_images, create_instance.py,
+
+269
+00:16:32,023 --> 00:16:36,457
+provision_instance.py,
+setup_containers.py and setup_webserver.py.
+
+270
+00:16:37,716 --> 00:16:40,084
+The lecture also names six principles.
+
+271
+00:16:40,404 --> 00:16:44,073
+Real language,
+declarative, state with previews: yes.
+
+272
+00:16:44,393 --> 00:16:46,655
+Components and tests: not here.
+
+273
+00:16:46,975 --> 00:16:49,002
+Many providers, but one cloud.
+
+274
+00:16:49,250 --> 00:16:51,853
+One VM is a single point of failure.
+
+275
+00:16:52,173 --> 00:16:55,309
+Lecture 21 automates builds and tests,
+
+276
+00:16:55,309 --> 00:16:59,353
+lecture 22 moves to Kubernetes
+with this toolbox,
+
+277
+00:16:59,353 --> 00:17:03,479
+and lecture 23 runs pulumi up
+from GitHub Actions.
+
+278
+00:17:03,716 --> 00:17:04,825
+Test yourself.
+
+279
+00:17:05,145 --> 00:17:11,041
+Trace your instance_ip/api-service/status:
+which gate, which container,
+
+280
+00:17:11,041 --> 00:17:12,811
+which location block,
+
+281
+00:17:12,811 --> 00:17:16,687
+and which character
+makes the API see /status?
+
+282
+00:17:16,933 --> 00:17:19,655
+What three things does pulumi up compare,
+
+283
+00:17:19,655 --> 00:17:22,842
+what does refresh change,
+and what does -y skip?
+
+284
+00:17:23,162 --> 00:17:27,301
+Name the two service accounts,
+where each key sits, and what each may do.
+
+285
+00:17:27,550 --> 00:17:30,730
+Which of the six steps
+can Pulumi inspect afterwards,
+
+286
+00:17:30,730 --> 00:17:32,649
+and which does it only remember?
+
+287
+00:17:32,969 --> 00:17:34,547
+What survives destroy?
+
+288
+00:17:34,867 --> 00:17:38,046
+Answers are in the exercises
+and the study guide.
+

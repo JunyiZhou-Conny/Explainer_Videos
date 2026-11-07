@@ -1,0 +1,237 @@
+[Script Info]
+Title: AC215 · L20, part 1: deploy by hand — Docker Hub, a VM, five containers and nginx
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.80,0:00:04.08,Bilingual,,0,0,0,,我们停掉了一个 container，也就是前端\N{\fs33\c&H00C8C0B8&\bord1.4}We stopped one container, the frontend,
+Dialogue: 0,0:00:04.08,0:00:06.64,Bilingual,,0,0,0,,又重启了它前面的 Web 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}and restarted the web server in front of it.
+Dialogue: 0,0:00:06.96,0:00:11.29,Bilingual,,0,0,0,,API 的 container 还在运行，向量数据库也是\N{\fs33\c&H00C8C0B8&\bord1.4}The API container is still up, and so is the vector database.
+Dialogue: 0,0:00:11.53,0:00:15.80,Bilingual,,0,0,0,,可整个网站什么都不响应，连 API 的地址也一样\N{\fs33\c&H00C8C0B8&\bord1.4}Yet the whole site answers nothing, the address of the API included.
+Dialogue: 0,0:00:16.03,0:00:20.53,Bilingual,,0,0,0,,今天的谜题：API 明明在运行，为什么它的地址也不通了？\N{\fs33\c&H00C8C0B8&\bord1.4}Today's puzzle: the API is running, so why is its address dead too?
+Dialogue: 0,0:00:20.85,0:00:23.54,Bilingual,,0,0,0,,我们会在手动把它建出来以后回答\N{\fs33\c&H00C8C0B8&\bord1.4}We answer it once we have built this by hand.
+Dialogue: 0,0:00:23.78,0:00:27.37,Bilingual,,0,0,0,,目标在这里，也就是课上画的部署图\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the goal, the lecture's picture of deployment:
+Dialogue: 0,0:00:27.37,0:00:32.42,Bilingual,,0,0,0,,你笔记本上的 container 搬到 Google Cloud 里的一台虚拟机上\N{\fs33\c&H00C8C0B8&\bord1.4}the containers from your laptop move to one virtual machine in Google Cloud,
+Dialogue: 0,0:00:32.42,0:00:34.22,Bilingual,,0,0,0,,port 80 是唯一的入口\N{\fs33\c&H00C8C0B8&\bord1.4}with port 80 the only door.
+Dialogue: 0,0:00:34.54,0:00:37.14,Bilingual,,0,0,0,,我们把它建两遍：先手动，再写成代码\N{\fs33\c&H00C8C0B8&\bord1.4}We build it twice: by hand, then as code.
+Dialogue: 0,0:00:37.38,0:00:42.35,Bilingual,,0,0,0,,在课程路线图上，标记已经移到了部署、扩展和自动化\N{\fs33\c&H00C8C0B8&\bord1.4}On the course roadmap, the marker has moved to deployment, scaling and automation.
+Dialogue: 0,0:00:42.67,0:00:45.36,Bilingual,,0,0,0,,到目前为止，一切都跑在你自己的电脑上\N{\fs33\c&H00C8C0B8&\bord1.4}Everything so far ran on your own computer.
+Dialogue: 0,0:00:45.68,0:00:47.28,Bilingual,,0,0,0,,用户需要的是一台服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Users need a server.
+Dialogue: 0,0:00:47.37,0:00:51.19,Bilingual,,0,0,0,,你需要 cheese-app-v3，旁边放着你的 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}You need cheese-app-v3 with your secrets folder beside it,
+Dialogue: 0,0:00:51.19,0:00:53.57,Bilingual,,0,0,0,,还要一个开通了结算的 Google Cloud 项目\N{\fs33\c&H00C8C0B8&\bord1.4}a Google Cloud project with billing,
+Dialogue: 0,0:00:53.57,0:00:55.22,Bilingual,,0,0,0,,和一个 Docker Hub 账号\N{\fs33\c&H00C8C0B8&\bord1.4}and a Docker Hub account.
+Dialogue: 0,0:00:55.54,0:00:59.82,Bilingual,,0,0,0,,这会花真钱，所以每个部分最后都会把所有东西删掉\N{\fs33\c&H00C8C0B8&\bord1.4}This costs real money, so each part ends by deleting everything.
+Dialogue: 0,0:01:00.07,0:01:05.68,Bilingual,,0,0,0,,角落里的进度条标出 README 的哪一步，代码面板标出文件和行号\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker in the corner names the README step, code panels name their file and lines,
+Dialogue: 0,0:01:05.68,0:01:09.03,Bilingual,,0,0,0,,黄色的 your turn 标签表示暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}and a yellow tag, your turn, means pause and run it.
+Dialogue: 0,0:01:09.27,0:01:13.34,Bilingual,,0,0,0,,如实说一句：我们录制用的机器没有 Google 账号\N{\fs33\c&H00C8C0B8&\bord1.4}One honest note: our recording machine has no Google account
+Dialogue: 0,0:01:13.34,0:01:14.96,Bilingual,,0,0,0,,也没有登录 Docker Hub\N{\fs33\c&H00C8C0B8&\bord1.4}and no Docker Hub login.
+Dialogue: 0,0:01:15.28,0:01:17.82,Bilingual,,0,0,0,,在自己的机器上能跑的都是真的\N{\fs33\c&H00C8C0B8&\bord1.4}What runs on a machine you own is real;
+Dialogue: 0,0:01:17.82,0:01:21.01,Bilingual,,0,0,0,,每个云端步骤都停在它第一个真实的报错处\N{\fs33\c&H00C8C0B8&\bord1.4}every cloud step stops at its first honest error,
+Dialogue: 0,0:01:21.01,0:01:22.90,Bilingual,,0,0,0,,我们会说你的会输出什么\N{\fs33\c&H00C8C0B8&\bord1.4}and we say what yours prints.
+Dialogue: 0,0:01:24.03,0:01:25.70,Bilingual,,0,0,0,,我们把目标好好画一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Let's draw the goal properly.
+Dialogue: 0,0:01:26.02,0:01:29.19,Bilingual,,0,0,0,,浏览器把请求发到 port 80\N{\fs33\c&H00C8C0B8&\bord1.4}A browser sends a request to port 80,
+Dialogue: 0,0:01:29.19,0:01:33.74,Bilingual,,0,0,0,,nginx 在那里把页面交给 port 3000 上的前端\N{\fs33\c&H00C8C0B8&\bord1.4}where nginx passes pages to the frontend on port 3000
+Dialogue: 0,0:01:33.74,0:01:36.66,Bilingual,,0,0,0,,把数据请求交给 9000 上的 API\N{\fs33\c&H00C8C0B8&\bord1.4}and data calls to the API on 9000.
+Dialogue: 0,0:01:36.98,0:01:40.50,Bilingual,,0,0,0,,API 去问 8000 上的向量数据库\N{\fs33\c&H00C8C0B8&\bord1.4}The API asks the vector database on 8000.
+Dialogue: 0,0:01:40.75,0:01:45.66,Bilingual,,0,0,0,,课件上的箭头方向是反的；我们按请求实际走的方向画\N{\fs33\c&H00C8C0B8&\bord1.4}The slide draws its arrowheads the other way; we draw requests the way they travel.
+Dialogue: 0,0:01:45.98,0:01:47.98,Bilingual,,0,0,0,,课件上画了四个 container\N{\fs33\c&H00C8C0B8&\bord1.4}The slide shows four containers.
+Dialogue: 0,0:01:48.30,0:01:53.19,Bilingual,,0,0,0,,还有第五个：一个加载器，它把向量数据库填满一次，然后就退出\N{\fs33\c&H00C8C0B8&\bord1.4}There is a fifth: a loader that fills the vector database once and then leaves.
+Dialogue: 0,0:01:53.43,0:01:57.03,Bilingual,,0,0,0,,课上把手动部署分成四个阶段\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture splits the manual route into four stages:
+Dialogue: 0,0:01:57.03,0:02:00.70,Bilingual,,0,0,0,,push image、配置 VM、部署 container\N{\fs33\c&H00C8C0B8&\bord1.4}push the images, set up the VM, deploy the containers,
+Dialogue: 0,0:02:00.70,0:02:02.73,Bilingual,,0,0,0,,再在前面放一台 Web 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}and put a web server in front.
+Dialogue: 0,0:02:03.05,0:02:04.87,Bilingual,,0,0,0,,这就是我们第 1 部分的地图\N{\fs33\c&H00C8C0B8&\bord1.4}That is our map for part 1.
+Dialogue: 0,0:02:05.12,0:02:07.98,Bilingual,,0,0,0,,README 一开头是一个检查，不是命令\N{\fs33\c&H00C8C0B8&\bord1.4}The README starts with a check, not a command:
+Dialogue: 0,0:02:07.98,0:02:09.72,Bilingual,,0,0,0,,你的 container 都在本地跑着\N{\fs33\c&H00C8C0B8&\bord1.4}your containers run locally.
+Dialogue: 0,0:02:10.04,0:02:15.20,Bilingual,,0,0,0,,向量数据库已经起来了，API 在 port 9000 上显示文档页\N{\fs33\c&H00C8C0B8&\bord1.4}The vector database is up, the API shows its docs on port 9000,
+Dialogue: 0,0:02:15.20,0:02:18.39,Bilingual,,0,0,0,,前端在 3000 上显示首页\N{\fs33\c&H00C8C0B8&\bord1.4}and the frontend its home page on 3000.
+Dialogue: 0,0:02:18.63,0:02:24.33,Bilingual,,0,0,0,,说明一点：在这份代码上，/status 比文档页更适合用来检查 API\N{\fs33\c&H00C8C0B8&\bord1.4}A small note: on this code, /status is a better API check than the docs page.
+Dialogue: 0,0:02:24.65,0:02:28.53,Bilingual,,0,0,0,,它返回版本 3.0，所以你知道跑的是哪份代码\N{\fs33\c&H00C8C0B8&\bord1.4}It answers version 3.0, so you know which code runs.
+Dialogue: 0,0:02:28.77,0:02:34.03,Bilingual,,0,0,0,,如果你最近跟过第 18 讲，它现在讲的是重构过的 v2\N{\fs33\c&H00C8C0B8&\bord1.4}If you followed lecture 18 lately, it now teaches a refactored version 2;
+Dialogue: 0,0:02:34.03,0:02:38.00,Bilingual,,0,0,0,,这里你跑的是 v3，用的是这个 repo 自己的脚本\N{\fs33\c&H00C8C0B8&\bord1.4}here you run version 3, with this repository's scripts.
+Dialogue: 0,0:02:38.25,0:02:41.89,Bilingual,,0,0,0,,我们跟着 main 分支走，也就是课程网站链接的那个分支\N{\fs33\c&H00C8C0B8&\bord1.4}We follow main, the branch the course site links;
+Dialogue: 0,0:02:41.89,0:02:45.61,Bilingual,,0,0,0,,录制当天，它停在 2025 年 11 月的这个 commit 上\N{\fs33\c&H00C8C0B8&\bord1.4}on recording day it was this November 2025 commit.
+Dialogue: 0,0:02:45.93,0:02:49.07,Bilingual,,0,0,0,,README 会变；git log 能告诉你手上的是哪一版\N{\fs33\c&H00C8C0B8&\bord1.4}READMEs change; git log shows which one you have.
+Dialogue: 0,0:02:50.20,0:02:52.25,Bilingual,,0,0,0,,第 1 阶段：push image\N{\fs33\c&H00C8C0B8&\bord1.4}Stage 1: push the images.
+Dialogue: 0,0:02:52.57,0:02:56.25,Bilingual,,0,0,0,,在你的 Docker Hub 账号设置里创建一个访问令牌\N{\fs33\c&H00C8C0B8&\bord1.4}Create an access token in your Docker Hub account settings;
+Dialogue: 0,0:02:56.25,0:02:59.18,Bilingual,,0,0,0,,它是给脚本用的密码，所以千万别给人看\N{\fs33\c&H00C8C0B8&\bord1.4}it is a password for scripts, so never show it.
+Dialogue: 0,0:02:59.42,0:03:03.34,Bilingual,,0,0,0,,照 README 印的原样敲，登录会失败\N{\fs33\c&H00C8C0B8&\bord1.4}Typed exactly as the README prints it, the login fails:
+Dialogue: 0,0:03:03.34,0:03:06.54,Bilingual,,0,0,0,,syntax error near unexpected token newline\N{\fs33\c&H00C8C0B8&\bord1.4}syntax error near unexpected token `newline'.
+Dialogue: 0,0:03:06.86,0:03:09.71,Bilingual,,0,0,0,,尖括号对 shell 来说是重定向\N{\fs33\c&H00C8C0B8&\bord1.4}Angle brackets are redirections to the shell,
+Dialogue: 0,0:03:09.71,0:03:13.81,Bilingual,,0,0,0,,所以要把整个占位符换掉，连尖括号一起。更好的做法\N{\fs33\c&H00C8C0B8&\bord1.4}so replace the whole placeholder, brackets included. Better:
+Dialogue: 0,0:03:13.81,0:03:17.67,Bilingual,,0,0,0,,--password-stdin 参数让令牌不会进到你的 shell 历史记录里\N{\fs33\c&H00C8C0B8&\bord1.4}the flag --password-stdin keeps the token out of your shell history.
+Dialogue: 0,0:03:17.90,0:03:21.21,Bilingual,,0,0,0,,现在是 Docker Hub 脚本，每个服务目录里各有一个\N{\fs33\c&H00C8C0B8&\bord1.4}Now the Docker Hub script, one in each service folder.
+Dialogue: 0,0:03:21.53,0:03:27.16,Bilingual,,0,0,0,,第 11 行把用户名设成 dlops，也就是课程的账号：改成你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Line 11 sets the user name to dlops, the course account: change it to yours.
+Dialogue: 0,0:03:27.40,0:03:30.92,Bilingual,,0,0,0,,第 27 行创建并选中一个新的 BuildKit 构建器\N{\fs33\c&H00C8C0B8&\bord1.4}Line 27 creates and selects a new BuildKit builder;
+Dialogue: 0,0:03:30.92,0:03:34.04,Bilingual,,0,0,0,,脚本先构建一遍，再构建一遍来 push\N{\fs33\c&H00C8C0B8&\bord1.4}the script builds, then builds again to push.
+Dialogue: 0,0:03:34.36,0:03:42.80,Bilingual,,0,0,0,,API 的脚本为 AMD64 和 ARM64 构建；前端的脚本只构建 AMD64\N{\fs33\c&H00C8C0B8&\bord1.4}The API script builds for AMD64 and ARM64; the frontend script, AMD64 only.
+Dialogue: 0,0:03:43.05,0:03:46.80,Bilingual,,0,0,0,,在 frontend-react 里、在任何 docker shell 之外运行它\N{\fs33\c&H00C8C0B8&\bord1.4}Inside frontend-react, outside any docker shell, run it.
+Dialogue: 0,0:03:47.12,0:03:50.28,Bilingual,,0,0,0,,它打印出 dlops，创建构建器，然后构建\N{\fs33\c&H00C8C0B8&\bord1.4}It prints dlops, creates the builder, and builds:
+Dialogue: 0,0:03:50.28,0:03:51.88,Bilingual,,0,0,0,,Compiled successfully\N{\fs33\c&H00C8C0B8&\bord1.4}Compiled successfully.
+Dialogue: 0,0:03:52.01,0:03:54.79,Bilingual,,0,0,0,,这条警告是说，这次构建的结果只留在构建器的缓存里\N{\fs33\c&H00C8C0B8&\bord1.4}The warning says this build stays in the builder cache.
+Dialogue: 0,0:03:54.97,0:03:56.97,Bilingual,,0,0,0,,接着是 push：access denied\N{\fs33\c&H00C8C0B8&\bord1.4}Then the push: access denied.
+Dialogue: 0,0:03:57.29,0:03:59.59,Bilingual,,0,0,0,,我们不是 dlops，也没有登录\N{\fs33\c&H00C8C0B8&\bord1.4}We are not dlops, and not logged in;
+Dialogue: 0,0:03:59.59,0:04:03.09,Bilingual,,0,0,0,,换成你的用户名并登录后，这里会显示 pushed\N{\fs33\c&H00C8C0B8&\bord1.4}with your name and login, this is where it says pushed.
+Dialogue: 0,0:04:03.33,0:04:06.70,Bilingual,,0,0,0,,在 api-service 和 vector-db 里跑同一个脚本\N{\fs33\c&H00C8C0B8&\bord1.4}Run the same script in api-service and vector-db;
+Dialogue: 0,0:04:06.70,0:04:09.80,Bilingual,,0,0,0,,那两个双平台构建我们没有录\N{\fs33\c&H00C8C0B8&\bord1.4}we did not capture those two-platform builds.
+Dialogue: 0,0:04:10.12,0:04:14.86,Bilingual,,0,0,0,,这两个要为两种芯片构建，其中一种靠模拟\N{\fs33\c&H00C8C0B8&\bord1.4}Those two build for two chip types, one of them emulated:
+Dialogue: 0,0:04:14.86,0:04:17.53,Bilingual,,0,0,0,,api-service 会构建很久\N{\fs33\c&H00C8C0B8&\bord1.4}expect a long api-service build,
+Dialogue: 0,0:04:17.53,0:04:20.27,Bilingual,,0,0,0,,在 Linux 上，先注册 QEMU\N{\fs33\c&H00C8C0B8&\bord1.4}and on Linux register QEMU first.
+Dialogue: 0,0:04:20.59,0:04:23.33,Bilingual,,0,0,0,,暂停一下，三个都跑一遍，再去 Docker Hub 上看看\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, run all three, and check Docker Hub.
+Dialogue: 0,0:04:23.55,0:04:26.24,Bilingual,,0,0,0,,跳过这个阶段，第 1 部分也照样能跑\N{\fs33\c&H00C8C0B8&\bord1.4}Skip this stage and part 1 still works,
+Dialogue: 0,0:04:26.24,0:04:31.06,Bilingual,,0,0,0,,用的是公开的 dlops image，比代码稍微旧一点\N{\fs33\c&H00C8C0B8&\bord1.4}using the public dlops images, which are a little older than the code.
+Dialogue: 0,0:04:31.38,0:04:32.88,Bilingual,,0,0,0,,如果你 push 了自己的\N{\fs33\c&H00C8C0B8&\bord1.4}If you pushed yours,
+Dialogue: 0,0:04:32.88,0:04:36.20,Bilingual,,0,0,0,,就在 VM 的命令里把 dlops 换成你的用户名\N{\fs33\c&H00C8C0B8&\bord1.4}replace dlops with your user name in the VM commands.
+Dialogue: 0,0:04:37.35,0:04:39.44,Bilingual,,0,0,0,,第 2 阶段：配置 VM\N{\fs33\c&H00C8C0B8&\bord1.4}Stage 2: set up the VM.
+Dialogue: 0,0:04:39.76,0:04:44.80,Bilingual,,0,0,0,,在控制台里用默认值创建一个 VM 实例\N{\fs33\c&H00C8C0B8&\bord1.4}In the console, create a VM instance with the defaults,
+Dialogue: 0,0:04:44.80,0:04:48.28,Bilingual,,0,0,0,,只是机器类型改成 N2D、磁盘 50 GB\N{\fs33\c&H00C8C0B8&\bord1.4}except machine type N2D, a 50 GB disk,
+Dialogue: 0,0:04:48.28,0:04:50.75,Bilingual,,0,0,0,,并允许 HTTP 和 HTTPS 流量\N{\fs33\c&H00C8C0B8&\bord1.4}and HTTP and HTTPS allowed.
+Dialogue: 0,0:04:50.98,0:04:56.85,Bilingual,,0,0,0,,这两个勾会加上网络标记 http-server 和 https-server\N{\fs33\c&H00C8C0B8&\bord1.4}Those two ticks add network tags, http-server and https-server;
+Dialogue: 0,0:04:56.85,0:05:02.44,Bilingual,,0,0,0,,默认防火墙只对带这两个标记的 VM 开放 80 和 443\N{\fs33\c&H00C8C0B8&\bord1.4}the default firewall opens 80 and 443 only to VMs with them.
+Dialogue: 0,0:05:02.76,0:05:06.56,Bilingual,,0,0,0,,从现在起，VM 运行时计费，磁盘只要存在就计费\N{\fs33\c&H00C8C0B8&\bord1.4}The VM now bills while it runs, its disk while it exists.
+Dialogue: 0,0:05:06.80,0:05:08.34,Bilingual,,0,0,0,,暂停一下，创建你自己的 VM\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, create yours,
+Dialogue: 0,0:05:08.34,0:05:12.67,Bilingual,,0,0,0,,然后在 VM 实例列表里点 SSH 按钮连进去\N{\fs33\c&H00C8C0B8&\bord1.4}and SSH in with the SSH button in the VM instances list.
+Dialogue: 0,0:05:12.99,0:05:16.60,Bilingual,,0,0,0,,我们的 VM 是一个能从头录到尾的替身\N{\fs33\c&H00C8C0B8&\bord1.4}Our VM is a stand-in we can capture end to end:
+Dialogue: 0,0:05:16.60,0:05:19.75,Bilingual,,0,0,0,,一台全新的、没装 Docker 的 Debian 12 机器\N{\fs33\c&H00C8C0B8&\bord1.4}a fresh Debian 12 machine without Docker.
+Dialogue: 0,0:05:20.07,0:05:22.35,Bilingual,,0,0,0,,每条命令在你的 VM 上都一样\N{\fs33\c&H00C8C0B8&\bord1.4}Every command is the same on yours.
+Dialogue: 0,0:05:22.60,0:05:27.68,Bilingual,,0,0,0,,用官方脚本安装 Docker：用 curl 下载，再用 sudo 运行\N{\fs33\c&H00C8C0B8&\bord1.4}Install Docker with the official script: download it with curl, run it with sudo.
+Dialogue: 0,0:05:28.00,0:05:30.84,Bilingual,,0,0,0,,它为 bookworm 加上 Docker 的软件源\N{\fs33\c&H00C8C0B8&\bord1.4}It adds the Docker repository for bookworm
+Dialogue: 0,0:05:30.84,0:05:33.82,Bilingual,,0,0,0,,装好引擎、buildx 和 compose\N{\fs33\c&H00C8C0B8&\bord1.4}and installs the engine, buildx and compose.
+Dialogue: 0,0:05:34.63,0:05:37.81,Bilingual,,0,0,0,,然后用 sudo docker --version 检查一下\N{\fs33\c&H00C8C0B8&\bord1.4}Then check it with sudo docker --version.
+Dialogue: 0,0:05:38.13,0:05:40.84,Bilingual,,0,0,0,,在这里暂停一下，在你的 VM 上装好 Docker\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here and install Docker on your VM.
+Dialogue: 0,0:05:41.08,0:05:42.73,Bilingual,,0,0,0,,接下来建目录\N{\fs33\c&H00C8C0B8&\bord1.4}Next, create folders:
+Dialogue: 0,0:05:42.73,0:05:47.59,Bilingual,,0,0,0,,persistent-folder、secrets 和 conf/nginx，任何人都能写\N{\fs33\c&H00C8C0B8&\bord1.4}persistent-folder, secrets and conf/nginx, writable by anyone.
+Dialogue: 0,0:05:47.91,0:05:50.50,Bilingual,,0,0,0,,README 把这六条命令列了两遍\N{\fs33\c&H00C8C0B8&\bord1.4}The README lists these six commands twice:
+Dialogue: 0,0:05:50.50,0:05:52.97,Bilingual,,0,0,0,,在你的 home 目录下跑一遍就够了\N{\fs33\c&H00C8C0B8&\bord1.4}run them once, from your home directory.
+Dialogue: 0,0:05:55.67,0:05:58.70,Bilingual,,0,0,0,,一个额外检查：这些目录属于 root\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check: the folders belong to root,
+Dialogue: 0,0:05:58.70,0:06:02.37,Bilingual,,0,0,0,,但任何人都能往里写：只适合演示用的 VM\N{\fs33\c&H00C8C0B8&\bord1.4}but anyone may write there: fine for a demo VM only.
+Dialogue: 0,0:06:02.69,0:06:06.46,Bilingual,,0,0,0,,留在你的 home 目录里：后面的挂载用的都是当前目录\N{\fs33\c&H00C8C0B8&\bord1.4}Stay in your home directory: later mounts use the current folder.
+Dialogue: 0,0:06:06.70,0:06:12.04,Bilingual,,0,0,0,,现在是应用的密钥 gcp-service.json，用 echo 写进去\N{\fs33\c&H00C8C0B8&\bord1.4}Now the app's key, gcp-service.json, written with echo; ours holds
+Dialogue: 0,0:06:12.04,0:06:13.74,Bilingual,,0,0,0,,我们的只有占位符\N{\fs33\c&H00C8C0B8&\bord1.4}just the placeholder.
+Dialogue: 0,0:06:14.06,0:06:18.38,Bilingual,,0,0,0,,把你笔记本 secrets 目录里的 gcp-service 密钥粘贴进去\N{\fs33\c&H00C8C0B8&\bord1.4}Paste in the gcp-service key from your laptop's secrets folder;
+Dialogue: 0,0:06:18.38,0:06:20.38,Bilingual,,0,0,0,,第 2 部分会讲怎么生成\N{\fs33\c&H00C8C0B8&\bord1.4}part 2 shows how to make one.
+Dialogue: 0,0:06:20.70,0:06:22.30,Bilingual,,0,0,0,,千万别给人看，也别 commit\N{\fs33\c&H00C8C0B8&\bord1.4}Never show or commit it.
+Dialogue: 0,0:06:22.50,0:06:25.70,Bilingual,,0,0,0,,最后，创建 Docker 网络 cheese-app-network\N{\fs33\c&H00C8C0B8&\bord1.4}Last, create the Docker network, cheese-app-network:
+Dialogue: 0,0:06:25.70,0:06:29.58,Bilingual,,0,0,0,,一个私有网络，我们的 container 在里面按名字找到彼此\N{\fs33\c&H00C8C0B8&\bord1.4}a private network where our containers find each other by name.
+Dialogue: 0,0:06:29.90,0:06:31.82,Bilingual,,0,0,0,,暂停一下，把这三步跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run these three steps.
+Dialogue: 0,0:06:32.97,0:06:34.84,Bilingual,,0,0,0,,第 3 阶段：container\N{\fs33\c&H00C8C0B8&\bord1.4}Stage 3: the containers.
+Dialogue: 0,0:06:35.16,0:06:39.54,Bilingual,,0,0,0,,先 pull Chroma 的 image，再停掉并删除旧的向量数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Pull the Chroma image, then stop and remove any old vector database.
+Dialogue: 0,0:06:39.86,0:06:42.93,Bilingual,,0,0,0,,No such container 这个报错在这里是无害的\N{\fs33\c&H00C8C0B8&\bord1.4}The error, No such container, is harmless here:
+Dialogue: 0,0:06:42.93,0:06:45.62,Bilingual,,0,0,0,,|| true 让这一步可以放心重跑\N{\fs33\c&H00C8C0B8&\bord1.4}|| true makes the step safe to run again.
+Dialogue: 0,0:06:45.87,0:06:49.02,Bilingual,,0,0,0,,然后在 cheese-app-network 上以后台方式运行它\N{\fs33\c&H00C8C0B8&\bord1.4}Then run it detached on cheese-app-network,
+Dialogue: 0,0:06:49.02,0:06:53.99,Bilingual,,0,0,0,,发布 port 8000，restart always，并挂载一个数据目录\N{\fs33\c&H00C8C0B8&\bord1.4}publishing port 8000, restarting always, with a data folder mounted.
+Dialogue: 0,0:06:54.31,0:06:56.38,Bilingual,,0,0,0,,它的名字会记进电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}Its name goes into the phone book.
+Dialogue: 0,0:06:56.75,0:07:00.43,Bilingual,,0,0,0,,一个额外检查：port 已经发布，心跳有回应\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check: the port is published, the heartbeat answers,
+Dialogue: 0,0:07:00.43,0:07:03.09,Bilingual,,0,0,0,,录制时是 Chroma 版本 1\N{\fs33\c&H00C8C0B8&\bord1.4}Chroma version one at the time of recording.
+Dialogue: 0,0:07:03.33,0:07:06.15,Bilingual,,0,0,0,,现在是加载器，Run vector db cli 这一节\N{\fs33\c&H00C8C0B8&\bord1.4}Now the loader, run vector db cli.
+Dialogue: 0,0:07:06.47,0:07:08.54,Bilingual,,0,0,0,,它按名字找到数据库\N{\fs33\c&H00C8C0B8&\bord1.4}It finds the database by name,
+Dialogue: 0,0:07:08.54,0:07:11.10,Bilingual,,0,0,0,,也就是 cheese-app-vector-db，而不是按地址\N{\fs33\c&H00C8C0B8&\bord1.4}cheese-app-vector-db, not by address.
+Dialogue: 0,0:07:11.42,0:07:15.00,Bilingual,,0,0,0,,项目用的是 README 的默认值；改成你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}The project is the README's default; change it to yours.
+Dialogue: 0,0:07:15.25,0:07:18.78,Bilingual,,0,0,0,,它下载数据，创建 collection\N{\fs33\c&H00C8C0B8&\bord1.4}It downloads, creates the collection,
+Dialogue: 0,0:07:18.78,0:07:23.08,Bilingual,,0,0,0,,载入 11 个文件：一共 14,356 个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}and loads eleven files: 14,356 chunks in all.
+Dialogue: 0,0:07:23.40,0:07:27.47,Bilingual,,0,0,0,,这些 embedding 是预先算好的，所以我们的占位密钥根本没用上\N{\fs33\c&H00C8C0B8&\bord1.4}The embeddings come precomputed, so our placeholder key never mattered.
+Dialogue: 0,0:07:27.72,0:07:31.47,Bilingual,,0,0,0,,加载器带着 --rm 运行，所以它退出后就没了\N{\fs33\c&H00C8C0B8&\bord1.4}The loader ran with the --rm flag, so it exits and is gone.
+Dialogue: 0,0:07:31.79,0:07:34.13,Bilingual,,0,0,0,,暂停一下，现在把两个 container 都跑起来\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both containers now.
+Dialogue: 0,0:07:34.25,0:07:35.52,Bilingual,,0,0,0,,想一想\N{\fs33\c&H00C8C0B8&\bord1.4}A question.
+Dialogue: 0,0:07:35.57,0:07:37.16,Bilingual,,0,0,0,,加载器没了\N{\fs33\c&H00C8C0B8&\bord1.4}The loader is gone.
+Dialogue: 0,0:07:37.21,0:07:40.97,Bilingual,,0,0,0,,那 14,356 个 chunk 也没了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Are the 14,356 chunks gone too?
+Dialogue: 0,0:07:50.12,0:07:52.69,Bilingual,,0,0,0,,不会。加载器只是把它们发过去\N{\fs33\c&H00C8C0B8&\bord1.4}No. The loader only sent them;
+Dialogue: 0,0:07:52.69,0:07:54.89,Bilingual,,0,0,0,,它们待在向量数据库的 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}they sit in the vector database container,
+Dialogue: 0,0:07:54.89,0:07:56.49,Bilingual,,0,0,0,,而那个 container 一直在跑\N{\fs33\c&H00C8C0B8&\bord1.4}which keeps running.
+Dialogue: 0,0:07:56.71,0:07:59.23,Bilingual,,0,0,0,,删掉它，加载器就得重新填一个新的\N{\fs33\c&H00C8C0B8&\bord1.4}Remove it, and the loader must fill a new one.
+Dialogue: 0,0:07:59.47,0:08:01.39,Bilingual,,0,0,0,,那存在里面的哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}But where inside that container?
+Dialogue: 0,0:08:01.71,0:08:04.34,Bilingual,,0,0,0,,有一个小疏漏：Chroma 存到 /data\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: Chroma saves to /data,
+Dialogue: 0,0:08:04.34,0:08:07.55,Bilingual,,0,0,0,,所以 README 挂载的目录一直是空的\N{\fs33\c&H00C8C0B8&\bord1.4}so the folder the README mounts stays empty.
+Dialogue: 0,0:08:07.87,0:08:11.67,Bilingual,,0,0,0,,要把数据留在 VM 的磁盘上，就改为挂载 /data\N{\fs33\c&H00C8C0B8&\bord1.4}To keep the data on the VM disk, mount /data instead,
+Dialogue: 0,0:08:11.67,0:08:15.53,Bilingual,,0,0,0,,重跑停止、删除和运行这几行，再跑加载器\N{\fs33\c&H00C8C0B8&\bord1.4}rerun the stop, remove and run lines, then the loader.
+Dialogue: 0,0:08:16.67,0:08:18.61,Bilingual,,0,0,0,,接下来运行 api-service\N{\fs33\c&H00C8C0B8&\bord1.4}Next, run api-service.
+Dialogue: 0,0:08:18.93,0:08:23.05,Bilingual,,0,0,0,,VM 上还没有这个 image，所以 docker run 会先把它 pull 下来\N{\fs33\c&H00C8C0B8&\bord1.4}The image is not on the VM yet, so docker run pulls it first.
+Dialogue: 0,0:08:23.28,0:08:26.36,Bilingual,,0,0,0,,两个挂载，persistent-folder 和 secrets\N{\fs33\c&H00C8C0B8&\bord1.4}Two mounts, persistent-folder and secrets;
+Dialogue: 0,0:08:26.36,0:08:30.02,Bilingual,,0,0,0,,port 9000；密钥路径；还有按名字找的数据库\N{\fs33\c&H00C8C0B8&\bord1.4}port 9000; the key path; and the database by name.
+Dialogue: 0,0:08:30.34,0:08:35.34,Bilingual,,0,0,0,,项目是 README 的默认值，bucket 名传了进去，但从来没用到\N{\fs33\c&H00C8C0B8&\bord1.4}The project is the README's default, and the bucket name is passed but never used.
+Dialogue: 0,0:08:38.45,0:08:40.94,Bilingual,,0,0,0,,日志显示 loading CNN model\N{\fs33\c&H00C8C0B8&\bord1.4}The logs show loading CNN model,
+Dialogue: 0,0:08:40.94,0:08:43.59,Bilingual,,0,0,0,,然后是 uvicorn 在 port 9000 上运行\N{\fs33\c&H00C8C0B8&\bord1.4}then uvicorn running on port 9000.
+Dialogue: 0,0:08:43.91,0:08:47.11,Bilingual,,0,0,0,,模型来自 GitHub 的一个 release，不是 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}The model comes from a GitHub release, not a bucket,
+Dialogue: 0,0:08:47.11,0:08:49.82,Bilingual,,0,0,0,,所以我们的图把课件上的 bucket 画成了灰色\N{\fs33\c&H00C8C0B8&\bord1.4}so our picture grays out the slide's bucket.
+Dialogue: 0,0:08:50.07,0:08:53.55,Bilingual,,0,0,0,,而且这个 image 很大，在磁盘上大约 5 GB\N{\fs33\c&H00C8C0B8&\bord1.4}And the image is big, about five gigabytes on disk,
+Dialogue: 0,0:08:53.55,0:08:55.15,Bilingual,,0,0,0,,里面装着 TensorFlow\N{\fs33\c&H00C8C0B8&\bord1.4}with TensorFlow inside.
+Dialogue: 0,0:08:55.37,0:08:57.41,Bilingual,,0,0,0,,三个额外的 curl 检查\N{\fs33\c&H00C8C0B8&\bord1.4}Three extra curl checks:
+Dialogue: 0,0:08:57.41,0:09:02.71,Bilingual,,0,0,0,,根路径返回 Welcome to AC215，/docs 显示文档页\N{\fs33\c&H00C8C0B8&\bord1.4}the root says Welcome to AC215, and /docs shows the docs page.
+Dialogue: 0,0:09:03.03,0:09:07.61,Bilingual,,0,0,0,,/status 返回 404：公开的 image 比你的 clone 旧\N{\fs33\c&H00C8C0B8&\bord1.4}/status says 404: the public image is older than your clone.
+Dialogue: 0,0:09:07.85,0:09:10.79,Bilingual,,0,0,0,,README 接着给了一个交互式的版本\N{\fs33\c&H00C8C0B8&\bord1.4}The README then offers an interactive variant.
+Dialogue: 0,0:09:11.11,0:09:15.25,Bilingual,,0,0,0,,照原样运行会失败：api-service 这个名字已经被占用了\N{\fs33\c&H00C8C0B8&\bord1.4}Run as written, it fails: the name api-service is in use,
+Dialogue: 0,0:09:15.25,0:09:18.30,Bilingual,,0,0,0,,因为后台的那个 container 还在跑\N{\fs33\c&H00C8C0B8&\bord1.4}because the detached container still runs.
+Dialogue: 0,0:09:18.55,0:09:21.38,Bilingual,,0,0,0,,用 docker rm -f 删掉正在运行的那个\N{\fs33\c&H00C8C0B8&\bord1.4}Remove the running one with docker rm -f,
+Dialogue: 0,0:09:21.38,0:09:23.46,Bilingual,,0,0,0,,交互式版本就会打开一个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}and the variant opens a shell.
+Dialogue: 0,0:09:23.78,0:09:27.55,Bilingual,,0,0,0,,这一步是可选的：我们 exit 出来，再把后台的那个启动起来\N{\fs33\c&H00C8C0B8&\bord1.4}It is optional: we exit and start the detached one again.
+Dialogue: 0,0:09:28.85,0:09:31.45,Bilingual,,0,0,0,,然后是前端，在 port 3000 上\N{\fs33\c&H00C8C0B8&\bord1.4}Then the frontend, on port 3000.
+Dialogue: 0,0:09:31.77,0:09:34.41,Bilingual,,0,0,0,,额外检查显示了标题\N{\fs33\c&H00C8C0B8&\bord1.4}The extra check shows the title,
+Dialogue: 0,0:09:34.41,0:09:38.20,Bilingual,,0,0,0,,Formaggio 和 API 的基础 URL /api-service\N{\fs33\c&H00C8C0B8&\bord1.4}Formaggio, and the base API URL, /api-service,
+Dialogue: 0,0:09:38.20,0:09:41.50,Bilingual,,0,0,0,,页面就在它自己的地址上调用它\N{\fs33\c&H00C8C0B8&\bord1.4}which the page calls on its own address.
+Dialogue: 0,0:09:41.82,0:09:43.42,Bilingual,,0,0,0,,暂停一下，两个都启动起来\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and start both.
+Dialogue: 0,0:09:44.40,0:09:46.75,Bilingual,,0,0,0,,第 4 阶段：在前面放一台 Web 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Stage 4: a web server in front.
+Dialogue: 0,0:09:47.07,0:09:50.69,Bilingual,,0,0,0,,反向代理给浏览器一个地址\N{\fs33\c&H00C8C0B8&\bord1.4}A reverse proxy gives the browser one address:
+Dialogue: 0,0:09:50.69,0:09:55.81,Bilingual,,0,0,0,,nginx 监听 port 80，把每个请求转发到 VM 内部\N{\fs33\c&H00C8C0B8&\bord1.4}nginx listens on port 80 and forwards each request inside the VM.
+Dialogue: 0,0:09:56.05,0:09:58.80,Bilingual,,0,0,0,,在 repo 的 nginx.conf 里\N{\fs33\c&H00C8C0B8&\bord1.4}In the repository's nginx.conf,
+Dialogue: 0,0:09:58.80,0:10:05.29,Bilingual,,0,0,0,,第 35 行的 location 块接住以 /api-service 开头的路径\N{\fs33\c&H00C8C0B8&\bord1.4}the location block on line 35 catches paths that start with /api-service.
+Dialogue: 0,0:10:05.61,0:10:09.26,Bilingual,,0,0,0,,它把这些请求交给 port 9000 上的 api-service\N{\fs33\c&H00C8C0B8&\bord1.4}It passes them to api-service on port 9000.
+Dialogue: 0,0:10:09.50,0:10:12.10,Bilingual,,0,0,0,,看那个地址的结尾：一个斜杠\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the end of that address: one slash.
+Dialogue: 0,0:10:12.42,0:10:17.16,Bilingual,,0,0,0,,有了它，nginx 就把匹配到的前缀换成这个斜杠\N{\fs33\c&H00C8C0B8&\bord1.4}With it, nginx swaps the matched prefix for that slash,
+Dialogue: 0,0:10:17.16,0:10:21.90,Bilingual,,0,0,0,,所以 /api-service/status 到了 API 那里就只是 /status\N{\fs33\c&H00C8C0B8&\bord1.4}so /api-service/status reaches the API as just /status.
+Dialogue: 0,0:10:22.13,0:10:26.29,Bilingual,,0,0,0,,其余的请求都交给下一个块，也就是 3000 上的前端\N{\fs33\c&H00C8C0B8&\bord1.4}Everything else goes to the next block, the frontend on 3000.
+Dialogue: 0,0:10:26.61,0:10:30.22,Bilingual,,0,0,0,,两个目标都是 cheese-app-network 上的 container 名字\N{\fs33\c&H00C8C0B8&\bord1.4}Both targets are container names on cheese-app-network.
+Dialogue: 0,0:10:30.47,0:10:34.41,Bilingual,,0,0,0,,README 用一条很长的 echo 加单引号来写这个文件\N{\fs33\c&H00C8C0B8&\bord1.4}The README writes this file with one long echo in single quotes.
+Dialogue: 0,0:10:34.73,0:10:39.06,Bilingual,,0,0,0,,可文件里也有单引号，所以 shell 把 log format 吃掉了\N{\fs33\c&H00C8C0B8&\bord1.4}But the file holds single quotes too, so the shell eats the log_format
+Dialogue: 0,0:10:39.06,0:10:41.22,Bilingual,,0,0,0,,只剩下一个短横线和两个括号\N{\fs33\c&H00C8C0B8&\bord1.4}and leaves a dash and two brackets.
+Dialogue: 0,0:10:41.52,0:10:44.76,Bilingual,,0,0,0,,路由还能用，但访问日志就没用了\N{\fs33\c&H00C8C0B8&\bord1.4}Routing still works, but the access logs are useless.
+Dialogue: 0,0:10:45.08,0:10:49.96,Bilingual,,0,0,0,,改用带引号的 heredoc 来写：cat，同样的内容，最后是 EOF\N{\fs33\c&H00C8C0B8&\bord1.4}Write it with a quoted heredoc instead: cat, the same text, then EOF.
+Dialogue: 0,0:10:50.20,0:10:53.44,Bilingual,,0,0,0,,如果你用的是 echo，先用这种方式把文件重写一遍\N{\fs33\c&H00C8C0B8&\bord1.4}If you used the echo, rewrite the file this way first.
+Dialogue: 0,0:10:53.76,0:10:57.75,Bilingual,,0,0,0,,然后运行 nginx，挂载这个文件，发布 port 80\N{\fs33\c&H00C8C0B8&\bord1.4}Then run nginx with that file mounted, publishing port 80.
+Dialogue: 0,0:10:58.07,0:11:03.96,Bilingual,,0,0,0,,container 列表显示四个：port 80、3000、9000 和 8000\N{\fs33\c&H00C8C0B8&\bord1.4}The container list shows four: ports 80, 3000, 9000 and 8000.
+Dialogue: 0,0:11:04.20,0:11:08.69,Bilingual,,0,0,0,,在 VM 实例列表里找到你的 VM 的外部 IP\N{\fs33\c&H00C8C0B8&\bord1.4}Open the external IP of your VM, from the VM instances list,
+Dialogue: 0,0:11:08.69,0:11:11.69,Bilingual,,0,0,0,,在浏览器里打开，首页就出来了\N{\fs33\c&H00C8C0B8&\bord1.4}in a browser, and the home page appears.
+Dialogue: 0,0:11:12.01,0:11:14.24,Bilingual,,0,0,0,,在 VM 上，curl 也一样\N{\fs33\c&H00C8C0B8&\bord1.4}On the VM, curl agrees:
+Dialogue: 0,0:11:14.24,0:11:18.22,Bilingual,,0,0,0,,200 OK，由 nginx 提供，标题是 Formaggio\N{\fs33\c&H00C8C0B8&\bord1.4}200 OK, served by nginx, title Formaggio.
+Dialogue: 0,0:11:18.45,0:11:24.38,Bilingual,,0,0,0,,/api-service 返回 Welcome to AC215：前缀在路上被剪掉了\N{\fs33\c&H00C8C0B8&\bord1.4}/api-service says Welcome to AC215: the prefix was cut on the way.
+Dialogue: 0,0:11:24.70,0:11:26.32,Bilingual,,0,0,0,,暂停一下，打开你的网站\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and open your site.
+Dialogue: 0,0:11:26.57,0:11:27.84,Bilingual,,0,0,0,,想一想\N{\fs33\c&H00C8C0B8&\bord1.4}A question.
+Dialogue: 0,0:11:27.89,0:11:30.77,Bilingual,,0,0,0,,VM 上发布了 port 9000\N{\fs33\c&H00C8C0B8&\bord1.4}Port 9000 is published on the VM.
+Dialogue: 0,0:11:31.09,0:11:32.84,Bilingual,,0,0,0,,从你的笔记本能访问到它吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Does it answer from your laptop?
+Dialogue: 0,0:11:41.68,0:11:47.93,Bilingual,,0,0,0,,不能。那两个勾只开了 80 和 443；没有规则开放 9000\N{\fs33\c&H00C8C0B8&\bord1.4}No. The two ticks opened only 80 and 443; no rule opens 9000.
+Dialogue: 0,0:11:48.25,0:11:50.36,Bilingual,,0,0,0,,VM 上的 port 9000 是开着的\N{\fs33\c&H00C8C0B8&\bord1.4}Port 9000 is open on the VM
+Dialogue: 0,0:11:50.36,0:11:53.95,Bilingual,,0,0,0,,但在网络边界上是关着的：唯一的公共入口\N{\fs33\c&H00C8C0B8&\bord1.4}but shut at the network edge: one public door.
+Dialogue: 0,0:11:54.62,0:11:55.98,Bilingual,,0,0,0,,现在回答开头的谜题\N{\fs33\c&H00C8C0B8&\bord1.4}Now the puzzle.
+Dialogue: 0,0:11:56.02,0:12:00.38,Bilingual,,0,0,0,,Web 服务器只在启动时查一次 frontend 和 api-service 的地址\N{\fs33\c&H00C8C0B8&\bord1.4}The web server looks up frontend and api-service once, at start.
+Dialogue: 0,0:12:00.70,0:12:05.10,Bilingual,,0,0,0,,前端停了，重启时这次查找失败并直接退出\N{\fs33\c&H00C8C0B8&\bord1.4}With the frontend stopped, the restart fails that lookup and exits,
+Dialogue: 0,0:12:05.10,0:12:07.01,Bilingual,,0,0,0,,API 的路由也跟着没了\N{\fs33\c&H00C8C0B8&\bord1.4}taking the API route with it.
+Dialogue: 0,0:12:07.25,0:12:11.94,Bilingual,,0,0,0,,先启动前端，再启动 nginx，网站又返回 200 了\N{\fs33\c&H00C8C0B8&\bord1.4}Start the frontend, then nginx, and the site answers 200 again.
+Dialogue: 0,0:12:12.26,0:12:15.51,Bilingual,,0,0,0,,启动顺序很重要，重启策略也很重要\N{\fs33\c&H00C8C0B8&\bord1.4}Start order matters, and so does a restart policy,
+Dialogue: 0,0:12:15.51,0:12:18.30,Bilingual,,0,0,0,,而只有向量数据库那条命令带了重启策略\N{\fs33\c&H00C8C0B8&\bord1.4}which only the vector database command has.
+Dialogue: 0,0:12:19.70,0:12:21.30,Bilingual,,0,0,0,,我们来数一数敲了什么\N{\fs33\c&H00C8C0B8&\bord1.4}Let's count what we typed.
+Dialogue: 0,0:12:21.54,0:12:24.96,Bilingual,,0,0,0,,VM 上 21 条命令，加上控制台里的点击\N{\fs33\c&H00C8C0B8&\bord1.4}Twenty-one commands on the VM, plus console clicks,
+Dialogue: 0,0:12:24.96,0:12:27.91,Bilingual,,0,0,0,,再加上笔记本上的三个 Docker Hub 脚本\N{\fs33\c&H00C8C0B8&\bord1.4}plus three Docker Hub scripts on the laptop.
+Dialogue: 0,0:12:28.23,0:12:30.32,Bilingual,,0,0,0,,每一条都给 VM 加了一块积木\N{\fs33\c&H00C8C0B8&\bord1.4}Each one added a block to the VM.
+Dialogue: 0,0:12:30.57,0:12:32.17,Bilingual,,0,0,0,,现在有三个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Now three questions.
+Dialogue: 0,0:12:32.25,0:12:35.96,Bilingual,,0,0,0,,重复：明天你能为一个 staging 副本建出一模一样的东西吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Repeat: can you build the same thing for a staging copy tomorrow?
+Dialogue: 0,0:12:36.28,0:12:38.67,Bilingual,,0,0,0,,审查：那台 VM 上到底有什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Review: what exactly is on that VM?
+Dialogue: 0,0:12:38.99,0:12:41.26,Bilingual,,0,0,0,,撤销：怎么把每一块都删掉？\N{\fs33\c&H00C8C0B8&\bord1.4}Undo: how do you delete every piece?
+Dialogue: 0,0:12:41.50,0:12:47.15,Bilingual,,0,0,0,,课上用一个想法来回答：步骤太多，记不过来，所以让工具去做\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture answers with one idea: too many steps to keep track of, so let a tool do them.
+Dialogue: 0,0:12:47.57,0:12:49.40,Bilingual,,0,0,0,,这就是基础设施即代码\N{\fs33\c&H00C8C0B8&\bord1.4}That is infrastructure as code.
+Dialogue: 0,0:12:49.72,0:12:55.75,Bilingual,,0,0,0,,你描述服务器、网络和软件，用的是一门真正的编程语言\N{\fs33\c&H00C8C0B8&\bord1.4}You describe the servers, the networks and the software in a real programming language, Python here,
+Dialogue: 0,0:12:55.75,0:12:57.59,Bilingual,,0,0,0,,这里是 Python，并放进 Git 里共享\N{\fs33\c&H00C8C0B8&\bord1.4}and keep it in Git to share.
+Dialogue: 0,0:12:57.91,0:13:00.41,Bilingual,,0,0,0,,没有 YAML 文件，也没有专门的语言\N{\fs33\c&H00C8C0B8&\bord1.4}No YAML file, no special language.
+Dialogue: 0,0:13:00.65,0:13:05.19,Bilingual,,0,0,0,,课程早先的一个版本用 Ansible playbook 做这几个阶段\N{\fs33\c&H00C8C0B8&\bord1.4}An earlier version of the course did these same stages as Ansible playbooks,
+Dialogue: 0,0:13:05.19,0:13:06.74,Bilingual,,0,0,0,,是用 YAML 写的\N{\fs33\c&H00C8C0B8&\bord1.4}written in YAML.
+Dialogue: 0,0:13:06.79,0:13:09.59,Bilingual,,0,0,0,,这个版本用 Pulumi 来做，一一对应\N{\fs33\c&H00C8C0B8&\bord1.4}This version does them with Pulumi, one to one.
+Dialogue: 0,0:13:09.95,0:13:12.53,Bilingual,,0,0,0,,还有一件 README 从来没说的事\N{\fs33\c&H00C8C0B8&\bord1.4}One more thing the README never says:
+Dialogue: 0,0:13:12.53,0:13:14.90,Bilingual,,0,0,0,,现在就删掉这台 VM，在第 2 部分之前\N{\fs33\c&H00C8C0B8&\bord1.4}delete this VM now, before part 2.
+Dialogue: 0,0:13:15.22,0:13:20.62,Bilingual,,0,0,0,,在控制台里打开 VM instances，选中它，连同启动磁盘一起删除\N{\fs33\c&H00C8C0B8&\bord1.4}In the console, open VM instances, select it, and delete it with its boot disk.
+Dialogue: 0,0:13:20.94,0:13:23.84,Bilingual,,0,0,0,,暂停一下，删掉你的；列表应该是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and delete yours; the list should be empty.
+Dialogue: 0,0:13:24.08,0:13:28.88,Bilingual,,0,0,0,,第 2 部分把这些全部用代码再建一遍，并让工具记住每一块\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 builds it all again, as code, and lets a tool remember every piece.
