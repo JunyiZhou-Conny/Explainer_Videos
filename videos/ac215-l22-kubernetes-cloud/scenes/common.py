@@ -1490,8 +1490,10 @@ class Piece(VGroup):
         scene.remove(*mobs)
         self.heal(scene)
 
-    def swap(self, scene, old, new, run_time: float = 0.6, extra=(), into=None):
-        """PLAYS: `old` (a part) morphs into `new` (not yet shown); afterwards `new` is the part."""
+    def swap(self, scene, old, new, run_time: float = 0.6, extra=(), into=None, morph: bool = False):
+        """PLAYS: `old` (a part) cross-fades into `new` in place (not yet shown; nothing is stretched, so
+        texts never shrink below their size mid-way; morph=True: a point-by-point ReplacementTransform,
+        for shapes of the same kind); afterwards `new` is the part."""
         parent = into
         if parent is None:
             for sub in self.get_family():
@@ -1500,7 +1502,10 @@ class Piece(VGroup):
                     break
         self._detach(old)
         scene.add(old)
-        scene.play(ReplacementTransform(old, new), *extra, run_time=run_time)
+        if morph:
+            scene.play(ReplacementTransform(old, new), *extra, run_time=run_time)
+        else:
+            scene.play(FadeOut(old), FadeIn(new), *extra, run_time=run_time)
         scene.remove(old, new)
         (parent if parent is not None else self).add(new)
         self.heal(scene)
@@ -2406,7 +2411,8 @@ class AsksChecklist(Piece):
         old = self.card
         self.remove(old)
         scene.add(old)
-        scene.play(FadeTransform(old, new), run_time=run_time)
+        shift = new.get_center() - old.get_center()
+        scene.play(FadeOut(old, shift=shift * 0.5), FadeIn(new, shift=shift * 0.5), run_time=run_time)
         scene.remove(old, new)
         self.card, self.small = new, small
         self.add(new)
@@ -2996,14 +3002,14 @@ class MasterDiagram(_Anchored):
         text=CALLOUTS-style label restore it."""
         ca = self.parts["cloud_arrow"]
         anims = [ca.line.animate.set_color(color)]
-        if text:
-            nt = label(text, 20, color).move_to(ca.text, aligned_edge=LEFT)
-            anims.append(Transform(ca.text, nt))
-        else:
+        if not text:
             anims.append(ca.text.animate.set_color(color))
         self._ensure(scene)
         scene.play(*anims, run_time=run_time)
         self.heal(scene)
+        if text:
+            nt = label(text, 20, color).move_to(ca.text, aligned_edge=LEFT)
+            ca.text = self.swap(scene, ca.text, nt, run_time=run_time, into=ca)
 
     def to_standin(self, scene, run_time: float = 0.9):
         """PLAYS: the GKE cluster becomes the kind stand-in: GREY dashed outline, standin_tag as its
@@ -3618,9 +3624,9 @@ class CheeseBlueprint(_Anchored):
     the picture lives at the left, x -6.3 .. 0.3, y -3.0 .. 2.45 (table on the right, x 0.7 .. 6.5);
     after the table, slide_center() slides it to x -3.3 .. 3.3 and the VPC pieces go around it.
       L20 VM (GREY dashed, l20_vm()) → cluster outline 'cheese-app-cluster' (BLUE dashed); inside it:
-      ingress row y 1.55 (nginx box → 'nginx-f5' controller + 'cheese-app-ingress' rule card),
-      Deployment cards row y 0.45 (frontend, api, vector-db: GREEN cards with a TEAL Pod), Service tags
-      row y -0.4 (PINK 'frontend :3000', 'api :9000', 'vector-db :8000'), PVC row y -1.25 (BLUE disks
+      ingress row y 1.6 (nginx box → 'nginx-f5' controller + 'cheese-app-ingress' rule card),
+      Deployment cards row y 0.42 (frontend, api, vector-db: GREEN cards with a TEAL Pod), Service tags
+      row y -0.42 (PINK 'frontend :3000', 'api :9000', 'vector-db :8000'), PVC row y -1.25 (BLUE disks
       'persistent-pvc 5Gi', 'chromadb-pvc 10Gi'), Job + Workload Identity row y -2.05, node pool strip
       y -2.65.
     PLAYS l20(scene) the L20 VM · dissolve(scene) it becomes the cluster with the containers in place ·
@@ -3629,9 +3635,9 @@ class CheeseBlueprint(_Anchored):
         7 node pool) · drop_table(scene) · slide_center(scene) · vpc(scene) BLUE 'cheese-app-vpc · subnet
         10.0.0.0/19' frame (x -3.75 .. 3.75, y -3.35 .. 2.8) · private_nodes(scene) the nodes' public-IP
         badges peel off · nat(scene) BLUE 'Cloud NAT' funnel at the right edge, 'outbound only' ·
-        namespace(scene) GREEN 'cheese-app-namespace' frame around the app · lb(scene) BLUE
-        load-balancer door at the left edge · chip(scene, key, text) a GREY scene chip beside a part
-        ('wi', 'ingress', 'pvc').
+        namespace(scene) GREEN dashed 'cheese-app-namespace' frame around the app (label top-left) · lb(scene) BLUE
+        load-balancer box at the left edge with a PINK arrow to nginx · chip(scene, key, text) a GREY
+        scene chip in a column right of the VPC (x 4.05 .., from y 2.0 down), a thin line to the part.
     .parts{nginx, ingress, front, api, vdb, job, svc_front, svc_api, svc_vdb, pvc1, pvc2, wi, pool} .table"""
 
     def __init__(self, **kw):
@@ -3649,10 +3655,10 @@ class CheeseBlueprint(_Anchored):
 
     def _cards(self):
         out_ = {}
-        for key, name, x in (("front", "frontend", -5.0), ("api", "api", -3.0), ("vdb", "vector-db", -1.0)):
-            c = boxed([name, "Deployment"], OWN, box_w=1.85, box_h=0.85, k=0.16).move_to(self.p(x, 0.45))
-            c.text.shift(LEFT * 0.2)
-            pg = pod_glyph(r=0.16, dots=1).move_to(c.frame.get_right() + LEFT * 0.28)
+        for key, name, x in (("front", "frontend", -5.05), ("api", "api", -3.0), ("vdb", "vector-db", -0.95)):
+            c = boxed([name, "Deployment"], OWN, box_w=1.95, box_h=0.85, k=0.16).move_to(self.p(x, 0.42))
+            c.text.align_to(c.frame, LEFT).shift(RIGHT * 0.12)
+            pg = pod_glyph(r=0.15, dots=1).move_to(c.frame.get_right() + LEFT * 0.25)
             g = VGroup(c, pg)
             g.card, g.pod = c, pg
             out_[key] = g
@@ -3672,8 +3678,8 @@ class CheeseBlueprint(_Anchored):
         keep = VGroup(*[b[k] for k in ("nginx", "front", "api", "vdb", "loader")])
         scene.remove(*keep)
         rest = VGroup(vm.frame, vm.title)
-        targets = {"nginx": self.p(-3.0, 1.55), "front": self.p(-5.0, 0.45), "api": self.p(-3.0, 0.45),
-                   "vdb": self.p(-1.0, 0.45), "loader": self.p(-1.0, -2.05)}
+        targets = {"nginx": self.p(-3.0, 1.6), "front": self.p(-5.05, 0.42), "api": self.p(-3.0, 0.42),
+                   "vdb": self.p(-0.95, 0.42), "loader": self.p(-1.15, -2.05)}
         scene.play(ReplacementTransform(rest, cl), *[b[k].animate.move_to(targets[k]) for k in targets],
                    run_time=run_time)
         scene.remove(rest, cl, *keep)
@@ -3711,22 +3717,22 @@ class CheeseBlueprint(_Anchored):
     def _row1(self, scene, rt):
         j = boxed(["Job", "vector-db-loader"], OWN, box_w=2.3, box_h=0.75, k=0.16).move_to(self.p(-1.15, -2.05))
         self.parts["job"] = self.swap(scene, self.parts.pop("loader"), j, run_time=rt * 0.5)
-        a = arrow(j.get_top(), self.p(-1.0, 0.02), OWN, buff=0.04)
+        a = arrow(j.get_corner(UR) + LEFT * 0.25, self.p(-0.25, -0.0), OWN, buff=0.04)
         self.parts["job_arrow"] = a
         self.show(scene, a, anims=[GrowArrow(a)], run_time=0.3)
 
     def _row2(self, scene, rt):
         new = []
-        for k, x in (("front", -5.0), ("api", -3.0), ("vdb", -1.0)):
+        for k, x in (("front", -5.05), ("api", -3.0), ("vdb", -0.95)):
             t = chip(f"{SVC_NAMES[k]} :{PORTS[k]}", ROUTE, size=20, pad_x=0.12, pad_y=0.05)
-            t.move_to(self.p(x, -0.4))
+            t.move_to(self.p(x, -0.42))
             self.parts[f"svc_{k}"] = t
             new.append(t)
         self.show(scene, *new, anims=[FadeIn(t, shift=UP * 0.15) for t in new], run_time=rt * 0.5)
 
     def _row3(self, scene, rt):
         new = []
-        for key, name, x in (("pvc1", "persistent-pvc 5Gi", -4.3), ("pvc2", "chromadb-pvc 10Gi", -1.45)):
+        for key, name, x in (("pvc1", "persistent-pvc 5Gi", -4.8), ("pvc2", "chromadb-pvc 10Gi", -2.0)):
             d = disk_cyl(0.42).move_to(self.p(x - 0.95, -1.25))
             t = label(name, 20, INK).next_to(d, RIGHT, buff=0.1)
             g = VGroup(d, t)
@@ -3736,8 +3742,8 @@ class CheeseBlueprint(_Anchored):
 
     def _row4(self, scene, rt):
         ng = boxed(["nginx-f5", "Ingress controller"], CONTAINER, box_w=2.6, box_h=0.75, k=0.18)
-        ng.move_to(self.p(-4.55, 1.55))
-        ing = boxed([INGRESS, "the rule"], ROUTE, box_w=2.6, box_h=0.75, k=0.14).move_to(self.p(-1.55, 1.55))
+        ng.move_to(self.p(-4.55, 1.6))
+        ing = boxed([INGRESS, "the rule"], ROUTE, box_w=2.6, box_h=0.75, k=0.14).move_to(self.p(-1.55, 1.6))
         self.parts["nginx"] = self.swap(scene, self.parts["nginx"], ng, run_time=rt * 0.4)
         self.parts["ingress"] = ing
         self.show(scene, ing, run_time=rt * 0.3)
@@ -3759,8 +3765,8 @@ class CheeseBlueprint(_Anchored):
     def _row7(self, scene, rt):
         strip = frame_box(6.1, 0.42, CLOUD, k=0.2).move_to(self.p(-3.0, -2.67))
         t = label(f"node pool · 1–2 × {MACHINE}", 20, INK).move_to(strip).align_to(strip, LEFT).shift(RIGHT * 0.15)
-        badges = VGroup(*[chip("public IP", S.GREY, size=20, pad_x=0.1, pad_y=0.02) for _ in range(2)])
-        badges.arrange(RIGHT, buff=0.1).move_to(strip).align_to(strip, RIGHT).shift(LEFT * 0.1)
+        badges = chip("public IPs", S.GREY, size=20, pad_x=0.1, pad_y=0.02)
+        badges.move_to(strip).align_to(strip, RIGHT).shift(LEFT * 0.1)
         pool = VGroup(strip, t)
         self.parts["pool"], self.parts["badges"] = pool, badges
         self.show(scene, pool, badges, run_time=rt * 0.5)
@@ -3811,19 +3817,18 @@ class CheeseBlueprint(_Anchored):
     def namespace(self, scene):
         grp = VGroup(*[self.parts[k] for k in ("front", "api", "vdb", "svc_front", "svc_api", "svc_vdb",
                                                    "pvc1", "pvc2", "job") if k in self.parts])
-        fr = DashedVMobject(RoundedRectangle(width=grp.width + 0.3, height=grp.height + 0.5, corner_radius=0.12),
-                            num_dashes=60, dashed_ratio=0.6).set_stroke(OWN, 3).move_to(grp).shift(UP * 0.08)
-        t = label(NAMESPACE, 20, OWN).next_to(fr.get_corner(UR), DOWN, buff=0.04).align_to(fr, RIGHT).shift(LEFT * 0.12)
-        t.set_y(fr.get_top()[1] - 0.18)
+        top = self.parts["nginx"].get_bottom()[1] - 0.07
+        bot = grp.get_bottom()[1] - 0.1
+        fr = DashedVMobject(RoundedRectangle(width=grp.width + 0.24, height=top - bot, corner_radius=0.12),
+                            num_dashes=60, dashed_ratio=0.6).set_stroke(OWN, 3)
+        fr.move_to([grp.get_center()[0], (top + bot) / 2, 0])
+        t = label(NAMESPACE, 20, OWN).move_to(fr).align_to(fr, UL).shift(np.array([0.12, -0.04, 0]))
         g = VGroup(fr, t)
         self.extras["ns"] = g
         return self.show(scene, g, anims=[Create(fr), FadeIn(t)], run_time=0.7)
 
     def lb(self, scene):
         edge = self.extras["vpc"][0].get_left()[0] if "vpc" in self.extras else self._c(-3.3, 0)[0]
-        d = door("load balancer", CLOUD, mono_font=False).rotate(PI / 2)
-        d.move_to([edge, self.parts["nginx"].get_center()[1], 0])
-        d[1].rotate(-PI / 2)
         lb_ = VGroup(boxed("load balancer", CLOUD, box_w=2.0, box_h=0.6, k=0.25))
         lb_.move_to([edge - 1.05, self.parts["nginx"].get_center()[1], 0])
         a = route(lb_.get_right(), self.parts["nginx"].get_left())
@@ -3833,22 +3838,28 @@ class CheeseBlueprint(_Anchored):
         return self.show(scene, g, run_time=0.5)
 
     def chip(self, scene, key: str, text: str):
-        """PLAYS: a GREY scene chip beside part `key` ('wi', 'ingress', 'pvc1', 'job', …)."""
-        tgt = self.parts[key]
-        c = scene_chip(text).next_to(tgt, DOWN if key == "ingress" else RIGHT, buff=0.08)
+        """PLAYS: a GREY scene chip ('Ingress → S13') in a column right of the VPC (x from 4.05, from
+        y 2.0 down; call after slide_center()), joined to part `key` ('wi', 'ingress', 'pvc1', 'job', …)
+        by a thin GREY line."""
+        n = len([k for k in self.extras if k.startswith("chip_")])
+        c = scene_chip(text)
+        c.move_to(np.array([4.05 + c.width / 2, 2.0 - n * 0.6, 0]))
         keep_inside(c)
-        self.extras[f"chip_{key}"] = c
-        return self.show(scene, c, run_time=0.4)
+        tgt = self.parts[key]
+        ln = Line(c.get_left(), tgt.get_right(), color=S.GREY, stroke_width=1.5)
+        g = VGroup(ln, c)
+        self.extras[f"chip_{key}"] = g
+        return self.show(scene, g, anims=[Create(ln), FadeIn(c)], run_time=0.5)
 
 
 # ------------------------------------------------------------------ StackPipe (S10, S11)
 class StackPipe(_Anchored):
     """The two Pulumi stacks and the StackReference between them (S10's 'V5 mini', S11's bucket).
     Built at ORIGIN, x -6.2 .. 6.2, y -1.2 .. 2.6 (fits above a 3-row strip).
-    S10  PLAYS images(scene) three TEAL image crates (x -5.0) · to_registry(scene) they fly into a BLUE
-         'Artifact Registry' box (x -1.4) and three PINK '-tags' chips appear · pipe(scene) the tags
-         merge into one PINK pipe 'StackReference organization/deploy-images/dev' to a GREEN
-         'deploy_k8s' box (x 4.6).
+    S10  PLAYS images(scene) three TEAL image crates (x -4.9) · to_registry(scene) they move into a BLUE
+         'Artifact Registry' box (x -2.95 .. -0.25) and three PINK '-tags' chips appear right of it ·
+         pipe(scene) the tags merge into one PINK pipe to a GREEN 'deploy_k8s' box (x 4.05 .. 6.25),
+         labelled 'StackReference organization/deploy-images/dev' under the tags (y ~ -0.1).
     S11  PLAYS bucket(scene) a BLUE state bucket holding 'deploy_images' (with an empty GREY outputs
          box, 'init + preview only, no up') and 'deploy_k8s' · break_pipe(scene) the pipe reaches the
          empty box and breaks RED · fill_outputs(scene) a 'pulumi up' stamp fills the box with three
@@ -3867,28 +3878,29 @@ class StackPipe(_Anchored):
         return self.show(scene, cr, run_time=0.6)
 
     def to_registry(self, scene):
-        reg = boxed("Artifact Registry", CLOUD, box_w=2.9, box_h=2.1, k=0.12).move_to(self.p(-1.2, 0.8))
+        reg = boxed("Artifact Registry", CLOUD, box_w=2.7, box_h=2.1, k=0.12).move_to(self.p(-1.6, 0.8))
         reg.text.align_to(reg.frame, UP).shift(DOWN * 0.12)
         self.reg = reg
         self.show(scene, reg, run_time=0.4)
         small = [crate(n, 2.3, 0.42, size=20) for n in self.NAMES]
         VGroup(*small).arrange(DOWN, buff=0.08).move_to(reg.frame).shift(DOWN * 0.2)
-        for c, s in zip(self.crates, small):
-            self.swap(scene, c, s, run_time=0.35)
-        self.crates = VGroup(*small)
+        self._ensure(scene)
+        scene.play(LaggedStart(*[Transform(c, s_) for c, s_ in zip(self.crates, small)], lag_ratio=0.3),
+                   run_time=1.0)
+        self.heal(scene)
         tg = VGroup(*[route_chip(f"{n}-tags", size=20) for n in ("api", "frontend", "vector-db")])
-        tg.arrange(DOWN, buff=0.12, aligned_edge=LEFT).next_to(reg, RIGHT, buff=0.35)
+        tg.arrange(DOWN, buff=0.12, aligned_edge=LEFT).next_to(reg, RIGHT, buff=0.3)
         self.tags_ = tg
         self.show(scene, *tg, run_time=0.5)
 
     def pipe(self, scene):
-        k8s = boxed("deploy_k8s", OWN, box_w=2.3, box_h=0.8, mono_font=True).move_to(self.p(4.9, 0.8))
+        k8s = boxed("deploy_k8s", OWN, box_w=2.2, box_h=0.8, mono_font=True).move_to(self.p(5.15, 0.8))
         self.k8s = k8s
         self.show(scene, k8s, run_time=0.4)
-        start = self.tags_.get_right() + RIGHT * 0.1
+        start = self.tags_.get_right() + RIGHT * 0.25
         ln = Line(start, k8s.get_left(), color=ROUTE, stroke_width=8)
-        t = VGroup(label("StackReference", 20, ROUTE), mono(STACK_REF, 20, ROUTE)).arrange(DOWN, buff=0.06)
-        t.next_to(ln, DOWN, buff=0.6).set_x(self.p(3.0, 0)[0])
+        t = VGroup(label("StackReference", 20, ROUTE), mono(STACK_REF, 20, ROUTE)).arrange(RIGHT, buff=0.2)
+        t.next_to(self.tags_, DOWN, buff=0.25).set_x(self.p(2.9, 0)[0])
         keep_inside(t)
         self.pipe_g = VGroup(ln, t)
         merges = [Line(c.get_right(), start, color=ROUTE, stroke_width=3) for c in self.tags_]
@@ -3896,13 +3908,13 @@ class StackPipe(_Anchored):
 
     # ---- S11
     def bucket(self, scene):
-        b = frame_box(11.8, 3.3, CLOUD, k=0.06).move_to(self.p(0, 0.75))
+        b = frame_box(11.8, 3.5, CLOUD, k=0.06).move_to(self.p(0, 0.85))
         bt = label("state bucket (gs://…)", 20, CLOUD).move_to(b).align_to(b, UL).shift(np.array([0.18, -0.08, 0]))
-        di = boxed("deploy_images", OWN, box_w=2.8, box_h=0.7, mono_font=True).move_to(self.p(-3.9, 1.5))
-        out = frame_box(3.6, 1.5, S.GREY, k=0.06, dashed=True).move_to(self.p(-3.9, 0.2))
+        di = boxed("deploy_images", OWN, box_w=2.8, box_h=0.7, mono_font=True).move_to(self.p(-3.9, 1.85))
+        out = frame_box(3.6, 1.3, S.GREY, k=0.06, dashed=True).move_to(self.p(-3.9, 0.65))
         ot = label("outputs: empty", 20, S.GREY).move_to(out).align_to(out, UP).shift(DOWN * 0.1)
         on = label("init + preview only, no up", 20, S.GREY).next_to(out, DOWN, buff=0.1)
-        k8 = boxed("deploy_k8s", OWN, box_w=2.6, box_h=0.7, mono_font=True).move_to(self.p(4.1, 0.2))
+        k8 = boxed("deploy_k8s", OWN, box_w=2.6, box_h=0.7, mono_font=True).move_to(self.p(4.1, 0.65))
         self.bk = VGroup(b, bt)
         self.di, self.out, self.k8 = di, VGroup(out, ot), k8
         self.out_note = on
@@ -4136,7 +4148,7 @@ class ResourceTree(_Anchored):
         imgs = VGroup(crate("registry images", 2.3, 0.5), padlock(0.4, COST, "retain_on_delete")).arrange(RIGHT, buff=0.15)
         row = VGroup(fwd, dk, imgs).arrange(RIGHT, buff=0.6).move_to(self.p(0, -0.5))
         for m in (fwd, dk):
-            m.set_opacity(0.6)
+            m.set_opacity(0.85)
         self.ghost_g = row
         self.show(scene, row, run_time=0.5)
         scene.play(*[Indicate(m, color=COST, scale_factor=1.06) for m in row], run_time=0.8)
@@ -4158,11 +4170,12 @@ class RequestJourney(_Anchored):
         send(scene, text, hops, color=ROUTE, keep=True) a PINK bubble with `text` rides hop to hop
         (returns it; keep=False fades it at the end) · dns(scene) a PINK bubble '<IP>.sslip.io → <IP>'
         beside the browser · routing_card(scene) above nginx: PINK 'host: <IP>.sslip.io' and the two
-        rules · reject(scene, packet) the card's host flashes RED, the packet turns RED '404' and
-        bounces back to the browser · reply(scene, at, text) a bubble from hop `at` back to the browser
+        rules · reject(scene, packet) the card's host flashes RED, the packet is replaced by a RED
+        '404' bubble that goes back to the browser (returns the new bubble; drop that one) · reply(scene, at, text) a bubble from hop `at` back to the browser
         · page_spawn(scene) a GREY page returns to the browser and a new packet '/api-service/…'
-        leaves the browser itself · scissors_crossed(scene, at='nginx') L20's scissors, crossed out ·
-        drop_packet(scene, packet).
+        leaves the browser itself · scissors_crossed(scene, at='api') L20's scissors, crossed out, under the api box ·
+        drop_packet(scene, packet). Path labels: '/' left of the nginx → frontend arrow,
+    '/api-service' left of the api box, below the arrow.
     .hops{key} (each .frame .text) .card .paths"""
 
     LAYOUT = {"browser": (-5.6, -0.55, 1.4, ["Browser"], LAPTOP),
@@ -4197,8 +4210,11 @@ class RequestJourney(_Anchored):
             ar = route(self.hops[a].get_right(), self.hops[b].get_left(), stroke=3)
             g = VGroup(ar)
             if path:
-                t = mono(path, 20, ROUTE).move_to(ar.get_center() + (UP if b == "front" else DOWN) * 0.28)
-                t.shift(LEFT * 0.15)
+                t = mono(path, 20, ROUTE)
+                if b == "front":
+                    t.next_to(ar.get_center(), LEFT, buff=0.12).shift(UP * 0.12)
+                else:
+                    t.next_to(self.hops[b], LEFT, buff=0.12).shift(DOWN * 0.3)
                 g.add(t)
             self.paths[(a, b)] = g
         for k in order:
@@ -4234,14 +4250,17 @@ class RequestJourney(_Anchored):
         keep_inside(pk)
         scene.play(FadeIn(pk, shift=DOWN * 0.1), run_time=0.3)
         for k in hops[1:]:
-            tgt = self.hops[k].get_top() + UP * (pk.height / 2 + 0.12)
-            scene.play(pk.animate.move_to(tgt), run_time=per)
-            keep_inside(pk)
+            scene.play(pk.animate.move_to(self._above(k, pk)), run_time=per)
         if not keep:
             scene.play(FadeOut(pk), run_time=0.25)
             scene.remove(pk)
         self.heal(scene)
         return pk
+
+    def _above(self, key, pk):
+        """Where a packet sits above hop `key` (kept inside the safe frame)."""
+        ghost = pk.copy().move_to(self.hops[key].get_top() + UP * (pk.height / 2 + 0.12))
+        return keep_inside(ghost).get_center()
 
     def drop_packet(self, scene, packet):
         scene.play(FadeOut(packet), run_time=0.25)
@@ -4274,20 +4293,18 @@ class RequestJourney(_Anchored):
         if self.card is not None:
             scene.play(Indicate(self.card.head, color=ERR, scale_factor=1.1), run_time=0.6)
         nw = self._bubble("404", ERR).move_to(packet)
-        scene.play(Transform(packet, nw), run_time=0.3)
-        tgt = self.hops["browser"].get_top() + UP * (packet.height / 2 + 0.12)
-        scene.play(packet.animate.move_to(tgt), run_time=0.8)
+        scene.play(FadeOut(packet), FadeIn(nw), run_time=0.3)
+        scene.remove(packet)
+        scene.play(nw.animate.move_to(self._above("browser", nw)), run_time=0.8)
         self.heal(scene)
-        return packet
+        return nw
 
     def reply(self, scene, at: str, text: str):
         pk = self._bubble(text)
         pk.next_to(self.hops[at], UP, buff=0.12)
         keep_inside(pk)
         scene.play(FadeIn(pk), run_time=0.3)
-        tgt = self.hops["browser"].get_top() + UP * (pk.height / 2 + 0.12)
-        scene.play(pk.animate.move_to(tgt), run_time=0.9)
-        keep_inside(pk)
+        scene.play(pk.animate.move_to(self._above("browser", pk)), run_time=0.9)
         self.heal(scene)
         return pk
 
@@ -4300,7 +4317,7 @@ class RequestJourney(_Anchored):
         scene.remove(pg)
         return pk
 
-    def scissors_crossed(self, scene, at: str = "nginx"):
+    def scissors_crossed(self, scene, at: str = "api"):
         sc = scissors(0.5, PAST).next_to(self.hops[at], DOWN, buff=0.2)
         x = cross_glyph(0.45).move_to(sc)
         self.sc = VGroup(sc, x)
@@ -4368,11 +4385,11 @@ class BinPacking(_Anchored):
         · max 2') · fill(scene) node 1's first four blocks · add_block(scene, key='frontend', node=None)
         a new block drops: onto `node` (or the first with room); none has room → it hovers 'Pending'
         (returns it) · land(scene, block, node) a hovering block moves into node · disk(scene) a BLUE
-        disk 'persistent-pvc' chained to node 1 under the api block + PINK chip 'ReadWriteOnce · one
-        node at a time' · multi_attach(scene) a second api block on node 2 reaches for the disk; the
+        disk 'persistent-pvc' chained to node 1 under the api block, the PINK chip 'ReadWriteOnce · one
+        node at a time' under the disk · multi_attach(scene) a second api block on node 2 reaches for the disk; the
         RED chain snaps 'Multi-Attach', the block stays 'ContainerCreating' · ghost_node(scene) a third
-        GREY-dashed node crossed RED 'more nodes don't help' · levers(scene) two labelled levers on the
-        right (x 3.4 .. 6.4): 'Pods' (you: kubectl scale; dashed 'HPA: not configured · needs
+        GREY-dashed node (x 3.95 .. 6.35, y -2.2 .. -1.2) crossed RED 'more nodes don't help' ·
+        levers(scene) two labelled levers on the right (x 3.4 .. 6.4, y -0.6 .. 1.5): 'Pods' (you: kubectl scale; dashed 'HPA: not configured · needs
         requests') and 'nodes' (GKE autoscaler · 1–2: on) · legend(scene) a card of REQUESTS.
     .nodes[i] .blocks[i] (list per node) .pending (list)"""
 
@@ -4458,10 +4475,8 @@ class BinPacking(_Anchored):
             self.heal(scene)
             return b
         tgt = self._slot(dest, key)
-        b.move_to(tgt + UP * 1.4)
-        b.set_opacity(0)
-        scene.add(b)
-        scene.play(b.animate.move_to(tgt).set_opacity(1), run_time=run_time)
+        b.move_to(tgt)
+        scene.play(FadeIn(b, shift=DOWN * 1.2), run_time=run_time)
         scene.remove(b)
         b.node = dest
         self.blocks[dest].append(b)
@@ -4494,7 +4509,8 @@ class BinPacking(_Anchored):
         d = disk_cyl(0.5).next_to(self.nodes[0].frame, DOWN, buff=0.25).set_x(api.get_center()[0])
         t = label("persistent-pvc", 20, CLOUD).next_to(d, RIGHT, buff=0.12)
         ch = Line(api.get_bottom(), d.get_top(), color=CLOUD, stroke_width=5)
-        rw = route_chip("ReadWriteOnce · one node at a time", size=20, mono_font=False).next_to(t, RIGHT, buff=0.2)
+        rw = route_chip("ReadWriteOnce · one node at a time", size=20, mono_font=False).next_to(d, DOWN, buff=0.12)
+        rw.align_to(d, LEFT)
         keep_inside(rw)
         self.disk_g = VGroup(ch, d, t, rw)
         self.disk_g.cyl, self.disk_g.rwo = d, rw
@@ -4516,7 +4532,7 @@ class BinPacking(_Anchored):
         self.drop(scene, ch, run_time=0.3)
 
     def ghost_node(self, scene):
-        fr = frame_box(2.4, 1.0, PAST, k=0.03, dashed=True).move_to(self.p(2.4, -1.7))
+        fr = frame_box(2.4, 1.0, PAST, k=0.03, dashed=True).move_to(self.p(5.15, -1.7))
         t = label("node 3", 20, PAST).move_to(fr)
         x = cross_glyph(0.5).move_to(fr)
         c = label("more nodes don't help", 20, ERR).next_to(fr, DOWN, buff=0.1)
@@ -4535,7 +4551,7 @@ class BinPacking(_Anchored):
         hpa = dashed_chip("HPA: not configured · needs requests")
         rows.arrange(DOWN, aligned_edge=LEFT, buff=0.35)
         g = VGroup(rows, hpa).arrange(DOWN, aligned_edge=LEFT, buff=0.15)
-        g.move_to(self.p(4.9, 0.3))
+        g.move_to(self.p(4.9, 0.55))
         keep_inside(g)
         self.levers_g = g
         return self.show(scene, g, run_time=0.6)

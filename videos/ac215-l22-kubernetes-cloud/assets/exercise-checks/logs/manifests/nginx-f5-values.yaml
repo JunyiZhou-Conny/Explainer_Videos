@@ -1,0 +1,13 @@
+# B8: the Helm values of setup_loadbalancer.py:19-44, with ONE change for the stand-in: the controller's
+# Service is a NodePort (kind has no cloud load balancer; on GKE it is type LoadBalancer).
+controller:
+  service:
+    type: NodePort
+  resources:
+    requests: {memory: 128Mi, cpu: 100m}
+    limits: {memory: 256Mi, cpu: 200m}
+  replicaCount: 1
+  ingressClass:
+    name: nginx
+    create: true
+    setAsDefaultIngress: true

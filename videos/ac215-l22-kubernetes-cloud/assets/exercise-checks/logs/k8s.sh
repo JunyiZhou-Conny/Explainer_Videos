@@ -65,7 +65,7 @@ b6)
 b7)
   echo '## B7: a Pod autoscaler needs requests (metrics-server, v0.8.0, kubelet TLS check off for kind)'
   kstep "kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.8.0/components.yaml >/dev/null && kubectl -n kube-system patch deployment metrics-server --type=json -p '[{\"op\":\"add\",\"path\":\"/spec/template/spec/containers/0/args/-\",\"value\":\"--kubelet-insecure-tls\"}]' && kubectl -n kube-system rollout status deployment/metrics-server --timeout=240s"
-  sleep 60
+  kstep "for i in \$(seq 36); do kubectl top nodes >/dev/null 2>&1 && break; sleep 5; done; kubectl get apiservice v1beta1.metrics.k8s.io; kubectl top nodes"
   kstep "kubectl top pods -l run=web; kubectl get deployment web -o jsonpath='requests: {.spec.template.spec.containers[0].resources}{\"\n\"}'"
   kstep "kubectl autoscale deployment web --cpu-percent=50 --min=2 --max=4; sleep 75; kubectl get hpa web; kubectl describe hpa web | sed -n '/^Conditions:/,\$p'"
   kstep "kubectl set resources deployment web --requests=cpu=50m; kubectl rollout status deployment/web --timeout=180s; sleep 90; kubectl get hpa web"
