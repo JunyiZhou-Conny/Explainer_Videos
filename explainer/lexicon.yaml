@@ -457,3 +457,14 @@ readyz: {ipa: "ɹˈɛdi zˈiː", say: "ready zee"}
 Readyz: {ipa: "ɹˈɛdi zˈiː", say: "ready zee"}
 "5173": {ipa: "fˈɪfti wˈʌn sˈɛvənti θɹˈiː", say: "fifty-one seventy-three"}
 "cli dot py": {ipa: "sˌiːˌɛlˈaɪ dˈɑːt pˈaɪ", say: "C-L-I dot pie"}
+# AC215 L20 (spoken review of videos/ac215-l20-deployment-pulumi). Pulumi is "PULL-oo-mee" (Kokoro:
+# "pyoo-LOO-mee"); kubectl "cube control"; Formaggio "for-MAH-joh". Pulumi, pulumi, kubectl, heredoc and
+# Formaggio are in no other video's SAY (grep -w videos/*/script.md, 2026-11-06); "db cli" and
+# "inventory dot yml" are phrase keys because bare "cli" and "yml" are in finished videos' SAY.
+Pulumi: {ipa: "pˈʊlʊmi", say: "PULL-oo-mee"}
+pulumi: {ipa: "pˈʊlʊmi", say: "pull-oo-mee"}
+kubectl: {ipa: "kjˈuːb kəntɹˈoʊl", say: "cube control"}
+heredoc: {ipa: "hˈɪɹ dˌɑːk", say: "here doc"}
+Formaggio: {ipa: "fɔːɹmˈɑːdʒoʊ", say: "for-MAH-joh"}
+db cli: {ipa: "dˌiːbˈiː sˌiːˌɛlˈaɪ", say: "D B C L I"}
+inventory dot yml: {ipa: "ˈɪnvəntˌɔːɹi dˈɑːt jˈæməl", say: "inventory dot yammel"}
