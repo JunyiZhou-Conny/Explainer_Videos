@@ -98,73 +98,101 @@ Tags and chips (GREY unless said; 20-22 pt)
     seconds=8) PLAYS (pause_and_ponder; FadeOut the card at the next block) · flash_tag(scene, tg).
 
 Glyphs (text-free unless named; sizes in scene units)
-    state_mark(state, h=0.3): 'success' GREEN check, 'failure' RED cross, 'skipped' GREY dashed
-    circle-slash, 'running' YELLOW dot, 'idle' GREY ring · script_glyph() '>_' (run:) ·
-    puzzle_glyph() PURPLE (uses:) · spark(colour) PINK burst · runner_icon(h, lit=) BLUE ·
-    laptop_icon(w) GREY · cube_glyph(side) TEAL image · suitcase_glyph(h) TEAL tar · shelf(w)
-    'Docker' shelf (label 20) · bell_glyph(h, colour, slashed=) · hourglass(h) · key_file(h) ·
-    cursor_dot() · door_glyph(text, colour) ORANGE door with a number · exit_badge(code) 'exit N'
-    (GREY; RED outline when N != 0) · github_box(text='GitHub', box_w, box_h) BLUE · chat_window(
-    title=CHANNEL, rows=(), win_w, win_h) GREY · vault_glyph(h) BLUE · gh_page(crumb, page_w, page_h)
-    schematic GitHub page (.frame .crumb .body) · checkbox_row(text, on) · field_row(name, value) ·
-    actions_tab(row_text, state) S07's list · outline_box · arrow / route / travel / bounce · ring /
-    under / strike / hl_bar · emo_line(s, size, colour) an emoji-safe mono_line.
+    state_mark(state, h=0.3): 'success' GREEN check in a ring, 'failure' RED cross, 'skipped' GREY
+    dashed ring + slash, 'running' YELLOW dot, 'idle' GREY ring · dot(colour) a commit dot ·
+    script_glyph() '>_' (run:, 20 pt) · puzzle_glyph() PURPLE (uses:) · spark(colour) PINK burst ·
+    runner_icon(h, lit=) BLUE machine · laptop_icon(w) GREY · cube_glyph(side) TEAL image ·
+    suitcase_glyph(h) TEAL tar · shelf(w) 'Docker' shelf (label 20) · bell_glyph(h, colour, slashed=)
+    · ring_waves(mob, colour) three arcs (ringing / knocking) · hourglass(h) (.sand_top .sand_bot) ·
+    key_file(h) · cursor_dot() · door_glyph(text, colour) door + plate (.frame .text) · gate_glyph(
+    gate_h, gate_w) posts + bar (.bar .posts) · exit_badge(code) 'exit N' (RED outline when N != 0) ·
+    github_box(text='GitHub') BLUE · chat_window(title=CHANNEL, rows, win_w, win_h) GREY (.frame
+    .title .body .rows) · vault_glyph(h) BLUE · gh_page(crumb, page_w, page_h) a schematic GitHub page
+    (.frame .crumb .body: place rows in .body; tag it illustration_tag()) · checkbox_row(text, on) ·
+    field_row(name, value) · actions_tab(row_text, state) S07's Actions list (6.4 x 2.6; .tabs{name}
+    .row .mark) · outline_box · dashed_copy(group) · arrow / route(a, b, arc, dashed=) / travel /
+    bounce · ArcBetween(a, b, angle, colour) curved arrow · ring / under / strike / hl_bar ·
+    emo_line(s, size, colour) an emoji-safe mono_line · disp_len(s) cells incl. emoji.
+    Animating ONE member of a filled box (Indicate(box.frame), box.frame.animate…) re-adds it on top
+    of its text and hides the text: animate the whole box, or Circumscribe + Indicate(text) (what
+    the pieces' pulse / flash / light do).
 
 Run panels (built from the captures; every one carries its tag)
     run_log(cap, lines=(spec…), title=None, heading=None, size=22, colors={file line: colour},
-        crop=True, wrap=False, tag='live · stand-in runner', badge=True, log_w=None) the job-log panel:
-        title 'Job name › Step name' (from 00-steps.txt; x* files need title=), heading = the '$' line
-        in GREY mono (a multi-line command collapses to the step name; heading=False: none), rows of
-        the picked FILE lines, 'exit N' badge on the top edge. .frame .title .heading .rows .row(n)
-        (by file line) .badge .tag. lines=() shows the heading only (S08's save step).
-    steps_list(run, job, lines=None, size=22, tag=...) STEPS(): one row per step with a state mark,
-        the step name and its note as a GREY chip; 'job result' row when its file line is included.
-        .rows .row(n) (by file line) .marks .names .notes{n} .tag; code_chip(n, code) / shunt_arc(n)
-        / bridge(a, b) mobjects drawn on the rows (V6 on the rows: S10, S14).
-    JobGraph / run_graph(run=None, labels='names'|'short'|None) V4: six nodes in GitHub's layout,
-        states from runner/<run>/results.txt (None: all idle). recorded_graph() the README screenshot
-        (six GREEN short nodes with their times, tag 'recorded · README screenshot').
-    pipeline_strip(current=None) V2's thin strip under the tracker (Part 2); PipelineStrip(full=True)
-        slide 26's row at full size (S03, S05).
+        crop_ids=True, wrap=False, tag_text='live · stand-in runner', badge=True, log_w=None) the
+        job-log panel: title 'Job name › Step name' (from 00-steps.txt; x* files and laptop captures
+        need title=), heading = the '$' line in GREY mono 20 (a multi-line run: script collapses to the
+        step name; heading='…' any text; heading=False none), rows of the picked FILE lines (ids cropped
+        to 7, client addresses to '…', emoji drawn), 'exit N' badge on the top edge, tag on the bottom
+        edge. Width fits (>= 6, <= 12.6); a row wider than 65 cells (22 pt) raises unless wrap=True or
+        size=20. .frame .title .heading .rows .row(n) (by file line) .badge .tag. lines=() shows the
+        heading only (S08's save step). Examples: run_log("run1/test-summary/01", ((13, 16),)) ~7.0 x
+        3.3; run_log("run1/build/03", (2, (4, 5), "…", 653, 656)) ~11.8 x 4.2.
+    steps_list(run, job, lines=None, size=22, tag_text=...) STEPS(): one row per step (state mark,
+        name, note chip); 'job result' row when its file line is included; header = the job's name.
+        ~10 x 5 for unit-tests (its long note). .rows .row(n) (by 00-steps.txt file line) .marks
+        .names .notes{n} .tag; code_chip(n, code) / shunt_arc(n) / bridge(a, b) return mobjects drawn
+        on the rows (V6 on the rows: S10, S14); FadeIn / Create them yourself.
+    run_graph(run=None, labels='names'|'short'|'ids'|None, col_gap=1.0, gap=False, badge=True) a
+        JobGraph (below) coloured from runner/<run>/results.txt (None: all idle). 'names' ~12.4 x 4.6
+        (badge and tag included), 'short' ~8.1 (col_gap=0.6: ~7.3).
+    recorded_graph(names=False) RECORDED(screenshot): six GREEN nodes with their times, tag 'recorded
+        · README screenshot', ~4.7 x 3.2 (fits beside run_graph(run, 'short', col_gap=0.6)). .graph .tag
+    graph_icon(h) a text-free graph (small corners, S16's cards).
+    pipeline_strip(current=None) V2's thin Part 2 strip (20 pt, 9.7 x 0.44) under the tracker
+        (left -6.5, y STRIP_Y); .set_current(name) ANIM. PipelineStrip(full=True) slide 26's row (22
+        pt, 11.9 x 0.72) centred on the origin; .purposes() slide 27's lines under the boxes.
 
-Set pieces (V numbers = BRIEF; each class doc gives its layout and every method)
-    V1 HookChain(boxes=('hygiene ×7', 'Black', 'Flake8'), title='Git local hooks', frame_w=6.1,
-        frame_h=2.6, tests=False) the GREY laptop frame (~6.1 x 2.6, centred on its anchor).
-        PLAYS commit(dot=None) · pass_through(dot, stop=None) · bypass(dot) · add_tests() ·
-        hook_tags() · push(dot, target, arc) · second_laptop(text) ... ANIM flash(i, colour).
-        .frame .title .gates .arrows .tests .dot
-    V1 ServerDoor(label='shared repository', box_w=5.6, box_h=3.0) BLUE server, door on its left wall,
-        GREY pre-receive gate in front, GREY post-receive bell inside. PLAYS refuse(dot) · enter(dot)
-        · ring(chips=()) · update_chip() · github(scene) (GitHub.com, pre-receive dashed + chip,
-        Actions badge on the bell, GREEN 'branch protection' gate) · protect(shut=True). caption()
-        'Actions on a push is the bell, not the gate.' (a mobject; place it).
-    V1 SharedRepo(box_w=6.0, box_h=2.4) BLUE 'Shared Repository' frame with an empty dashed slot.
-        PLAYS fill() slide 16's three boxes · pass_through(dot). .boxes
-    V2 CiLoop(loop_w=9.0, loop_h=4.4) slide 21's loop. PLAYS question() · marks(states) · close()
-        · go_around(colour) · deploy() (S16). ANIM light(key). .boxes{'codebase','build','test'}
-        .devs .notify .commits .returns
-    V2 PipelineStrip(current=None, full=False) .boxes[i] .names .arrows; set_current(i|name) ANIM ·
-        purposes() slide 27's lines under the full-size row (mobjects) · drop_commit() S05.
-    V3 TriggerLanes(lanes=('main', 'develop', 'feature/login'), lane_w=9.0, pitch=1.15) PLAYS
-        push(lane) (spark + runner icon when the lane triggers) · pr(src, dst) · ghost_merge(dst) ·
-        tick(n) GOLD meter · reset_runners(). .lanes{name} .runners{name} .meter .pr_arrow .ghost
-    V4 WorkflowTree() S03's grammar tree. PLAYS open_job('build') · dim_others(). ANIM pulse(layer)
-        layers 'event' 'workflow' 'jobs' 'steps'. .root .wf .jobs{id} .steps
-    V4 JobGraph(states=None, labels='names', size=22, pitch=0.8) PLAYS reveal(states, order) ·
-        tokens(results) · draw_edges() · show_gap(). ANIM set_state(job, state) · set_badge(state) ·
-        pulse(job). .nodes{id} .edges{(a, b)} .gap .badge .tag .stage_labels()
-    V4 Gantt(times=SCREENSHOT_TIMES, bar_w=8.0) S05's timeline. PLAYS critical() · billed().
-        .bars{id} .labels{id} .ruler .billed_row
-    V5 ImageSuitcase(room_w=2.5) six BLUE rooms in the graph's layout, the artifact store, Docker
-        Hub. PLAYS build_cube() · fold() · upload() · dissolve_build() · deliver(jobs) · load(job) ·
-        no_load(job). .rooms{id} .shelves{id} .store .hub .cube .case
-    V6 ExitGates(names, gate_h=0.62) a column of step gates. PLAYS hold(i, code) · climb() ·
-        skip(indices) · shunt(i, code) · bridge(i) · reset(). .gates .names .job_badge .run_badge
-    V7 SystemTestRig(rig_w=10.0, rig_h=4.4) PLAYS server_up() · wait(seconds) · knock(ok) ·
-        tests_up() · host_net() · arrivals(labels) · stop() · trapdoor() (mobject). .runner .server
-        .door .tests .bubble
-    V8 SlackRoute() PLAYS outward(targets) · ghost_outward() · inward() · silence() · ring(ok).
-        .github .targets .runner .slack .bell
+Set pieces (V numbers = BRIEF; each class doc gives its exact layout and every method). Every piece
+is centred on its anchor unless said; sizes are width x height.
+    V1 HookChain(boxes=('hygiene ×7', 'Black', 'Flake8'), title='Git local hooks', size=22) the GREY
+        laptop frame, 7.4 x 2.6 (size=20: 6.9; boxes=() an empty frame: the teammate's laptop).
+        PLAYS commit() (returns the GREEN dot) · pass_through(dot, stop=None) · bypass(dot) (RED arc
+        over the gates; drop the hook tags first) · add_tests() ('Tests' dashed, struck, 'CI runs
+        these') · hook_tags() ('pre-commit', 'pre-push') · push(dot, target, arc=-0.5) (PINK arc from
+        the right edge; returns the arrow). ANIM flash(i, colour). .frame .title .gates .arrows .tests
+        .tags .exit_point
+    V1 ServerDoor(name='shared repository', box_w=5.6, box_h=3.0) 8.0 x 3.0: BLUE server, a door in its
+        left wall, GREY 'pre-receive' gate outside, GREY 'post-receive' bell inside. PLAYS refuse(dot)
+        · enter(dot) · ring(chips=()) (chips in a row under the box) · update_chip() · github()
+        ('GitHub.com', pre-receive dashed + 'your own scripts: not on GitHub.com', BLUE 'Actions'
+        badge on the bell, GREEN 'branch protection' gate at the door) · protect(shut=True).
+        caption() 'Actions on a push is the bell, not the gate.' (place it). .start .landing points.
+    V1 SharedRepo() 7.3 x 2.4 BLUE 'Shared Repository' with an empty dashed slot. PLAYS fill() (slide
+        16's 'Build Container' TEAL → 'Check Code' → 'Test Summary') · pass_through(dot). .landing
+    V2 CiLoop(loop_w=9.0, loop_h=4.4) 8.5 x 4.4, slide 21's loop. PLAYS question() · marks(states) ·
+        close() · go_around(colour) · deploy() (S16; adds ~2.2 to the right). ANIM light(key) key in
+        'codebase' 'build' 'test' 'devs' 'notify'. .boxes{key} .devs .notify .commits .returns .back
+    V2 PipelineStrip / pipeline_strip: see Run panels.
+    V3 TriggerLanes(lanes=('main', 'develop', 'feature/login'), lane_w=9.0, pitch=1.15) 8.9 x 3.4 with
+        the GOLD 'runs' meter. PLAYS push(lane) (spark + runner lights + tick when the lane triggers;
+        returns the dot) · pr(src, dst, fire=True) / pr_fire() · ghost_merge(dst, src) ('github.sha')
+        · tick() · reset_runners(). .lanes{name} .runners{name} .dots{name} .meter .count .pr_arrow .ghost
+    V4 WorkflowTree() S03's grammar tree, 10.3 x 5.4 once open. PLAYS open_job() (build's five steps)
+        · dim_others(). ANIM pulse(layer) 'event' 'workflow' 'jobs' 'steps'. .root .wf .jobs{id} .steps
+    V4 JobGraph(states=None|dict|run, labels='names', size=22, pitch=0.8, col_gap=1.0, edges=True,
+        gap=False, badge=True, tag_text=..., texts=None) PLAYS reveal(states, order, per) · tokens(
+        states, text, keep=False) (PINK result tokens ride the three needs lines into the summary) ·
+        draw_edges() · show_gap() (dashed lint → summary, YELLOW '?'). ANIM set_state(job, state)
+        (whole node; self.add(graph) after, to re-seat it) · set_badge(state) · pulse(job, colour).
+        .nodes{id} (.frame .mark .text) .edges{(src, dst)} .gap .gap_q .badge .tag; stage_labels().
+    V4 Gantt(times=SCREENSHOT_TIMES, bar_w=8.0) 9.9 x 3.8 (+0.9 with billed()). PLAYS critical() ·
+        billed() (six GOLD '1 min' blocks: a count, not the clock's scale). .bars{id} .labels .times
+        .ruler .billed_row. Morph graph nodes into bars: Transform(g.nodes[j], gantt.bars[j]).
+    V5 ImageSuitcase(room_w=2.6) 12.4 x 5.1: put it at move_to([0, -0.65, 0]) under the Part 2
+        strip. PLAYS build_cube() · fold() · upload() · dissolve_build() · deliver(jobs=MIDDLE) ·
+        load(job) · no_load(job). .rooms{id} (.frame .text .shelf) .store .hub .cube .stamp .case
+        .copies{id} .cubes{id}
+    V6 ExitGates(names=('Checkout', 'Download', 'Load', 'Black', 'Flake8')) 3.8 x 4.4. PLAYS hold(i,
+        code) · climb() · skip(indices) · shunt(i, code) · bridge(i) · reset(). .gates .names .codes{i}
+        .job_badge .run_badge .failed
+    V7 SystemTestRig(rig_w=10.0, rig_h=4.2) built empty. PLAYS server_up() · wait(seconds) · knock(ok)
+        · tests_up() · host_net() · arrivals(labels) · stop(). trapdoor() a small 'skipif' hatch
+        (mobject). .runner .server .door .tests .bubble .curl .hour .net
+    V8 SlackRoute() absolute layout (x -6.0 .. 6.1, y -2.4 .. 2.0; shift it as one): GitHub box at
+        (-4.6, 1.2); bottom band runner (-3.9, -1.45) and '#build-alerts' (3.9, -1.45). PLAYS
+        outward(targets) · ghost_outward() · inward() · silence() · ring(ok=False). .github .targets
+        .out_arrows .runner .slack .slot .bell
 
 Capture folder names: assets/terminal/laptop (every README Part 5 / 6 command and the extras, on
 a docker:29.8.2-dind stand-in laptop, user student), assets/terminal/runner/{run1, run2, run3,

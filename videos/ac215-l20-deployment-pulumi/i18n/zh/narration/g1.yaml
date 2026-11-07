@@ -146,9 +146,9 @@ S04:
   en_display:
   - "Those two ticks add network tags, http-server and https-server; the default firewall opens 80 and 443 only to VMs with them."
   - null
-- en: "SSH in. Our VM is a stand-in we can capture end to end: a fresh Debian 12 machine without Docker. Every command is the same on yours."
+- en: "Pause, create yours, and SSH in with the SSH button in the VM instances list. Our VM is a stand-in we can capture end to end: a fresh Debian 12 machine without Docker. Every command is the same on yours."
   zh:
-  - "SSH 进去。"
+  - "暂停一下，创建你自己的 VM，然后在 VM 实例列表里点 SSH 按钮连进去。"
   - "我们的 VM 是一个能从头录到尾的替身：一台全新的、没装 Docker 的 Debian 12 机器。"
   - "每条命令在你的 VM 上都一样。"
 - en: "Install Docker with the official script: download it with curl, run it with sudo. It adds the Docker repository for bookworm and installs the engine, buildx and compose."
@@ -340,9 +340,10 @@ S07:
   en_display:
   - null
   - "Write it with a quoted heredoc instead: cat, the same text, then EOF."
-- en: "Run nginx with that file mounted, publishing port 80. The container list shows four: ports 80, 3000, 9000 and 8000."
+- en: "If you used the echo, rewrite the file this way first. Then run nginx with that file mounted, publishing port 80. The container list shows four: ports 80, 3000, 9000 and 8000."
   zh:
-  - "运行 nginx，挂载这个文件，发布 port 80。"
+  - "如果你用的是 echo，先用这种方式把文件重写一遍。"
+  - "然后运行 nginx，挂载这个文件，发布 port 80。"
   - "container 列表显示四个：port 80、3000、9000 和 8000。"
 - en: "Open the external IP of your VM, from the VM instances list, in a browser, and the home page appears. On the VM, curl agrees: 200 OK, served by nginx, title Formaggio."
   zh:

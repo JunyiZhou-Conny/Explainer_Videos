@@ -6,7 +6,8 @@ Beats (script.md "## S12", one voiceover block each):
    the PURPLE key ssh-key-deployment beside it (SshKey.appear). Below, a sketch: the GREY laptop
    (Pulumi inside) -> PINK 'SSH' arrow -> an outlined BLUE VM ('scripts', 'docker'), and a badge
    'who logs in?' (YELLOW) 'deployment, via OS Login'; the deployment key flashes on "The deployment
-   service account".
+   service account". On the OS Login clause the PURPLE key and the VM flash, then the deployment key
+   (its login profile), and a third YELLOW row 'profile key · Linux user sa_…' appears.
 1. Sketch, deployment key and chip go; the PURPLE key stays parked above a 6-row terminal
    'laptop · toolbox' (prompt from b02d:77). Types b08 (folds) -> TERM(b08: 2) RED; on "the angle
    bracket lesson" every < and > of the typed line turns PINK and pulses; on "replace the whole
@@ -134,7 +135,8 @@ class SshKeys(VoiceScene):
         ssh_t = label("SSH", 22, ROUTE).next_to(ssh, UP, buff=0.12)
         q1 = label("who logs in?", 20, TURN)
         q2 = label("deployment, via OS Login", 20, INK)
-        qrows = VGroup(q1, q2).arrange(DOWN, buff=0.08)
+        q3 = label("profile key · Linux user sa_…", 20, TURN)
+        qrows = VGroup(q1, q2, q3).arrange(DOWN, buff=0.08)
         qbox = outline_box(qrows.width + 0.5, qrows.height + 0.3, S.GREY, solid=True, fill_opacity=0.08)
         qbox.next_to(ssh, DOWN, buff=0.14)
         qrows.move_to(qbox)
@@ -158,12 +160,20 @@ class SshKeys(VoiceScene):
                       run_time=0.8)
             vo.wait_until("through OS Login")
             self.play(Indicate(q2, color=CLOUD, scale_factor=1.08), run_time=0.7)
+            vo.wait_until("the VM accepts a key")
+            self.play(Indicate(sk.key.glyph, color=TURN, scale_factor=1.2), Indicate(vm_box, color=CLOUD, scale_factor=1.04),
+                      run_time=0.8)
+            vo.wait_until("registered to that account's login profile")
+            self.play(Indicate(dep.glyph, color=CLOUD, scale_factor=1.25), run_time=0.7)
+            vo.wait_until("under a Linux username")
+            self.play(FadeIn(q3, shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(q3, color=TURN, scale_factor=1.08), run_time=0.6)
 
         # ========================================================== 1. OS Login: the template fails
         t = toolbox_term(TERM_ROWS)
         assert abs(t.box.get_top()[1] - (-0.23)) < 0.05
         assert sk.key.get_bottom()[1] > t.box.get_top()[1] + 0.1, sk.key.get_bottom()
-        sketch = VGroup(lap, vm, vm_c, ssh, ssh_t, qbox, q1, q2)
+        sketch = VGroup(lap, vm, vm_c, ssh, ssh_t, qbox, q1, q2, q3)
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(sketch), FadeOut(dep), FadeOut(skip), run_time=0.5)
             self.remove(sketch, dep, skip)

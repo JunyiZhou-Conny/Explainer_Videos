@@ -481,7 +481,7 @@ SHOW: TRACKER [M] 4 · extra. The VM panel shrinks to the top right. Full-width 
 TERM(vm/00: 3, 4, 8, 9, 10): `cheese-app-vm`, `Debian GNU/Linux 12 (bookworm)`, `x86_64`,
 `which-docker-exit:1` (YELLOW: "no docker yet"), `/home/student`. The date line 2 is not printed. A
 GREY chip "stand-in for your VM".
-SAY: SSH in. Our VM is a stand-in we can capture end to end: a fresh Debian 12 machine without Docker. Every command is the same on yours.
+SAY: Pause, create yours, and SSH in with the SSH button in the VM instances list. Our VM is a stand-in we can capture end to end: a fresh Debian 12 machine without Docker. Every command is the same on yours.
 
 SHOW: TRACKER [M] 5. It types `curl -fsSL https://get.docker.com -o get-docker.sh` → TERM(vm/01: →
 (no output)); then `sudo sh get-docker.sh` → TERM(vm/02: 2–3, …, 8 wrap, 12 wrap, …, 21–24) (lines
@@ -674,7 +674,7 @@ SHOW: TRACKER [M] 14. It types `sudo docker run -d --name nginx -v
 $(pwd)/conf/nginx/nginx.conf:/etc/nginx/nginx.conf -p 80:80 --network cheese-app-network
 nginx:stable` (folds) → TERM(vm/46: 2, …, 36–38). TRACKER [M] 14 · extra: `sudo docker container
 ls` (extra) → TERM(vm/47: 2–6), the four PORTS cells PINK. In V2 the `nginx` box plugs in, door "80" on the VM's box (inside the fence).
-SAY: Run nginx with that file mounted, publishing port 80. The container list shows four: ports 80, 3000, 9000 and 8000.
+SAY: If you used the echo, rewrite the file this way first. Then run nginx with that file mounted, publishing port 80. The container list shows four: ports 80, 3000, 9000 and 8000.
 
 SHOW: TRACKER [M] 15. A GREY browser window (`browser_window`, tag `illustration`) with address
 `http://<Your VM IP Address>/`: a schematic home page (title bar "Formaggio", a hero block, a footer
