@@ -245,12 +245,12 @@ class ApiAndFrontend(VoiceScene):
         assert mv.fence.get_left()[0] > tracker_m(11, True).get_right()[0] + 0.15, mv.fence.get_left()
         assert mv.gates.get_top()[1] < TRACK_BOTTOM - 0.15, mv.gates.get_top()     # gates sit below the tracker
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(ref), FadeIn(mv), FadeIn(t, shift=UP * 0.2),
+            self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(mv), FadeIn(t, shift=UP * 0.2),   # no tag: the VM is up ~2 s
                       run_time=0.6)
             mv.show(self, slot, anims=[Create(slot)], run_time=0.5)
             self.play(slot.animate(rate_func=there_and_back).set_stroke(width=6), run_time=0.6)
-            self.play(FadeOut(mv), FadeOut(ref), run_time=0.4)
-            self.remove(mv, ref)
+            self.play(FadeOut(mv), run_time=0.4)
+            self.remove(mv)
             mv.remove(slot)
             resize(self, t, 13, run_time=0.5)
             rows = type_capture(self, t, V30, type_time=0.16)

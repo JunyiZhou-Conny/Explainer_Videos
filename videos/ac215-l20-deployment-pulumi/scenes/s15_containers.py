@@ -224,7 +224,8 @@ class ContainersOverSsh(VoiceScene):
             self.add(ss)
             vo.wait_until("The VM program asks the images stack")
             ss.shrink_away(self, run_time=0.4)
-            self.play(FadeIn(p0, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(ref0), FadeIn(p0, shift=UP * 0.2), run_time=0.5)   # slide 19's strip is gone: so is its tag
+            self.remove(ref0)
             self.play(FadeIn(b29), run_time=0.4)
             self.play(FadeIn(src, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("through a stack reference")
@@ -241,8 +242,8 @@ class ContainersOverSsh(VoiceScene):
             self.play(tp.ticket_m.animate.move_to(tp.p(4.95, -1.05)), run_time=1.0)
             self.play(Indicate(tp.card, color=OWN, scale_factor=1.06), run_time=0.5)
             tp.heal(self)
-        self.play(FadeOut(VGroup(p0, b29, tp, src, ext, ref0)), run_time=0.5)
-        self.remove(p0, b29, tp, src, ext, ref0)
+        self.play(FadeOut(VGroup(p0, b29, tp, src, ext)), run_time=0.5)
+        self.remove(p0, b29, tp, src, ext)
 
         # ========================================================== 1. a Docker provider over SSH
         p1 = code(SC, 79, 90, dedent=True, font_size=20, shown=SC_SHOWN, elide={81: "instance_ip.apply(lambda ip: "},

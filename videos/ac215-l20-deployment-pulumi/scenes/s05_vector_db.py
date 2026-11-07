@@ -209,7 +209,7 @@ class VectorDb(VoiceScene):
 
         # ========================================================== 0. stage 3: pull, stop, rm
         trk = tracker_m(9)
-        ref = lref("7–8")
+        ref = lref("8")                   # only slide 8's stage chips are drawn here
         stages = stage_row()
         assert stages.get_top()[1] < TRACK_BOTTOM - 0.1 and stages.get_left()[0] > -6.5
         t = vm_term(rows=10)
