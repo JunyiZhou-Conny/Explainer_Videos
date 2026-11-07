@@ -1,7 +1,9 @@
 #!/bin/bash
 # Re-capture the L22 terminal transcripts (needs Docker and privileged containers).
 #   bash assets/terminal/capture.sh relay laptop-setup pre tb-commit tb-shell tb-wait tb-readme tb-local \
-#        kind-up kind-readme kind-extra kind-down tb-close laptop-teardown
+#        tb-local2 kind-up kind-readme kind-extra kind-down tb-close laptop-teardown
+# (As recorded on 2026-11-07, kind-readme2 and kind-extra2 re-ran a few steps after fixes; see
+# ASSETS.md, "Re-runs". With the fixed scripts the sequence above does it all.)
 #   docker rm -f l22-relay
 # Each segment is one call of run_steps.sh (see its header); the containers persist between calls, so
 # the capture can run in parts.

@@ -13,11 +13,14 @@
 #   tb-wait    capture-only: waits until that shell's prompt is up
 #   tb-readme  (laptop/b1x-b5x) every README command of the K8s sections at the toolbox prompt: tool
 #              checks, the warm-up's gcloud create/delete, deploy_images, deploy_k8s, kubectl, destroy
-#   tb-local   (laptop/c..) extras: the same Pulumi programs on Pulumi's local file backend, up to their
-#              first call that needs Google
+#   tb-local   (laptop/c0x-c1x) extras: the same Pulumi programs on Pulumi's local file backend, up to
+#              their first call that needs Google
+#   tb-local2  (laptop/c2x) the same, after a capture-only stand-in image stack with placeholder tags
 #   kind-up    (kind/k00-k01) extra: the labelled stand-in cluster (kind) + capture-only wiring
 #   kind-readme (kind/k02-k4x) the README's kubectl commands, from the toolbox, against the stand-in
-#   kind-extra (kind/k5x-k7x) extras: rollout, self-healing, scaling, labels, DNS, a Job, port-forward
+#   kind-readme2 re-run of k06/k07 (as recorded)
+#   kind-extra (kind/k5x-k6x) extras: rollout, self-healing, scaling, labels, DNS, a Job, port-forward
+#   kind-extra2 re-run of k52-k54, k64 (as recorded)
 #   kind-down  (kind/k8x) extra: cleanup the stand-in
 #   tb-close   capture-only: types `exit` into the open toolbox shell
 # Steps whose name contains "-x-" are extras (not README steps): checks the video uses.
@@ -115,6 +118,13 @@ capture_only_retag() {  # capture_only_retag <image> [base]: recording sandbox o
   cp "$d/Dockerfile" "$OUT/capture-only/$safe.Dockerfile"
   step "capture-only/$safe-build" "docker build -q -t $img $d"
   rm -rf "$d"
+}
+pods_extras() {  # k52-k54: cluster DNS for the Service, then a deleted Pod comes back (kind-extra, kind-extra2)
+  cstep k52-x-dns /app "kubectl run dns-check --image=busybox:1.36 --restart=Never -- sh -c 'nslookup web.default.svc.cluster.local | tail -3; wget -qO- http://web | head -5'; kubectl wait --for=jsonpath='{.status.phase}'=Succeeded pod/dns-check --timeout=120s; kubectl logs dns-check; kubectl delete pod dns-check"
+  P=$(docker exec "${CENV[@]}" $C kubectl get pods -l run=web -o jsonpath='{.items[0].metadata.name}')
+  cstep k53-x-delete-pod /app "kubectl delete pod $P; kubectl get pods -l run=web"
+  sleep 15
+  cstep k54-x-pods-after-delete /app "kubectl get pods -l run=web -o wide"
 }
 CUE=/tmp/l22-cue-shell
 CTRLC=$'\x03'
@@ -312,11 +322,7 @@ kind-extra)
   cstep k50-x-get-deploy-rs-pods /app "kubectl get deployment,replicaset,pods,service,endpoints -o wide; kubectl get pods --show-labels"
   ctstep k51-x-exec-web /app "kubectl exec --stdin --tty deployment/web -- /bin/sh" "kubectl exec --stdin --tty deployment/web -- /bin/sh" \
     '[#$] $' 'hostname; ls; exit'
-  cstep k52-x-dns /app "kubectl run dns-check --image=busybox:1.36 --restart=Never --rm -i --quiet -- sh -c 'nslookup web.default.svc.cluster.local | tail -3; wget -qO- http://web | head -5'"
-  P=$(docker exec $C kubectl get pods -l run=web -o jsonpath='{.items[0].metadata.name}')
-  cstep k53-x-delete-pod /app "kubectl delete pod $P; kubectl get pods -l run=web"
-  sleep 15
-  cstep k54-x-pods-after-delete /app "kubectl get pods -l run=web -o wide"
+  pods_extras
   cstep k55-x-scale /app "kubectl scale deployment web --replicas=4; kubectl rollout status deployment/web --timeout=180s; kubectl get pods -l run=web -o wide; kubectl get endpoints web"
   cstep k56-x-scale-back /app "kubectl scale deployment web --replicas=2; sleep 10; kubectl get pods -l run=web"
   cstep k57-x-port-forward /app "kubectl port-forward service/web 8080:80 >/tmp/pf.log 2>&1 & PF=\$!; sleep 4; curl -s -i http://localhost:8080/ | head -12; cat /tmp/pf.log; kill \$PF"
@@ -328,10 +334,16 @@ kind-extra)
   cstep k64-x-events /app "kubectl get events --sort-by=.lastTimestamp | tail -15"
   cstep k65-x-kubeconfig /app "kubectl config get-contexts; kubectl config view --minify | grep -E 'server:|user:|client-certificate|exec' | sed -E 's/(client-(certificate|key)-data:).*/\1 <redacted>/'"
   ;;
+kind-extra2)
+  # re-run of k52-k54 and k64 alone (as recorded: k52's first form, `kubectl run --rm -i`, printed
+  # nothing without a terminal, and k53's pod lookup missed the NO_PROXY setting; ASSETS.md, "Re-runs")
+  pods_extras
+  cstep k64-x-events /app "kubectl get events --sort-by=.lastTimestamp | tail -15"
+  ;;
 # ------------------------------------------------------------------------------------------------
 kind-down)
   # extra: the digest's tip (delete the Service first so a cloud LB goes too), then the stand-in
   cstep k80-x-kubectl-delete /app "kubectl delete -f deploy-k8s-tic-tac-toe.yml; kubectl delete job hello-job"
-  step k81-x-kind-delete "kind delete cluster --name test-cluster; docker ps -a --format '{{.Names}}'"
+  step k81-x-kind-delete "kind delete cluster --name test-cluster; docker ps -a --format '{{.Names}}'; docker images"
   ;;
 esac

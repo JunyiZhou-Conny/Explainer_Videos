@@ -1,0 +1,11 @@
+$ kubectl create job hello-job --image=busybox:1.36 -- sh -c 'echo loading...; sleep 5; echo done'; kubectl wait --for=condition=complete job/hello-job --timeout=180s; kubectl get jobs,pods
+job.batch/hello-job created
+job.batch/hello-job condition met
+NAME                  STATUS     COMPLETIONS   DURATION   AGE
+job.batch/hello-job   Complete   1/1           8s         8s
+
+NAME                       READY   STATUS      RESTARTS   AGE
+pod/hello-job-cpm66        0/1     Completed   0          8s
+pod/web-5cd9789488-5h48s   1/1     Running     0          2m41s
+pod/web-5cd9789488-bmkj5   1/1     Running     0          2m41s
+[exit 0]

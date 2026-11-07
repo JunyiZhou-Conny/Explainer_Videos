@@ -1,0 +1,16 @@
+$ kubectl port-forward service/web 8080:80 >/tmp/pf.log 2>&1 & PF=$!; sleep 4; curl -s -i http://localhost:8080/ | head -12; cat /tmp/pf.log; kill $PF
+HTTP/1.1 200 OK
+accept-ranges: bytes
+cache-control: max-age=3600
+last-modified: Fri, 17 Sep 2021 20:30:44 GMT
+etag: W/"2916853-1389-2021-09-17T20:30:44.000Z"
+content-length: 1389
+content-type: text/html; charset=UTF-8
+Date: Sat, 07 Nov 2026 21:13:32 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+<!DOCTYPE html>
+Forwarding from 127.0.0.1:8080 -> 8080
+Handling connection for 8080
+[exit 0]

@@ -1,0 +1,4 @@
+$ kubectl logs job/hello-job
+loading...
+done
+[exit 0]
