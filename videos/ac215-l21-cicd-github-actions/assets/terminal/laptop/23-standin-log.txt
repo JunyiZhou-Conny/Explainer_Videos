@@ -1,0 +1,3 @@
+$ git --git-dir=/home/student/github-standin/student/cheese-app-ci-cd.git log --format='%H %s' -1
+b8458ff0cc1898700b32a873b4665f43f50df71e demo class 1
+[exit 0]

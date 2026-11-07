@@ -1,0 +1,9 @@
+00:00 Build once; every job starts empty
+02:13 Gates speak in exit codes
+03:41 Three test jobs, three altitudes
+05:44 The summary listens only to tests
+07:33 Fix, push, green: one turn of the loop
+08:53 The local conundrum: --no-verify
+11:14 Webhooks, secrets and the Slack bell
+13:04 Branch protection: from report to gate
+14:42 Non-determinism, CD next, and recap

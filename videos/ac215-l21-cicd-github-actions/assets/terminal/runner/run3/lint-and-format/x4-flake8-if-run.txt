@@ -1,0 +1,7 @@
+$ docker run --rm cheese-app-api:2892b1bfbcb0848ba16f600ee55b23d1ba81d99c flake8 --max-line-length=120 --extend-ignore=E203,W503 api/
+Container is running!!!
+Executing command: flake8 --max-line-length=120 --extend-ignore=E203,W503 api/
+api/service.py:43:6: E225 missing whitespace around operator
+api/service.py:43:14: E231 missing whitespace after ','
+api/service.py:43:25: E231 missing whitespace after ','
+[exit 1]

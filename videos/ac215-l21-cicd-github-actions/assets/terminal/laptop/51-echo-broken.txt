@@ -1,0 +1,2 @@
+$ echo "def broken(): assert False" >> tests/unit/test_utils.py
+[exit 0]

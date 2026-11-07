@@ -1,0 +1,4 @@
+$ git push
+To /home/student/github-standin/student/cheese-app-ci-cd.git
+   2289d89..2892b1b  main -> main
+[exit 0]

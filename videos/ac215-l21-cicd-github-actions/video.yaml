@@ -1,0 +1,61 @@
+id: ac215-l21-cicd-github-actions
+title: "AC215 · Lecture 21 — CI/CD with GitHub Actions II: one push, six fresh machines (follow-along: cheese-app-ci-cd)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 21
+  lecture_title: "Automating Software Development: CI/CD with GitHub Actions II"
+  ed: https://edstem.org/us/courses/97373/lessons/166046/
+  repos:
+    # main, the only branch; still the head on 2026-11-06 (assets/terminal/laptop/01-ls-remote.txt).
+    # Parts 1-4 of the same README are L09's (videos/ac215-l09-ci-testing/); Part 6 is shown as the optional next step.
+    - {repo: dlops-io/cheese-app-ci-cd, branch: main, commit: b8458ff0cc1898700b32a873b4665f43f50df71e,
+       sections: ["Part 5: GitHub Actions (Remote CI)", "Part 6: Branch Protection (Optional)"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L21-cicd-github-actions.md
+audience: "AC215 student who has done L1-L20, in particular L09 (this repo's Parts 1-4: the FastAPI toy, black and flake8, the three pytest levels inside the image, pre-commit hooks), new to GitHub Actions workflows, runners, artifacts, job graphs, repository secrets and branch protection; watching with their own clone of cheese-app-ci-cd open, Docker running and a GitHub repository of their own, pausing to run each step — no GCP and no keys; Actions minutes are free on public repos"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,      cls: Hook,        title: "Red run, green summary"}
+  - {file: scenes/s02_hooks.py,     cls: LocalHooks,  title: "Hooks stay on your laptop"}
+  - {file: scenes/s03_pipeline.py,  cls: CiPipeline,  title: "The CI loop and the workflow file"}
+  - {file: scenes/s04_triggers.py,  cls: WhenItRuns,  title: "When does the pipeline wake up?"}
+  - {file: scenes/s05_jobs.py,      cls: SixJobs,     title: "Six jobs, one graph"}
+  - {file: scenes/s06_push.py,      cls: PushIt,      title: "Push to a repo of your own"}
+  - {file: scenes/s07_watch.py,     cls: WatchTheRun, title: "Watch the run: six colours"}
+  - {file: scenes/s08_artifact.py,  cls: BuildOnce,   title: "Build once; every job starts empty"}
+  - {file: scenes/s09_gates.py,     cls: ExitCodes,   title: "Gates speak in exit codes"}
+  - {file: scenes/s10_tests.py,     cls: TestJobs,    title: "Three test jobs, three altitudes"}
+  - {file: scenes/s11_summary.py,   cls: TheSummary,  title: "The summary listens only to tests"}
+  - {file: scenes/s12_green.py,     cls: RedToGreen,  title: "Fix, push, green: one turn of the loop"}
+  - {file: scenes/s13_noverify.py,  cls: NoVerify,    title: "The local conundrum: --no-verify"}
+  - {file: scenes/s14_slack.py,     cls: SlackBell,   title: "Webhooks, secrets and the Slack bell"}
+  - {file: scenes/s15_protect.py,   cls: ProtectMain, title: "Branch protection: from report to gate"}
+  - {file: scenes/s16_recap.py,     cls: Recap,       title: "Non-determinism, CD next, and recap"}
+parts:
+  - id: part1
+    title: "AC215 · L21, part 1: from local hooks to a pipeline on GitHub — read it, push it, watch it"
+    scenes: [s01_hook, s02_hooks, s03_pipeline, s04_triggers, s05_jobs, s06_push, s07_watch]
+  - id: part2
+    title: "AC215 · L21, part 2: the run job by job — artifacts, exit codes, tests, --no-verify, Slack and branch protection"
+    scenes: [s08_artifact, s09_gates, s10_tests, s11_summary, s12_green, s13_noverify, s14_slack, s15_protect, s16_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第21讲跟练 · 用 GitHub Actions 做 CI：一次 push，六台全新的机器"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 21 讲教程的逐步跟练，照着 dlops-io/cheese-app-ci-cd 的 README 第 5 部分（GitHub Actions Remote CI）一步一步做：
+    上半场：为什么本地的 pre-commit 钩子不够（只在装了它的电脑上运行，--no-verify 还能跳过），pre-receive / post-receive 与 GitHub 上的对应做法，
+    CI 循环和课件里的五段流水线，读懂 .github/workflows/ci.yml：触发条件、六个 job 组成的依赖图，然后 push 到你自己的仓库、在 Actions 页看结果。
+    下半场：逐个打开每个 job 的日志——镜像只构建一次、以 artifact 传给每台全新的 runner，exit code 决定成败（Black 阻断、Flake8 只提示），
+    unit / integration / system 三个测试 job，Test Summary 为什么在 lint 失败时仍然显示全部通过；用 pre-commit 修好格式让流水线变绿，
+    亲手演示 --no-verify 被 CI 拦下，Slack 通知与仓库 secret，以及分支保护。
+    每个 job 都在全新的独立机器上实时运行并录下真实输出；GitHub 网页部分为根据 workflow 文件绘制的示意图。本讲不需要云资源。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/cheese-app-ci-cd
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L21-cicd-github-actions.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, CI/CD, GitHub Actions, Docker, pytest, pre-commit, 哈佛, 教程跟练]
+  tid: 231

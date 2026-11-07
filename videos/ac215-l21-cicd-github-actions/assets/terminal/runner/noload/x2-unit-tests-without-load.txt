@@ -1,0 +1,6 @@
+$ docker run --rm cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e pytest tests/unit/ -v --tb=short
+Unable to find image 'cheese-app-api:b8458ff0cc1898700b32a873b4665f43f50df71e' locally
+docker: Error response from daemon: pull access denied for cheese-app-api, repository does not exist or may require 'docker login'
+
+Run 'docker run --help' for more information
+[exit 125]

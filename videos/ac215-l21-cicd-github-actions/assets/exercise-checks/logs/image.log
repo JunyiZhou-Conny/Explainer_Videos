@@ -1,0 +1,201 @@
+## B1: the lint job's two commands on b8458ff (ci.yml:61, :66), then on a Black-fixed copy
+$ docker run --rm $IMG black --check --line-length 120 api/; echo "exit code: $?"
+Container is running!!!
+Executing command: black --check --line-length 120 api/
+would reformat /app/api/utils.py
+
+Oh no! 💥 💔 💥
+1 file would be reformatted, 2 files would be left unchanged.
+exit code: 1
+[exit 0]
+
+$ docker run --rm $IMG flake8 --max-line-length=120 --extend-ignore=E203,W503 api/; echo "exit code: $?"
+Container is running!!!
+Executing command: flake8 --max-line-length=120 --extend-ignore=E203,W503 api/
+api/utils.py:7:15: E231 missing whitespace after ','
+api/utils.py:13:1: E303 too many blank lines (3)
+exit code: 1
+[exit 0]
+
+$ rm -rf $SCRATCH/l21ex/fixed && cp -r $W $SCRATCH/l21ex/fixed && cd $SCRATCH/l21ex/fixed && chmod -R a+rwX src/api-service/api && docker run --rm -v "$(pwd)/src/api-service/api":/app/api $IMG black --line-length 120 api/
+Container is running!!!
+Executing command: black --line-length 120 api/
+reformatted /app/api/utils.py
+
+All done! ✨ 🍰 ✨
+1 file reformatted, 2 files left unchanged.
+[exit 0]
+
+$ cd $SCRATCH/l21ex/fixed && diff -u $W/src/api-service/api/utils.py src/api-service/api/utils.py
+--- $SCRATCH/l21ex/work/src/api-service/api/utils.py	2025-11-13 18:59:04.000000000 +0000
++++ src/api-service/api/utils.py	2026-11-07 04:59:15.924411713 +0000
+@@ -4,11 +4,10 @@
+ """
+ 
+ 
+-def power(base,exponent):
++def power(base, exponent):
+     """Calculate base raised to the power of exponent"""
+     return base**exponent
+ 
+ 
+-
+ def unused_function():
+     pass
+[exit 1]
+
+$ cd $SCRATCH/l21ex/fixed && build cheese-app-api:fixed-l21ex && docker run --rm cheese-app-api:fixed-l21ex black --check --line-length 120 api/; echo "exit code: $?"
+Container is running!!!
+Executing command: black --check --line-length 120 api/
+All done! ✨ 🍰 ✨
+3 files would be left unchanged.
+exit code: 0
+[exit 0]
+
+$ docker run --rm cheese-app-api:fixed-l21ex flake8 --max-line-length=120 --extend-ignore=E203,W503 api/; echo "exit code: $?"
+Container is running!!!
+Executing command: flake8 --max-line-length=120 --extend-ignore=E203,W503 api/
+exit code: 0
+[exit 0]
+
+## B1 (aside): README Part 7's mount over /app hides the entrypoint (digest G4)
+$ cd $SCRATCH/l21ex/fixed && docker run --rm -v $(pwd)/src/api-service:/app $IMG black --line-length 120 api/; echo "exit code: $?"
+/bin/bash: docker-entrypoint.sh: No such file or directory
+exit code: 127
+[exit 0]
+
+## B3: the coverage step as written (ci.yml:94), a fresh workspace, coverage/ not there yet
+$ rm -rf $SCRATCH/l21ex/ws1 && mkdir -p $SCRATCH/l21ex/ws1 && cd $SCRATCH/l21ex/ws1 && docker run --rm -v $(pwd)/coverage:/app/coverage $IMG pytest tests/unit/ --cov=api --cov-report=term --cov-report=xml --cov-report=html:coverage 2>&1 | grep -E "PermissionError|passed|failed|TOTAL"; echo "exit code: ${PIPESTATUS[0]}"
+INTERNALERROR> PermissionError: [Errno 13] Permission denied: 'coverage/style_cb_4667309f.css'
+============================== 11 passed in 0.14s ==============================
+exit code: 3
+[exit 0]
+
+$ cd $SCRATCH/l21ex/ws1 && ls -ld coverage && find coverage -type f | wc -l && docker run --rm $IMG id
+drwxr-xr-x 2 root root 4096 Nov  7 04:59 coverage
+0
+Container is running!!!
+Executing command: id
+uid=1000(app) gid=1000(app) groups=1000(app)
+[exit 0]
+
+## B3: the fix: create the folder writable first, write XML and HTML into the mount
+$ rm -rf $SCRATCH/l21ex/ws2 && mkdir -p $SCRATCH/l21ex/ws2 && cd $SCRATCH/l21ex/ws2 && mkdir -p coverage && chmod 777 coverage && docker run --rm -v $(pwd)/coverage:/app/coverage $IMG pytest tests/unit/ --cov=api --cov-report=term --cov-report=xml:coverage/coverage.xml --cov-report=html:coverage/html 2>&1 | sed -n "/coverage: platform/,/passed/p"; echo "exit code: ${PIPESTATUS[0]}"
+_______________ coverage: platform linux, python 3.11.18-final-0 _______________
+
+Name              Stmts   Miss  Cover
+-------------------------------------
+api/__init__.py       0      0   100%
+api/service.py       17     17     0%
+api/utils.py          4      1    75%
+-------------------------------------
+TOTAL                21     18    14%
+Coverage HTML written to dir coverage/html
+Coverage XML written to file coverage/coverage.xml
+============================== 11 passed in 0.13s ==============================
+exit code: 0
+[exit 0]
+
+$ cd $SCRATCH/l21ex/ws2 && ls coverage && ls coverage/html | head -5 && find coverage -type f | wc -l
+coverage.xml
+html
+class_index.html
+coverage_html_cb_54cfdca1.js
+favicon_32_cb_c827f16f.png
+function_index.html
+index.html
+13
+[exit 0]
+
+## B4: a coverage bar: --cov-fail-under=50, unit tests only, then unit + integration
+$ docker run --rm $IMG pytest tests/unit/ --cov=api --cov-report=term --cov-fail-under=50 2>&1 | grep -E "^(Name|api/|TOTAL)|Required test coverage|FAIL|passed"; echo "exit code: ${PIPESTATUS[0]}"
+Name              Stmts   Miss  Cover
+api/__init__.py       0      0   100%
+api/service.py       17     17     0%
+api/utils.py          4      1    75%
+TOTAL                21     18    14%
+FAIL Required test coverage of 50% not reached. Total coverage: 14.29%
+============================== 11 passed in 0.15s ==============================
+exit code: 1
+[exit 0]
+
+$ docker run --rm $IMG pytest tests/unit/ tests/integration/ --cov=api --cov-report=term-missing --cov-fail-under=50 2>&1 | grep -E "^(Name|api/|TOTAL)|Required test coverage|FAIL|passed"; echo "exit code: ${PIPESTATUS[0]}"
+Name              Stmts   Miss  Cover   Missing
+api/__init__.py       0      0   100%
+api/service.py       17      1    94%   35
+api/utils.py          4      1    75%   14
+TOTAL                21      2    90%
+Required test coverage of 50% reached. Total coverage: 90.48%
+======================== 21 passed, 1 warning in 0.66s =========================
+exit code: 0
+[exit 0]
+
+## B5: the readiness loop instead of sleep 10 (server on host port 19000)
+$ docker rm -f l21ex-api-server >/dev/null 2>&1; docker run -d --name l21ex-api-server -p 19000:9000 -e DEV=1 $IMG >/dev/null && start=$(date +%s.%N) && for i in $(seq 1 30); do curl -sf http://localhost:19000/health && { echo; echo "ready on try $i after $(echo "$(date +%s.%N) - $start" | bc) s"; exit 0; }; sleep 1; done; docker logs l21ex-api-server; exit 1
+{"status":"healthy"}
+ready on try 2 after 1.025113891 s
+[exit 0]
+
+$ docker rm -f l21ex-api-server
+l21ex-api-server
+[exit 0]
+
+## B5: the same loop when the server never comes up (a container that only sleeps)
+$ docker rm -f l21ex-api-server >/dev/null 2>&1; docker run -d --name l21ex-api-server -p 19001:9000 $IMG sleep 120 >/dev/null && start=$(date +%s) && for i in $(seq 1 30); do curl -sf http://localhost:19001/health && exit 0; sleep 1; done; echo "gave up after $(( $(date +%s) - start )) s"; docker logs l21ex-api-server; exit 1
+gave up after 31 s
+Container is running!!!
+Executing command: sleep 120
+[exit 1]
+
+$ docker rm -f l21ex-api-server
+l21ex-api-server
+[exit 0]
+
+## C6: a syntax error in service.py; what each job would see
+$ rm -rf $SCRATCH/l21ex/syntax && cp -r $W $SCRATCH/l21ex/syntax && cd $SCRATCH/l21ex/syntax && printf "\ndef oops(:\n    pass\n" >> src/api-service/api/service.py && tail -3 src/api-service/api/service.py && build cheese-app-api:syntax-l21ex && echo built
+
+def oops(:
+    pass
+built
+[exit 0]
+
+$ docker run --rm cheese-app-api:syntax-l21ex black --check --line-length 120 api/ 2>&1 | grep -vE "^(Container is running|Executing command)"; echo "exit code: ${PIPESTATUS[0]}"
+would reformat /app/api/utils.py
+error: cannot parse: /app/api/service.py:52:9
+    def oops(:
+            ^
+ParseError: bad input
+
+Oh no! 💥 💔 💥
+1 file would be reformatted, 1 file would be left unchanged, 1 file would fail to reformat.
+exit code: 123
+[exit 0]
+
+$ docker run --rm cheese-app-api:syntax-l21ex pytest tests/unit/ -v --tb=short 2>&1 | tail -1; echo "exit code: ${PIPESTATUS[0]}"
+============================== 11 passed in 0.04s ==============================
+exit code: 0
+[exit 0]
+
+$ docker run --rm cheese-app-api:syntax-l21ex pytest tests/integration/ -v --tb=short 2>&1 | grep -E "SyntaxError|Interrupted|error" | head -4; echo "exit code: ${PIPESTATUS[0]}"
+collecting ... collected 0 items / 1 error
+E   SyntaxError: invalid syntax
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 1 warning, 1 error in 0.57s ==========================
+exit code: 2
+[exit 0]
+
+$ docker rm -f l21ex-api-server >/dev/null 2>&1; docker run -d --name l21ex-api-server -p 19000:9000 -e DEV=1 cheese-app-api:syntax-l21ex >/dev/null && sleep 10 && curl -f http://localhost:19000/ || { echo "exit code: $?"; docker logs l21ex-api-server 2>&1 | grep -E "SyntaxError|Started reloader|Uvicorn running" ; }
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (56) Recv failure: Connection reset by peer
+exit code: 56
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [7] using StatReload
+SyntaxError: invalid syntax
+[exit 0]
+
+$ docker rm -f l21ex-api-server
+l21ex-api-server
+[exit 0]
+

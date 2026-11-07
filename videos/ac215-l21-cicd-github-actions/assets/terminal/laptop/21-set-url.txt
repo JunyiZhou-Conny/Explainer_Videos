@@ -1,0 +1,2 @@
+$ git remote set-url origin /home/student/github-standin/student/cheese-app-ci-cd.git
+[exit 0]

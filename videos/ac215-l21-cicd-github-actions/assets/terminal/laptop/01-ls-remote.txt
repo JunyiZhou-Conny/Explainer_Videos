@@ -1,0 +1,8 @@
+$ git ls-remote https://github.com/dlops-io/cheese-app-ci-cd.git
+b8458ff0cc1898700b32a873b4665f43f50df71e	HEAD
+b8458ff0cc1898700b32a873b4665f43f50df71e	refs/heads/main
+93a211bda22e89a48e47e3c107a012da915b2840	refs/pull/1/head
+0f6ee6c872d95fb69efb03eb2985b9627b59dca5	refs/pull/1/merge
+3c2f5c5fcec811b373403252399d5de5938ffdde	refs/pull/2/head
+080865998837dbfd86f7bee8cd6255f6d9ceca07	refs/pull/3/head
+[exit 0]

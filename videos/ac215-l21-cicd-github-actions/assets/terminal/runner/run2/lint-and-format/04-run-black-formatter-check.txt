@@ -1,0 +1,6 @@
+$ docker run --rm cheese-app-api:2289d89d3cfe316334fe208cea10530c4f2378c6 black --check --line-length 120 api/
+Container is running!!!
+Executing command: black --check --line-length 120 api/
+All done! ✨ 🍰 ✨
+3 files would be left unchanged.
+[exit 0]

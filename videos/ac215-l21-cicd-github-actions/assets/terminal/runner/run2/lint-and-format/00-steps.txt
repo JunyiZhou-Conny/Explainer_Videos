@@ -1,0 +1,7 @@
+job: lint-and-format (name: Lint and Format Check) on a fresh capture runner, commit 2289d89d3cfe316334fe208cea10530c4f2378c6
+01  success   Checkout code
+02  success   Download Docker image
+03  success   Load Docker image
+04  success   Run Black formatter check
+05  success   Run Flake8 linter
+job result: success

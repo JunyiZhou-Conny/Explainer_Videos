@@ -1,0 +1,3 @@
+$ docker load -i /tmp/cheese-app-api.tar
+Loaded image: cheese-app-api:2289d89d3cfe316334fe208cea10530c4f2378c6
+[exit 0]

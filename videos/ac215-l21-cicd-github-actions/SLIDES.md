@@ -1,8 +1,8 @@
 # L21 lecture slides — Automating Software Development: CI/CD with GitHub Actions and other tools II
 
 Source: one deck, `L21_cicd_with_github_actions` (35 slides), titled "Lecture 21: Automating
-Software Development: CI/CD with GitHub Actions and other tools II" (AC215/E115, Pavlos
-Protopapas, SEAS/Harvard). These are the instructor's lecture slides (PDF), provided by the
+Software Development: CI/CD with GitHub Actions and other tools II" (AC215/E115, the course
+staff, SEAS/Harvard). These are the instructor's lecture slides (PDF), provided by the
 student for study; the PDFs are not in this repository; slide numbers are PDF page numbers.
 The page numbers printed in the slide footers drift from slide 16 on (slide 16 prints "17",
 slides 17–35 print "19"–"37"), so two pages of the original deck are missing from the PDF; this
@@ -155,7 +155,7 @@ in bold. Two recap slides come before the first outline.
   Failed step (`Run python3 -m pre-commit run --all-files`), Tests (128 failing, 0 passing),
   Lint (53 errors, 12 warnings) and Duration (about 2 min). A tip suggests running
   `pre-commit install` locally before pushing. Buttons: View checks, Open PR, Re-run job, Assign
-  a senior developer. Underneath, a reply from "Pavlos" jokes that the commit message is a
+  a senior developer. Underneath, a reply from ‹instructor› jokes that the commit message is a
   firing offence. Purpose: what a webhook delivers (who, which commit, which step failed,
   counts, links back). Slide 10 says it is imagined; it is not output of the tutorial, whose
   `ci.yml` does not run pre-commit.

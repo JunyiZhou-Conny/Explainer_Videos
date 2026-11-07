@@ -1,0 +1,19 @@
+$ git diff
+diff --git a/src/api-service/api/utils.py b/src/api-service/api/utils.py
+index 8ce1f9d..4012137 100644
+--- a/src/api-service/api/utils.py
++++ b/src/api-service/api/utils.py
+@@ -4,11 +4,10 @@ Used by the Cheese App API Service
+ """
+ 
+ 
+-def power(base,exponent):
++def power(base, exponent):
+     """Calculate base raised to the power of exponent"""
+     return base**exponent
+ 
+ 
+-
+ def unused_function():
+     pass
+[exit 0]

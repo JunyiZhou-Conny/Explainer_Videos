@@ -1,0 +1,7 @@
+job: build (name: Build Docker Image) on a fresh capture runner, commit c3b227f43d3a523509262e5cc83dfc5a248eeb2d
+01  success   Checkout code
+02  success   Set up Docker Buildx
+03  success   Build Docker image
+04  success   Save Docker image
+05  success   Upload Docker image artifact
+job result: success

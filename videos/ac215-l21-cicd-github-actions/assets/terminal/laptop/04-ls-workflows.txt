@@ -1,0 +1,6 @@
+$ ls -la .github/workflows/
+total 16
+drwxr-sr-x    2 student  student       4096 Nov  6 19:10 .
+drwxr-sr-x    3 student  student       4096 Nov  6 19:10 ..
+-rw-r--r--    1 student  student       8159 Nov  6 19:10 ci.yml
+[exit 0]

@@ -1,0 +1,8 @@
+job: unit-tests (name: Unit Tests) on a fresh capture runner, commit 2892b1bfbcb0848ba16f600ee55b23d1ba81d99c
+01  success   Checkout code
+02  success   Download Docker image
+03  success   Load Docker image
+04  success   Run unit tests
+05  failure   Generate coverage report   (continue-on-error: the job stays green)
+06  success   Upload coverage report
+job result: success
