@@ -161,6 +161,11 @@
       "bvid": "BV1U94V6oECP",
       "title": "AC215 第18讲跟练 · API 与前端：FastAPI 服务、简单网页和 React 应用，一步一步在本地跑起奶酪 App",
       "pubdate": 1793993416
+    },
+    "ac215-l20-deployment-pulumi": {
+      "bvid": "BV1hs4H6SEMj",
+      "title": "AC215 第20讲跟练 · 部署：先手动把奶酪 App 部署到一台 GCP VM，再用 Pulumi 把同样的部署写成代码",
+      "pubdate": 1794076900
     }
   },
   "unmatched": [
