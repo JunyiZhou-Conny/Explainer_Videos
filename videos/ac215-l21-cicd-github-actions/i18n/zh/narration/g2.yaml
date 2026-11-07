@@ -56,7 +56,7 @@ S08:
 - en: "A small slip: the README promises Buildx caching, but the build runs on the default builder, and nothing saves a cache, so every fresh machine rebuilds from scratch. The exercises show how."
   zh:
   - "有一个小疏漏：README 说有 Buildx 缓存，但构建用的是默认的构建器，也没有东西保存缓存，所以每台全新的机器都从头重建。"
-  - "练习里有做法。"
+  - "练习里讲了怎么加。"
 - en: "Docker save folds the image into one file, about 176 megabytes. The upload step carries it to the artifact store, kept for one day. Then the build machine is thrown away."
   zh:
   - "用 docker save 把 image 打成一个文件，大约 176 MB。"
@@ -136,7 +136,7 @@ S09:
   - "失败步骤下面的步骤都不会运行，除非它们要求总是运行。"
 - en: "The cause is the mess you met in lecture 9, still in the repository on purpose: no space after the comma, and three blank lines where two belong."
   zh:
-  - "原因就是你在第 9 讲见过的那处乱，它是故意留在 repo 里的：逗号后面少了一个空格，该空两行的地方空了三行。"
+  - "原因就是你在第 9 讲见过的那处乱糟糟的格式，它是故意留在 repo 里的：逗号后面少了一个空格，该空两行的地方空了三行。"
 - en: "What would the skipped Flake8 have said? An extra run shows two warnings on those same lines. But even then it's advisory: only Black decides the job."
   zh:
   - "被跳过的 Flake8 本来会说什么？"
@@ -231,7 +231,7 @@ S11:
 - en: "And here is the hook, answered. Lint isn't in needs, so its failure never reaches the summary. The run is still red, because any failed job turns the whole run red."
   zh:
   - "开头那个谜题，现在有答案了。"
-  - "这个 lint 不在 needs 里，所以它的失败永远到不了汇总。"
+  - "lint 不在 needs 里，所以它的失败永远到不了汇总。"
   - "这个 run 还是红的，因为任何一个失败的 job 都会让整个 run 变红。"
 - en: "The README says the summary checks the results of all test jobs, and that's literally true: lint isn't a test job. Add lint and format to needs and to the check if you want it counted."
   zh:
@@ -419,7 +419,7 @@ S14:
 - en: "The webhook address is a secret. Add it under Settings, Secrets and variables, Actions, as a new repository secret named Slack webhook URL, not under Webhooks. It never goes in the repository, logs show it as three stars, and pull requests from forks don't get it."
   zh:
   - "这个 webhook 地址是一个 secret。"
-  - "在 Settings，Secrets and variables，Actions 下面，加一个名叫 Slack webhook URL 的新仓库 secret，别加在 webhook 那一页。"
+  - "在 Settings，Secrets and variables，Actions 下面，加一个名叫 Slack webhook URL 的新仓库 secret，别加在 Webhooks 页面里。"
   - "它永远不进 repo，日志里显示成三个星号，来自 fork 的 PR 拿不到它。"
   en_display:
   - null
@@ -427,7 +427,7 @@ S14:
   - "It never goes in the repository, logs show it as ***, and pull requests from forks don't get it."
 - en: "The check step tests whether the secret is set, and writes enabled, true or false. Why not test the secret right in the if line? GitHub doesn't allow secrets there; the repository's own history tried it, and replaced it with this shell check."
   zh:
-  - "检查那一步测试有没有设这个 secret，然后写下 enabled 为 true 或 false。"
+  - "检查那一步看有没有设这个 secret，然后写下 enabled 为 true 或 false。"
   - "为什么不直接在 if 那一行里测这个 secret？"
   - "GitHub 不允许在那里用 secret；这个 repo 自己的历史里就试过，后来换成了这个 shell 检查。"
   en_display:
@@ -545,7 +545,7 @@ S16:
 - en: "Two: which unit gets a fresh machine, a job or a step? And why does that force a docker load in every check job?"
   zh:
   - "第二题：分到一台全新机器的单位是哪个，job 还是步骤？"
-  - "那又为什么因此每个检查 job 里都得做一次 docker load？"
+  - "为什么这就逼得每个检查 job 里都得做一次 docker load？"
 - en: "Three: your run is red, but the summary says all tests passed. Why, and what is the one-line fix?"
   zh:
   - "第三题：你的 run 是红的，但汇总说所有测试都通过了。"

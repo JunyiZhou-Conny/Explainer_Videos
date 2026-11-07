@@ -178,10 +178,12 @@ def pr_arrow(scene, tl: TriggerLanes, src: str, dst: str = "main"):
     b = np.array([tl.lx1 - 0.3, tl.lanes[dst].line.get_center()[1], 0]) + DOWN * 0.12
     ar = route(a, b, arc=-0.6, dashed=True)
     y = tl.lanes[dst].line.get_center()[1] - tl.pitch * 0.5
-    pts = route(a, b, arc=-0.6).get_points()
-    p = min(pts, key=lambda q: abs(q[1] - y))
+    body = route(a, b, arc=-0.6)
+    body = body[0] if isinstance(body, VGroup) else body
+    pts = [body.point_from_proportion(k / 80) for k in range(81)]   # on the curve (not control points)
     t = label(f"PR → {dst}", 20, ROUTE)
-    t.move_to([p[0] - 0.25 - t.width / 2, y, 0])
+    near = [q[0] for q in pts if abs(q[1] - y) <= t.height / 2 + 0.12]
+    t.move_to([min(near) - 0.25 - t.width / 2, y, 0])
     scene.play(Create(ar), FadeIn(t), run_time=0.6)
     tl.pr_arrow, tl.pr_label, tl.pr_dst, tl.pr_a, tl.pr_b = ar, t, dst, a, b
     tl.keep(scene, ar, t)
@@ -410,19 +412,18 @@ class ProtectMain(VoiceScene):
         commit_c = grey_chip("commit the corrected line").move_to(cmp4.head)
         commit_c.shift(RIGHT * (cmp4.frame.get_right()[0] - 0.2 - commit_c.get_right()[0]))
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(ini, bar8), shift=DOWN * 0.2), run_time=0.4)
+            resize(self, t, 8, extra=[FadeOut(VGroup(ini, bar8), shift=DOWN * 0.2)], run_time=0.6)
             self.remove(ini, bar8)
-            resize(self, t, 8, run_time=0.6)
             restored = grey_chip("test file restored")
             under_term(t, restored, buff=0.1)
             self.play(FadeIn(restored, shift=DOWN * 0.1), run_time=0.3)
-            ln = type_capture(self, t, C55, type_time=1.2)[-1]
+            ln = type_capture(self, t, C55, type_time=0.8)[-1]
             bar_tags.append(extra_pin(self, t, ln))
             bare_prompt(self, t)
             rebuilt = grey_chip("rebuilt").move_to(restored).align_to(restored, RIGHT)
             self.play(ReplacementTransform(restored, rebuilt), run_time=0.3)
+            type_capture(self, t, C57, type_time=0.6)
             vo.wait_until("Now 1 failed")
-            type_capture(self, t, C57, type_time=0.9)
             o = out(self, t, [(L57_28, ERR), L57_37, (L57_38, ERR)], run_time=0.5)
             self.play(Indicate(o[-1], color=ERR, scale_factor=1.08), run_time=0.6)
             vo.wait_until("That's the one")
@@ -434,18 +435,18 @@ class ProtectMain(VoiceScene):
             self.play(Circumscribe(o[-1], color=ERR, buff=0.06), run_time=0.8)
 
         # ========================================================== 6. push, PR, locked merge
-        c6 = readme_code([391, 392, 393])
-        c6.move_to([LEFT_X + c6.width / 2, 0.6, 0])
+        c6 = readme_code([391, 392, 393], size=26)
+        c6.move_to([LEFT_X + c6.width / 2, 0.2, 0])
         shown6 = shown_tag().next_to(c6.frame, RIGHT, buff=0.3).align_to(c6.frame, UP)
-        c6_top = c6.copy()
+        c6_top = readme_code([391, 392, 393])
         at_top_left(c6_top)
         bars6 = {n: hl_bar(c6.rows[n], TURN, 0.22) for n in (391, 392, 393)}
-        prp = gh_page("Pull request · feature/test-protection → main", page_w=8.2, page_h=2.55)
+        prp = gh_page("Pull request · feature/test-protection → main", page_w=9.6, page_h=2.8)
         prp.shift(np.array([LEFT_X - prp.get_left()[0], c6_top.get_bottom()[1] - 0.35 - prp.get_top()[1], 0]))
-        chk = VGroup(state_mark("failure", 0.32), label("Unit Tests", 22, INK),
+        chk = VGroup(state_mark("failure", 0.36), label("Unit Tests", 24, INK),
                      grey_chip("required")).arrange(RIGHT, buff=0.25)
         chk.move_to(prp.body).align_to(prp.body, LEFT).shift(UP * 0.3)
-        mtxt = label("Merge pull request", 20, S.GREY)
+        mtxt = label("Merge pull request", 22, S.GREY)
         lk = lock_glyph(0.3)
         mg = VGroup(lk, mtxt).arrange(RIGHT, buff=0.2)
         mbtn = RoundedRectangle(width=mg.width + 0.5, height=0.5, corner_radius=0.1, stroke_color=S.GREY,
@@ -462,15 +463,19 @@ class ProtectMain(VoiceScene):
             gone = VGroup(t, err388, commit_c, rebuilt, *[x for x in bar_tags if x is not None])
             self.play(track(tr, 5), FadeOut(gone, shift=DOWN * 0.3), run_time=0.6)
             self.remove(gone, *gone.get_family())
-            frag = VGroup(cmp4, st_old, fix)
-            self.play(ReplacementTransform(frag, c6), FadeIn(shown6), run_time=0.7)
+            old_rows = VGroup(*cmp4.rows.values(), st_old, fix)
+            self.play(Transform(cmp4.frame, c6.frame), Transform(cmp4.head, c6.head),
+                      FadeOut(old_rows, shift=UP * 0.2),
+                      FadeIn(VGroup(*c6.rows.values()), shift=UP * 0.2), FadeIn(shown6), run_time=0.7)
+            self.remove(cmp4, *cmp4.get_family(), old_rows, *old_rows.get_family())
+            self.add(c6)
             for n, cue in ((391, "git add dot"), (392, "git commit, dash m"), (393, "and git push origin")):
                 vo.wait_until(cue)
                 self.add(bars6[n], c6.rows[n])
                 self.play(FadeIn(bars6[n]), Indicate(c6.rows[n], color=TURN, scale_factor=1.04), run_time=0.6)
             vo.wait_until("Open the pull request on GitHub")
             self.play(track(tr, 6), FadeOut(VGroup(*bars6.values())), FadeOut(shown6),
-                      c6.animate.move_to(c6_top), run_time=0.6)
+                      Transform(c6, c6_top), run_time=0.6)
             self.remove(*bars6.values(), shown6)
             self.play(FadeIn(VGroup(prp, chk, merge), shift=UP * 0.2), FadeIn(ill6), run_time=0.6)
             vo.wait_until("the merge stays locked")

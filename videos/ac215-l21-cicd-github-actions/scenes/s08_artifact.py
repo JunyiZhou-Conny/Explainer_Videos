@@ -359,6 +359,7 @@ class BuildOnce(VoiceScene):
         l04 = top_at(run_log("run1/build/04", ()))
         l05 = top_at(run_log(B05, (2,), wrap=True))
         mask = mask_chip(l05.row(2), "176112128", TAR_SIZE)
+        substring(l05.row(2), "176112128").set_opacity(0)   # the exact bytes never show, not even mid-morph
         cost = cost_tag("artifact · about 176 MB · 1 day")
         with self.voiceover(SAY[5]) as vo:
             gone = VGroup(slip, cache_box, no_cache, exer, hb)
@@ -368,9 +369,9 @@ class BuildOnce(VoiceScene):
             vo.wait_until("Docker save folds")
             im.fold(self)
             vo.wait_until("about 176 megabytes")
-            self.play(*morph_log(l04, l05), run_time=0.6)
+            self.play(*morph_log(l04, l05), FadeIn(mask), run_time=0.6)
             settle(self, l04, l05)
-            self.play(FadeIn(mask), run_time=0.3)
+            self.add(mask)
             self.play(Indicate(mask, color=INK, scale_factor=1.1), Indicate(im.case_tag, color=IMAGE, scale_factor=1.1),
                       run_time=0.6)
             vo.wait_until("The upload step carries it")
@@ -497,7 +498,7 @@ class BuildOnce(VoiceScene):
                             colors={2: S.GREY, 3: ERR}))
         x2t = extra_tag().next_to(n2.frame, DOWN, buff=0.12).align_to(n2.frame, LEFT)
         hub = im.hub
-        hub.move_to(HUB_POS)
+        hub.scale(1.4).move_to(HUB_POS)       # the same 1.4x as the unit room it stands beside
         rows3 = VGroup(*n2.rows[1:])
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(card8), run_time=0.4)
@@ -515,6 +516,8 @@ class BuildOnce(VoiceScene):
             self.play(FadeIn(hub), run_time=0.4)
             im.add(hub)
             im.no_load(self, "unit-tests")
+            # the set piece's '?' is drawn for the small rooms; grow it to the 1.4x room's scale
+            self.play(im.denied[0].animate.scale(1.8), run_time=0.3)
             vo.wait_until("pull access denied")
             self.play(FadeIn(rows3), run_time=0.4)
             self.remove(n2.rows)

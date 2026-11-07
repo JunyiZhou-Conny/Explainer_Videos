@@ -179,7 +179,7 @@ S04:
   - null
 - en: "None for the three pushes: the branch filter. One when the pull request opens, and one more for every later push while it stays open."
   zh:
-  - "三次 push 一次也没有：因为分支过滤。"
+  - "那三次 push，一个 run 也不会启动：因为有分支过滤。"
   - "PR 打开时一次，之后它开着的时候，每 push 一次再加一次。"
 - en: "And it doesn't test your branch tip. GitHub makes a temporary merge of your branch into main, and the commit ID the jobs see names that merge. What will land is what gets tested: each merge is tested, as the lecture says."
   zh:

@@ -244,7 +244,7 @@ class CompactRig(SystemTestRig):
         sv = self._container("api-server").move_to(c + np.array([-self.rig_w * 0.3, -0.35, 0]))
         sv.text.shift(UP * 0.25)
         dev = grey_chip("-e DEV=1", mono_font=True).move_to(sv.frame.get_center() + DOWN * 0.27)
-        door = door_glyph("9000", SHARED, 0.8).move_to(sv.frame.get_right() + RIGHT * 0.3)
+        door = door_glyph("9000", SHARED, 0.8).move_to(sv.frame.get_right() + RIGHT * 0.48)
         door.shift(DOWN * (door.frame.get_center()[1] - sv.get_center()[1]))
         scene.play(FadeIn(sv, scale=0.9), run_time=0.5)
         scene.play(FadeIn(door, shift=LEFT * 0.2), run_time=0.4)
@@ -376,6 +376,8 @@ class TestJobs(VoiceScene):
             self.add(sl)
             vo.wait_until("so the failure is shunted aside")
             c3 = sl.code_chip(6, 3)
+            c3.shift(RIGHT * max(0.0, sl.frame.get_right()[0] + 0.15 - c3.get_left()[0]))
+            assert c3.get_right()[0] <= 6.5, c3.get_right()
             arc = sl.shunt_arc(6)
             self.play(FadeIn(c3, scale=1.3), run_time=0.4)
             self.play(Create(arc), Indicate(sl.row(6).mark, color=ERR, scale_factor=1.3), run_time=0.8)
@@ -604,9 +606,10 @@ class TestJobs(VoiceScene):
             self.play(Indicate(nh, color=ROUTE, scale_factor=1.12), run_time=0.5)
             rig.host_net(self)
             vo.wait_until("it shares the runner's network")
-            nm.move_to(rig.tests.get_center() + DOWN * 0.95)
-            if nm.get_bottom()[1] < rig.runner.get_bottom()[1] + 0.05:
-                nm.shift(UP * (rig.runner.get_bottom()[1] + 0.05 - nm.get_bottom()[1]))
+            nm.move_to([(rig.door.get_right()[0] + rig.tests.get_left()[0]) / 2,
+                        (rig.net[2].get_bottom()[1] + rig.runner.get_bottom()[1]) / 2, 0])
+            assert nm.get_left()[0] > rig.door.get_right()[0] and nm.get_right()[0] < rig.tests.get_left()[0], \
+                (nm.get_left(), nm.get_right())
             nm_start = nm.copy().move_to([6.3 - nm.width / 2, LOG_TOP - 0.3, 0])
             self.play(FadeIn(nm_start, shift=LEFT * 0.2), run_time=0.3)
             self.play(ReplacementTransform(nm_start, nm), Indicate(rig.runner, color=GITHUB, scale_factor=1.01),
@@ -685,7 +688,8 @@ class TestJobs(VoiceScene):
         td.move_to([-2.8, 0.3, 0])
         l09 = dashed_chip("L09", size=22).next_to(td, LEFT, buff=0.5)
         td_t = label("skips quietly", 24, S.GREY).next_to(td, DOWN, buff=1.1)
-        tdot = Dot(radius=0.14, color=S.GREY).move_to(td[0].get_top() + UP * 1.0)
+        tdot = Dot(radius=0.1, color=S.GREY).move_to(td[0].get_center() + RIGHT * 0.5 +
+                                                     UP * (td[0].get_height() / 2 + 0.12))
         cg = gate_glyph(1.3, 1.5, ROUTE).move_to([2.6, 0.3, 0])
         cg_t = mono("curl -f", 26, ROUTE).next_to(cg, UP, buff=0.25)
         e1 = exit_badge(1, size=22).next_to(cg, RIGHT, buff=0.4)

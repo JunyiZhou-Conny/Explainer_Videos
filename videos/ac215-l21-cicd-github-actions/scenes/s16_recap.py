@@ -131,16 +131,15 @@ def teardown_card() -> VGroup:
 
 
 def repo_name() -> VGroup:
-    """'cheese-app-ci-cd': 'ci' GREEN, 'cd' GREY in a dashed outline. .ci .cd"""
-    a = mono("cheese-app-", 26, INK)
-    ci = mono("ci", 26, PASS)
-    dash = mono("-", 26, INK)
-    cd = mono("cd", 26, S.GREY)
-    g = VGroup(a, ci, dash, cd).arrange(RIGHT, buff=0.02)
-    for m in (ci, dash, cd):
-        m.align_to(a, DOWN)
-    ob = outline_box(cd.width + 0.2, cd.height + 0.2, S.GREY).move_to(cd)
-    g.add(ob)
+    """'cheese-app-ci-cd': 'ci' GREEN, 'cd' GREY in a dashed outline. .ci .cd .cd_box
+    One mono_line (a shared baseline: separate Text pieces aligned DOWN dropped the '-' to the
+    baseline, so the name read 'ci_cd')."""
+    name = "cheese-app-ci-cd"
+    line = mono_line(name, 26, INK, t2c={"[11:13]": PASS, "[14:16]": S.GREY})
+    ci, cd = substring(line, "ci"), glyph_range(line, 14, 16)
+    ob = outline_box(cd.width + 0.22, line.strut.height + 0.06, S.GREY).move_to(
+        [cd.get_center()[0], line.strut.get_center()[1], 0])
+    g = VGroup(line, ob)
     g.ci, g.cd, g.cd_box = ci, cd, ob
     return g
 
@@ -268,13 +267,14 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(head0, stages, qs, *answers, m5)), ReplacementTransform(ref0, ref1),
                       run_time=0.5)
-            self.play(FadeIn(loop), run_time=0.6)
+            self.play(FadeIn(loop), FadeIn(rn[0], shift=DOWN * 0.15), run_time=0.6)
+            self.play(Indicate(rn.ci, color=PASS, scale_factor=1.2), run_time=0.6)
             vo.wait_until("automates the release")
             cd = loop.deploy(self, run_time=0.8)
             assert cd.get_right()[0] < SX, cd.get_right()
             vo.wait_until("that's lecture 23")
-            self.play(FadeIn(rn, shift=DOWN * 0.15), Indicate(cd[1], color=S.GREY, scale_factor=1.08), run_time=0.7)
-            self.play(Indicate(rn.ci, color=PASS, scale_factor=1.2), Create(rn.cd_box.frame), run_time=0.6)
+            self.play(Create(rn.cd_box.frame), Indicate(rn.cd, color=S.GREY, scale_factor=1.2),
+                      Indicate(cd[1], color=S.GREY, scale_factor=1.08), run_time=0.8)
 
         # ========================================================== 2. teardown
         card = teardown_card().move_to([0, 0.1, 0])
@@ -287,7 +287,8 @@ class Recap(VoiceScene):
             return t
 
         def light(row):
-            self.play(Indicate(row, color=PASS, scale_factor=1.04), run_time=0.6)
+            """The spoken row turns GREEN and stays so (where we are on the card stays visible)."""
+            self.play(row.animate.set_color(PASS), run_time=0.5)
 
         ticks = []
         with self.voiceover(SAY[2]) as vo:
@@ -471,9 +472,11 @@ class Recap(VoiceScene):
                     i4.shunt(self, 1, 1)
                     vo.wait_until("and why don't you see its output")
                     i4.reset(self)
+                    self.play(Indicate(i4.names[1], color=TURN, scale_factor=1.2), run_time=0.4)
                     vo.wait_until("when Black fails")
                     i4.hold(self, 0, 1)
                     i4.skip(self, [1])
+                    self.wait(0.6)            # let the skipped gate be seen before question 5
                 else:
                     vo.wait_until("is a push-triggered run a pre-receive")
                     self.play(Indicate(i5.gate, color=TURN, scale_factor=1.15), run_time=0.6)

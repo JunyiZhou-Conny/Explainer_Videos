@@ -307,7 +307,7 @@ class TheSummary(VoiceScene):
             shell = VGroup(*[m for m in lg2.submobjects if lg2.rows not in m.get_family()])
             self.play(FadeIn(shell, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("three success tokens arrive")
-            g.tokens(self, "run1", run_time=1.4)
+            ride_tokens(self, g, results("run1"), run_time=2.0)
             self.add(g)
             vo.wait_until("unit, integration, system")
             for n_ in (13, 14, 15):
@@ -346,7 +346,8 @@ class TheSummary(VoiceScene):
                       Indicate(g.badge.text, color=ERR, scale_factor=1.08), run_time=0.8)
             vo.wait_until("because any failed job")
             self.play(FadeIn(red_chip, shift=LEFT * 0.2), run_time=0.5)
-            self.play(Indicate(red_chip, color=INK, scale_factor=1.05), run_time=0.6)
+            self.play(Indicate(red_chip, color=INK, scale_factor=1.05),
+                      Indicate(g.badge, color=ERR, scale_factor=1.06), run_time=0.7)
 
         # ========================================================== 4. the README is literally true; the fix
         card4 = readme_panel(328, 328)
@@ -388,14 +389,17 @@ class TheSummary(VoiceScene):
             rest = VGroup(card4, note4, ex_chip, after, fix_arrow, tip, red_chip)
             self.play(FadeOut(rest), run_time=0.5)
             self.remove(rest, *rest.get_family())
-            self.play(ReplacementTransform(g, icon), run_time=0.8)
+            self.play(FadeOut(g, target_position=icon.get_center(), scale=0.12),
+                      FadeIn(icon, scale=1.6), run_time=0.8)
+            self.remove(g, *g.get_family())
+            self.add(icon)
             self.play(FadeIn(sp, shift=UP * 0.15), FadeIn(demo_chip, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("In the demo commit")
             self.play(Indicate(demo_chip, color=INK, scale_factor=1.05), run_time=0.6)
             self.play(FadeIn(map_chip, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("the distance function")
-            u_doc = under(doc, INK)
-            self.play(doc.animate.set_color(INK), Create(u_doc), run_time=0.6)
+            u_doc = hl_bar(doc, INK, 0.16, buff=0.03)   # a bar, not an underline: it stays in its row
+            self.play(doc.animate.set_color(INK), FadeIn(u_doc), run_time=0.6)
             vo.wait_until("takes the square root of 2 times z")
             bb = hl_bar(bug, ERR, 0.22)
             self.play(FadeIn(bb), bug.animate.set_color(ERR), run_time=0.5)
@@ -413,7 +417,7 @@ class TheSummary(VoiceScene):
         b44 = code_span(strip44.code, 0, "result = math.sqrt(2 * z)")
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(demo_chip, map_chip, u_doc, rg, bb)),
-                      ReplacementTransform(sp, strip44), ReplacementTransform(icon, gd), run_time=0.9)
+                      ReplacementTransform(sp, strip44), FadeTransform(icon, gd), run_time=0.9)
             self.remove(sp, icon, demo_chip, map_chip, u_doc, rg, bb)
             self.add(gd, strip44)
             self.play(b44.animate.set_color(ERR), FadeIn(dcommit, shift=LEFT * 0.2), run_time=0.5)
@@ -491,7 +495,7 @@ class TheSummary(VoiceScene):
             out8 = VGroup(lg8, c35, c27, unit_chip, lint_chip)
             self.play(FadeOut(out8), run_time=0.4)
             self.remove(out8, *out8.get_family())
-            gd.tokens(self, DEMO, run_time=1.3)
+            ride_tokens(self, gd, DEMO, run_time=1.9)
             self.play(gd.set_state("test-summary", "failure"), run_time=0.4)
             self.add(gd)
             self.play(gd.set_badge("failure"), FadeIn(lg9, shift=UP * 0.15), run_time=0.5)
@@ -505,6 +509,33 @@ class TheSummary(VoiceScene):
         self.wait(0.3)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.wait(0.2)
+
+
+def ride_tokens(scene, g: JobGraph, states: dict, run_time: float = 1.5):
+    """PLAYS: three PINK result tokens ride the needs lines from the test jobs into Summary (V4, S11).
+    A local variant of JobGraph.tokens(): each token fades in while it leaves its node and fades out
+    as it reaches Summary, so no token ever sits still on a node label or on another token; then
+    Summary's mark flashes PINK."""
+    anims, toks = [], []
+    for j in TEST_JOBS:
+        e = g.edges[(j, "test-summary")]
+        t0 = route_chip(states[j], 20)
+        t = t0.copy().move_to(e.get_start()).fade(1)
+
+        def upd(m, a, e=e, t0=t0):
+            m.become(t0)
+            m.move_to(e.point_from_proportion(a))
+            o = max(0.0, min(1.0, (a - 0.08) / 0.2, (1 - a) / 0.2))
+            if o < 1:
+                m.fade(1 - o)
+            return m
+        toks.append(t)
+        anims.append(UpdateFromAlphaFunc(t, upd))
+    scene.add(*toks)
+    # one after another (unit, integration, system): they never meet at the shared elbow
+    scene.play(LaggedStart(*anims, lag_ratio=0.8), run_time=run_time)
+    scene.remove(*toks)
+    scene.play(Indicate(g.nodes["test-summary"].mark, color=ROUTE), run_time=0.5)
 
 
 def _gap_path(g: JobGraph) -> VMobject:

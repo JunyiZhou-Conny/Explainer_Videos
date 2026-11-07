@@ -36,8 +36,9 @@ Beats (script.md "## S12", one voiceover block each):
 7. Steps and log go. GRAPH(run2) left, RECORDED(screenshot) slides in on the right; their nodes
    pulse GREEN pair by pair. Both go; the corner copy of the loop grows back into the full CiLoop,
    its return lines solid (no "?" any more); on its phrases: run 1's marks (a red notification),
-   the "fix" chip, a GREEN commit dot goes around (Commits → Codebase → Build → Test, a ✓ back along
-   the returns to the developers), six GREEN marks on the bar. Fade; empty frame.
+   the "fix" chip, a GREEN commit dot goes around (Commits → Codebase → Build → Test, a ✓ down the
+   return line; as it reaches the bar run 1's marks turn into six GREEN ✓, and it runs back to the
+   developers; local fix_commit_around(), CiLoop.go_around's minimum is too slow here). Fade; empty frame.
 
 Deviation from SHOW (beat 6): GRAPH(run2), STEPS and LOG do not fit the Part 2 frame together at
 >= 20 pt (graph ~7.0 x 4.0, log 12.6 x 2.6), so the steps list and the log take the graph's place
@@ -145,6 +146,27 @@ def corner_copy(loop: CiLoop) -> list:
 
 def fix_chip(loop: CiLoop) -> VGroup:
     return grey_chip("fix", size=22).next_to(loop.devs, LEFT, buff=0.3)
+
+
+def fix_commit_around(scene, loop: CiLoop, fix: VGroup):
+    """CiLoop.go_around(PASS) on this beat's clock (its own segments are too long for "a fix, a commit,
+    and a green run"): the fix chip and a GREEN dot appear, the dot goes Commits → Codebase → Build →
+    Test, turns into a ✓ that runs down the return line; as it reaches the bar, run 1's marks turn into
+    run 2's six GREEN ✓ (each old mark becomes its new one), and the ✓ runs back to the developers."""
+    d = dot(PASS).move_to(loop.commits_path.get_start())
+    scene.play(FadeIn(fix, shift=RIGHT * 0.2), FadeIn(d, scale=1.5), run_time=0.35)
+    scene.play(MoveAlongPath(d, loop.commits_path), run_time=0.4)
+    scene.play(d.animate.move_to(loop.boxes["build"].frame.get_top() + UP * 0.15), run_time=0.2)
+    scene.play(d.animate.move_to(loop.boxes["test"].frame.get_top() + UP * 0.15), run_time=0.2)
+    mk = state_mark("success", 0.32).move_to(loop.boxes["test"].get_bottom())
+    scene.play(FadeTransform(d, mk), run_time=0.15)
+    scene.remove(d)
+    scene.play(mk.animate.move_to(loop.return_paths[1].get_end()), run_time=0.25)
+    new = VGroup(*[state_mark("success", 0.3).move_to(m) for m in loop.mark_row])
+    scene.play(LaggedStart(*[Transform(a, b) for a, b in zip(loop.mark_row, new)], lag_ratio=0.15),
+               mk.animate.move_to(loop.back_path.get_end() + RIGHT * 0.2), run_time=0.5)
+    scene.play(FadeOut(mk), loop.light("devs", PASS), loop.light("notify", PASS), run_time=0.5)
+    scene.remove(mk)
 
 
 class RedToGreen(VoiceScene):
@@ -401,11 +423,7 @@ class RedToGreen(VoiceScene):
             vo.wait_until("a red notification")
             loop2.marks(self, run1_marks, run_time=0.4)
             vo.wait_until("a fix")
-            self.play(FadeIn(fix2, shift=RIGHT * 0.2), run_time=0.3)
-            loop2.go_around(self, PASS, run_time=1.2)        # the fix commit: Commits → … → a ✓ back
-            vo.wait_until("and a green run")
-            loop2.marks(self, ["success"] * len(JOB_IDS), run_time=0.4)
-            self.play(loop2.light("notify", PASS), run_time=0.6)
+            fix_commit_around(self, loop2, fix2)             # the fix commit goes around; run 2's marks land
         self.play(FadeOut(VGroup(loop2, fix2, tr, strip)), run_time=0.8)
         self.wait(0.3)
 

@@ -39,8 +39,8 @@ Beats (script.md "## S13", one voiceover block each):
 10. Table and chips clear. A GREY key-file icon sits on a GREY laptop; it rides a RED `--no-verify`
    arc into a BLUE "GitHub" box where GRAPH(run3)'s six nodes wait GREY (tag `illustration`); the
    nodes pulse in turn on the question. PONDER(8 s).
-11. The card leaves. The key passes all six nodes untouched (each flashes GREY) and stays RED on
-   GitHub. LECTURE 21 · 11. A GREY chat-card fragment (`#build-alerts`, tag `illustration`):
+11. The card leaves. The key passes all six nodes untouched (each flashes GREY; it hops above Build,
+   above the four-job column, above Summary, so it never covers a label) and stays RED on GitHub. LECTURE 21 · 11. A GREY chat-card fragment (`#build-alerts`, tag `illustration`):
    "Failed step:" `Run python3 -m pre-commit run --all-files`; a GREEN dashed new step slides in
    under the lint job: `pre-commit run --all-files`. A RED chip "rotate the key: it's already on
    GitHub". Fade; empty frame.
@@ -166,7 +166,7 @@ def clear_lines(scene, t: Terminal, run_time: float = 0.4):
 
 
 def compact_graph(states=None) -> JobGraph:
-    """GRAPH(run3), compact: short labels, the run badge above Build, the tag right of Summary."""
+    """GRAPH(run3), compact: short labels, the run badge left of Build, the tag right of Lint."""
     g = JobGraph(states=states, labels="short", size=20, pitch=0.55, col_gap=0.6)
     g.badge.next_to(g.nodes["build"], LEFT, buff=0.3)
     g.tag.next_to(g.nodes["lint-and-format"], RIGHT, buff=0.3)
@@ -190,7 +190,7 @@ def file_card(title: str, code_line: str, color) -> VGroup:
 def not_in_ci() -> VGroup:
     """A GREY dashed 'not in CI' chip sized for a 0.42 table row. .box .text"""
     t = label("not in CI", 20, S.GREY)
-    ob = outline_box(t.width + 0.34, 0.36, S.GREY, solid=False, radius=0.18)
+    ob = outline_box(t.width + 0.34, 0.32, S.GREY, solid=False, radius=0.16)
     t.move_to(ob)
     g = VGroup(ob, t)
     g.box, g.text = ob, t
@@ -235,7 +235,7 @@ class NoVerify(VoiceScene):
             self.play(FadeIn(sv, shift=LEFT * 0.2), run_time=0.5)
             self.play(Create(why_a), FadeIn(why, shift=DOWN * 0.1), run_time=0.6)
             self.play(Circumscribe(sv.check, color=TURN, buff=0.06), Indicate(sv.check.text, color=TURN),
-                      Indicate(hc.gates, color=TURN, scale_factor=1.03), run_time=0.9)
+                      Indicate(VGroup(*[g.text for g in hc.gates]), color=TURN, scale_factor=1.08), run_time=0.9)
 
         # ========================================================== 1. extras: squeeze one line
         t = laptop_term(10)
@@ -314,7 +314,7 @@ class NoVerify(VoiceScene):
             self.remove(gone, *gone.get_family())
             resize(self, t, 5, run_time=0.5)
             vo.wait_until("Now the lecture's command")
-            self.play(Indicate(ref, color=TURN, scale_factor=1.06), run_time=0.6)
+            self.play(Indicate(ref.text, color=TURN, scale_factor=1.08), run_time=0.6)
             vo.wait_until("git commit, no verify")
             (nv,) = type_capture(self, t, C44, type_time=1.0)
             nv_flag = substring(nv.rows[0], "--no-verify")
@@ -387,7 +387,7 @@ class NoVerify(VoiceScene):
             self.play(Transform(sv6.check, red_ck), Circumscribe(sv6.check, color=ERR, buff=0.06),
                       FadeIn(caught, shift=LEFT * 0.15), run_time=0.7)
             vo.wait_until("slide 31")
-            self.play(Indicate(ref, color=TURN, scale_factor=1.06), Indicate(caught, color=ERR, scale_factor=1.1),
+            self.play(Indicate(ref.text, color=TURN, scale_factor=1.08), Indicate(caught, color=ERR, scale_factor=1.1),
                       run_time=0.7)
 
         # ========================================================== 7. clean up the experiment
@@ -544,14 +544,19 @@ class NoVerify(VoiceScene):
             self.play(FadeOut(card10), run_time=0.4)
             self.remove(card10)
             vo.wait_until("None")
-            for j in ("build", "unit-tests", "integration-tests", "system-tests", "lint-and-format", "test-summary"):
-                nd = g10.nodes[j]
-                self.play(key.animate.move_to(nd.get_top() + UP * 0.36), run_time=0.22)
-                self.play(g10.pulse(j, S.GREY), run_time=0.22)
+            # the key never crosses a label: above Build, above the four-job column, above Summary
+            col = ["unit-tests", "integration-tests", "system-tests", "lint-and-format"]
+            col_top = max(g10.nodes[j].get_top()[1] for j in col)
+            col_x = g10.nodes["unit-tests"].get_center()[0]
+            self.play(g10.pulse("build", S.GREY), run_time=0.4)
+            self.play(key.animate.move_to([col_x, col_top + 0.36, 0]), run_time=0.35)
+            self.play(LaggedStart(*[g10.pulse(j, S.GREY) for j in col], lag_ratio=0.3), run_time=1.0)
+            self.play(key.animate.move_to(g10.nodes["test-summary"].get_top() + UP * 0.36), run_time=0.35)
+            self.play(g10.pulse("test-summary", S.GREY), run_time=0.3)
             vo.wait_until("Detect private key is a local hook only")
             self.play(FadeOut(VGroup(kpath, nv10)), run_time=0.4)
             self.remove(kpath, nv10)
-            self.play(Indicate(lap, color=S.GREY, scale_factor=1.1), key.animate.set_color(ERR), run_time=0.6)
+            self.play(Circumscribe(lap, color=S.GREY, buff=0.08), key.animate.set_color(ERR), run_time=0.6)
             vo.wait_until("The fix is one CI step")
             self.play(FadeOut(lap), run_time=0.3)
             self.remove(lap)
