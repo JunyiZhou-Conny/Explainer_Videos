@@ -1,0 +1,66 @@
+id: ac215-l22-kubernetes-cloud
+title: "AC215 · Lecture 22 — Scaling: Kubernetes in the cloud (follow-along: cheese-app-v3)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 22
+  lecture_title: "Scaling: Kubernetes (cloud)"
+  ed: https://edstem.org/us/courses/97373/lessons/166047/
+  repos:
+    # main, unchanged since 2025-11-28 (git ls-remote on the recording day, 2026-11-07); the course
+    # site links main. cluster-updates and pipenv are comparison only. See ASSETS.md "Which commit".
+    - {repo: dlops-io/cheese-app-v3, branch: main, commit: 3ecef56fea879ac480d260c0906cd95baf05179a,
+       sections: ["Create Simple Kubernetes Cluster Tutorial", "Deployment with Scaling using Kubernetes",
+                  "Create & Deploy Cluster", "Debugging Containers"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L22-kubernetes-cloud.md
+audience: "AC215 student who has done L1-L21 (cloud VMs, Docker images, containers and networks, service-account keys in secrets/, the cheese app's four services, and L20's deployment toolbox, Pulumi stacks and the single-VM deployment behind nginx), new to Kubernetes, clusters, kubectl, Deployments, Services, namespaces, Ingress and GKE; watching with their own clone of cheese-app-v3 next to secrets/, Docker running and a GCP project with billing, pausing to run each command — the test cluster and the GKE cluster cost money by the hour (GOLD tags; each part ends with a delete)"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,         cls: Hook,           title: "Who restarts it at 2 a.m.?"}
+  - {file: scenes/s02_orchestrator.py, cls: Orchestrator,   title: "From one box to a fleet"}
+  - {file: scenes/s03_anatomy.py,      cls: ClusterAnatomy, title: "Inside a cluster: brain and workers"}
+  - {file: scenes/s04_toolbox.py,      cls: Toolbox,        title: "The toolbox, still fixed twice"}
+  - {file: scenes/s05_test_cluster.py, cls: TestCluster,    title: "A test cluster and a first look"}
+  - {file: scenes/s06_tic_tac_toe.py,  cls: TicTacToe,      title: "Two objects: a Deployment and a Service"}
+  - {file: scenes/s07_self_healing.py, cls: SelfHealing,    title: "Desired state: Pods that come back"}
+  - {file: scenes/s08_stable_names.py, cls: StableNames,    title: "Labels, Services, namespaces, then delete"}
+  - {file: scenes/s09_blueprint.py,    cls: Blueprint,      title: "The cheese app's cluster, as code"}
+  - {file: scenes/s10_images.py,       cls: ImagesStack,    title: "Setup and the images stack"}
+  - {file: scenes/s11_plan.py,         cls: ClusterPlan,    title: "deploy_k8s: config and a 23-resource plan"}
+  - {file: scenes/s12_pulumi_up.py,    cls: PulumiUp,       title: "pulumi up: what builds, in what order"}
+  - {file: scenes/s13_one_click.py,    cls: OneClick,       title: "The journey of one click"}
+  - {file: scenes/s14_explore.py,      cls: ExploreApp,     title: "kubectl on the app, and the outputs"}
+  - {file: scenes/s15_scaling.py,      cls: LogsAndScaling, title: "Logs, then scaling at two levels"}
+  - {file: scenes/s16_recap.py,        cls: Recap,          title: "Destroy, audit, recap"}
+parts:
+  - id: part1
+    title: "AC215 · L22, part 1: Kubernetes by hand — the cluster, its parts and a test deployment"
+    scenes: [s01_hook, s02_orchestrator, s03_anatomy, s04_toolbox, s05_test_cluster, s06_tic_tac_toe, s07_self_healing, s08_stable_names]
+  - id: part2
+    title: "AC215 · L22, part 2: the cheese app on GKE as Pulumi code — plan, traffic, scaling, teardown"
+    scenes: [s09_blueprint, s10_images, s11_plan, s12_pulumi_up, s13_one_click, s14_explore, s15_scaling, s16_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker).
+# Draft written with the brief; the finishing step checks it against the final cut.
+publish:
+  title_zh: "AC215 第22讲跟练 · 扩展：云上的 Kubernetes——先手动体验一个测试集群，再用 Pulumi 把奶酪 App 部署到 GKE"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 22 讲教程的逐条命令跟练，照着 dlops-io/cheese-app-v3 的 README 一步一步做，并对照课件逐页讲解。
+    上半场（手动体验 Kubernetes）：为什么一台 VM 需要有人半夜去重启容器；failover、load balancing、scaling 三个诉求；
+    集群的组成：control plane（API server、etcd、scheduler、controllers）与 worker node（kubelet、kube-proxy、containerd、Pod）；
+    部署工具箱容器（录制当天 Dockerfile 仍需两处一行修改才能构建）；用 gcloud 创建测试集群，用 kubectl 查看；
+    部署 tic-tac-toe：Deployment 与 Service、label 与 selector、被删掉又自己回来的 Pod、cluster DNS、namespace，最后删除集群。
+    下半场（用 Pulumi 部署奶酪 App 到 GKE）：VPC 与 Cloud NAT、私有节点、node pool；deploy_images 与 deploy_k8s 两个 stack，
+    23 个资源的计划与创建顺序；Workload Identity；一次点击的完整路径：sslip.io → 负载均衡 → NGINX Ingress → Service → Pod；
+    kubectl 查看应用、进入 Pod、读 Job 日志（README 调试命令里的 namespace 已过时）；Pod 与节点两层扩展、resource requests、
+    Pending 与自动扩容、ReadWriteOnce 磁盘为什么限制 API 扩展；pulumi destroy 与残留资源检查。
+    录制环境没有 Google 账号：每个云端步骤都展示到它真实的第一个报错为止；kubectl 命令在一个明确标注的本地替身集群（kind，不是 GKE）上真实运行。边看边暂停，在自己的项目里跑每一条命令；集群按小时计费，每一部分结尾都有删除步骤。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/cheese-app-v3
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L22-kubernetes-cloud.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, Kubernetes, GKE, Pulumi, kubectl, 云部署, 扩展, 哈佛, 教程跟练]
+  tid: 231

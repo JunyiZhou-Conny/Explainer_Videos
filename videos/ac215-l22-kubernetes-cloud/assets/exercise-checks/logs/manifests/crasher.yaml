@@ -1,0 +1,17 @@
+# B3: a container that exits with an error 8 s after it starts (a crash, not a delete)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crasher
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {run: crasher}
+  template:
+    metadata:
+      labels: {run: crasher}
+    spec:
+      containers:
+      - name: crasher
+        image: busybox:1.36
+        command: ["sh", "-c", "echo started; sleep 8; echo crashing; exit 1"]

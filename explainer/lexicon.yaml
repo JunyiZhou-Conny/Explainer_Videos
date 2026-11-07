@@ -473,3 +473,17 @@ inventory dot yml: {ipa: "ˈɪnvəntˌɔːɹi dˈɑːt jˈæməl", say: "invento
 # Both occur in no other video's SAY (grep -w videos/*/script.md, 2026-11-06).
 Buildx: {ipa: "bˈɪld ˈɛks", say: "build-ex"}
 under uses: {ipa: "ˌʌndɚ jˈuːzᵻz", say: "under yoo-ziz"}
+# AC215 L22 (spoken review of videos/ac215-l22-kubernetes-cloud). No key below is in another video's
+# SAY (grep -w videos/*/script.md, 2026-11-07; containerd only outside L02's SAY lines); phrase keys
+# where a bare word ("k8s" in L20, "502" in L18, "us") is used elsewhere.
+etcd: {ipa: "ˌɛt sˌiː dˈiː", say: "et-see-dee"}
+Etcd: {ipa: "ˌɛt sˌiː dˈiː", say: "Et-see-dee"}
+kubeconfig: {ipa: "kjˈuːb kˈɑːnfɪɡ", say: "cube config"}
+containerd: {ipa: "kəntˈeɪnɚ dˈiː", say: "container dee"}
+kubelet: {ipa: "kjˈuːblət", say: "cube-let"}
+kubelets: {ipa: "kjˈuːbləts", say: "cube-lets"}
+deploy k8s: {ipa: "dᵻplˈɔɪ kˈeɪ ˈeɪts", say: "deploy K eights"}
+zone us east 1 c: {ipa: "zˈoʊn jˌuːˈɛs ˈiːst wˈʌn sˈiː", say: "zone U S east one C"}
+docker-shell.bat: {ipa: "dˈɑːkɚ ʃˈɛl dˈɑːt bˈæt", say: "docker shell dot bat"}
+sslip dot io: {ipa: "ˈɛs slˈɪp dˈɑːt ˌaɪˈoʊ", say: "S slip dot I O"}
+502 or 503: {ipa: "fˈaɪv ˈoʊ tˈuː ɔːɹ fˈaɪv ˈoʊ θɹˈiː", say: "five oh two or five oh three"}
