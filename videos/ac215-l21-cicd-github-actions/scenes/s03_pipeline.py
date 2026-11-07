@@ -236,7 +236,9 @@ class CiPipeline(VoiceScene):
             self.play(FadeIn(gha, shift=UP * 0.15), run_time=0.4)
             for bx, pu, cue in zip(fs.boxes, purposes, STRIP_CUES):
                 vo.wait_until(cue)
-                self.play(Indicate(bx, color=TURN, scale_factor=1.08), Write(pu), run_time=0.6)
+                lit = bx.frame.copy().set_stroke(TURN, 5)
+                self.play(Transform(bx.frame, lit, rate_func=there_and_back),
+                          Indicate(bx.text, color=TURN, scale_factor=1.12), Write(pu), run_time=0.6)
 
         # ========================================================== 4. README Part 5
         tr = tracker_p5(1)
@@ -280,9 +282,10 @@ class CiPipeline(VoiceScene):
         fix.next_to(ghost, DOWN, buff=0.3).align_to(tree, LEFT)
         gh_dirs = VGroup(tree.row(".github/"), tree.row("workflows/"))
         with self.voiceover(SAY[5]) as vo:
-            cap_copy = tr.caption.copy()
-            self.play(ReplacementTransform(VGroup(card, err), cap_copy), run_time=0.6)
-            self.remove(cap_copy, card, err)
+            gone_card = VGroup(card, err)
+            self.play(gone_card.animate.scale(0.12).move_to(tr.caption).set_opacity(0),
+                      Indicate(tr.caption, color=TURN, scale_factor=1.05), run_time=0.6)
+            self.remove(gone_card, *gone_card.get_family())
             self.play(track(tr, 1, True), FadeIn(t, shift=UP * 0.2), FadeIn(bar_tag, shift=UP * 0.2),
                       run_time=0.6)
             vo.wait_until("list the workflows folder")
@@ -330,7 +333,9 @@ class CiPipeline(VoiceScene):
             vo.wait_until("Under jobs")
             self.play(FadeOut(bar_name), FadeOut(bars_on), run_time=0.25)
             self.remove(bar_name, bars_on)
-            self.play(ReplacementTransform(p1, p2), run_time=0.7)
+            self.play(FadeTransform(p1, p2), run_time=0.7)
+            self.remove(p1, *p1.get_family())
+            self.add(p2)
             bars_jobs = VGroup(line_bar(p2.code, 0, TURN), line_bar(p2.code, 2, TURN))
             self.play(FadeIn(bars_jobs), run_time=0.4)
             vo.wait_until("each job gets its own machine")
@@ -356,7 +361,8 @@ class CiPipeline(VoiceScene):
             vo.wait_until("A step is either a shell script")
             runs = VGroup(*[r for r in wt.steps if r.kind == "run"])
             uses = VGroup(*[r for r in wt.steps if r.kind == "uses"])
-            self.play(Indicate(runs, color=TURN, scale_factor=1.06), run_time=0.7)
+            self.play(*[light(r.glyph, TURN) for r in runs],
+                      *[Indicate(r.text, color=TURN, scale_factor=1.06) for r in runs], run_time=0.7)
             vo.wait_until("or a reusable action")
             self.play(Indicate(uses, color=TOOL, scale_factor=1.06), run_time=0.7)
             vo.wait_until("like actions checkout")

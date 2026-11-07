@@ -2,7 +2,8 @@
 step 1: the trigger sentence). Lecture: 21 · slides 25 (beat 0), 23 (beat 4), 24 (beat 5).
 
 Beats (script.md "## S04", one voiceover block each):
-0. TRACKER P5 1 fades in. lecture_ref 25. A GREY quote chip from the slide, "on every push or pull
+0. TRACKER P5 1 fades in with the hook question written top centre ("When does the pipeline wake
+   up?", leaves with the chip in beat 1). lecture_ref 25. A GREY quote chip from the slide, "on every push or pull
    request" (left); CODE(ci.yml 7–11) beside it (right); a GREY arrow "more precisely:" from the
    chip to the panel. Lines 8–9 (push: branches) get PINK bars on "pushes to main or develop", lines
    10–11 (pull_request: branches) on "and pull requests into".
@@ -12,7 +13,7 @@ Beats (script.md "## S04", one voiceover block each):
    same on develop; a dot on feature/login: no spark, the dot turns GREY, its runner stays GREY.
    On "waits for your pull request" the feature runner is ringed and the panel's pull_request lines
    flash PINK. "A small note": the one-line panel ci.yml:2 (the comment) appears bottom right,
-   "main branch" is underlined YELLOW, two GREY erratum tags stack beside the lanes ("erratum · the
+   the lanes fade back (restored in beat 2), "main branch" is underlined YELLOW, two GREY erratum tags stack beside the lanes ("erratum · the
    comment: main only", "the triggers: main and develop") and the corner panel's branch lines
    flash.
 2. The corner panel, comment strip and tags go; the runners reset to GREY. Three new dots land on
@@ -24,8 +25,8 @@ Beats (script.md "## S04", one voiceover block each):
    the meter ticks, BLUE chip "1 run"; a fifth dot lands on feature/login, the arrow re-aims from
    the new tip, a second spark and tick, GREY chip "+1 per push while it's open" under the tip.
 4. lecture_ref 23. The feature tip is ringed; a GREY dashed ghost merge commit 'github.sha' appears
-   above main, joined to both tips, with a PINK arrow into main's runner; the PR arrow turns GREY
-   dashed and its label goes (the runner's arrow now comes from the ghost). The ghost's label flashes on "the commit ID the jobs
+   above main, joined to both tips; the lit PR arc re-aims (ReplacementTransform) into the PINK
+   ghost -> runner arrow and its label goes (scene-local ghost_merge()). The ghost's label flashes on "the commit ID the jobs
    see"; GREY caption "each merge is tested".
 5. lecture_ref 24. The answer chips and caption go. The GOLD meter blocks pulse one by one; three
    GREY chips dock on the meter row, one per phrase: "branch filter", "one shared build", "image
@@ -82,6 +83,29 @@ def pr_arrow(scene, tl: TriggerLanes, src: str = FEATURE, dst: str = "main"):
     return ar, t
 
 
+def ghost_merge(scene, tl: TriggerLanes, dst: str = "main", src: str = FEATURE):
+    """TriggerLanes.ghost_merge with the runner's arrow re-aimed: the lit PR arc (tip -> runner)
+    becomes the ghost -> runner arrow, and its label goes, instead of a second arrow next to it."""
+    y = tl.lanes[dst].line.get_center()[1] + tl.pitch * 0.55
+    c = DashedVMobject(Circle(radius=0.16), num_dashes=10).set_stroke(S.GREY, 2.5).move_to([tl.lx1 - 0.9, y, 0])
+    t = mono("github.sha", 20, S.GREY).next_to(c, UP, buff=0.12)
+    l1 = DashedLine(tl.dots[dst][-1].get_center(), c.get_center(), color=S.GREY, stroke_width=2, buff=0.18)
+    l2 = DashedLine(tl.dots[src][-1].get_center(), c.get_center(), color=S.GREY, stroke_width=2, buff=0.18)
+    aim = arrow(c, tl.runners[dst], ROUTE, 3, 0.2)
+    scene.play(Create(l1), Create(l2), FadeIn(c), FadeIn(t), run_time=0.7)
+    old, lab = tl.pr_arrow, tl.pr_label
+    scene.play(ReplacementTransform(old, aim), FadeOut(lab), run_time=0.7)
+    for m in (old, lab):
+        for owner in [tl, *tl.get_family()]:
+            if m in owner.submobjects:
+                owner.remove(m)
+        scene.remove(m)
+    tl.pr_arrow = tl.pr_label = None
+    tl.ghost = VGroup(c, t, l1, l2, aim)
+    tl.keep(scene, tl.ghost)
+    return tl.ghost
+
+
 class WhenItRuns(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S04"] == 7, len(SAY)
@@ -96,8 +120,9 @@ class WhenItRuns(VoiceScene):
         more_t.set_x(more.get_center()[0])
         push_bars = VGroup(line_bar(p0.code, 1, ROUTE, 0.25), line_bar(p0.code, 2, ROUTE, 0.25))
         pr_bars = VGroup(line_bar(p0.code, 3, ROUTE, 0.25), line_bar(p0.code, 4, ROUTE, 0.25))
+        hook = label("When does the pipeline wake up?", 34, INK).move_to([0, 2.25, 0])
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(tr, shift=RIGHT * 0.2), run_time=0.5)
+            self.play(FadeIn(tr, shift=RIGHT * 0.2), Write(hook), run_time=0.9)
             self.play(Indicate(tr.caption, color=TURN, scale_factor=1.05), run_time=0.6)
             vo.wait_until("The slide says")
             self.play(FadeIn(ref), FadeIn(quote, shift=UP * 0.2), run_time=0.6)
@@ -128,7 +153,7 @@ class WhenItRuns(VoiceScene):
                       erratum_tag("the triggers: main and develop")).arrange(DOWN, aligned_edge=RIGHT, buff=0.18)
         errs.next_to(strip2, UP, buff=0.3).align_to(strip2, RIGHT)
         with self.voiceover(SAY[1]) as vo:
-            gone = VGroup(quote, more, more_t, push_bars, pr_bars)
+            gone = VGroup(hook, quote, more, more_t, push_bars, pr_bars)
             self.play(FadeOut(gone), FadeOut(ref), run_time=0.4)
             self.remove(gone, *gone.get_family(), ref)
             self.play(Transform(p0, p1), run_time=0.7)
@@ -151,7 +176,9 @@ class WhenItRuns(VoiceScene):
             p1_pr = VGroup(line_bar(p1.code, 3, ROUTE, 0.25), line_bar(p1.code, 4, ROUTE, 0.25))
             self.play(FadeIn(p1_pr), Indicate(p1.code.code_lines[3], color=ROUTE, scale_factor=1.08), run_time=0.7)
             vo.wait_until("A small note")
-            self.play(FadeOut(r_ring), FadeOut(p1_pr), FadeIn(strip2, shift=UP * 0.2), run_time=0.6)
+            tl.save_state()   # the lanes step back while the erratum is the narrated thing
+            self.play(FadeOut(r_ring), FadeOut(p1_pr), FadeIn(strip2, shift=UP * 0.2),
+                      tl.animate.fade(0.7), run_time=0.6)
             self.remove(r_ring, p1_pr)
             vo.wait_until("the comment at the top of the file")
             self.play(Create(main_ul), Indicate(main_words, color=TURN, scale_factor=1.12), run_time=0.6)
@@ -165,8 +192,9 @@ class WhenItRuns(VoiceScene):
         # ========================================================== 2. the ponder
         with self.voiceover(SAY[2]) as vo:
             gone = VGroup(p1, p1_br, strip2, main_ul, errs)
-            self.play(FadeOut(gone), run_time=0.5)
+            self.play(FadeOut(gone), Restore(tl), run_time=0.5)
             self.remove(gone, *gone.get_family())
+            tl.saved_state = None
             tl.reset_runners(self)
             vo.wait_until("You push three commits")
             new = []
@@ -233,10 +261,7 @@ class WhenItRuns(VoiceScene):
             vo.wait_until("GitHub makes a temporary merge")
             self.play(FadeOut(tip_ring), run_time=0.3)
             self.remove(tip_ring)
-            ghost = tl.ghost_merge(self)
-            dim = route(tl.pr_a, tl.pr_b, arc=-0.6, color=S.GREY, dashed=True)
-            self.play(Transform(tl.pr_arrow, dim), run_time=0.5)
-            tl.drop(self, tl.pr_label, run_time=0.3)
+            ghost = ghost_merge(self, tl)
             vo.wait_until("and the commit ID the jobs see")
             sha_t = ghost[1]
             self.play(Indicate(sha_t, color=ROUTE, scale_factor=1.15), run_time=0.6)

@@ -202,11 +202,33 @@ class LocalHooks(VoiceScene):
             self.remove(in_dot)
             sd.drop(self, sd.chips, sd.waves)
             vo.wait_until("doesn't run your own pre-receive scripts")
-            sd.github(self)
+            # ServerDoor.github(), split: relabel + dashed gate now, each new piece on its own phrase
+            new_name = label("GitHub.com", 22, GITHUB).move_to(sd.name, aligned_edge=LEFT)
+            dashed = dashed_copy(VGroup(*sd.gate.posts, sd.gate.bar), S.GREY)
+            note_ = grey_chip("your own scripts: not on GitHub.com").next_to(sd.gate.text, DOWN, buff=0.12)
+            note_.shift(RIGHT * (sd.door.get_left()[0] - 0.15 - note_.get_right()[0]))
+            sd.drop(self, sd.update_c, run_time=0.3)
+            sd.update_c = None
+            self.play(FadeOut(sd.name), FadeIn(new_name), FadeOut(sd.gate.posts), FadeOut(sd.gate.bar),
+                      FadeIn(dashed), FadeIn(note_), run_time=0.8)
+            sd.remove(sd.gate, sd.name)
+            self.remove(sd.gate, sd.name)
+            sd.name, sd.gate_dashed = new_name, dashed
+            act = github_chip("Actions").next_to(sd.bell, UP, buff=0.12)
+            prot = gate_glyph(0.9, 0.6, PASS).move_to(sd.door.get_left() + LEFT * 0.42)
+            prot.text = label("branch protection", 20, PASS).next_to(prot, UP, buff=0.12)
+            prot.text.shift(LEFT * max(0, prot.text.get_right()[0] - (sd.door.get_left()[0] - 0.12)))
+            sd.actions, sd.protection = act, prot
+            sd.keep(self, new_name, dashed, note_)
+            self.play(Indicate(note_, color=INK, scale_factor=1.05), run_time=0.6)
             vo.wait_until("Actions, which runs after the push")
-            self.play(Indicate(sd.actions, color=GITHUB, scale_factor=1.12), run_time=0.6)
+            self.play(FadeIn(act, shift=DOWN * 0.3), run_time=0.5)
+            self.play(Indicate(act, color=GITHUB, scale_factor=1.12), run_time=0.6)
             vo.wait_until("and branch protection")
+            self.play(FadeIn(prot, shift=RIGHT * 0.3), FadeIn(prot.text), run_time=0.5)
+            sd.keep(self, act, prot, prot.text)
             sd.protect(self)
+            vo.wait_until("which can say no")
             self.play(Write(cap), run_time=0.9)
 
         # ========================================================== 6. hooks act only inside Git

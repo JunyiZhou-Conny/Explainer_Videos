@@ -3,7 +3,7 @@ the sample in beat 6. Lecture: 21 · slides 1, 4 (beat 4 only).
 
 Beats (script.md "## S01", one voiceover block each):
 0. Black frame. GRAPH(run1) builds with every node GREY (tag 'illustration · colors from our live
-   runs'). On "Soon after" the Test Summary node expands (Transform) into LOG(run1/test-summary/01:
+   runs'). On "Soon after" the Test Summary node expands (the log grows out of it) into LOG(run1/test-summary/01:
    13–16), title "Test Summary › Check test results", the multi-line heading collapsed into one GREY
    row "Check test results", tag 'live · stand-in runner'; the graph dims to 20 % behind it.
    The three `success` words light GREEN one by one, then line 16 `✅ All tests passed!` grows GREEN
@@ -112,7 +112,7 @@ class Hook(VoiceScene):
             vo.wait_until("Soon after")
             self.play(graph.pulse("test-summary", TURN), run_time=0.6)
             self.add(graph)
-            self.play(fade_to(graph, 0.2), ReplacementTransform(summ.copy(), log), run_time=0.9)
+            self.play(fade_to(graph, 0.2), FadeIn(log, target_position=summ, scale=0.15), run_time=0.9)
             self.add(log)
             for k, cue in ((13, "unit tests, success"), (14, "Integration tests, success"),
                            (15, "System tests, success")):
@@ -124,9 +124,8 @@ class Hook(VoiceScene):
             last = log.row(16)
             self.play(last.animate.set_color(PASS).scale(1.12), run_time=0.45)
             self.play(last.animate.scale(1 / 1.12), Circumscribe(last, color=PASS, buff=0.08), run_time=0.7)
-            ghost = summ.copy()
-            self.play(ReplacementTransform(log, ghost), fade_to(graph, 5.0), run_time=0.8)
-            self.remove(ghost)
+            self.play(FadeOut(log, target_position=summ, scale=0.15), fade_to(graph, 5.0), run_time=0.8)
+            self.remove(log)
             self.play(graph.set_state("test-summary", "success"), run_time=0.4)
             self.add(graph)
 
@@ -136,6 +135,8 @@ class Hook(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(strip, shift=UP * 0.3), FadeIn(bar_tag, shift=UP * 0.3), run_time=0.5)
             strip.add(bar_tag)
+            vo.wait_until("run end to end")
+            flash_tag(self, bar_tag, INK)
             vo.wait_until("job Lint and Format Check failed")
             err_ln = out(self, strip, [(ACT_LAST[0], ERR)], run_time=0.5)[0]
             self.play(Indicate(err_ln, color=ERR, scale_factor=1.05), run_time=0.6)
@@ -277,7 +278,7 @@ class Hook(VoiceScene):
             self.play(FadeIn(ill, shift=RIGHT * 0.15), run_time=0.4)
             flash_tag(self, ill)
             vo.wait_until("and they say so")
-            self.play(Indicate(ill, color=INK, scale_factor=1.1), run_time=0.6)
+            flash_tag(self, ill, INK, run_time=0.6)
 
         everything = VGroup(tr, panel, demo, mini, ill, card)
         self.play(FadeOut(everything), run_time=0.6)

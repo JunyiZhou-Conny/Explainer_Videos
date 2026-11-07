@@ -168,8 +168,12 @@ def clear_lines(scene, t: Terminal, run_time: float = 0.4):
 def compact_graph(states=None) -> JobGraph:
     """GRAPH(run3), compact: short labels, the run badge above Build, the tag right of Summary."""
     g = JobGraph(states=states, labels="short", size=20, pitch=0.55, col_gap=0.6)
-    g.badge.next_to(g.nodes["build"], UP, buff=0.22).align_to(g.nodes["build"], LEFT)
-    g.tag.next_to(g.nodes["test-summary"], DOWN, buff=0.22).align_to(g.nodes["test-summary"], RIGHT)
+    g.badge.next_to(g.nodes["build"], LEFT, buff=0.3)
+    g.tag.next_to(g.nodes["lint-and-format"], RIGHT, buff=0.3)
+    summ = g.nodes["test-summary"]
+    assert g.tag.get_top()[1] < summ.get_bottom()[1] - 0.1, (g.tag.get_top(), summ.get_bottom())
+    g.shift(-g.get_center()[0] * RIGHT)
+    assert g.width < 12.9, g.width
     return g
 
 
@@ -183,12 +187,22 @@ def file_card(title: str, code_line: str, color) -> VGroup:
     return g
 
 
-def code_card(head: str, lines, size: float = 22) -> VGroup:
+def not_in_ci() -> VGroup:
+    """A GREY dashed 'not in CI' chip sized for a 0.42 table row. .box .text"""
+    t = label("not in CI", 20, S.GREY)
+    ob = outline_box(t.width + 0.34, 0.36, S.GREY, solid=False, radius=0.18)
+    t.move_to(ob)
+    g = VGroup(ob, t)
+    g.box, g.text = ob, t
+    return g
+
+
+def code_card(head: str, lines, size: float = 20) -> VGroup:
     """A GREY card: a label header, then mono command rows. .frame .head .rows"""
     hd = label(head, 22, S.GREY)
-    rows = VGroup(*[mono_line(s, size, INK) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
-    body = VGroup(hd, rows).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
-    fr = box(body.width + 0.6, body.height + 0.45, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+    rows = VGroup(*[mono_line(s, size, INK) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.08)
+    body = VGroup(hd, rows).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
+    fr = box(body.width + 0.6, body.height + 0.36, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
     body.move_to(fr)
     g = VGroup(fr, body)
     g.frame, g.head, g.rows = fr, hd, rows
@@ -241,7 +255,9 @@ class NoVerify(VoiceScene):
             hl = hl_bar(substring(plus, "z=power(x,2)+power(y,2)"), TURN, opacity=0.35)
             self.play(FadeIn(hl), Indicate(substring(plus, "z=power(x,2)+power(y,2)"), color=TURN,
                                            scale_factor=1.06), run_time=0.7)
-            attach(self, plus, hl)
+            self.remove(hl)
+            plus.add_to_back(hl)
+            self.add(plus)
 
         # ========================================================== 2. the hook stops the commit
         hc2 = HookChain(size=20).move_to(CHAIN_C)
@@ -278,11 +294,15 @@ class NoVerify(VoiceScene):
             mm2 = substring(mm, "MM")
             self.play(Indicate(mm2, color=TURN, scale_factor=1.3), run_time=0.6)
             vo.wait_until("Black fixed your working copy")
-            a2 = arrow(mm2[1].get_top() + UP * 0.05, work.get_bottom() + DOWN * 0.08, PASS, stroke=2.5)
-            self.play(FadeIn(work, shift=UP * 0.2), GrowArrow(a2), mm2[1].animate.set_color(PASS), run_time=0.7)
+            a2 = mm2[1].copy()
+            self.add(a2)
+            self.play(FadeIn(work, shift=UP * 0.2), mm2[1].animate.set_color(PASS),
+                      a2.animate.move_to(work.icon.get_left() + LEFT * 0.35).set_color(PASS), run_time=0.8)
             vo.wait_until("but the staged copy")
-            a1 = arrow(mm2[0].get_top() + UP * 0.05, staged.get_bottom() + DOWN * 0.08, ERR, stroke=2.5)
-            self.play(FadeIn(staged, shift=UP * 0.2), GrowArrow(a1), mm2[0].animate.set_color(ERR), run_time=0.7)
+            a1 = mm2[0].copy()
+            self.add(a1)
+            self.play(FadeIn(staged, shift=UP * 0.2), mm2[0].animate.set_color(ERR),
+                      a1.animate.move_to(staged.icon.get_left() + LEFT * 0.35).set_color(ERR), run_time=0.8)
             self.play(Indicate(staged.code, color=ERR, scale_factor=1.06), run_time=0.6)
 
         # ========================================================== 4. slide 30: --no-verify
@@ -311,16 +331,18 @@ class NoVerify(VoiceScene):
             d4 = hc4.commit(self, color=PASS)
             arc = hc4.bypass(self, d4, run_time=1.0)
             nvc = err_chip("--no-verify", mono_font=True)
-            nvc.next_to(hc4.frame, UP, buff=0.12).align_to(hc4.frame, RIGHT)
+            nvc.move_to(hc4.frame.get_corner(DR) + np.array([-0.2 - nvc.width / 2, 0.2 + nvc.height / 2, 0]))
+            assert nvc.get_top()[1] < hc4.gates.get_bottom()[1] or nvc.get_left()[0] > hc4.gates.get_right()[0] + 0.2, \
+                (nvc.get_corner(UL), hc4.gates.get_corner(DR))
             self.play(FadeIn(nvc, shift=DOWN * 0.1), d4.animate.set_color(ERR), run_time=0.4)
             hc4.keep(self, nvc)
 
         # ========================================================== 5. push: run 3
         sv5 = server_box().move_to(SERVER_C)
         g5 = compact_graph(None)
-        g5.move_to([0, TOP - g5.height / 2, 0])
         lg = run_log(L04, (4, 6, 7), colors={4: ERR})
         lg.move_to([0, -3.5 + lg.height / 2, 0])
+        g5.move_to([0, (TOP + lg.get_top()[1] + 0.35) / 2, 0])
         assert lg.get_top()[1] < g5.get_bottom()[1] - 0.15, (lg.get_top(), g5.get_bottom())
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeIn(sv5, shift=LEFT * 0.2), run_time=0.4)
@@ -400,8 +422,8 @@ class NoVerify(VoiceScene):
                                   lag_ratio=0.35), run_time=1.2)
 
         # ========================================================== 8. what CI repeats, and what not
-        pitch = 0.44
-        hdr_y, row0 = 1.85, 1.3
+        pitch = 0.42
+        hdr_y, row0 = 1.85, 1.32
         lx, rx = -5.9, 0.6
         lh = VGroup(label("local hooks", 24, LAPTOP), mono(".pre-commit-config.yaml", 20, S.GREY)).arrange(RIGHT, buff=0.3)
         lh.move_to([lx + lh.width / 2, hdr_y, 0])
@@ -412,14 +434,14 @@ class NoVerify(VoiceScene):
         ticks = VGroup()
         for i, n in ((7, 61), (8, 66)):
             mk = check_mark(0.3, PASS)
-            ch = ok_chip(f"api/ only · ci.yml:{n}", mono_font=True)
+            ch = row_tag([(f"api/ only · ci.yml:{n}", "mono")], PASS)
             row = VGroup(mk, ch).arrange(RIGHT, buff=0.25).move_to([0, names[i].get_center()[1], 0])
             row.align_to(np.array([rx, 0, 0]), LEFT)
             ticks.add(row)
-        nots = VGroup(*[dashed_chip("not in CI").move_to([0, names[i].get_center()[1], 0])
+        nots = VGroup(*[not_in_ci().move_to([0, names[i].get_center()[1], 0])
                         .align_to(np.array([rx, 0, 0]), LEFT) for i in range(7)])
         err8 = VGroup(erratum_tag(), grey_chip("the slides: CI repeats the checks · this CI: two of them"))
-        err8.arrange(RIGHT, buff=0.25).move_to([0, -2.75, 0])
+        err8.arrange(RIGHT, buff=0.25).move_to([0, -2.72, 0])
         assert names[-1].get_bottom()[1] > err8.get_top()[1] + 0.15, names[-1].get_bottom()
         table = VGroup(lh, rh, rule, names)
         spoken = ("trailing whitespace", "end of file", "YAML", "large files", "JSON", "merge markers",
@@ -444,16 +466,19 @@ class NoVerify(VoiceScene):
             self.play(Indicate(names[6], color=ERR, scale_factor=1.08), run_time=0.5)
 
         # ========================================================== 9. pinned Black vs the image's Black
-        v1 = grey_chip(f"pre-commit: Black {VERSIONS['black (hook)']} (pinned)", size=22)
-        v2 = image_chip(f"image: black {VERSIONS['black (image)']} (newest)", size=22)
+        v1 = grey_chip(f"pre-commit: Black {VERSIONS['black (hook)']} (pinned)", size=20)
+        v2 = image_chip(f"image: black {VERSIONS['black (image)']} (newest)", size=20)
         eq = label("=", 36, PASS)
-        vrow = VGroup(v1, eq, v2).arrange(RIGHT, buff=1.0).move_to([0, -2.45, 0])
+        vrow = VGroup(v1, eq, v2).arrange(RIGHT, buff=0.85).move_to([0, -2.72, 0])
         ne = dashed_chip("≠ some day", S.GREY, size=22).move_to(eq)
-        assert ne.width < 1.0 + eq.width + 1.0 - 0.3, ne.width
-        rec = recording_tag().move_to([0, -3.2, 0])
+        assert ne.width < 0.85 * 2 + eq.width + 0.5 - 0.3, ne.width
+        assert vrow.width + 0.5 < 13.2, vrow.width
+        rec = recording_tag().move_to([0, -3.3, 0])
+        assert vrow.get_top()[1] < names[-1].get_bottom()[1] - 0.1 and rec.get_top()[1] < vrow.get_bottom()[1], \
+            (vrow.get_top(), rec.get_top())
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(err8), table.animate.set_opacity(0.45), nots.animate.set_opacity(0.45),
-                      ticks.animate.set_opacity(0.45), run_time=0.5)
+            self.play(FadeOut(err8), table.animate.fade(0.55), nots.animate.fade(0.55),
+                      ticks.animate.fade(0.55), run_time=0.5)
             self.remove(err8, *err8.get_family())
             vo.wait_until("the hooks pin an older Black")
             self.play(FadeIn(v1, shift=UP * 0.15), run_time=0.5)
@@ -463,7 +488,7 @@ class NoVerify(VoiceScene):
             self.play(FadeIn(eq, scale=0.6), FadeIn(rec, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("but they can drift apart")
             self.play(Wiggle(eq, scale_value=1.3, rotation_angle=0.08 * TAU), run_time=0.8)
-            self.play(ReplacementTransform(eq, ne), v1.animate.shift(LEFT * 0.2), v2.animate.shift(RIGHT * 0.2),
+            self.play(ReplacementTransform(eq, ne), v1.animate.shift(LEFT * 0.25), v2.animate.shift(RIGHT * 0.25),
                       run_time=0.6)
 
         # ========================================================== 10. ponder: a key with --no-verify
@@ -478,10 +503,11 @@ class NoVerify(VoiceScene):
         hub = VGroup(gh, gh_t, gil, g10)
         hub.move_to([6.45 - hub.width / 2, TOP - hub.height / 2, 0])
         assert hub.get_left()[0] > lap.get_right()[0] + 1.6, (hub.get_left(), lap.get_right())
-        land = np.array([g10.nodes["build"].get_left()[0] - 0.35, g10.nodes["build"].get_center()[1] + 0.55, 0])
-        kpath = ArcBetweenPointsNoTip(key.get_center(), land, -PI / 3, ERR, 4)
-        nv10 = err_chip("--no-verify", mono_font=True).next_to(kpath, UP, buff=0.05)
-        nv10.shift(RIGHT * max(0, -6.4 - nv10.get_left()[0]))
+        land = g10.nodes["build"].get_top() + UP * 0.45
+        kpath = ArcBetweenPointsNoTip(key.get_center(), land, -PI / 5, ERR, 4)
+        nv10 = err_chip("--no-verify", mono_font=True).next_to(kpath, DOWN, buff=0.12)
+        nv10.move_to([(lap.get_right()[0] + gh.get_left()[0]) / 2, nv10.get_center()[1], 0])
+        assert kpath.get_top()[1] < TOP and nv10.get_right()[0] < gh.get_left()[0] - 0.1, (kpath.get_top(), nv10.get_right())
         with self.voiceover(SAY[10]) as vo:
             gone = VGroup(table, nots, ticks, v1, v2, ne, rec)
             self.play(FadeOut(gone), run_time=0.5)
@@ -503,7 +529,7 @@ class NoVerify(VoiceScene):
         ref11 = lref("11")
         chat = chat_window(rows=[label("Failed step:", 20, ERR),
                                  mono("Run python3 -m", 20, INK), mono("pre-commit run --all-files", 20, INK)],
-                           win_w=5.2, win_h=2.25)
+                           win_w=4.9, win_h=1.95)
         chat.move_to([-6.45 + chat.width / 2, 0.65, 0])
         ctag = illustration_tag().next_to(chat, DOWN, buff=0.15).align_to(chat, LEFT)
         lint = g10.nodes["lint-and-format"]
@@ -520,7 +546,7 @@ class NoVerify(VoiceScene):
             vo.wait_until("None")
             for j in ("build", "unit-tests", "integration-tests", "system-tests", "lint-and-format", "test-summary"):
                 nd = g10.nodes[j]
-                self.play(key.animate.move_to(nd.get_top() + UP * 0.28), run_time=0.22)
+                self.play(key.animate.move_to(nd.get_top() + UP * 0.36), run_time=0.22)
                 self.play(g10.pulse(j, S.GREY), run_time=0.22)
             vo.wait_until("Detect private key is a local hook only")
             self.play(FadeOut(VGroup(kpath, nv10)), run_time=0.4)
