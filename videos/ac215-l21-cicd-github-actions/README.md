@@ -44,10 +44,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l21-cicd-github-actions.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l21-cicd-github-actions.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 28:54.7 (1734.7 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l21-cicd-github-actions.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l21-cicd-github-actions_part1.mp4` | part 1, DURATION_P1: from local hooks to a pipeline on GitHub — read it, push it, watch it (S01–S07). Release asset, not in Git |
-| `output/ac215-l21-cicd-github-actions_part2.mp4` | part 2, DURATION_P2: the run job by job — artifacts, exit codes, tests, `--no-verify`, Slack and branch protection (S08–S16). Release asset, not in Git |
+| `output/ac215-l21-cicd-github-actions_part1.mp4` | part 1, 12:36.3 (756.3 s): from local hooks to a pipeline on GitHub — read it, push it, watch it (S01–S07). Release asset, not in Git |
+| `output/ac215-l21-cicd-github-actions_part2.mp4` | part 2, 16:18.4 (978.4 s): the run job by job — artifacts, exit codes, tests, `--no-verify`, Slack and branch protection (S08–S16). Release asset, not in Git |
 | `output/ac215-l21-cicd-github-actions.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l21-cicd-github-actions.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l21-cicd-github-actions.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -66,7 +66,26 @@ the two part cuts) are release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts). Part 1 (12:36) is chapters 00:00–10:46 below; part 2 (16:18) restarts at 00:00 with "Build once; every job starts empty", its chapters at 00:00, 02:13, 03:41, 05:44, 07:33, 08:53, 11:14, 13:04, 14:42.
+
+```
+00:00 Red run, green summary
+01:33 Hooks stay on your laptop
+03:24 The CI loop and the workflow file
+05:21 When does the pipeline wake up?
+06:57 Six jobs, one graph
+08:40 Push to a repo of your own
+10:46 Watch the run: six colours
+12:36 Build once; every job starts empty
+14:49 Gates speak in exit codes
+16:17 Three test jobs, three altitudes
+18:21 The summary listens only to tests
+20:09 Fix, push, green: one turn of the loop
+21:29 The local conundrum: --no-verify
+23:50 Webhooks, secrets and the Slack bell
+25:40 Branch protection: from report to gate
+27:18 Non-determinism, CD next, and recap
+```
 
 ## What you'll learn
 
