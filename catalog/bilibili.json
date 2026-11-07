@@ -166,6 +166,11 @@
       "bvid": "BV1hs4H6SEMj",
       "title": "AC215 第20讲跟练 · 部署：先手动把奶酪 App 部署到一台 GCP VM，再用 Pulumi 把同样的部署写成代码",
       "pubdate": 1794076900
+    },
+    "ac215-l21-cicd-github-actions": {
+      "bvid": "BV1Vp4W6fEEM",
+      "title": "AC215 第21讲跟练 · 用 GitHub Actions 做 CI：一次 push，六台全新的机器",
+      "pubdate": 1794090820
     }
   },
   "unmatched": [
