@@ -212,7 +212,7 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from manim import (Star, WHITE, DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, TAU, UL, UP, UR, AnimationGroup, Arc,  # noqa: F401
+from manim import (Star, WHITE, ParametricFunction, DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, TAU, UL, UP, UR, AnimationGroup, Arc,  # noqa: F401
                    Arrow, Circle, Circumscribe, Create, CurvedArrow, DashedLine, DashedVMobject, Dot, FadeIn, FadeOut,
                    GrowArrow, GrowFromCenter, Indicate, LaggedStart, Line, MoveAlongPath, Polygon,
                    Rectangle, ReplacementTransform, RoundedRectangle, Rotate, ShowIncreasingSubsets,
@@ -315,7 +315,7 @@ def unname(s: str) -> str:
 
 
 # ------------------------------------------------------------------ emoji (script.md "Emoji")
-EMOJI_GLYPH = {"✅": "check", "❌": "cross", "💥": "box", "💔": "box", "✨": "sparkle", "🍰": "cake",
+EMOJI_GLYPH = {"✅": "check", "❌": "cross", "💥": "burst", "💔": "heart", "✨": "sparkle", "🍰": "cake",
                "🏁": "flag"}
 
 
@@ -368,6 +368,22 @@ def emo_line(s: str, size: float = 22, color=OUTPUT, t2c: dict | None = None) ->
             g = check_mark(ref_h * 1.15, PASS, stroke=4)
         elif kind == "cross":
             g = cross_mark(ref_h * 1.0, ERR, stroke=4)
+        elif kind == "burst":            # 💥: ORANGE star burst with a YELLOW core (as S09 drew it)
+            g = VGroup(Star(n=8, outer_radius=ref_h * 0.58, inner_radius=ref_h * 0.27, stroke_width=0)
+                       .set_fill(S.ORANGE, 1),
+                       Star(n=8, outer_radius=ref_h * 0.32, inner_radius=ref_h * 0.16, stroke_width=0)
+                       .set_fill(S.YELLOW, 1).rotate(PI / 8))
+        elif kind == "heart":            # 💔: RED heart with a dark zigzag crack
+            def _pt(t):
+                return np.array([16 * np.sin(t) ** 3,
+                                 13 * np.cos(t) - 5 * np.cos(2 * t) - 2 * np.cos(3 * t) - np.cos(4 * t), 0]) / 32
+            heart = ParametricFunction(_pt, t_range=[0, TAU], stroke_width=0).set_fill(ERR, 1)
+            heart.scale_to_fit_height(ref_h * 1.0)
+            top, bot = heart.get_top()[1] - ref_h * 0.19, heart.get_bottom()[1] + ref_h * 0.05
+            cx, dx = heart.get_center()[0], ref_h * 0.1
+            crack = VMobject(stroke_color=TERM_BG, stroke_width=3).set_points_as_corners(
+                [[cx + (dx if k % 2 else -dx * 0.4), y, 0] for k, y in enumerate(np.linspace(top, bot, 5))])
+            g = VGroup(heart, crack)
         elif kind == "sparkle":          # ✨: a small four-point GOLD star (no empty box)
             g = Star(n=4, outer_radius=ref_h * 0.62, inner_radius=ref_h * 0.2, stroke_width=0
                      ).set_fill(S.GOLD, 1)

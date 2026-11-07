@@ -51,7 +51,7 @@ S08:
   - "这个 tag 只表示这个 commit 的 image，别的都不是。"
   en_display:
   - null
-  - "Docker builds the image from the Dockerfile and names it cheese-app-api:<commit ID>."
+  - "Docker builds the image from the Dockerfile, and names it cheese-app-api:<commit ID>."
   - null
 - en: "A small slip: the README promises Buildx caching, but the build runs on the default builder, and nothing saves a cache, so every fresh machine rebuilds from scratch. The exercises show how."
   zh:
@@ -182,7 +182,7 @@ S10:
 - en: "System tests need the real thing. One container starts the server in the background and publishes port 9000 on the runner. An extra command, docker ps, shows it running, with 9000 mapped."
   zh:
   - "系统测试要真家伙。"
-  - "一个 container 在后台启动服务器，把 port 9000 发布到 runner 上。"
+  - "一个 container 在后台启动服务器并发布 port 9000。"
   - "一条额外的命令 docker ps 显示它正在运行，9000 已经映射好了。"
 - en: "Then the job waits 10 seconds, and curl, dash f, knocks on localhost 9000. Only when the welcome message comes back does the next gate open."
   zh:
@@ -566,5 +566,5 @@ S16:
   - "第四题：为什么 Flake8 失败了，它的 job 却不会失败；Black 失败时，你又为什么看不到它的输出？"
 - en: "Five: is a push-triggered run a pre-receive or a post-receive check, and what makes it a gate? Answers are in the exercises and the study guide."
   zh:
-  - "第五题：由 push 触发的 run，是 pre-receive 检查还是 post-receive 检查，又是什么让它成为门禁？"
+  - "第五题：由 push 触发的 run 是 pre-receive 检查还是 post-receive 检查，又是什么让它成为门禁？"
   - "答案在练习和学习指南里。"

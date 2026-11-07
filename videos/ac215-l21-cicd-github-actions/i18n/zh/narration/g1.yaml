@@ -214,7 +214,7 @@ S05:
   zh:
   - "现在，每一行 needs 画出一条箭头。"
   - "先看 lint and format，它需要 build。"
-  - "Unit tests、integration tests 和 system tests 也各自需要 build。"
+  - "三个测试 job 也各自需要 build。"
   - "所以 build 之后，四个 job 并排运行，各在自己的机器上。"
 - en: "Test summary needs the three test jobs. Look closely: the lint job isn't on that list. The lecture lists the stages in order; on GitHub, four of them run side by side, and the summary listens only to the tests. Keep that gap in mind."
   zh:
@@ -273,7 +273,7 @@ S06:
 - en: "So point origin at a repository you own. Either fork the course's repository and enable workflows on its Actions tab, or create a new empty repository. Either way, run git remote set-url origin, with your own address. Pause and set yours up."
   zh:
   - "所以把 origin 指向一个你自己的 repo。"
-  - "要么 fork 课程的 repo，再到它的 Actions 标签页启用工作流，要么新建一个空 repo。"
+  - "要么 fork 课程的 repo 再到它的 Actions 标签页启用工作流，要么新建一个空 repo。"
   - "不管选哪个，都运行：git remote set-url origin，后面跟你自己的地址。"
   - "暂停一下，把你的设置好。"
 - en: "This recording machine can't push to GitHub, so an empty repository on the same machine stands in for yours. From now on we just say your repository."
