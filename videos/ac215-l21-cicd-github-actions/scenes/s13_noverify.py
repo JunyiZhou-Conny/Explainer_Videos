@@ -27,8 +27,8 @@ Beats (script.md "## S13", one voiceover block each):
    the BLUE server, whose `Check Code` box flashes RED with a RED chip "caught".
 7. LECTURE off. Server and log leave. A 5-row terminal: `git status --short` → TERM(laptop/48: 2);
    `git restore src/api-service/api/service.py && git status --short` (folds) → (no output). Above
-   it a GREY code card headed "pushed it too?" (RED ✗ "main") with the four commands, tag "shown,
-   not run".
+   it two GREY code cards, tag "shown, not run": "not pushed?" with `git reset --hard HEAD~1`, and
+   "pushed?" (RED ✗ "main") with the four commands (the messy commit is on local main either way).
 8. Two columns from `.pre-commit-config.yaml:12–44`: "local hooks" (GREY) lists the nine hook ids;
    "CI" (BLUE): `black` and `flake8` get GREEN ticks and chips "api/ only · ci.yml:61" / ":66";
    the seven hygiene rows get GREY dashed "not in CI" one by one as they are named. A GREY
@@ -347,7 +347,7 @@ class NoVerify(VoiceScene):
         assert lg.get_top()[1] < g5.get_bottom()[1] - 0.15, (lg.get_top(), g5.get_bottom())
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeIn(sv5, shift=LEFT * 0.2), run_time=0.4)
-            vo.wait_until("Push it")
+            vo.wait_until("We push it")
             (pl,) = type_capture(self, t, C45, type_time=0.4)
             (pushed,) = out(self, t, [C45.line(3)])
             hc4.push(self, d4, sv5.frame.get_left() + RIGHT * 0.5 + DOWN * 0.25, arc=-0.4, run_time=0.7)
@@ -393,14 +393,19 @@ class NoVerify(VoiceScene):
 
         # ========================================================== 7. clean up the experiment
         t7 = laptop_term(5)
-        card = code_card("pushed it too?", ["pre-commit run --all-files", "git add .",
-                                            'git commit -m "Format service.py"', "git push"])
+        # the messy commit is on local main, pushed or not: two cards, both "shown, not run"
+        card_np = code_card("not pushed?", ["git reset --hard HEAD~1"])
+        card = code_card("pushed?", ["pre-commit run --all-files", "git add .",
+                                     'git commit -m "Format service.py"', "git push"])
         red = VGroup(state_mark("failure", 0.3), mono("main", 22, OWN)).arrange(RIGHT, buff=0.15)
         red.next_to(card.head, RIGHT, buff=0.35)
         card.add(red)
-        card.move_to([-1.2, (TOP + t7.box.get_top()[1]) / 2, 0])
-        shown = shown_tag().next_to(card, RIGHT, buff=0.3).align_to(card, UP)
-        assert card.get_top()[1] < TOP and card.get_bottom()[1] > t7.box.get_top()[1] + 0.1, card.get_bottom()
+        cards = VGroup(card_np, card).arrange(RIGHT, buff=0.45, aligned_edge=UP)
+        cards.move_to([0, 0, 0]).align_to(np.array([0, TOP - 0.05, 0]), UP)
+        shown = shown_tag().next_to(card_np, DOWN, buff=0.25).align_to(card_np, LEFT)
+        assert cards.get_left()[0] > -6.6 and cards.get_right()[0] < 6.6, (cards.get_left(), cards.get_right())
+        assert card.get_bottom()[1] > t7.box.get_top()[1] + 0.1, (card.get_bottom(), t7.box.get_top())
+        assert shown.get_bottom()[1] > t7.box.get_top()[1] + 0.1, shown.get_bottom()
         with self.voiceover(SAY[7]) as vo:
             gone = VGroup(sv6, caught, lg6, xt)
             self.play(FadeOut(gone), FadeOut(ref), run_time=0.5)
@@ -413,11 +418,16 @@ class NoVerify(VoiceScene):
             type_capture(self, t7, C49, type_time=1.0)
             bare_prompt(self, t7)
             vo.wait_until("the messy commit is on your main")
-            self.play(FadeIn(card, shift=DOWN * 0.15), FadeIn(shown, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeIn(cards, shift=DOWN * 0.15), FadeIn(shown, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("pushed or not")
-            self.play(Indicate(red, color=ERR, scale_factor=1.15), run_time=0.6)
+            self.play(Indicate(VGroup(card_np.head, card.head), color=TURN, scale_factor=1.08), run_time=0.6)
+            vo.wait_until("Not pushed yet")
+            self.play(Circumscribe(card_np.frame, color=TURN, buff=0.04), run_time=0.6)
+            vo.wait_until("Git reset, hard")
+            self.play(Indicate(card_np.rows[0], color=TURN, scale_factor=1.05), run_time=0.6)
             vo.wait_until("run pre-commit run, all files")
-            self.play(Indicate(card.rows[0], color=TURN, scale_factor=1.05), run_time=0.6)
+            self.play(Indicate(red, color=ERR, scale_factor=1.15), Indicate(card.rows[0], color=TURN, scale_factor=1.05),
+                      run_time=0.6)
             vo.wait_until("then add, commit and push")
             self.play(LaggedStart(*[Indicate(r, color=TURN, scale_factor=1.05) for r in card.rows[1:]],
                                   lag_ratio=0.35), run_time=1.2)
@@ -448,7 +458,7 @@ class NoVerify(VoiceScene):
         spoken = ("trailing whitespace", "end of file", "YAML", "large files", "JSON", "merge markers",
                   "and private keys")
         with self.voiceover(SAY[8]) as vo:
-            gone = VGroup(t7, card, shown)
+            gone = VGroup(t7, cards, shown)
             self.play(FadeOut(gone), run_time=0.5)
             self.remove(gone, *gone.get_family())
             self.play(FadeIn(lh, shift=RIGHT * 0.2), FadeIn(rh, shift=LEFT * 0.2), Create(rule), run_time=0.5)

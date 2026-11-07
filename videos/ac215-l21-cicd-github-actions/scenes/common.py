@@ -212,7 +212,7 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from manim import (DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, TAU, UL, UP, UR, AnimationGroup, Arc,  # noqa: F401
+from manim import (Star, WHITE, DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, TAU, UL, UP, UR, AnimationGroup, Arc,  # noqa: F401
                    Arrow, Circle, Circumscribe, Create, CurvedArrow, DashedLine, DashedVMobject, Dot, FadeIn, FadeOut,
                    GrowArrow, GrowFromCenter, Indicate, LaggedStart, Line, MoveAlongPath, Polygon,
                    Rectangle, ReplacementTransform, RoundedRectangle, Rotate, ShowIncreasingSubsets,
@@ -315,8 +315,8 @@ def unname(s: str) -> str:
 
 
 # ------------------------------------------------------------------ emoji (script.md "Emoji")
-EMOJI_GLYPH = {"✅": "check", "❌": "cross", "💥": "box", "💔": "box", "✨": "box", "🍰": "box",
-               "🏁": "box"}
+EMOJI_GLYPH = {"✅": "check", "❌": "cross", "💥": "box", "💔": "box", "✨": "sparkle", "🍰": "cake",
+               "🏁": "flag"}
 
 
 @lru_cache(maxsize=None)
@@ -368,6 +368,21 @@ def emo_line(s: str, size: float = 22, color=OUTPUT, t2c: dict | None = None) ->
             g = check_mark(ref_h * 1.15, PASS, stroke=4)
         elif kind == "cross":
             g = cross_mark(ref_h * 1.0, ERR, stroke=4)
+        elif kind == "sparkle":          # ✨: a small four-point GOLD star (no empty box)
+            g = Star(n=4, outer_radius=ref_h * 0.62, inner_radius=ref_h * 0.2, stroke_width=0
+                     ).set_fill(S.GOLD, 1)
+        elif kind == "cake":             # 🍰: a slice drawn as a wedge with a cream top
+            body = Polygon([-cw * 0.7, -ref_h * 0.5, 0], [cw * 0.7, -ref_h * 0.5, 0], [cw * 0.7, ref_h * 0.25, 0],
+                           stroke_width=0).set_fill("#E8C9A0", 1)
+            top = Polygon([-cw * 0.7, -ref_h * 0.5, 0], [cw * 0.7, ref_h * 0.25, 0], [cw * 0.7, ref_h * 0.45, 0],
+                          [-cw * 0.7, -ref_h * 0.3, 0], stroke_width=0).set_fill(WHITE, 1)
+            g = VGroup(body, top)
+        elif kind == "flag":             # 🏁: a 2x2 chequered flag on a pole
+            sq = ref_h * 0.32
+            cells = VGroup(*[Square(sq, stroke_width=0).set_fill(WHITE if (r + c) % 2 == 0 else S.GREY, 1)
+                             .move_to([c * sq, -r * sq, 0]) for r in range(2) for c in range(2)])
+            pole = Line([-sq * 0.5, sq * 0.5, 0], [-sq * 0.5, -ref_h * 0.6, 0], stroke_width=2, color=S.GREY)
+            g = VGroup(pole, cells)
         else:
             g = RoundedRectangle(width=cw * 1.5, height=ref_h * 1.1, corner_radius=0.04,
                                  stroke_color=S.GREY, stroke_width=2).set_fill(S.GREY, 0.2)

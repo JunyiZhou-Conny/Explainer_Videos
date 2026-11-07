@@ -23,7 +23,8 @@ Beats (script.md "## S11", one voiceover block each):
 5. The graph shrinks into a text-free graph glyph (top right). CODE(history/c3b227f-service.py
    38–44) at 20 pt: the docstring's `sqrt(x^2 + y^2)` WHITE, underlined; line 44 RED, `2 * z`
    ringed. GREY chip "demo class 1 · 2025-11-13" above, GREY chip "unit tests → utils.py ·
-   /euclidean_distance/ → integration + system" below.
+   /euclidean_distance/ → integration + system" below. On "We ran this one for you" a GREY chip
+   "watch only · we ran it for you" beside the demo chip (no command for the viewer here).
 6. The glyph grows into GRAPH(run-demo) at the start state (six GREY nodes); the panel condenses to
    line 44 (RED) with a GREY chip "the demo commit" under the graph. On "Which jobs" the six nodes
    pulse left to right; on "Test Summary" the summary node pulses. No colors change.
@@ -391,6 +392,7 @@ class TheSummary(VoiceScene):
         doc = code_span(sp.code, 2, "sqrt(x^2 + y^2)")
         bug = code_span(sp.code, 6, "result = math.sqrt(2 * z)")
         two = code_span(sp.code, 6, "2 * z")
+        watch = grey_chip("watch only · we ran it for you", size=20).next_to(demo_chip, RIGHT, buff=0.35)
         with self.voiceover(SAY[5]) as vo:
             rest = VGroup(card4, note4, ex_chip, after, fix_arrow, tip, red_chip)
             # the fix was hypothetical: run 1's summary goes back to green as its arrow leaves
@@ -415,6 +417,10 @@ class TheSummary(VoiceScene):
             self.play(Create(rg), run_time=0.5)
             vo.wait_until("instead of z")
             self.play(Indicate(two, color=ERR, scale_factor=1.3), run_time=0.7)
+            vo.wait_until("We ran this one for you")
+            self.play(FadeIn(watch, shift=LEFT * 0.2), run_time=0.5)
+            vo.wait_until("just watch")
+            self.play(Indicate(watch, color=INK, scale_factor=1.05), run_time=0.6)
 
         # ========================================================== 6. predict (ponder)
         gd = summary_graph(None)
@@ -424,9 +430,9 @@ class TheSummary(VoiceScene):
         sgrp.move_to([LEFT_X + sgrp.width / 2, -1.55 - strip44.height / 2, 0])
         b44 = code_span(strip44.code, 0, "result = math.sqrt(2 * z)")
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(demo_chip, map_chip, u_doc, rg, bb)),
+            self.play(FadeOut(VGroup(demo_chip, watch, map_chip, u_doc, rg, bb)),
                       ReplacementTransform(sp, strip44), FadeTransform(icon, gd), run_time=0.9)
-            self.remove(sp, icon, demo_chip, map_chip, u_doc, rg, bb)
+            self.remove(sp, icon, demo_chip, watch, map_chip, u_doc, rg, bb)
             self.add(gd, strip44)
             self.play(b44.animate.set_color(ERR), FadeIn(dcommit, shift=LEFT * 0.2), run_time=0.5)
             vo.wait_until("Which jobs turn red now")

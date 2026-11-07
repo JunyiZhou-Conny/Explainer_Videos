@@ -163,6 +163,8 @@ def draw_emoji(row, chars: str):
     """Swap emo_line's GREY placeholder boxes in `row` (in the order of `chars`) for drawn glyphs, so
     'Oh no! 💥 💔 💥' does not read as missing-font tofu. Shared fix requested in common.emo_line."""
     assert len(row.emoji) == len(chars), (len(row.emoji), chars)
+    if not all(isinstance(b, RoundedRectangle) for b in row.emoji):
+        return row      # common.emo_line already draws these glyphs: nothing to swap
     new = VGroup()
     for box_, ch in zip(list(row.emoji), chars):
         h = box_.height * 1.05

@@ -350,8 +350,11 @@ class SlackBell(VoiceScene):
                                              color=TURN, scale_factor=1.06), run_time=0.7)
             vo.wait_until("GitHub doesn't allow secrets there")
             nosec = err_chip("no secrets in if:")
-            nosec.next_to(p4.code.code_lines[11], RIGHT, buff=0.45).shift(DOWN * 0.12)
+            y202 = (p4.code.code_lines[7].get_center()[1] + p4.code.code_lines[9].get_center()[1]) / 2   # blank line 202
+            nosec.move_to([p4.get_right()[0] - 0.35 - nosec.width / 2, y202, 0])
             assert nosec.get_right()[0] < p4.get_right()[0] - 0.15, (nosec.get_right(), p4.get_right())
+            assert nosec.get_bottom()[1] > b204.get_top()[1] + 0.05, (nosec.get_bottom(), b204.get_top())
+            assert nosec.get_top()[1] < b200.get_bottom()[1] - 0.05, (nosec.get_top(), b200.get_bottom())
             self.play(FadeIn(nosec, shift=LEFT * 0.15),
                       Indicate(code_span(p4.code, 10, "if:"), color=ERR, scale_factor=1.15), run_time=0.7)
             vo.wait_until("the repository's own history tried it")

@@ -39,9 +39,12 @@ Beats (script.md "## S06", one voiceover block each):
    terminal "on GitHub: more lines first, same last line". The terminal shrinks to a strip; a GREY
    laptop, a PINK arrow and a dot fly into "your repository", a PINK spark with the chip "event · run
    1", a TEAL `cheese-app-api:b8458ff…` chip forms under it. `▶ your turn` beside `git push`.
-8. The drawing clears (the strip and its your-turn tag stay); a BLUE "your fork" box comes in, the
-   laptop's dashed GREY push arrow reaches it, chip "Everything up-to-date · no run"; a dashed GREY
-   arrow to the dashed chip "first run: part 2, with the fix". After the narration, fade; empty frame.
+8. The drawing clears (the strip stays; its your-turn tag leaves with the card in); a BLUE "your fork" box comes in, the
+   laptop's dashed GREY push arrow reaches it, chip "Everything up-to-date · no run". On "To get run 1
+   anyway" a GREY code card `git commit --allow-empty -m "Trigger CI"` / `git push` (tag "not in
+   README · shown, not run"; exercise-checks C3), YELLOW `▶ your turn` on "then git push"; on "Or
+   wait" a dashed GREY arrow to the dashed chip "or wait: first run in part 2". After
+   the narration, fade; empty frame.
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -77,6 +80,8 @@ assert C22.cmd == "git push" == readme(348)
 assert C22.line(3) == " * [new branch]      main -> main", C22.line(3)
 assert readme_lines(344, 344)[0][1] == "Push to GitHub"
 SET_URL = ("git remote set-url origin \\", "    " + YOUR_REPO_URL)
+# the fork route's empty commit (SAY[8]; verified in assets/exercise-checks row C3, not in the README)
+EMPTY_COMMIT = ('git commit --allow-empty -m "Trigger CI"', "git push")
 
 ART_Y = 0.55          # the drawings' row over a 3-row strip (y in [-1.3, 2.8])
 
@@ -449,8 +454,14 @@ class PushIt(VoiceScene):
             flash_tag(self, turn7)
 
         # ========================================================== 8. on a fork: no run 1
-        lap_to = lap2.copy().move_to([-4.6, 1.3, 0])
-        fk = repo_box("your fork", None, GITHUB, mono_top=False).move_to([-0.8, 1.3, 0])
+        lap_to = lap2.copy().move_to([-4.6, 2.0, 0])
+        fk = repo_box("your fork", None, GITHUB, mono_top=False).move_to([-0.8, 2.0, 0])
+        # the empty-commit route (exercise-checks C3: b8458ff..<new>  main -> main); not in the README
+        ec = note_card([(EMPTY_COMMIT[0], INK, "mono"), (EMPTY_COMMIT[1], INK, "mono")], size=22)
+        ec.move_to([0, -0.62, 0]).align_to(np.array([-6.2, 0, 0]), LEFT)
+        ec_tag = shown_tag("not in README · shown, not run").next_to(ec, UP, buff=0.18).align_to(ec, LEFT)
+        ec_turn = your_turn().next_to(ec, RIGHT, buff=0.35)
+        assert ec_turn.get_right()[0] <= 6.5 and ec.get_bottom()[1] >= -1.3, (ec_turn.get_right(), ec.get_bottom())
         with self.voiceover(SAY[8]) as vo:
             gone = VGroup(ar, sp, ev, img, yours)
             self.play(FadeOut(gone), lap2.animate.move_to(lap_to), run_time=0.6)
@@ -464,12 +475,23 @@ class PushIt(VoiceScene):
             upd = grey_chip("Everything up-to-date · no run").next_to(fk, DOWN, buff=0.3)
             self.play(FadeIn(upd, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(upd.text, color=INK, scale_factor=1.06), run_time=0.6)
-            vo.wait_until("Your first run then comes")
-            nxt = dashed_chip("first run: part 2, with the fix").move_to([3.6, upd.get_center()[1] - 1.0, 0])
-            nxt_ar = route(upd.get_right() + RIGHT * 0.1, nxt.get_top() + UP * 0.1, arc=-0.6, color=S.GREY,
-                           dashed=True)
+            vo.wait_until("To get run 1 anyway")
+            unpin(self, ps, turn7, FadeIn(ec, shift=UP * 0.2), FadeIn(ec_tag, shift=LEFT * 0.1), run_time=0.6)
+            vo.wait_until("git commit, allow empty")
+            self.play(Indicate(substring(ec.body[0], "--allow-empty"), color=TURN, scale_factor=1.1), run_time=0.7)
+            vo.wait_until("then git push")
+            self.play(Indicate(ec.body[1], color=TURN, scale_factor=1.1), FadeIn(ec_turn, shift=LEFT * 0.1),
+                      run_time=0.6)
+            flash_tag(self, ec_turn)
+            vo.wait_until("Or wait")
+            nxt = dashed_chip("or wait: first run in part 2")
+            nxt.move_to([0, upd.get_center()[1], 0]).align_to(np.array([6.4, 0, 0]), RIGHT)
+            assert nxt.get_left()[0] >= upd.get_right()[0] + 0.6, (nxt.get_left(), upd.get_right())
+            nxt_ar = route(upd.get_right() + RIGHT * 0.1, nxt.get_left() + LEFT * 0.1, color=S.GREY, dashed=True)
             self.play(Create(nxt_ar), run_time=0.5)
-            self.play(FadeIn(nxt, shift=UP * 0.15), run_time=0.5)
+            self.play(FadeIn(nxt, shift=LEFT * 0.15), run_time=0.5)
+            vo.wait_until("and your first run then comes")
+            self.play(Indicate(nxt.text, color=PAST, scale_factor=1.06), run_time=0.7)
         everything = Group(*self.mobjects)
         self.play(FadeOut(everything), run_time=0.8)
         self.remove(*self.mobjects)

@@ -28,7 +28,7 @@ Beats (script.md "## S03", one voiceover block each):
    dashed ghost "my-project/subfolder/.github/workflows/" with a RED ✗ "never runs", and the GREY
    chip "fix: move to the root .github/workflows/ + defaults: run: working-directory: · study guide".
 6. TRACKER P5 1. The strip and the tree go. CODE(ci.yml 5–11): line 5 YELLOW on "a name", lines
-   7–11 PINK on "the key called on". Transform to CODE(ci.yml 13–20): lines 13 and 15 YELLOW on
+   7 PINK on "the key called on", 8–11 PINK on "It lists the events". Transform to CODE(ci.yml 13–20): lines 13 and 15 YELLOW on
    "Under jobs", line 17 BLUE on "its own machine".
 7. V4 WorkflowTree (S03 form): the panel's `jobs:` line becomes the column of six BLUE job ids,
    the PINK root "on: push · pull_request" and "workflow: CI Pipeline" fade in above it. The build
@@ -328,8 +328,10 @@ class CiPipeline(VoiceScene):
                       run_time=0.6)
             vo.wait_until("the key called on")
             bars_on = VGroup(*[line_bar(p1.code, k, ROUTE) for k in range(2, 7)])
-            self.play(LaggedStart(*[FadeIn(bb) for bb in bars_on], lag_ratio=0.15), run_time=0.7)
-            self.play(Indicate(p1.code.code_lines[2], color=ROUTE, scale_factor=1.1), run_time=0.6)
+            self.play(FadeIn(bars_on[0]), Indicate(p1.code.code_lines[2], color=ROUTE, scale_factor=1.1),
+                      run_time=0.7)
+            vo.wait_until("It lists the events")
+            self.play(LaggedStart(*[FadeIn(bb) for bb in bars_on[1:]], lag_ratio=0.15), run_time=0.7)
             vo.wait_until("Under jobs")
             self.play(FadeOut(bar_name), FadeOut(bars_on), run_time=0.25)
             self.remove(bar_name, bars_on)

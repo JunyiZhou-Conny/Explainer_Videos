@@ -393,7 +393,7 @@ class WatchTheRun(VoiceScene):
             self.play(Indicate(bad, color=ERR, scale_factor=1.04), run_time=0.7)
 
         # ========================================================== 7. the README's screenshot
-        gs = run_graph("run1", labels="short", col_gap=0.6, texts=LINT_TEXT)
+        gs = run_graph("run1", labels="short", col_gap=0.3, texts=LINT_TEXT)   # narrow: clear of the screenshot
         gs.shift(np.array([-6.45 - gs.get_left()[0], 0.2 - VGroup(*gs.nodes.values()).get_center()[1], 0]))
         rec = recorded_graph()
         rec.shift(np.array([6.4 - rec.get_right()[0], 0.2 - VGroup(*rec.graph.nodes.values()).get_center()[1], 0]))
