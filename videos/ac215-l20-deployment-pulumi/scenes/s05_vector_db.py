@@ -13,12 +13,15 @@ Beats (script.md "## S05", one voiceover block each):
    8000:8000` PINK, `--restart always` YELLOW, `-v …:/chroma/chroma` GREY. On "Its name goes into
    the phone book" the terminal shrinks to a 3-row strip and V2 `NamePhoneBook` (cable + book, as S04
    left it) appears above it: the TEAL `cheese-app-vector-db` box plugs into the cable, the PINK door
-   '8000' opens on the VM's wall and the name is written in the book.
-2. TRACKER [M] 9 · extra. The strip types vm/24's line 1 (extra, folds) -> TERM(vm/24: 3 wrap, 4, 5):
-   `0.0.0.0:8000->8000/tcp` PINK (V2's door 8000 flashes), the heartbeat (the vector-DB box
-   flashes), `"1.0.0"` with 'at the time of recording'.
-3. TRACKER [M] 10. V2 leaves, the terminal grows back to full size and a small GREEN card 'names on
-   this network · cheese-app-vector-db' (V2's book, top right) stands in for the phone book. `sudo
+   '8000' opens on the VM's wall and the name is written in the book. On "with a data folder mounted"
+   a GREEN row tag 'erratum → :/data' beside the `-v` row (QA 07:15: the viewer pauses at beat 5's
+   'your turn' before beat 8 explains the slip, so the fix shows where the command is typed).
+2. TRACKER [M] 9 · extra. V2 leaves, the terminal grows back to full size and a small GREEN card
+   'names on this network · cheese-app-vector-db' (V2's book, top right) stands in for the phone
+   book. The terminal types vm/24's line 1 (extra, folds) -> TERM(vm/24: 3 from PORTS on, after a
+   GREY '…', as S07 prints vm/47; 4; 5): `0.0.0.0:8000->8000/tcp` PINK, the heartbeat flashes,
+   `"1.0.0"` with 'at the time of recording'. Command and answer stay on screen together.
+3. TRACKER [M] 10. `sudo
    docker pull dlops/cheese-app-vector-db-cli` -> TERM(vm/26: 2, …, 45–46 wrap); the README's `sudo
    docker run --rm \\` block (vm/27: 1–9). `CHROMADB_HOST=cheese-app-vector-db` PINK with a row tag
    'a name, not an address' while the card's entry glows; `GCP_PROJECT=ac215-project` with the GREY
@@ -28,7 +31,8 @@ Beats (script.md "## S05", one voiceover block each):
    in, knocks on 'cheese-app-vector-db:8000' and pours dots into the vector DB while a YELLOW counter
    left of V2 climbs with every 'Finished inserting' line (BOOK_CHUNKS, vm/27:37 … 180) to 14,356.
    A GREY row tag 'precomputed embeddings · key not used' beside the last line.
-5. The loader leaves V2 (--rm): its box fades, its book line is struck GREY. YELLOW '▶ your turn'.
+5. The loader leaves V2 (--rm): its box fades, its book line is struck GREY. YELLOW '▶ your turn'
+   on the strip's bar, with beat 1's GREEN 'erratum → :/data' left of it (QA 07:15).
 6. The counter and the strip go; V2 moves to the middle: the dots fade from the vector-DB box, a
    YELLOW '?' sits over it, a dashed GREY outline marks the empty spot where the loader stood.
    PONDER(8 s).
@@ -41,15 +45,17 @@ Beats (script.md "## S05", one voiceover block each):
    'here' on `/data:`, `chroma.sqlite3` GREEN. The terminal shrinks to a 4-row strip; above it a GREY
    ghost of block 1's `-v ./docker-volumes/chromadb:/chroma/chroma` with an `erratum · README:95`
    tag, an arrow to the GREEN fix chip `-v ./docker-volumes/chromadb:/data`, and a GREY line 'then
-   rerun: stop · rm · run · loader'. Fade; empty frame.
+   rerun: stop · rm · run · loader' with, under it, 'typed :/data at the run step already? nothing to
+   redo' (beat 1's row tag). Fade; empty frame.
 
 Deviations from SHOW:
-- Beats 1-4: a full-width terminal and V2 cannot share the frame (V2 needs the space above a 3-row
-  strip; text never shrinks), so V2 enters at the end of beat 1 over the strip, leaves for the full
-  terminal of beat 3 (a small GREEN 'names on this network' card stands in for its phone book, and its
-  entry glows) and returns in beat 4.
-- Beat 2: the 3-row strip cannot hold all of vm/24's rows at once, so they scroll past in reading order
-  (port, heartbeat, version), each highlighted as it is named.
+- Beats 1-4: a full-width terminal and V2 cannot share the frame (V2 is 4.1 tall and needs the space
+  above a 3-row strip; text never shrinks), so V2 enters at the end of beat 1 over the strip, leaves
+  for the full terminal of beats 2-3 (a small GREEN 'names on this network' card stands in for its
+  phone book, and its entry glows) and returns in beat 4.
+- Beat 2 (QA 06:41): vm/24's command (3 rows) and its answer (3 rows) must be on screen together, which
+  a strip under V2 cannot hold, so V2 leaves at the start of beat 2 (not 3); the door and box no
+  longer flash, the port and heartbeat rows do.
 - Beat 4: the strip scrolls; the counter also climbs through the 'Finished inserting' lines hidden in
   the '…' gaps (vm/27:50 … 168), and a '…' marks every gap. The narration's "precomputed embeddings,
   placeholder key" is a GREY row tag beside the last line.
@@ -92,6 +98,10 @@ assert re.fullmatch(r"[0-9a-f]{64}", V23.line(10)), V23.line(10)
 assert V24.cmd.startswith("sudo docker ps; curl -s http://localhost:8000/api/v2/heartbeat")
 assert "0.0.0.0:8000->8000/tcp" in V24.line(3) and V24.line(3).endswith("cheese-app-vector-db")
 assert V24.line(4).startswith('{"nanosecond heartbeat":') and V24.line(5) == '"1.0.0"'
+# vm/24 line 3 from the PORTS column on (as S07 prints vm/47), so the 3-row command and its 3 rows
+# of answer share the screen
+PORT_ROW = V24.line(3)[V24.line(2).index("PORTS"):]
+assert PORT_ROW.startswith("0.0.0.0:8000->8000/tcp") and PORT_ROW.endswith("cheese-app-vector-db"), PORT_ROW
 assert V25.cmd == "sudo docker logs cheese-app-vector-db 2>&1 | head -30"
 assert V25.line(3) == 'persist_path: "/data"' and V25.line(21) == "Saving data to: /data"
 assert V26.cmd == "sudo docker pull dlops/cheese-app-vector-db-cli"
@@ -284,6 +294,11 @@ class VectorDb(VoiceScene):
             self.play(g.animate.set_color(S.GREY), run_time=0.3)
             self.play(Indicate(g, color=S.GREY, scale_factor=1.06), run_time=0.5)
             self.add(t)
+            # the README's mount is a slip (beat 8 explains it): flag the fix here, so a viewer who
+            # pauses at "your turn" types the working mount the first time
+            vfix = beside(row_tag([("erratum →", "label"), (":/data", "mono")], OWN), rr["v"], buff=0.3)
+            assert vfix.get_right()[0] < t.box.get_right()[0] - 0.1, (vfix.get_right(), t.box.get_right())
+            pin(self, rr["v"], vfix)
             vo.wait_until("Its name goes into the phone book")
             resize(self, t, 3, run_time=0.5)
             assert nb.vm.get_bottom()[1] > t.box.get_top()[1] + 0.05, (nb.vm.get_bottom(), t.box.get_top())
@@ -293,22 +308,30 @@ class VectorDb(VoiceScene):
             nb.heal(self)
 
         # ========================================================== 2. extra: ps, heartbeat, version
+        card = mini_book()
         with self.voiceover(SAY[2]) as vo:
+            # V2 cannot sit above the 6 rows (command 3 + answer 3) that must share the screen: it
+            # leaves, the terminal grows back, the small card stands in for the phone book
+            card.move_to([6.45 - card.width / 2, 0, 0])
+            top = vm_term(rows=10).box.get_top()[1]  # where the box's top will be (resize keeps the bottom)
+            card.set_y((top + PIC_TOP) / 2 + 0.05)
             self.play(track(trk, 9, True), run_time=0.4)
+            resize(self, t, 10, extra=[FadeOut(nb), FadeIn(card, shift=LEFT * 0.2)], run_time=0.6)
+            self.remove(nb)
+            assert card.get_bottom()[1] > t.box.get_top()[1] + 0.05 and card.get_top()[1] < 2.95, (card.get_bottom(), t.box.get_top())
             chk = type_capture(self, t, V24, type_time=0.5)[0]
             pin(self, chk, beside(extra_row(), chk))
             vo.wait_until("the port is published")
-            pr = out(self, t, [V24.line(3)], wrap=True, run_time=0.4)
-            prow = next(r for r in pr if "0.0.0.0:8000->8000/tcp" in r.text)
-            g = substring(prow, "0.0.0.0:8000->8000/tcp")
-            self.play(g.animate.set_color(ROUTE), *pulse(nb.doors["vdb"].plate, nb.doors["vdb"].text, ROUTE),
-                      run_time=0.6)
+            pr = out(self, t, ["…  " + PORT_ROW], run_time=0.4)
+            substring(pr[0], "…").set_color(S.GREY)
+            g = substring(pr[0], "0.0.0.0:8000->8000/tcp")
+            self.play(g.animate.set_color(ROUTE), run_time=0.3)
+            self.play(Indicate(g, color=ROUTE, scale_factor=1.1), run_time=0.5)
             self.add(t)
-            nb.heal(self)
             vo.wait_until("the heartbeat answers")
-            out(self, t, V24.at(4), run_time=0.4)
-            self.play(*pulse(nb.boxes["vdb"].frame, nb.boxes["vdb"].name, CONTAINER), run_time=0.6)
-            nb.heal(self)
+            hb = out(self, t, V24.at(4), run_time=0.4)
+            self.play(Indicate(hb[0], color=CONTAINER, scale_factor=1.06), run_time=0.6)
+            self.add(t)
             vo.wait_until("Chroma version one")
             vr = out(self, t, V24.at(5), run_time=0.4)
             pin(self, vr[0], beside(time_row(), vr[0]))
@@ -316,15 +339,8 @@ class VectorDb(VoiceScene):
             self.add(t)
 
         # ========================================================== 3. the loader's command
-        card = mini_book()
         with self.voiceover(SAY[3]) as vo:
-            card.move_to([6.45 - card.width / 2, 0, 0])
             self.play(track(trk, 10), run_time=0.4)
-            top = vm_term(rows=10).box.get_top()[1]  # where the box's top will be (resize keeps the bottom)
-            card.set_y((top + PIC_TOP) / 2 + 0.05)
-            resize(self, t, 10, extra=[FadeOut(nb), FadeIn(card, shift=LEFT * 0.2)], run_time=0.6)
-            self.remove(nb)
-            assert card.get_bottom()[1] > t.box.get_top()[1] + 0.05 and card.get_top()[1] < 2.95, (card.get_bottom(), t.box.get_top())
             type_capture(self, t, V26, type_time=0.5)
             out(self, t, V26.at(2, "…", (45, 46)), wrap=True, run_time=0.4)
             # a fresh screen for the 9-row block (no scrolling), typed up to the host row first
@@ -395,15 +411,19 @@ class VectorDb(VoiceScene):
             nb.unload(self, run_time=0.7)
             vo.wait_until("Pause and run both containers")
             yt = on_bar(t, turn_row())
-            self.play(FadeIn(yt, shift=LEFT * 0.1), run_time=0.4)
+            # beat 1's fix again, beside 'your turn': the viewer runs the vector DB with :/data
+            vt = row_tag([("erratum →", "label"), (":/data", "mono")], OWN)
+            vt.move_to([yt.get_left()[0] - 0.2 - vt.width / 2, yt.get_y(), 0])
+            assert vt.get_left()[0] > t.title.get_right()[0] + 0.15, (vt.get_left(), t.title.get_right())
+            self.play(FadeIn(yt, shift=LEFT * 0.1), FadeIn(vt, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, yt, TURN)
 
         # ========================================================== 6. the question
         spot = DashedVMobject(RoundedRectangle(width=1.46, height=1.0, corner_radius=0.1),
                               num_dashes=24, dashed_ratio=0.45).set_stroke(S.GREY, 2.5)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(ctr, ctr_l, yt)), run_time=0.4)
-            self.remove(ctr, ctr_l, yt)
+            self.play(FadeOut(VGroup(ctr, ctr_l, yt, vt)), run_time=0.4)
+            self.remove(ctr, ctr_l, yt, vt)
             self.play(FadeOut(t), nb.animate.shift(-NB_SHIFT), run_time=0.7)
             self.remove(t)
             nb.heal(self)
@@ -485,10 +505,12 @@ class VectorDb(VoiceScene):
             row_a = VGroup(ghost, et).arrange(RIGHT, buff=0.35)
             fix = ok_chip(FIX, size=22, mono_font=True)
             rerun = label("then rerun: stop · rm · run · loader", 20, S.GREY)
-            grp = VGroup(row_a, fix, rerun).arrange(DOWN, buff=0.5)
+            typed = label("typed :/data at the run step already? nothing to redo", 20, S.GREY)
+            grp = VGroup(row_a, fix, rerun, typed).arrange(DOWN, buff=0.4)
             grp.move_to([0, (t2.box.get_top()[1] + PIC_TOP) / 2, 0])
             fix.align_to(ghost, LEFT)
             rerun.align_to(ghost, LEFT)
+            typed.align_to(ghost, LEFT)
             g_old, g_new = substring_text(ghost, "/chroma/chroma"), substring_text(fix.text, "/data")
             down = Arrow(g_old.get_bottom(), g_new.get_top() + UP * 0.12, buff=0.08, color=OWN,
                          stroke_width=4, max_tip_length_to_length_ratio=0.3)
@@ -500,12 +522,12 @@ class VectorDb(VoiceScene):
             self.play(GrowArrow(down), FadeIn(fix, shift=DOWN * 0.15), run_time=0.6)
             self.play(Indicate(g_new, color=OWN, scale_factor=1.25), run_time=0.5)
             vo.wait_until("rerun the stop, remove and run lines")
-            self.play(FadeIn(rerun, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(rerun, shift=UP * 0.1), FadeIn(typed, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("then the loader")
             self.play(Indicate(rerun, color=INK, scale_factor=1.06), run_time=0.5)
 
-        self.play(FadeOut(VGroup(trk, t2, ghost, et, down, fix, rerun)), run_time=0.6)
-        self.remove(trk, t2, ghost, et, down, fix, rerun)
+        self.play(FadeOut(VGroup(trk, t2, ghost, et, down, fix, rerun, typed)), run_time=0.6)
+        self.remove(trk, t2, ghost, et, down, fix, rerun, typed)
         self.wait(0.3)
 
 

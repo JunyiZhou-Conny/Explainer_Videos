@@ -2,6 +2,7 @@
 # Re-capture the L21 terminal transcripts (needs Docker and privileged containers):
 #   bash assets/terminal/capture.sh laptop setup
 #   bash assets/terminal/capture.sh laptop l-pre l-push l-own l-fix l-noverify l-part6
+#   ACT_BIN=<act binary> bash assets/terminal/capture.sh laptop act-setup l-act
 #   bash assets/terminal/capture.sh export <label> <sha>      # checkout of <sha> from the stand-in remote
 #   bash assets/terminal/capture.sh run <label> <sha>         # the six ci.yml jobs, one fresh runner each
 #   bash assets/terminal/capture.sh noload <label> <sha>      # extra: a check job without `docker load`

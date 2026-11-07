@@ -21,9 +21,12 @@ Beats (script.md "## S07", one voiceover block each):
    lines 165–167, mono, verbatim) and a small card for README:156's `echo '`. A PINK arc joins the
    outer quote to the first inner quote ('the quote closes here'); the unquoted stretch turns GREY
    ('outside quotes'), its variables shrink to nothing ('empty variables'). TRACKER [M] 13 · extra:
-   the strip types vm/45 (extra) → TERM(vm/45: 2, 6–8) and the card's remains turn into line 6's
-   `log_format  main   - []  $`, RED.
-5. The strip grows; `sudo docker logs nginx 2>&1 | tail -6` (extra) → TERM(vm/51: 3–7) RED. GREY
+   the echo card and arc leave, the README card moves up and the strip grows to 6 rows (command,
+   '58 …' and line 6 together); it types vm/45 (extra) → TERM(vm/45: 2, 6–8) and the card's remains
+   FadeTransform onto line 6's `log_format  main   - []  $`, RED.
+5. The strip grows; `sudo docker logs nginx 2>&1 | tail -6` (extra) → TERM(vm/51: 3–7) RED, with a
+   GREY note above the strip 'output from after nginx runs · next step' (vm/51 was captured after
+   vm/46: no container 'nginx' exists yet at this point of the README). GREY
    `erratum` tag and a GREEN fix card (no capture): `cat > conf/nginx/nginx.conf <<'EOF'` · "paste
    the README's text between the quotes" · `EOF`, each row lit on its word.
 6. TRACKER [M] 14. V2 (cable, phone book, vector DB, API, frontend) over a 4-row strip that types the
@@ -424,18 +427,27 @@ class OnePublicDoor(VoiceScene):
                 for m in g:
                     m.set_opacity(0)
             self.add(rc, oq, arc)
-            self.play(track(trk, 13, True), run_time=0.3)
+            # the quote story is told: the outer-echo card and the arc leave, the README card moves up
+            # and the strip grows to 6 rows, so the vm/45 command, '58 …' and line 6 share the screen
+            self.play(FadeOut(VGroup(ec, arc, closes)), track(trk, 13, True), run_time=0.4)
+            self.remove(ec, arc, closes)
+            resize(self, t, 6, run_time=0.5,
+                   extra=[VGroup(rc, oq).animate.shift(UP * (ec.get_top()[1] - rc.get_top()[1]))])
+            assert rc.get_bottom()[1] > t.box.get_top()[1] + 0.1, (rc.get_bottom(), t.box.get_top())
             wc = type_capture(self, t, V45, type_time=0.35)[-1]
             rm_x = xtag(t, wc)
             o45 = out(self, t, V45.at(2, 6, 7, 8), run_time=0.4)
+            assert wc in t.lines.submobjects or rows_of(wc)[0] in t.lines.submobjects   # command still on screen
             row6 = [r for r in o45 if "log_format" in r.text][0]
             vo.wait_until("and leaves a dash and two brackets")
             remains = VGroup(*substring(r0, "log_format  main  "), *substring(r0, "-"), *substring(r0, "[$time_local]")[:1],
                              *substring(r0, "[$time_local]")[-1:])
-            target = substring(row6, "log_format  main   - []").copy().set_color(ERR)
-            self.play(TransformMatchingShapes(remains.copy(), target), run_time=0.8)
-            self.remove(target)
-            substring(row6, "log_format  main   - []").set_color(ERR)
+            target = substring(row6, "log_format  main   - []")
+            landing = target.copy().set_color(ERR)
+            # a straight fade-morph onto line 6 (TransformMatchingShapes sent a stray copy off the left edge)
+            self.play(FadeTransform(remains.copy(), landing), run_time=0.8)
+            target.set_color(ERR)
+            self.remove(landing)
             self.add(t)
 
         # ========================================================== 5. useless logs; the heredoc fix
@@ -445,16 +457,19 @@ class OnePublicDoor(VoiceScene):
         fix = card(fix_rows, color=OWN)
         er = erratum_tag()
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(rc, ec, arc, closes, oq)), run_time=0.4)
-            self.remove(rc, ec, arc, closes, oq)
+            self.play(FadeOut(VGroup(rc, oq)), run_time=0.4)
+            self.remove(rc, oq)
             rm_x()
             resize(self, t, 7, run_time=0.5)
             lg = type_capture(self, t, V51, type_time=0.5)[0]
             rm_x = xtag(t, lg)
+            # vm/51 was captured after the next step's `docker run` (no container 'nginx' exists yet)
+            later = under_term(t, row_tag("output from after nginx runs · next step"))
+            self.play(FadeIn(later, shift=DOWN * 0.1), run_time=0.3)
             vo.wait_until("but the access logs are useless")
             out(self, t, [(s, ERR) for s in V51.at((3, 7))], run_time=0.5)
             vo.wait_until("Write it with a quoted heredoc instead")
-            fix.move_to([0.3, t.box.get_top()[1] + 0.35 + fix.height / 2, 0])
+            fix.move_to([0.3, later.get_top()[1] + 0.3 + fix.height / 2, 0])
             er.next_to(fix, LEFT, buff=0.3).align_to(fix, UP)
             assert fix.get_top()[1] < TRACK_BOTTOM - 0.05 and er.get_left()[0] > -6.55, (fix.get_top(), er.get_left())
             self.play(FadeIn(er), FadeIn(fix, shift=UP * 0.2), run_time=0.6)
@@ -470,8 +485,8 @@ class OnePublicDoor(VoiceScene):
         prebuild(nb, ("vdb", "api", "front"))
         nb.shift(NB_UP)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(fix, er)), track(trk, 14), run_time=0.4)
-            self.remove(fix, er)
+            self.play(FadeOut(VGroup(fix, er, later)), track(trk, 14), run_time=0.4)
+            self.remove(fix, er, later)
             rm_x()
             t.clear(self, run_time=0.3)
             resize(self, t, 4, run_time=0.5)

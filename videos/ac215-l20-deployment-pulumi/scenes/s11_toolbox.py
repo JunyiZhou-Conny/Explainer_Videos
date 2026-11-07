@@ -442,7 +442,9 @@ class Toolbox(VoiceScene):
         slots = [arch.get_bottom() + np.array([-0.95 + 0.63 * i, 0.4, 0]) for i in range(4)]
         assert sh_label.get_right()[0] < 6.5 and arch.get_right()[0] < 6.5
         with self.voiceover(SAY[4]) as vo:
-            resize(self, t, 3, run_time=0.6)
+            # the strip keeps the error's HEAD (b02:168 cropped), not the tail of its wrapped rows
+            resize(self, t, 3, keep=0, run_time=0.6)
+            out(self, t, [(B02.crop(168, "cheese-app-deployment", " …"), ERR)], wrap=True, run_time=0.4)
             vo.wait_until("The cause is line 4")
             self.play(FadeIn(df, shift=RIGHT * 0.2), FadeIn(mb), run_time=0.6)
             b4 = line_bar(df.code, 1, ERR, 0.25)

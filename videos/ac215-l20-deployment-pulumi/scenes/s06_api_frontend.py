@@ -36,7 +36,9 @@ Beats (script.md "## S06", one voiceover block each):
 Deviations from SHOW:
 - V2 is drawn as a small in-scene copy of the VM (MiniVm: three slots, doors, cable, fence; no phone
   book, no network label) because the shared NamePhoneBook is 9.5 units wide and has no compact
-  variant; it sits top right over an 8-row terminal, as S04's corner VM did.
+  variant; it sits top right over an 8-row terminal, as S04's corner VM did. Its title sits inside,
+  bottom left (the placement QA picked for every V2), and its fence keeps S04's gates 80 / 443 on
+  its left edge (plates just outside the frame, clear of the vector DB box and the cable).
 - Beats 0-1: the 10-row README block plus its output needs 13 rows, so the small V2 leaves while the
   block is typed and comes back (with the API plug) after the flags have glowed; the pull's last
   lines (vm/30: 55–57) print at the end of beat 1, so the block stays whole while its flags glow.
@@ -109,9 +111,10 @@ MV_NAMES = {"vdb": ("cheese-app-", "vector-db"), "api": ("api-service",), "front
 
 
 class MiniVm(Piece):
-    """The VM from the inside, small (x 1.56 .. 6.54, y 0.65 .. 3.07 with its fence and doors): BLUE
-    frame, dotted PINK fence, GREEN cable, title bottom left; slots for the vector DB, the API and the
-    frontend. PLAYS plug(key) · stop(key) · start(key). .boxes{key} .doors{key} .plugs{key}"""
+    """The VM from the inside, small (x 0.96 .. 6.54, y 0.65 .. 3.07 with its fence, gates and doors):
+    BLUE frame, dotted PINK fence with S04's gates 80 / 443 on its left edge, GREEN cable, title inside
+    bottom left; slots for the vector DB, the API and the frontend. PLAYS plug(key) · stop(key) ·
+    start(key). .boxes{key} .doors{key} .plugs{key} .gates"""
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -124,7 +127,13 @@ class MiniVm(Piece):
         self.fence.move_to(c)
         self.title = mono(T_VM, 20, CLOUD).move_to([MV_X0 + 0.2, 1.0, 0], aligned_edge=LEFT)
         self.cable = Line([MV_X0 + 0.2, MV_CABLE_Y, 0], [MV_X1 - 0.2, MV_CABLE_Y, 0], color=OWN, stroke_width=6)
-        self.add(self.fence, self.frame, self.title, self.cable)
+        # S04's gates 80 / 443 on the fence's left edge (as its corner VM drew them); they hang just
+        # outside the frame so they clear the vector DB box, the cable and the title.
+        fx = self.fence.get_left()[0]
+        g80 = door("80", door_w=0.62).move_to([fx + 0.12, 2.4, 0], aligned_edge=RIGHT)
+        g443 = door("443", door_w=0.72).move_to([fx + 0.12, 1.3, 0], aligned_edge=RIGHT)
+        self.gates = VGroup(g80, g443)
+        self.add(self.fence, self.frame, self.title, self.cable, self.gates)
         self.boxes, self.doors, self.plugs = {}, {}, {}
 
     def make_box(self, key: str) -> VGroup:
@@ -181,7 +190,7 @@ def api_slot() -> VMobject:
     return DashedVMobject(r, num_dashes=22, dashed_ratio=0.5).set_stroke(TURN, 3).move_to([MV_SLOT["api"], MV_BOX_Y, 0])
 
 
-LEFT_X = -6.45          # left column above the 8-row terminal: x -6.45 .. 1.4, y 0.75 .. 2.75
+LEFT_X = -6.45          # left column above the 8-row terminal: x -6.45 .. 0.85, y 0.75 .. 2.75
 
 
 def pulse(scene, mv: MiniVm, key: str, color, run_time: float = 0.7):
@@ -234,6 +243,7 @@ class ApiAndFrontend(VoiceScene):
         assert mv.fence.get_bottom()[1] > t.box.get_top()[1] + 0.03, (mv.fence.get_bottom(), t.box.get_top())
         assert mv.doors["vdb"].get_top()[1] < ref.get_bottom()[1], mv.doors["vdb"].get_top()
         assert mv.fence.get_left()[0] > tracker_m(11, True).get_right()[0] + 0.15, mv.fence.get_left()
+        assert mv.gates.get_top()[1] < TRACK_BOTTOM - 0.15, mv.gates.get_top()     # gates sit below the tracker
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(ref), FadeIn(mv), FadeIn(t, shift=UP * 0.2),
                       run_time=0.6)
@@ -298,7 +308,7 @@ class ApiAndFrontend(VoiceScene):
         at_left(models, 2.15)
         gh = grey_chip("GitHub release → /persistent/experiments")
         at_left(gh, 1.2)
-        assert gh.get_right()[0] < mv.fence.get_left()[0] - 0.1, gh.get_right()
+        assert gh.get_right()[0] < mv.get_left()[0] - 0.1, gh.get_right()
         mstrike = Line(models.get_corner(DL) + LEFT * 0.08, models.get_corner(UR) + RIGHT * 0.08,
                        color=S.GREY, stroke_width=4)
         with self.voiceover(SAY[2]) as vo:
@@ -344,7 +354,7 @@ class ApiAndFrontend(VoiceScene):
         e2 = grey_chip("your own images answer it")
         at_left(e1, 1.65)
         at_left(e2, 1.05)
-        assert e1.get_right()[0] < mv.fence.get_left()[0] - 0.1, e1.get_right()
+        assert e1.get_right()[0] < mv.get_left()[0] - 0.1, e1.get_right()
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(dk), run_time=0.3)
             self.remove(dk)
@@ -369,7 +379,7 @@ class ApiAndFrontend(VoiceScene):
         # ========================================================== 5. the interactive variant: name in use
         rc = readme_card(131, "If you want to run in interactive mode\nlike we did in development:")
         at_left(rc, 1.75)
-        assert rc.get_right()[0] < mv.fence.get_left()[0] - 0.1 and rc.get_bottom()[1] > t.box.get_top()[1] + 0.1, \
+        assert rc.get_right()[0] < mv.get_left()[0] - 0.1 and rc.get_bottom()[1] > t.box.get_top()[1] + 0.1, \
             (rc.get_right(), rc.get_bottom())
         assert rc.get_top()[1] < TRACK_BOTTOM - 0.05, rc.get_top()
         with self.voiceover(SAY[5]) as vo:

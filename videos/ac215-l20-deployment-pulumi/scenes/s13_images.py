@@ -1,5 +1,5 @@
-"""S13 · Step 2: images with timestamps (AC215 L20). No tracker (beats 0-2), TRACKER [P] 9 (3-4),
-10 (4), 9 · extra · not for you (4), 9 · extra (5), 10 (6-7), 10 · extra (8-9), 10 (9 end-10).
+"""S13 · Step 2: images with timestamps (AC215 L20). No tracker (beats 0-2), TRACKER [P] 9 (3-5),
+9 · extra · not for you (4), 9 · extra (5), 10 (6-7), 10 · extra (8-9), 10 (9 end-10).
 Lecture: 20 · 19, 21 (beat 0), 20 · 13, 18 (beats 1-2).
 
 Beats (script.md "## S13", one voiceover block each):
@@ -26,7 +26,7 @@ Beats (script.md "## S13", one voiceover block each):
    line 7 ORANGE. GREY chip 'no bucket login → Pulumi offers its own cloud' above the terminal; on
    "If yours says" a GREY chip `pulumi stack select dev` · 'second time'.
 4. Same terminal. `pulumi config set gcp:project ac215-project` (default_tag above the terminal,
-   'ac215-project' YELLOW) -> TERM(b15: 2 wrap) RED; TRACKER [P] 10: `pulumi preview --stack dev
+   'ac215-project' YELLOW) -> TERM(b15: 2 wrap) RED; (tracker stays 9) `pulumi preview --stack dev
    --refresh` -> TERM(b16: 2 wrap) RED; `pulumi up --stack dev --refresh -y` -> TERM(b17: 2 wrap) RED;
    on "Pulumi access token must be set" the three PULUMI_ACCESS_TOKEN words flash RED. TRACKER [P] 9 ·
    extra · not for you: `pulumi login --local` (tag 'extra · not for you' on the title bar) ->
@@ -394,7 +394,7 @@ class ImagesStack(VoiceScene):
             self.play(pr.animate.set_color(TURN), FadeIn(dtag, shift=DOWN * 0.1), run_time=0.4)
             self.add(t)
             e1 = out(self, t, [(B15.line(2), ERR)], wrap=True, run_time=0.3)
-            self.play(track(trk, 10), run_time=0.3)
+            # the tracker stays on 9 through beats 3-5 (moves to 10 only with the program, beat 6)
             type_cmd(self, t, B16.cmd, type_time=0.45)
             e2 = out(self, t, [(B16.line(2), ERR)], wrap=True, run_time=0.3)
             type_cmd(self, t, B17.cmd, type_time=0.45)

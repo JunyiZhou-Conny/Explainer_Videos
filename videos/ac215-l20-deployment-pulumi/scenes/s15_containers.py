@@ -79,6 +79,11 @@ Deviations from SHOW:
   /status, said in S06), so the 404 does not contradict beat 11.
 - Beat 12: vm/52's rows are 148 characters wide: printed from the PORTS column on with a GREY '…'
   (as S07 does with vm/47); vm/53:53 and vm/55:9 are wrapped.
+- Beat 12: vm/53:54-56 lose their client address column (no IP anywhere): 'INFO:     … - "GET …'; the
+  404 line is folded before '404 Not Found' so its GREY row tag fits beside it.
+- Beat 0: the ticket carries STAMP_2 (b35b:17), the stamp S13 leaves on it.
+- Beat 13: the note card names the current model (GENERATIVE_MODEL = "gemini-2.0-flash-001", retired)
+  and Google's suggested upgrade gemini-3.5-flash-lite (digest §10, errata 20), QA 2026-11-06.
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -126,6 +131,14 @@ assert V55.line(15) == "^C" and "ready for start up" in V55.line(9)
 assert V56.line(5).endswith(":/app$ exit") and V56.line(6) == "exit"
 assert V57.line(3) == "nginx version: nginx/1.30.6" and V57.line(5) == "exit"
 assert "--root-path /api-service" in capture("vm/37").line(20)
+# no IP anywhere (script.md placeholders): vm/53:54-56 keep the INFO prefix and everything from '"GET'
+# on; the client address column becomes '…' (S11 crops b02's IP column the same way)
+V53_GET = ["INFO:     … - " + V53.line(n)[V53.line(n).index('"GET'):] for n in (54, 55, 56)]
+assert all(V53.line(n).startswith("INFO:     ") for n in (54, 55, 56))
+assert not any(re.search(r"\d+\.\d+\.\d+\.\d+", s) for s in V53_GET), V53_GET
+GEN_MODEL = 'GENERATIVE_MODEL = "gemini-2.0-flash-001"'
+assert all(GEN_MODEL in source_text(f"src/api-service/api/utils/{f}")
+           for f in ("llm_utils.py", "llm_rag_utils.py", "llm_agent_utils.py", "llm_cnn_utils.py"))
 
 # ------------------------------------------------------------------ small local helpers
 
@@ -219,6 +232,7 @@ class ContainersOverSsh(VoiceScene):
             self.add(p0, b29)
             self.play(Create(ext), run_time=0.3)
             tp.pipe(self, run_time=0.6)
+            tp.stamp_text = STAMP_2          # the stamp S13 left on the ticket (the up's, b35b:17)
             tp.ticket(self, run_time=0.6)
             vo.wait_until("to organization")
             self.play(Indicate(tp.pipe_m[1], color=ROUTE, scale_factor=1.06), run_time=0.6)
@@ -657,7 +671,7 @@ class ContainersOverSsh(VoiceScene):
         trk = tracker_p(13)
         t = vm_term(10)
         stand = under_term(t, grey_chip("our part 1 stand-in · same names except vector-db"))
-        root = under_term(t, grey_chip("uvicorn logs the path with --root-path /api-service added back (vm/37:20)"))
+        root = under_term(t, grey_chip("uvicorn logs the path with --root-path /api-service added back (as in part 1)"))
         assert stand.get_top()[1] < TRACK_BOTTOM - 0.05 and root.get_left()[0] > -6.55, root.get_left()
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t, shift=UP * 0.3), run_time=0.6)
@@ -680,7 +694,10 @@ class ContainersOverSsh(VoiceScene):
             vo.wait_until("follow each log")
             type_capture(self, t, V53, type_time=0.3)
             out(self, t, V53.at(2, "…", 26, "…", 53), wrap=True, run_time=0.4)
-            rows56 = out(self, t, V53.at((54, 56)), wrap=True, run_time=0.35)
+            # the 404 row is folded before its status (as the uncropped line wrapped), so the GREY row tag
+            # still fits beside '404 Not Found'
+            g404 = V53_GET[2].rsplit(" 404 ", 1)
+            rows56 = out(self, t, V53_GET[:2] + [g404[0], "404 " + g404[1]], wrap=True, run_time=0.35)
             r54 = [r for r in rows56 if "/api-service" in r.text]
             r404 = [r for r in rows56 if r.text.strip() == "404 Not Found"]
             assert len(r54) == 3 and len(r404) == 1, [r.text for r in rows56]
@@ -705,8 +722,8 @@ class ContainersOverSsh(VoiceScene):
             flash_tag(self, stand, INK)
 
         # ========================================================== 13. exec; the chat model; your turn
-        note = card(["chat: GENERATIVE_MODEL in the four llm_*_utils.py files",
-                     "→ a model Vertex AI lists as available",
+        note = card(["chat: " + GEN_MODEL + " (retired) in the four llm_*_utils.py files",
+                     "→ e.g. gemini-3.5-flash-lite (Google's suggested upgrade, Nov 2026)",
                      "· then up in deploy_images and deploy_single_vm"], size=20)
         with self.voiceover(SAY[13]) as vo:
             self.play(FadeOut(stand), run_time=0.3)

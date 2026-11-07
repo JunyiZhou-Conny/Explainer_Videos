@@ -30,10 +30,9 @@ Beats (script.md "## S08", one voiceover block each):
    the VM panel and a GOLD cost dial inside it that ticks. A schematic console list (tags `extra`,
    `illustration`): 'VM instances', a 'Delete' button, the row 'cheese-app-vm' whose box ticks on
    "select it"; a confirm dialog 'Delete instance?' with '☑ delete boot disk' and its own 'Delete'
-   button; YELLOW '▶ your turn' beside that button on "Pause". The click stops the dial; the row
-   becomes a GREY 'No VM instances'.
-6. The console, tags, dial and tracker leave; the tower's blocks fall away and the VM panel fades to a
-   GREY outline; a GREY caption 'part 2 · as code' in it. Fade; empty frame.
+   button; YELLOW '▶ your turn' beside that button on "Pause". The click stops the dial (GREY); the
+   row becomes a GREY 'No VM instances' and the tower's blocks fall away at the same moment.
+6. The console, tags, dial and tracker leave; the empty VM panel fades to a GREY outline; a GREY caption 'part 2 · as code' in it. Fade; empty frame.
 
 Deviations from SHOW:
 - Beat 0: the 'console clicks' chip and the 'laptop' frame with the three `docker-hub.sh` chips sit
@@ -355,13 +354,15 @@ class ByHand(VoiceScene):
             turn = your_turn().next_to(ok_btn, LEFT, buff=0.25)
             ticking(0.5, FadeIn(turn, shift=RIGHT * 0.15))
             ticking(vo.until("the list should be", 0.3))
-            # the click: the meter stops
+            # the click: the meter stops, the VM's blocks fall away as the list empties
             self.play(ok_btn.box.animate.set_fill(tint(TURN, 0.45), 1), run_time=0.3)
             dial.freeze()
             gone = label("No VM instances", 22, S.GREY).move_to(row_name, aligned_edge=LEFT).shift(LEFT * 0.55)
             self.play(FadeOut(dialog), FadeOut(turn), FadeOut(tick2),
                       ReplacementTransform(VGroup(box1, tick1, row_name), gone),
-                      dial.face.animate.set_stroke(S.GREY), run_time=0.6)
+                      dial.animate.set_color(S.GREY),
+                      LaggedStart(*[FadeOut(b, shift=DOWN * 0.4) for b in blocks[::-1]], lag_ratio=0.03),
+                      run_time=0.8)
             listing.remove(box1, row_name)
             listing.add(gone)
 
@@ -369,8 +370,6 @@ class ByHand(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             vmp = md.parts["vm"]
             self.play(FadeOut(listing), FadeOut(gold), FadeOut(dial), FadeOut(tr), run_time=0.5)
-            self.play(LaggedStart(*[FadeOut(b, shift=DOWN * 0.4) for b in blocks[::-1]], lag_ratio=0.05),
-                      run_time=0.8)
             self.play(vmp.frame.animate.set_fill(opacity=0).set_stroke(S.GREY, opacity=0.7),
                       vmp.title.animate.set_color(S.GREY), run_time=0.7)
             md.heal(self)

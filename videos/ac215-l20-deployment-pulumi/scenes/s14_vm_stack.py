@@ -139,6 +139,53 @@ def same_err(c):
     return [(c.line(2), ERR)]
 
 
+def _stroke_to(fr, c0, c1):
+    """Only the frame's stroke colour, so it can run beside a Rotate of the whole tile (an
+    .animate on the frame would restore its pre-rotation points and leave the box upright)."""
+    return UpdateFromAlphaFunc(fr, lambda m, a: m.set_stroke(interpolate_color(ManimColor(c0), ManimColor(c1), a)))
+
+
+def _pivot(t):
+    """The tile's tipping point (its frame's lower-right corner when upright), carried inside the tile
+    as an invisible point so it follows every later shift of the dominoes."""
+    if not hasattr(t, "pv"):
+        t.pv = VectorizedPoint(t.frame.get_corner(DR))
+        t.add(t.pv)
+    return t.pv.get_center()
+
+
+def tip_tiles(d, scene, upto: int, per: float = 0.25):
+    """ProvisionDominoes.fall, but the whole tile (box, number, label) tips together: the shared
+    fall() pairs Rotate(tile) with tile.frame.animate, which keeps the box upright."""
+    for i in range(upto):
+        if i in d._fallen:
+            continue
+        t = d.tiles[i]
+        scene.play(Rotate(t, -PI / 9, about_point=_pivot(t)), _stroke_to(t.frame, TOOL, S.GREY),
+                   run_time=per)
+        d._fallen.add(i)
+    d.heal(scene)
+
+
+def settle_tiles(d, back: bool = True):
+    """Animations: every tipped tile turns upright (back=True, stays GREY: it ran) or tips again
+    (back=False). Upright, the dominoes fit under beat 9's code panel; a tipped tile is 0.47 taller."""
+    sgn = 1 if back else -1
+    return [Rotate(d.tiles[i], sgn * PI / 9, about_point=_pivot(d.tiles[i])) for i in sorted(d._fallen)]
+
+
+def stand_tiles(d, scene, run_time: float = 0.6):
+    """ProvisionDominoes.stand for tiles tipped by tip_tiles (whole tile rotates back)."""
+    anims = []
+    for i in sorted(d._fallen):
+        t = d.tiles[i]
+        anims += [Rotate(t, PI / 9, about_point=_pivot(t)), _stroke_to(t.frame, S.GREY, TOOL)]
+    if anims:
+        scene.play(*anims, run_time=run_time)
+    d._fallen = set()
+    d.heal(scene)
+
+
 class VmStack(VoiceScene):
     def construct(self):
         # ========================================================== 0. step 3: the VM and its disk
@@ -459,11 +506,11 @@ class VmStack(VoiceScene):
             self.remove(*d.tiles, d.arrows)
             self.add(d)
             vo.wait_until("format and mount the disk")
-            d.fall(self, 3, per=0.3)
+            tip_tiles(d, self, 3, per=0.3)
             vo.wait_until("update")
-            d.fall(self, 6, per=0.25)
+            tip_tiles(d, self, 6, per=0.25)
             vo.wait_until("install Docker")
-            d.fall(self, 9, per=0.25)
+            tip_tiles(d, self, 9, per=0.25)
         self.play(FadeOut(ref8), run_time=0.3)
         self.remove(ref8)
 
@@ -476,7 +523,8 @@ class VmStack(VoiceScene):
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(el), run_time=0.3)
             self.remove(el)
-            self.play(FadeIn(cap9, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(cap9, shift=UP * 0.1), *settle_tiles(d), run_time=0.5)
+            d.heal(self)
             vo.wait_until("not what it changed")
             self.play(Indicate(cap9, color=TURN, scale_factor=1.04), run_time=0.7)
             vo.wait_until("Look at the first one")
@@ -522,10 +570,12 @@ class VmStack(VoiceScene):
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(pc_), FadeOut(solo), run_time=0.4)
             self.remove(pc_, solo)
-            self.play(d.animate.shift(-down).set_opacity(1), run_time=0.6)
+            self.play(d.animate.shift(-down).set_opacity(1), run_time=0.5)
+            d.heal(self)
+            self.play(*settle_tiles(d, back=False), run_time=0.3)
             d.heal(self)
             vo.wait_until("Because formatting erases")
-            d.stand(self, run_time=0.5)
+            stand_tiles(d, self, run_time=0.5)
             d.disk(self, run_time=0.5)
             vo.wait_until("If this step ever ran again")
             d.refuse(self, 0)

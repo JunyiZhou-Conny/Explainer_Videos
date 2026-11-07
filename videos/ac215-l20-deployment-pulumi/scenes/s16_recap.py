@@ -17,7 +17,9 @@ Beats (script.md "## S16", one voiceover block each):
    forgets the images'); V6's shelf of crates stays, each crate gets a small GOLD padlock,
    'retain_on_delete' under it. GREY erratum tag "the README doesn't say which folder".
 4. No tracker. The GOLD teardown checklist: items 1-3 write in and tick one per phrase (2 and 3 with
-   an 'extra' tag, no output panel).
+   an 'extra' tag, no output panel). Item 1's check is `gcloud compute instances list → empty`
+   (extra); item 3 gets a GREY line 'after pulumi destroy in deploy_images too' at "once no stack"
+   (the images stack still lists its three images until then).
 5. Items 4-6 write in and tick.
 6. LECTURE 20 · 19. The checklist goes; the six-step strip at full width, each chip with its file;
    above it a compact V1 grows one layer per chip (toolbox -> registry crates -> VM + disk ->
@@ -30,9 +32,9 @@ Beats (script.md "## S16", one voiceover block each):
    L23.
 9. Clear. 'Test yourself · 1/5': card 1.
 10. Card 1 -> 2 -> 3 on the sentence starts.
-11. Card 3 -> 4 -> 5; at 'Answers are in' the progress dots become the GREY pointer card 'answers:
-    exercises.md · study guide' under card 5 (card 5 stays readable ~4 s), then card 5 fades and the
-    pointer moves to the centre. Fade; empty frame.
+11. Card 3 -> 4 -> 5; at 'Answers are in' card 5 fades, then the progress dots become the GREY
+    pointer card 'answers: exercises.md · study guide', which moves to the centre. Fade (within ~1 s
+    of the last word); empty frame.
 
 Deviations from SHOW:
 - Beat 0: the meters are V1's GOLD cost dials (text-free needles) with one-word captions.
@@ -147,19 +149,21 @@ def teardown_items() -> list:
     n = lambda k: label(k, 20, COST)  # noqa: E731
     i1 = VGroup(parts_row(n("1"), ("pulumi destroy --stack dev --refresh -y", "m"), "in",
                           ("deploy_single_vm", "m")),
-                parts_row("the VM list is empty", base=S.GREY))
+                parts_row(("gcloud compute instances list", "m"), "→ empty", extra_tag(), base=S.GREY))
     i2 = VGroup(parts_row(n("2"), ("gcloud artifacts repositories delete", "m")),
                 parts_row(("cheese-app-repository --location=us", "m"), extra_tag()))
     i3 = VGroup(parts_row(n("3"), ("gcloud storage rm -r", "m")),
-                parts_row((BUCKET, "m"), ("· last", COST), extra_tag()))
+                parts_row((BUCKET, "m"), ("· last", COST), extra_tag()),
+                parts_row("after", ("pulumi destroy", "m"), "in", ("deploy_images", "m"),
+                          "too (it only forgets the images)", base=S.GREY))
     i4 = VGroup(parts_row(n("4"), "the part 1 VM, if it still runs"))
     i5 = VGroup(parts_row(n("5"), "Docker Hub images · free, optional"))
     i6 = VGroup(parts_row(n("6"), "the two service-account keys, when the course ends"))
     items = [i1, i2, i3, i4, i5, i6]
     for it in items:
         it.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-        if len(it) > 1:
-            it[1].shift(RIGHT * (it[0][1].get_left()[0] - it[1].get_left()[0]))   # indent under the command
+        for sub in it[1:]:
+            sub.shift(RIGHT * (it[0][1].get_left()[0] - sub.get_left()[0]))   # indent under the command
     return items
 
 
@@ -404,10 +408,15 @@ class Recap(VoiceScene):
             for i, (a, b) in enumerate((("One:", "and check the VM list"), ("Two:", "delete the registry"),
                                         ("Three:", "last, once no stack"))):
                 vo.wait_until(a)
+                if i == 2:
+                    rows[2].text[2].save_state().set_opacity(0)      # 'after … deploy_images too' comes in at "once no stack"
                 cl.show(self, rows[i], anims=[FadeIn(rows[i], shift=RIGHT * 0.15)], run_time=0.5, into=cl.rows)
                 vo.wait_until(b)
                 if i == 2:
                     self.play(Indicate(rows[2].text[1][1], color=COST, scale_factor=1.15), run_time=0.5)
+                    cl.heal(self)
+                    vo.wait_until("once no stack")
+                    self.play(rows[2].text[2].animate.restore(), run_time=0.5)
                     cl.heal(self)
                 cl.tick(self, i)
 
@@ -606,11 +615,10 @@ class Recap(VoiceScene):
             vo.wait_until("What survives destroy")
             self.play(to_card(4))
             vo.wait_until("Answers are in")
-            self.play(ReplacementTransform(dots, ans), run_time=0.6)     # the progress dots become the pointer
-        self.wait(2.0)                                                   # card 5 stays readable
-        self.play(FadeOut(cur[0], shift=UP * 0.2), FadeOut(cur[1]), FadeOut(head), run_time=0.6)
-        self.play(ans.animate.move_to([0, 0.15, 0]), run_time=0.5)
-        self.wait(0.8)
+            self.play(FadeOut(cur[0], shift=UP * 0.2), FadeOut(cur[1]), FadeOut(head), run_time=0.5)
+            self.play(ReplacementTransform(dots, ans), run_time=0.5)     # after card 5: the dots become the pointer
+            self.play(ans.animate.move_to([0, 0.15, 0]), run_time=0.5)
+        self.wait(0.4)
         self.play(FadeOut(ans), run_time=0.8)
         self.remove(*self.mobjects)
         self.wait(0.3)

@@ -352,7 +352,7 @@ class TwoKeys(VoiceScene):
 
         # ========================================================== 5. secrets/ next to the clone
         tree = folder_tree()
-        t = term(P_LAPTOP, 10, T_LAPTOP, size=20)
+        t = term(P_LAPTOP, 10, T_LAPTOP, width=12.8, size=20)   # 73 chars: p05:12 stays on one row
         assert tree.dep.get_bottom()[1] > t.box.get_top()[1] + 0.08, (tree.dep.get_bottom(), t.box.get_top())
         assert tree.home.get_top()[1] < PIC_TOP and tree.secrets.get_right()[0] < 6.45
         kd = [key_icon("deploy", False, 0.55), key_icon("service", False, 0.55)]
@@ -384,6 +384,8 @@ class TwoKeys(VoiceScene):
             self.remove(*gk)
             self.add(*kd)
             self.play(FadeIn(t, shift=UP * 0.3), run_time=0.4)
+            full = t.max_chars                   # 73 at width 12.8; the typed commands fold as at 72 (p01's
+            t.max_chars = 72                     # clone keeps its fold and room for its 'extra' tag)
             cl = type_capture(self, t, P01, type_time=0.7)[0]
             pin(self, cl, beside(extra_row("our spelling"), cl))
             self.play(*[r.glyphs.animate.set_color(S.GREY_DARK) for r in rows_of(cl)], run_time=0.3)
@@ -393,12 +395,17 @@ class TwoKeys(VoiceScene):
             pin(self, ph, beside(row_tag("your keys → secrets/ (README:249, 258)"), ph, buff=0.2))
             vo.wait_until("not inside it")
             ls = type_capture(self, t, P05, type_time=0.8)[0]
+            t.max_chars = full                   # the output rows use all 73: p05:12 stays on one row
             xr = beside(extra_row(), ls)
             pin(self, ls, xr)
-            rows = out(self, t, P05.at(6, 7, 11, 12), wrap=True, run_time=0.6)
+            # two listings, kept apart: ~ (p05:6-7), then '…' + a GREY 'inside secrets/' tag, then secrets/ (p05:11-12)
+            rows = out(self, t, P05.at(6, 7) + [("…", S.GREY)] + P05.at(11, 12), run_time=0.6)
+            assert len(rows) == 5 and rows[4].get_right()[0] < t.box.get_right()[0], "p05:12 must stay on one row"
+            sec = beside(row_tag([("inside", "label"), ("secrets/", "mono")]), rows[2], buff=0.3)
+            pin(self, rows[2], sec)
             self.play(substring(rows[0], "cheese-app-v3").animate.set_color(TURN),
                       substring(rows[1], "secrets").animate.set_color(TURN), run_time=0.4)
-            self.play(substring(rows[2], "deployment.json").animate.set_color(OWN),
+            self.play(substring(rows[3], "deployment.json").animate.set_color(OWN),
                       substring(rows[4], "gcp-service.json").animate.set_color(OWN), run_time=0.4)
             self.add(t)
             vo.wait_until("The deployment script of the next step")

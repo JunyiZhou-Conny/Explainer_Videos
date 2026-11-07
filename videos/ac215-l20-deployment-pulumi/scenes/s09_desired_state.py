@@ -19,16 +19,21 @@ Beats (script.md "## S09", one voiceover block each):
 3. LECTURE (held). The 'state' tree (GREEN, with the small BLUE bucket) and 'reality' (BLUE) slide in;
    the bucket flashes on "from your bucket"; on "The refresh flag" a PINK sweep lines the stale state
    card up with reality.
-4. LECTURE (held). On "Then it compares" the desired and state trees flash; on "each difference" the
+4. LECTURE (held). On "Then it compares" the trees change so that each row differs once: state and
+   reality show Network as a GREY dashed ghost (+), Firewall reads '· 80' in desired, '· 22' in
+   state/reality (~), desired shows Disk as a ghost (-), Instance reads 'image v2' vs 'image v1' (+-);
+   the desired and state trees flash; on "each difference" the
    glyphs pop (+ ~ - +-) and the plan row fills; each glyph and its plan twin flash on its phrase.
 5. LECTURE (held). On "Finally it calls the providers" the plan travels down the PINK arrow to the four
    PURPLE plugs (gcp, docker-build, docker, command), which light, and the BLUE arrow carries the calls
-   into reality. On "The banner on the slide" the banner writes under the picture.
+   into reality; state and reality then match desired (Network real, Firewall · 80, Disk a ghost,
+   image v2) and the glyphs leave. On "The banner on the slide" the banner writes under the picture.
 6. LECTURE 20 · 15. V4 turns into its compact form on the left. A card of seven commands ('pulumi' +
    new · up · preview · destroy · stack · config · refresh); stack, config, preview, up, destroy light
    YELLOW one by one; refresh is YELLOW-outlined with a chip 'as the --refresh flag'; new turns GREY
    with a chip 'both projects already exist'.
-7. LECTURE 20 · 16. The card leaves, V4 (compact) moves down. A wide strip
+7. LECTURE 20 · 16. The card leaves, V4 (compact) moves down and gets a new edit (Network a ghost
+   in state/reality, Firewall '· 80' vs '· 22'), so beat 8's preview glyphs + ~ have a cause. A wide strip
    `pulumi up --stack dev --refresh -y`; `up` PURPLE ('preview, ask, apply'), `--stack dev` GREEN
    ('which environment'), `--refresh` PINK ('sync state with reality first') light on their phrases;
    V4 replays the refresh sweep.
@@ -40,7 +45,7 @@ Beats (script.md "## S09", one voiceover block each):
 9. The strips leave; V4 back at full size, all three trees identical, the plan box empty, the
    providers dark. PONDER(8 s).
 10. The trees glow GREEN together, a GREEN 'desired = state = reality' line, the plan says 'no
-   changes'; the arrow and plugs stay dark. A YELLOW sticky 'hold that thought: S13' bottom right.
+   changes'; the arrow and plugs stay dark. A YELLOW sticky 'hold that thought' bottom right (as S13).
    Fade; empty frame.
 
 Deviations from SHOW:
@@ -92,6 +97,32 @@ def seat_trees(e, with_bucket: bool = True):
         e.bucket = pail(0.45, CLOUD, rim=OWN).next_to(e.heads["state"], RIGHT, buff=0.18)
         e.add(e.bucket)
     e.stale = None
+
+
+def ghost(card):
+    """(anims, dash): turn an EngineLoop card into a GREY dashed ghost (a resource that does not
+    exist on that side). The dash is a new mobject: e.show(scene, dash, anims=anims) seats it."""
+    b = card.box
+    dash = DashedVMobject(b.copy().set_fill(opacity=0).set_stroke(S.GREY, 2.5, opacity=1),
+                          num_dashes=26, dashed_ratio=0.55)
+    anims = [b.animate.set_stroke(opacity=0).set_fill(tint(S.GREY, 0.05), 1),
+             card.text.animate.set_color(S.GREY).set_opacity(0.7), FadeIn(dash)]
+    card.dash = dash
+    return anims, dash
+
+
+def unghost(card, color) -> list:
+    """Anims that make a ghost card real again (the dash fades; the caller takes it off the piece)."""
+    return [card.box.animate.set_stroke(color, opacity=1).set_fill(tint(color, 0.15), 1),
+            card.text.animate.set_color(INK).set_opacity(1), FadeOut(card.dash)]
+
+
+def relabel(card, text: str):
+    """A Transform of the card's text into `text` (same size, centred in the card)."""
+    t = label(text, 20, INK).move_to(card.box)
+    if t.width > card.box.width - 0.2:
+        raise ValueError(f"relabel: {text!r} too wide")
+    return Transform(card.text, t)
 
 
 def cmd_strip(s: str, size: float = 28) -> VGroup:
@@ -299,6 +330,19 @@ class DesiredState(VoiceScene):
         # ------------------------------------------------------------ 4 · diff -> plan
         with self.voiceover(SAY[4]) as vo:
             vo.wait_until("Then it compares")
+            # the program changed since the last run: one difference per row, so each glyph has a cause
+            # (+ Network: not in state/reality · ~ Firewall 80 vs 22 · - Disk: gone from the program ·
+            #  +- Instance: a new image replaces the VM)
+            D, St, R = (e.cards[k] for k in KEYS)
+            dash_anims, dashes = [], []
+            for c in (St[0], R[0], D[2]):
+                a_, d_ = ghost(c)
+                dash_anims += a_
+                dashes.append(d_)
+            dash_anims += [relabel(D[1], "Firewall · 80"), relabel(St[1], "Firewall · 22"),
+                           relabel(R[1], "Firewall · 22"), relabel(D[3], "Instance · image v2"),
+                           relabel(St[3], "Instance · image v1"), relabel(R[3], "Instance · image v1")]
+            e.show(self, *dashes, anims=dash_anims, run_time=1.0)
             cmp_r = VGroup(*[ring(VGroup(e.heads[k], *e.cards[k]), OWN, buff=0.15, stroke=4)
                              for k in ("desired", "state")])
             self.play(LaggedStart(*[Create(r_) for r_ in cmp_r], lag_ratio=0.3), run_time=0.9)
@@ -321,6 +365,15 @@ class DesiredState(VoiceScene):
             e.apply(self, run_time=1.4)
             vo.wait_until("which make the API calls")
             self.play(Indicate(e.flow, color=ROUTE, scale_factor=1.05), run_time=0.7)
+            e.heal(self)
+            # applied: state and reality now match desired (the glyphs are spent)
+            e.clear_glyphs(self)
+            new_d = [ghost(c) for c in (St[2], R[2])]
+            conv = unghost(St[0], OWN) + unghost(R[0], CLOUD) + [a for a_, _ in new_d for a in a_]
+            conv += [relabel(St[1], "Firewall · 80"), relabel(R[1], "Firewall · 80"),
+                     relabel(St[3], "Instance · image v2"), relabel(R[3], "Instance · image v2")]
+            e.show(self, *[d_ for _, d_ in new_d], anims=conv, run_time=0.9)
+            e.remove(St[0].dash, R[0].dash)
             e.heal(self)
             vo.wait_until("The banner on the slide")
             e.banner(self, run_time=0.8)
@@ -388,6 +441,16 @@ class DesiredState(VoiceScene):
             ln = strip.line
             self.play(FadeOut(cmds), FadeOut(hls), FadeOut(r_ring), FadeOut(r_chip), FadeOut(n_chip),
                       FadeOut(ref15), FadeIn(ref16), ce.animate.shift(np.array([0.25, -2.0, 0])), run_time=0.8)
+            # a new edit to the program for the preview of beat 8: a new Network (+), port 80 (~)
+            cD, cS, cR = (ce.cards[k] for k in KEYS)
+            c_anims, c_dashes = [], []
+            for c in (cS[0], cR[0]):
+                a_, d_ = ghost(c)
+                c_anims += a_
+                c_dashes.append(d_)
+            c_anims += [relabel(cD[1], "Firewall · 80"), relabel(cS[1], "Firewall · 22"),
+                        relabel(cR[1], "Firewall · 22")]
+            ce.show(self, *c_dashes, anims=c_anims, run_time=0.6)
             vo.wait_until("pulumi up, stack dev")
             self.play(FadeIn(strip.frame), LaggedStart(*[FadeIn(gl_) for gl_ in ln.glyphs], lag_ratio=0.08), run_time=1.3)
             self.remove(ln)
@@ -504,7 +567,7 @@ class DesiredState(VoiceScene):
             vo.wait_until("and nothing is created")
             self.play(Indicate(dark, color=S.GREY, scale_factor=1.05), run_time=0.7)
             e2.heal(self)
-            note_s = sticky("hold that thought: S13").move_to([4.85, -3.0, 0])
+            note_s = sticky("hold that thought").move_to([4.85, -3.0, 0])
             vo.wait_until("Hold that thought")
             self.play(FadeIn(note_s, shift=UP * 0.15, scale=0.8), run_time=0.6)
             self.play(Indicate(note_s, color=TURN, scale_factor=1.08), run_time=0.6)
