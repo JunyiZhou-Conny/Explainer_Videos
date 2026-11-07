@@ -1,0 +1,124 @@
+## setup: a clone at b8458ff whose origin is a stand-in fork that already has b8458ff
+$ git config --global --add safe.directory /dlops/cheese-app-ci-cd/.git && git clone -q /dlops/cheese-app-ci-cd cheese-app-ci-cd && cd cheese-app-ci-cd && git reset -q --hard b8458ff && git init -q --bare ~/fork.git && git push -q ~/fork.git HEAD:refs/heads/main && git remote set-url origin ~/fork.git && git fetch -q origin && git branch -q -u origin/main && git log -1 --format="%h %s"
+b8458ff demo class 1
+[exit 0]
+
+## C3: README Part 5 'Push to GitHub' on a fork
+$ git add .
+[exit 0]
+
+$ git commit -m "Add CI pipeline"
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+[exit 1]
+
+$ git push
+Everything up-to-date
+[exit 0]
+
+$ git commit --allow-empty -m "Trigger CI" && git push 2>&1 | tail -1
+[main 935e51d] Trigger CI
+   b8458ff..935e51d  main -> main
+[exit 0]
+
+## C4: the hook stops a commit; what happens if you just commit again
+$ pip install -q pre-commit==4.7.0 2>&1 | tail -1; pre-commit install
+[notice] To update, run: pip install --upgrade pip
+pre-commit installed at .git/hooks/pre-commit
+[exit 0]
+
+$ sed -i "s/z = power(x, 2) + power(y, 2)/z=power(x,2)+power(y,2)/" src/api-service/api/service.py && git add . && git commit -m "quick fix" 2>&1 | grep -E "Black|Flake8|reformatted|\[INFO\] Installing|^\[main" ; git status --short
+[INFO] Installing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Installing environment for https://github.com/psf/black.
+[INFO] Installing environment for https://github.com/PyCQA/flake8.
+Format Python code with Black............................................Failed
+reformatted src/api-service/api/service.py
+1 file reformatted.
+Check Python code with Flake8............................................Passed
+MM src/api-service/api/service.py
+[exit 0]
+
+$ git commit -m "quick fix"; echo "exit code: $?"; git status --short
+[WARNING] Unstaged files detected.
+[INFO] Stashing unstaged files to /home/student/.cache/pre-commit/patch1794027766-286.
+Trim trailing whitespace.................................................Passed
+Fix end of files.........................................................Passed
+Check YAML syntax....................................(no files to check)Skipped
+Check for large files....................................................Passed
+Check JSON syntax....................................(no files to check)Skipped
+Check for merge conflicts................................................Passed
+Detect private keys......................................................Passed
+Format Python code with Black............................................Failed
+- hook id: black
+- files were modified by this hook
+
+reformatted src/api-service/api/service.py
+
+All done! ✨ 🍰 ✨
+1 file reformatted.
+
+Check Python code with Flake8............................................Passed
+[WARNING] Stashed changes conflicted with hook auto-fixes... Rolling back fixes...
+[INFO] Restored changes from /home/student/.cache/pre-commit/patch1794027766-286.
+exit code: 1
+MM src/api-service/api/service.py
+[exit 0]
+
+$ git diff --stat; git add . && git commit -m "quick fix" | grep -vE "no files to check"; echo "exit code: ${PIPESTATUS[0]}"; git status --short; git log -1 --format="%h %s"
+ src/api-service/api/service.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Trim trailing whitespace.............................(no files to check)Skipped
+Fix end of files.....................................(no files to check)Skipped
+Check YAML syntax....................................(no files to check)Skipped
+Check for large files................................(no files to check)Skipped
+Check JSON syntax....................................(no files to check)Skipped
+Check for merge conflicts............................(no files to check)Skipped
+Detect private keys..................................(no files to check)Skipped
+Format Python code with Black........................(no files to check)Skipped
+Check Python code with Flake8........................(no files to check)Skipped
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+exit code: 1
+935e51d Trigger CI
+[exit 0]
+
+## Ponder 5 / D1: a private key file (placeholder content), with and without the hooks
+$ printf -- "-----BEGIN RSA PRIVATE KEY-----\nplaceholder, not a key\n-----END RSA PRIVATE KEY-----\n" > id_rsa && git add id_rsa && git commit -m "add key" | grep -E "private|id_rsa"; echo "exit code: ${PIPESTATUS[0]}"
+Trim trailing whitespace.................................................Passed
+Fix end of files.........................................................Passed
+Check YAML syntax....................................(no files to check)Skipped
+Check for large files....................................................Passed
+Check JSON syntax....................................(no files to check)Skipped
+Check for merge conflicts................................................Passed
+Detect private keys......................................................Failed
+- hook id: detect-private-key
+- exit code: 1
+
+Private key found: id_rsa
+
+Format Python code with Black........................(no files to check)Skipped
+Check Python code with Flake8........................(no files to check)Skipped
+exit code: 1
+[exit 0]
+
+$ git commit --no-verify -m "add key" && git status --short
+[main 64489ae] add key
+ 1 file changed, 3 insertions(+)
+ create mode 100644 id_rsa
+[exit 0]
+
+$ grep -n "api/" /dlops-src-ci.yml | grep -E "black|flake8"
+61:          docker run --rm cheese-app-api:${{ github.sha }} black --check --line-length 120 api/
+66:          docker run --rm cheese-app-api:${{ github.sha }} flake8 --max-line-length=120 --extend-ignore=E203,W503 api/
+[exit 0]
+
+$ pre-commit run --all-files | grep -E "Detect private|id_rsa"; echo "exit code: ${PIPESTATUS[0]}"
+Detect private keys......................................................Failed
+Private key found: id_rsa
+exit code: 1
+[exit 0]
+

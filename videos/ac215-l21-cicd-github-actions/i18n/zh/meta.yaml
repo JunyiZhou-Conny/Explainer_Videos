@@ -1,0 +1,46 @@
+# Chinese (zh-CN) metadata for ac215-l21-cicd-github-actions (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (仓库, 推送, 钩子, 流水线, 工作流, 机密, 门禁, 分支保护; A4; job, runner,
+# artifact and webhook stay English in both registers), the English colon structure kept (本地难题：--no-verify;
+# 分支保护：从报告到门禁), commands, tools and names as they are (GitHub Actions, --no-verify, Slack, Test Summary), questions
+# keep their question mark (流水线什么时候醒来？), and S16 follows the series' 回顾 pattern. 跟练 = follow-along. The title
+# is in substance video.yaml's publish.title_zh ("AC215 第21讲跟练 · 用 GitHub Actions 做 CI：一次 push，六台全新的机器"),
+# in the series pattern of the other meta.yaml titles (AC215 · 第 n 讲：…（跟练：…）); the Bilibili upload uses publish.title_zh.
+# SERIES RULE (A16): no title, chapter or description names the instructor.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 21 讲：用 GitHub Actions 做 CI——一次 push，六台全新的机器（跟练：cheese-app-ci-cd）"
+
+parts:
+  part1: "AC215 · 第 21 讲（上）：从本地钩子到 GitHub 上的流水线——读懂、推送、看它运行"
+  part2: "AC215 · 第 21 讲（下）：逐个 job 拆开看——artifact、退出码、测试、--no-verify、Slack 与分支保护"
+
+chapters:
+  s01_hook: "运行变红，汇总却全绿"
+  s02_hooks: "钩子（hook）只留在你的笔记本上"
+  s03_pipeline: "CI 循环与工作流文件"
+  s04_triggers: "流水线什么时候醒来？"
+  s05_jobs: "六个 job，一张依赖图"
+  s06_push: "推送到你自己的仓库"
+  s07_watch: "看这次运行：六台机器的颜色"
+  s08_artifact: "只构建一次；每个 job 都从空机器开始"
+  s09_gates: "门禁只听退出码"
+  s10_tests: "三个测试 job，三个层级"
+  s11_summary: "Test Summary 只听测试 job 的"
+  s12_green: "修复、推送、变绿：循环转一圈"
+  s13_noverify: "本地难题：--no-verify"
+  s14_slack: "Webhook、机密（secret）与 Slack 这只铃"
+  s15_protect: "分支保护：从报告到门禁"
+  s16_recap: "不确定性、下一步的 CD，以及回顾"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but without
+# the course-credit line's names (A16). Facts: script.md v2 (S01-S16, two parts: S01-S07 / S08-S16); README of
+# dlops-io/cheese-app-ci-cd @ b8458ff (main, the only branch, still the head on 2026-11-06), Part 5 step by step and the
+# optional Part 6; every job of ci.yml ran live on a fresh stand-in machine with an empty Docker, cross-checked with act;
+# the GitHub pages are drawings from the workflow file, tagged illustration; no cloud, no keys, the Slack secret is a
+# placeholder; five pause-and-ponder cards and five test-yourself questions. Paste the chapter timestamps from
+# output/chapters.txt under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 21 讲“CI/CD 与 GitHub Actions（二）”的跟练视频，对照课件逐页讲解，并照着 dlops-io/cheese-app-ci-cd 的 README 第 5 部分（GitHub Actions Remote CI）一步一步做：上半场先讲为什么本地的 pre-commit 钩子不是团队的保证、课上的 pre-receive / post-receive 远程钩子在 GitHub.com 上对应什么，再把 .github/workflows/ci.yml 读成“事件 → 工作流 → job → 步骤”，看懂触发条件和六个 job 的依赖图，然后推送到你自己的仓库，在 Actions 页看第一次运行变红。
+  下半场逐个 job 打开日志：镜像只构建一次、作为 artifact 传给每台全新的 runner，退出码决定成败（Black 阻断、Flake8 只提示），unit / integration / system 三个测试 job，以及为什么 lint 失败时 Test Summary 仍说全部通过；再用 pre-commit 修好格式让流水线变绿，亲手用 --no-verify 绕过本地钩子、看 CI 把它拦下，配置 Slack 通知的仓库机密，并用分支保护（可选的第 6 部分）把报告变成门禁。
+  英文旁白，配中文和中英双语字幕；每个 job 都在全新的独立机器上实时运行并录下真实输出，GitHub 网页部分是根据工作流文件绘制的示意图；本讲不需要云资源，也不需要任何密钥。

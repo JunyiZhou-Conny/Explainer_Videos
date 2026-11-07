@@ -1,0 +1,1474 @@
+1
+00:00:00,000 --> 00:00:01,899
+第二部分，逐个 job 看
+Part 2, job by job.
+
+2
+00:00:02,219 --> 00:00:05,675
+先看构建 container：课上把它放在最前面
+First, build container: the lecture builds it first,
+
+3
+00:00:05,675 --> 00:00:10,859
+这样每个检查都在同一个环境里运行，构建的问题也能尽早暴露
+so every check runs in the same environment, and build problems show up early.
+
+4
+00:00:11,100 --> 00:00:13,724
+课上说的是一台远程 CI 服务器
+The lecture speaks of one remote CI server.
+
+5
+00:00:14,044 --> 00:00:17,026
+GitHub 给每个 job 一台新的
+GitHub gives you a new one for every job:
+
+6
+00:00:17,026 --> 00:00:20,444
+这个文件里六次写着 runs-on: ubuntu-latest
+runs-on: ubuntu-latest, six times in this file.
+
+7
+00:00:20,764 --> 00:00:22,983
+每个 job 都从一台空机器开始
+Each job starts on an empty machine.
+
+8
+00:00:23,267 --> 00:00:26,228
+README 里 build 这个 job 只构建一次 image
+The README's build job builds the image once,
+
+9
+00:00:26,228 --> 00:00:27,939
+用 commit ID 打 tag
+tagged with the commit ID.
+
+10
+00:00:28,259 --> 00:00:32,150
+它把 image 存成一个 tar 文件，作为 artifact 上传
+It saves it as a tar file and uploads it as an artifact,
+
+11
+00:00:32,150 --> 00:00:35,277
+这样其他每个 job 拿到的都是完全相同的 image
+so every other job gets the exact same image.
+
+12
+00:00:35,517 --> 00:00:38,952
+在 GitHub 上，点一个 job，再点一个步骤，就能打开它的日志
+On GitHub, click a job, then a step, to open its log.
+
+13
+00:00:39,272 --> 00:00:42,758
+Docker 用 Dockerfile 构建 image
+Docker builds the image from the Dockerfile,
+
+14
+00:00:42,758 --> 00:00:45,928
+把它命名为 cheese-app-api，冒号，再加 commit ID
+and names it cheese-app-api:<commit ID>.
+
+15
+00:00:46,248 --> 00:00:49,170
+这个 tag 只表示这个 commit 的 image，别的都不是
+That tag means this commit's image, nothing else.
+
+16
+00:00:49,417 --> 00:00:52,797
+有一个小疏漏：README 说有 Buildx 缓存
+A small slip: the README promises Buildx caching,
+
+17
+00:00:52,797 --> 00:00:57,556
+但构建用的是默认的构建器，也没有东西保存缓存
+but the build runs on the default builder, and nothing saves a cache,
+
+18
+00:00:57,556 --> 00:01:00,660
+所以每台全新的机器都从头重建
+so every fresh machine rebuilds from scratch.
+
+19
+00:01:00,980 --> 00:01:02,622
+练习里讲了怎么加
+The exercises show how.
+
+20
+00:01:02,867 --> 00:01:08,371
+用 docker save 把 image 打成一个文件，大约 176 MB
+docker save folds the image into one file, about 176 megabytes.
+
+21
+00:01:08,691 --> 00:01:12,638
+上传那一步把它送进 artifact 存储，保留一天
+The upload step carries it to the artifact store, kept for one day.
+
+22
+00:01:12,958 --> 00:01:14,877
+然后构建用的机器就被扔掉了
+Then the build machine is thrown away.
+
+23
+00:01:15,117 --> 00:01:17,122
+现在进到一个全新的检查 job 里
+Now step into a fresh check job.
+
+24
+00:01:17,442 --> 00:01:20,920
+一条额外的命令 docker images，只显示了表头
+An extra command, docker images, shows just the header.
+
+25
+00:01:21,240 --> 00:01:22,683
+一个 image 也没有
+No image at all.
+
+26
+00:01:22,733 --> 00:01:26,480
+所以每个检查 job 都要下载 artifact
+So every check job downloads the artifact and runs
+
+27
+00:01:26,480 --> 00:01:28,428
+再对这个 tar 跑 docker load -i
+docker load -i on the tar:
+
+28
+00:01:28,428 --> 00:01:31,501
+同一个 tag，从行李箱里拆出来
+the same tag, unpacked from the suitcase.
+
+29
+00:01:31,821 --> 00:01:33,421
+这就是 artifact 共享
+That's artifact sharing.
+
+30
+00:01:33,677 --> 00:01:36,078
+而且 artifact 一天后过期
+And the artifact expires after a day,
+
+31
+00:01:36,078 --> 00:01:39,843
+所以明天再重新运行一个失败的 job，会在下载那一步失败
+so re-running a failed job tomorrow fails at the download.
+
+32
+00:01:40,083 --> 00:01:41,683
+轮到你来预测
+Your turn to predict.
+
+33
+00:01:41,768 --> 00:01:45,480
+从 Unit Tests 这个 job 里删掉 Load Docker image 这一步
+Delete the "Load Docker image" step from the unit tests job.
+
+34
+00:01:45,800 --> 00:01:48,041
+哪一步会失败，报什么错？
+Which step fails, and with what error?
+
+35
+00:01:56,883 --> 00:01:58,483
+是 Run unit tests 这一步
+The "Run unit tests" step.
+
+36
+00:01:58,739 --> 00:02:00,472
+Docker 在这台机器上找 image
+Docker looks for the image
+
+37
+00:02:00,472 --> 00:02:04,139
+什么也没找到，再去问 Docker Hub
+on the machine and finds nothing, then asks Docker Hub,
+
+38
+00:02:04,139 --> 00:02:07,272
+那里也没有这个 image：pull access denied
+where no such image exists: pull access denied.
+
+39
+00:02:07,592 --> 00:02:12,201
+退出码 125：这个步骤失败，job 也就失败了
+Exit code 125: the step fails, so the job fails.
+
+40
+00:02:13,750 --> 00:02:15,350
+接下来是 lint and format
+Next, lint and format.
+
+41
+00:02:15,627 --> 00:02:18,536
+课上说的编码规范，在这里就是 Black
+The lecture's coding standards are Black here,
+
+42
+00:02:18,536 --> 00:02:21,003
+静态代码分析就是 Flake8
+and its static code analysis is Flake8.
+
+43
+00:02:21,323 --> 00:02:26,571
+还记得第 9 讲：格式化工具会改写你的代码；linter 只报告
+Remember lecture 9: a formatter rewrites your code; a linter only reports.
+
+44
+00:02:26,817 --> 00:02:32,129
+两个都在 image 里运行，查 api 目录，都是 120 列
+Both run inside the image, on the api/ folder, at 120 columns.
+
+45
+00:02:32,449 --> 00:02:35,990
+Black 这一步的 continue-on-error 写着 false：它会阻断
+The Black step says continue-on-error, false: it blocks.
+
+46
+00:02:36,310 --> 00:02:38,156
+Flake8 这一步写的是 true
+The Flake8 step says true:
+
+47
+00:02:38,156 --> 00:02:41,707
+它只提示，是一个永远不会让 job 失败的警告
+it's advisory, a warning that never fails the job.
+
+48
+00:02:41,950 --> 00:02:43,550
+一个步骤是怎么失败的？
+How does a step fail?
+
+49
+00:02:43,657 --> 00:02:46,003
+每条命令结束时都有一个退出码
+Every command ends with an exit code.
+
+50
+00:02:46,323 --> 00:02:47,923
+0 打开门禁
+Zero opens the gate.
+
+51
+00:02:48,137 --> 00:02:52,851
+其他任何值都会关上它，红色从步骤爬到 job，再爬到整个 run
+Anything else shuts it, and the red climbs from the step to the job to the whole run.
+
+52
+00:02:53,100 --> 00:02:56,791
+在 run 1 里，Black 这一步：would reformat utils.py
+Run 1, the Black step: would reformat utils.py.
+
+53
+00:02:57,111 --> 00:02:58,988
+1 file would be reformatted
+1 file would be reformatted.
+
+54
+00:02:59,308 --> 00:03:01,548
+退出码 1，门禁关上了
+Exit code 1, so the gate shuts.
+
+55
+00:03:01,783 --> 00:03:03,938
+步骤列表显示了接下来发生的事
+The step list shows what happened next.
+
+56
+00:03:04,258 --> 00:03:05,658
+Black，failure
+Black, failure.
+
+57
+00:03:05,708 --> 00:03:07,280
+Flake8，skipped
+Flake8, skipped.
+
+58
+00:03:07,330 --> 00:03:11,831
+失败步骤下面的步骤都不会运行，除非它们要求总是运行
+The steps below a failed step don't run, unless they ask to run always.
+
+59
+00:03:12,067 --> 00:03:15,063
+原因就是你在第 9 讲见过的那处乱糟糟的格式
+The cause is the mess you met in lecture 9,
+
+60
+00:03:15,063 --> 00:03:17,501
+它是故意留在 repo 里的
+still in the repository on purpose:
+
+61
+00:03:17,501 --> 00:03:22,029
+逗号后面少了一个空格，该空两行的地方空了三行
+no space after the comma, and three blank lines where two belong.
+
+62
+00:03:22,267 --> 00:03:24,251
+被跳过的 Flake8 本来会说什么？
+What would the skipped Flake8 have said?
+
+63
+00:03:24,571 --> 00:03:27,856
+一次额外运行在同样那几行上给出两个警告
+An extra run shows two warnings on those same lines.
+
+64
+00:03:28,176 --> 00:03:32,016
+但即使那样它也只是提示：决定 job 的只有 Black
+But even then it's advisory: only Black decides the job.
+
+65
+00:03:32,250 --> 00:03:37,498
+这就是全部规则：一个步骤失败，是因为它的命令以非 0 的值退出
+So that's the whole rule: a step fails when its command exits with anything but zero.
+
+66
+00:03:37,818 --> 00:03:39,973
+CI 只听这一样东西
+It's the only thing CI listens to.
+
+67
+00:03:41,517 --> 00:03:42,939
+现在看测试
+Now the tests.
+
+68
+00:03:42,989 --> 00:03:49,048
+课上那一个测试方框，在这里是三个并排的 job，各在不同的层级
+The lecture's one test box is three jobs here, side by side, each at a different altitude.
+
+69
+00:03:49,284 --> 00:03:53,935
+单元测试一次检查一个函数，不依赖外部
+Unit tests check one function at a time, with no outside dependencies.
+
+70
+00:03:54,255 --> 00:03:57,369
+日志里收集了 11 个测试，11 个都通过
+The log collects 11 tests, and 11 pass.
+
+71
+00:03:57,617 --> 00:04:01,500
+接着覆盖率那一步又跑了一遍，11 个又全部通过
+Then the coverage step runs them again, and all 11 pass again.
+
+72
+00:04:01,820 --> 00:04:04,046
+可是 pytest 碰到一个内部错误
+But pytest hits an internal error:
+
+73
+00:04:04,046 --> 00:04:07,452
+permission denied，写不进覆盖率目录
+permission denied, writing into the coverage folder.
+
+74
+00:04:07,772 --> 00:04:09,150
+退出码 3
+Exit code 3.
+
+75
+00:04:09,200 --> 00:04:10,800
+可这个 job 是绿的
+Yet the job is green.
+
+76
+00:04:10,992 --> 00:04:14,853
+这一步写着 continue-on-error，所以失败被旁路到一边
+The step says continue-on-error, so the failure is shunted aside.
+
+77
+00:04:15,173 --> 00:04:18,578
+然后标着 if always 的上传找不到文件
+Then the upload, marked if: always(), finds no files;
+
+78
+00:04:18,578 --> 00:04:20,891
+在 GitHub 上，会有一个黄色警告说明这一点
+on GitHub, a yellow warning says so.
+
+79
+00:04:21,134 --> 00:04:26,873
+README 有一个小缺口：它承诺有终端、XML 和 HTML 三种报告
+The README has a small gap: it promises terminal, XML and HTML reports.
+
+80
+00:04:27,193 --> 00:04:30,329
+Docker 以 root 身份建出缺失的覆盖率目录
+Docker creates the missing coverage folder as root,
+
+81
+00:04:30,329 --> 00:04:33,465
+而 container 的用户 app 写不进去
+and the container's user, app, can't write into it.
+
+82
+00:04:33,785 --> 00:04:37,902
+先把目录建成可写的；练习里有修复方法
+Create the folder writable first; the exercises have the fix.
+
+83
+00:04:38,150 --> 00:04:41,651
+集成测试用的是 FastAPI 的测试客户端
+Integration tests use the FastAPI test client:
+
+84
+00:04:41,651 --> 00:04:45,382
+应用在同一个 Python 进程里被调用
+the app is called inside the same Python process.
+
+85
+00:04:45,702 --> 00:04:47,323
+没有服务器，也没有 port
+No server, no port.
+
+86
+00:04:47,643 --> 00:04:51,043
+10 passed。系统测试要真家伙
+10 passed. System tests need the real thing.
+
+87
+00:04:51,363 --> 00:04:56,974
+一个 container 在后台启动服务器并发布 port 9000
+One container starts the server in the background and publishes port 9000 on the runner.
+
+88
+00:04:57,294 --> 00:05:02,179
+一条额外的命令 docker ps 显示它正在运行，9000 已经映射好了
+An extra command, docker ps, shows it running, with 9000 mapped.
+
+89
+00:05:02,417 --> 00:05:08,241
+然后 job 等 10 秒，用 curl -f 去敲 localhost:9000 的门
+Then the job waits 10 seconds, and curl -f knocks on localhost:9000.
+
+90
+00:05:08,561 --> 00:05:12,508
+只有欢迎消息回来了，下一道门禁才会打开
+Only when the welcome message comes back does the next gate open.
+
+91
+00:05:12,750 --> 00:05:16,496
+第二个 container 用 --network host 跑测试
+A second container runs the tests with --network host:
+
+92
+00:05:16,496 --> 00:05:21,283
+它共用 runner 的网络，所以 localhost:9000 能连到服务器
+it shares the runner's network, so localhost:9000 reaches the server.
+
+93
+00:05:21,603 --> 00:05:22,884
+5 passed
+5 passed.
+
+94
+00:05:22,934 --> 00:05:25,619
+最后是两个标着 if always 的步骤
+Two steps marked if: always() come last,
+
+95
+00:05:25,619 --> 00:05:27,119
+就算前面失败也会运行
+even after a failure:
+
+96
+00:05:27,119 --> 00:05:30,653
+显示服务器日志，每个测试请求都会到达那里
+show the server log, where every test request arrives,
+
+97
+00:05:30,653 --> 00:05:33,003
+然后停掉并删除 container
+then stop and remove the container.
+
+98
+00:05:33,323 --> 00:05:35,904
+这就是 README 说的条件执行
+That's the README's conditional execution.
+
+99
+00:05:36,150 --> 00:05:40,075
+在第 9 讲，没有服务器时这些测试会悄悄跳过
+In lecture 9, a missing server made these tests skip quietly.
+
+100
+00:05:40,395 --> 00:05:43,276
+在这里，curl 这道门禁让它大声地失败
+Here the curl gate makes it fail loudly instead.
+
+101
+00:05:44,917 --> 00:05:51,040
+最后一个 job：汇总，课上说它收集结果，报告通过还是失败
+Last job: the summary, which the lecture says collects the results and reports pass or fail.
+
+102
+00:05:51,360 --> 00:05:53,834
+它的 needs 那一行写的是三个测试 job
+Its needs line names the three test jobs.
+
+103
+00:05:54,154 --> 00:05:57,729
+而 if always 让它就算其中一个失败了也照样运行
+And if: always() lets it run even when one of them failed:
+
+104
+00:05:57,729 --> 00:06:00,256
+它会运行，但运行不等于通过
+it runs, which isn't the same as passing.
+
+105
+00:06:00,500 --> 00:06:02,921
+它的脚本打印每个 job 的结果
+Its script prints each job's result,
+
+106
+00:06:02,921 --> 00:06:06,284
+把一个状态写进 GitHub output 留给后面的步骤
+writes a status to $GITHUB_OUTPUT for later steps,
+
+107
+00:06:06,284 --> 00:06:09,311
+并以 1 退出，只要有任何一个结果不是 success
+and exits with 1 if any result isn't success.
+
+108
+00:06:09,550 --> 00:06:12,425
+在 run 1 里，到来的是三个 success
+In run 1, three success tokens arrive:
+
+109
+00:06:12,425 --> 00:06:14,393
+unit、integration、system
+unit, integration, system.
+
+110
+00:06:14,713 --> 00:06:16,200
+All tests passed
+All tests passed.
+
+111
+00:06:16,250 --> 00:06:18,085
+开头那个谜题，现在有答案了
+And here is the hook, answered.
+
+112
+00:06:18,405 --> 00:06:22,159
+这个 lint 不在 needs 里，所以它的失败永远到不了汇总
+Lint isn't in needs, so its failure never reaches the summary.
+
+113
+00:06:22,479 --> 00:06:23,757
+这个 run 还是红的
+The run is still red,
+
+114
+00:06:23,757 --> 00:06:26,618
+因为任何一个失败的 job 都会让整个 run 变红
+because any failed job turns the whole run red.
+
+115
+00:06:26,867 --> 00:06:30,951
+README 说汇总检查所有测试 job 的结果
+The README says the summary checks the results of all test jobs,
+
+116
+00:06:30,951 --> 00:06:34,078
+字面上这没错：lint 不是测试 job
+and that's literally true: lint isn't a test job.
+
+117
+00:06:34,398 --> 00:06:37,051
+把 lint and format 加进 needs 和检查里
+Add lint and format to needs and to the check
+
+118
+00:06:37,051 --> 00:06:38,600
+如果你想让它算数的话
+if you want it counted.
+
+119
+00:06:38,650 --> 00:06:40,250
+现在来看课上那个 bug
+Now the bug from class.
+
+120
+00:06:40,463 --> 00:06:41,963
+在演示 commit 里
+In the demo commit,
+
+121
+00:06:41,963 --> 00:06:46,138
+距离函数取的是 2 乘 z 的平方根，而不是 z 的
+the distance function takes the square root of 2 times z, instead of z.
+
+122
+00:06:46,458 --> 00:06:48,677
+这次我们替你跑过了：你只看就行
+We ran this one for you: just watch.
+
+123
+00:06:48,917 --> 00:06:50,517
+先预测，再看 run
+Predict before the run.
+
+124
+00:06:50,666 --> 00:06:54,016
+现在哪些 job 会变红，Test Summary 又会说什么？
+Which jobs turn red now, and what does Test Summary say?
+
+125
+00:07:02,850 --> 00:07:05,943
+Integration：红，1 failed，9 passed
+Integration: red, 1 failed and 9 passed.
+
+126
+00:07:06,263 --> 00:07:10,232
+3 和 4 的距离回来的是大约 7，不是 5
+The distance for 3 and 4 came back as about 7, not 5.
+
+127
+00:07:10,467 --> 00:07:12,893
+System：红，2 failed，3 passed
+System: red, 2 failed and 3 passed:
+
+128
+00:07:12,893 --> 00:07:18,510
+又是 3 和 4，还有默认点 1 和 2，回来的结果也太大了
+3 and 4 again, and the default point, 1 and 2, which came back too large as well.
+
+129
+00:07:18,830 --> 00:07:22,904
+Unit：绿，因为只有 power 函数有单元测试
+Unit: green, because only the power function has unit tests.
+
+130
+00:07:23,224 --> 00:07:25,998
+Lint：照样红，因为 utils.py
+Lint: red anyway, for utils.py.
+
+131
+00:07:26,234 --> 00:07:29,861
+而汇总现在说有测试失败了，并以 1 退出
+And the summary now says some tests failed, and exits with 1.
+
+132
+00:07:30,181 --> 00:07:31,887
+这一次，汇总听见了
+This time the summary heard it.
+
+133
+00:07:33,433 --> 00:07:35,694
+回到 run 1，还有课上那个循环
+Back to run 1 and the lecture's loop.
+
+134
+00:07:36,014 --> 00:07:41,443
+通知回来是红的，所以现在开发者修代码
+The notification came back red, so now the developer fixes the code and commits again,
+
+135
+00:07:41,443 --> 00:07:43,652
+再 commit 一次，循环再转一圈
+and the loop goes around once more.
+
+136
+00:07:43,900 --> 00:07:48,138
+修复用的是第 9 讲的工具，同一个 README 的 Part 4
+The fix is the tool from lecture 9, Part 4 of the same README,
+
+137
+00:07:48,138 --> 00:07:50,257
+所以这些步骤在这里是额外的
+so these steps are extras here.
+
+138
+00:07:50,577 --> 00:07:53,759
+先 pip install pre-commit，再 pre-commit install
+pip install pre-commit, then pre-commit install,
+
+139
+00:07:53,759 --> 00:07:56,145
+它把 hook 放进 .git/hooks
+which puts the hook into .git/hooks.
+
+140
+00:07:56,383 --> 00:07:58,538
+然后跑 pre-commit run --all-files
+Then pre-commit run --all-files.
+
+141
+00:07:58,858 --> 00:08:00,656
+卫生检查都通过
+The hygiene checks pass;
+
+142
+00:08:00,656 --> 00:08:05,300
+Black 失败了，因为它改了一个文件：reformatted utils.py
+Black fails, because it modified a file: reformatted utils.py.
+
+143
+00:08:05,620 --> 00:08:07,220
+接着 Flake8 通过了
+Flake8 then passes.
+
+144
+00:08:07,519 --> 00:08:08,866
+暂停一下，自己跑一遍
+Pause and run it.
+
+145
+00:08:08,916 --> 00:08:11,772
+用 git diff 能看到 Black 到底改了什么
+git diff shows exactly what Black changed:
+
+146
+00:08:11,772 --> 00:08:15,103
+逗号后面加了空格，删掉了一个空行
+a space after the comma, and one blank line gone.
+
+147
+00:08:15,350 --> 00:08:17,590
+再跑一遍，所有 hook 都通过
+Run it again, and every hook passes.
+
+148
+00:08:17,910 --> 00:08:19,531
+没有要修的了
+Nothing is left to fix.
+
+149
+00:08:19,950 --> 00:08:23,377
+现在 git add .，再 git commit，写上信息
+Now git add ., and git commit with a message:
+
+150
+00:08:23,377 --> 00:08:25,433
+Format utils.py with Black
+Format utils.py with Black.
+
+151
+00:08:25,753 --> 00:08:28,398
+这条信息是我们写的；README 里没有
+The message is ours; the README has none.
+
+152
+00:08:28,718 --> 00:08:30,907
+这些 hook 在 commit 时运行，都通过了
+The hooks run on the commit and pass.
+
+153
+00:08:30,958 --> 00:08:32,380
+然后 git push
+Then git push.
+
+154
+00:08:32,430 --> 00:08:34,030
+暂停一下，push 你自己的
+Pause and push yours.
+
+155
+00:08:34,100 --> 00:08:35,913
+再看 run 2：六个全绿
+Run 2: all six green.
+
+156
+00:08:36,233 --> 00:08:38,226
+在 lint 这个 job 里，Black 满意了
+In the lint job, Black is happy,
+
+157
+00:08:38,226 --> 00:08:40,841
+这一次 Flake8 也跑了，而且通过了
+and this time Flake8 runs too, and passes.
+
+158
+00:08:41,161 --> 00:08:44,084
+在 fork 上，这是你的第一个 run，而且是绿的
+On a fork, this is your first run, and it's green.
+
+159
+00:08:44,333 --> 00:08:47,042
+现在你的 run 和 README 的截图一样了
+Now your run matches the README's screenshot.
+
+160
+00:08:47,362 --> 00:08:50,772
+循环转了一圈：一个红色的通知，一次修复
+One turn of the loop: a red notification, a fix, a commit,
+
+161
+00:08:50,772 --> 00:08:52,372
+一个 commit，一个绿色的 run
+and a green run.
+
+162
+00:08:53,783 --> 00:08:56,535
+课上把这个叫作本地难题
+The lecture calls this one the local conundrum.
+
+163
+00:08:56,855 --> 00:08:59,176
+如果 hook 已经在你的笔记本上跑过了
+If the hooks already ran on your laptop,
+
+164
+00:08:59,176 --> 00:09:01,612
+为什么还要在服务器上再跑一遍同样的检查？
+why run the same checks again on a server?
+
+165
+00:09:01,850 --> 00:09:04,645
+这些步骤都是额外的，你只看就行
+These steps are extras, and you can just watch.
+
+166
+00:09:04,965 --> 00:09:09,182
+快速改一下，把 service.py 里一行的空格挤掉
+A quick edit squeezes the spaces out of one line in service.py,
+
+167
+00:09:09,182 --> 00:09:10,782
+git diff 能看到
+and git diff shows it.
+
+168
+00:09:10,916 --> 00:09:14,116
+先 git add .，再 git commit -m "quick fix"
+git add ., then git commit -m "quick fix".
+
+169
+00:09:14,436 --> 00:09:16,965
+Black 这个 hook 失败了，并重新格式化了文件
+The Black hook fails and reformats the file,
+
+170
+00:09:16,965 --> 00:09:18,746
+所以 hook 拦下了这次 commit
+so the hook stopped the commit.
+
+171
+00:09:19,683 --> 00:09:23,566
+用 git status --short 看，显示两个字母 M，表示已修改
+git status --short shows the letter M, for modified, twice.
+
+172
+00:09:23,886 --> 00:09:28,238
+Black 修好了你工作区里的文件，但暂存的那份还是乱的
+Black fixed your working copy, but the staged copy is still the messy one.
+
+173
+00:09:28,483 --> 00:09:30,407
+现在是课上那条命令
+Now the lecture's command:
+
+174
+00:09:30,407 --> 00:09:33,219
+git commit --no-verify -m "quick fix"
+git commit --no-verify -m "quick fix".
+
+175
+00:09:33,539 --> 00:09:35,858
+没有任何 hook 运行，commit 也生成了
+No hook ran, and the commit exists:
+
+176
+00:09:35,858 --> 00:09:38,574
+--no-verify 跳过了所有 pre-commit 检查
+--no-verify skips every pre-commit check.
+
+177
+00:09:38,850 --> 00:09:40,059
+我们把它 push 上去
+We push it.
+
+178
+00:09:40,109 --> 00:09:43,586
+再看 run 3：lint and format 红了，因为 service.py
+Run 3: lint and format, red, on service.py.
+
+179
+00:09:43,906 --> 00:09:46,018
+测试和汇总全都通过
+The tests and the summary all pass.
+
+180
+00:09:46,683 --> 00:09:49,904
+被跳过的 Flake8 本来会把那一行标出三次
+The skipped Flake8 would have flagged that line three times.
+
+181
+00:09:50,224 --> 00:09:53,112
+被 --no-verify 放过去的，CI 抓住了
+CI caught what --no-verify let through:
+
+182
+00:09:53,112 --> 00:09:55,110
+课件第 31 页，就在你的终端里
+slide 31, at your terminal.
+
+183
+00:09:55,350 --> 00:09:56,950
+收拾一下这个实验
+Clean up the experiment.
+
+184
+00:09:57,163 --> 00:10:01,451
+在这里，git restore 只是扔掉了工作区里 Black 的修复
+Here, git restore only throws away Black's fix in the working copy.
+
+185
+00:10:01,771 --> 00:10:05,351
+如果你跟着做了，那个乱的 commit 现在就在你的 main 上
+If you followed along, the messy commit is on your main now,
+
+186
+00:10:05,351 --> 00:10:07,787
+不管 push 了没有。还没 push？
+pushed or not. Not pushed yet?
+
+187
+00:10:08,107 --> 00:10:12,140
+用 git reset --hard HEAD~1 把它去掉。已经 push 了？
+git reset --hard HEAD~1 drops it. Pushed?
+
+188
+00:10:12,395 --> 00:10:16,528
+先跑 pre-commit run --all-files，再 add、commit、push
+Run pre-commit run --all-files, then add, commit and push,
+
+189
+00:10:16,528 --> 00:10:17,850
+然后再做 Part 6
+before part 6.
+
+190
+00:10:17,900 --> 00:10:22,892
+但 CI 只重复 Black 和 Flake8，而且只查 api 目录
+But CI repeats only Black and Flake8, and only on the api/ folder.
+
+191
+00:10:23,212 --> 00:10:26,274
+七个卫生检查 hook 在 CI 里从来不跑
+The seven hygiene hooks never run in CI:
+
+192
+00:10:26,274 --> 00:10:33,238
+行尾空白、文件结尾、YAML、大文件、JSON、合并冲突标记和私钥
+trailing whitespace, end of file, YAML, large files, JSON, merge markers, and private keys.
+
+193
+00:10:33,483 --> 00:10:37,408
+还有一个缺口：hook pin 住的 Black 比 image 里装的旧
+One more gap: the hooks pin an older Black than the image installs.
+
+194
+00:10:37,728 --> 00:10:41,483
+录制时它们是一致的，但可能会慢慢分开
+At the time of recording they agreed, but they can drift apart.
+
+195
+00:10:41,733 --> 00:10:45,025
+一个队友用 --no-verify commit 了一个私钥文件
+A teammate commits a private key file with --no-verify
+
+196
+00:10:45,025 --> 00:10:46,590
+还 push 到了 main
+and pushes to main.
+
+197
+00:10:46,640 --> 00:10:48,858
+这条 pipeline 里哪个 job 能抓住它？
+Which job of this pipeline catches it?
+
+198
+00:10:57,700 --> 00:11:01,540
+一个也没有。这个 detect-private-key 只是本地 hook
+None. The detect-private-key hook is a local hook only.
+
+199
+00:11:01,860 --> 00:11:05,490
+解决办法是加一个 CI 步骤，pre-commit run --all-files
+The fix is one CI step, pre-commit run --all-files:
+
+200
+00:11:05,490 --> 00:11:10,116
+正是课上设想的那条 Slack 消息里失败的那一步
+the very step that fails on the lecture's imagined Slack message.
+
+201
+00:11:10,436 --> 00:11:13,188
+还要轮换那个密钥；它已经在 GitHub 上了
+And rotate that key; it's already on GitHub.
+
+202
+00:11:14,533 --> 00:11:18,266
+那条设想中的消息，把我们带回课上的 webhook
+That imagined message brings us back to the lecture's webhooks.
+
+203
+00:11:18,586 --> 00:11:21,908
+所谓 webhook，就是 GitHub 去调用一个外部地址
+A webhook is GitHub calling an outside address
+
+204
+00:11:21,908 --> 00:11:26,963
+在发生某件事的时候：用来启动像 Jenkins 这样的外部 CI 系统
+when something happens: to start an outside CI system such as Jenkins,
+
+205
+00:11:26,963 --> 00:11:29,274
+用来部署，或者往聊天工具里发消息
+to deploy, or to post to a chat.
+
+206
+00:11:29,516 --> 00:11:33,057
+这部分是可选的：需要你自己的 Slack 工作区
+This part is optional: it needs your own Slack workspace.
+
+207
+00:11:33,377 --> 00:11:35,809
+而这个 webhook 的方向是反过来的
+And this webhook works the other way round.
+
+208
+00:11:36,129 --> 00:11:39,067
+Slack 给你一个 incoming webhook，也就是一个地址
+Slack gives you an incoming webhook, an address,
+
+209
+00:11:39,067 --> 00:11:42,188
+Test Summary 这个 job 的最后几步去调用它
+and the last steps of the test summary job call it.
+
+210
+00:11:42,508 --> 00:11:45,388
+GitHub 不打这个铃；打铃的是你的工作流
+GitHub doesn't ring this bell; your workflow does.
+
+211
+00:11:45,633 --> 00:11:50,805
+课上设想的是一个 Slack 频道，每次 push 都会收到通知
+The lecture imagines a Slack channel told about every push, failures included,
+
+212
+00:11:50,805 --> 00:11:53,590
+失败也包括在内，还附上失败的步骤、数量和耗时
+with the failed step, counts and duration.
+
+213
+00:11:53,910 --> 00:11:57,942
+这个工作流发的少一些：通过还是失败、repo、分支、commit
+This workflow sends less: passed or failed, the repository,
+
+214
+00:11:57,942 --> 00:12:02,316
+和作者、每个测试 job 一个标记，还有两个链接
+branch, commit and author, one mark per test job, and two links.
+
+215
+00:12:02,550 --> 00:12:04,534
+这个 webhook 地址是一个 secret
+The webhook address is a secret.
+
+216
+00:12:04,854 --> 00:12:08,909
+在 Settings，Secrets and variables，Actions 下面
+Add it under Settings → Secrets and variables → Actions,
+
+217
+00:12:08,909 --> 00:12:12,570
+加一个名叫 Slack webhook URL 的新仓库 secret
+as a new repository secret named SLACK_WEBHOOK_URL,
+
+218
+00:12:12,570 --> 00:12:14,170
+别加在 Webhooks 页面里
+not under Webhooks.
+
+219
+00:12:14,390 --> 00:12:18,187
+它永远不进 repo，日志里显示成三个星号
+It never goes in the repository, logs show it as ***,
+
+220
+00:12:18,187 --> 00:12:21,195
+来自 fork 的 PR 拿不到它
+and pull requests from forks don't get it.
+
+221
+00:12:21,433 --> 00:12:24,145
+检查那一步看有没有设这个 secret
+The check step tests whether the secret is set,
+
+222
+00:12:24,145 --> 00:12:26,510
+然后写下 enabled 为 true 或 false
+and writes enabled=true or enabled=false.
+
+223
+00:12:26,830 --> 00:12:29,305
+为什么不直接在 if 那一行里测这个 secret？
+Why not test the secret right in the if line?
+
+224
+00:12:29,625 --> 00:12:31,812
+GitHub 不允许在那里用 secret
+GitHub doesn't allow secrets there;
+
+225
+00:12:31,812 --> 00:12:36,622
+这个 repo 自己的历史里就试过，后来换成了这个 shell 检查
+the repository's own history tried it, and replaced it with this shell check.
+
+226
+00:12:36,866 --> 00:12:39,949
+在 run 1 里没有 secret，所以 enabled 为 false
+In run 1 there's no secret, so enabled is false,
+
+227
+00:12:39,949 --> 00:12:42,968
+Slack 那一步被跳过，本该如此
+and the Slack step is skipped, as it should be.
+
+228
+00:12:43,216 --> 00:12:44,766
+再看演示 commit 那次 run
+Now the demo run.
+
+229
+00:12:44,816 --> 00:12:46,523
+Check test results 失败了
+Check test results fails.
+
+230
+00:12:46,843 --> 00:12:50,284
+检查那一步没有 if always，所以它也被跳过
+The check step has no if: always(), so it's skipped too,
+
+231
+00:12:50,284 --> 00:12:54,032
+enabled 一直是空的，Slack 那一步的条件就是 false
+enabled stays empty, and the Slack step's condition is false.
+
+232
+00:12:54,266 --> 00:12:56,997
+照现在这样写，这只铃只在有好消息时才响
+As written, the bell only rings for good news.
+
+233
+00:12:57,317 --> 00:13:00,495
+修复只要一行：在检查那一步加上 if always
+The fix is one line: if: always(), on the check step.
+
+234
+00:13:00,815 --> 00:13:03,354
+练习里有一个加固版
+The exercises have a hardened version.
+
+235
+00:13:04,700 --> 00:13:08,476
+README 的 Part 6 是可选的，它就是课上说的门禁
+Part 6 of the README is optional, and it's the lecture's gate.
+
+236
+00:13:08,796 --> 00:13:11,527
+由 push 触发的 run，就是 post-receive 这只铃
+A push-triggered run is the post-receive bell.
+
+237
+00:13:11,847 --> 00:13:16,048
+在 GitHub.com 上，会拒绝的那道门禁是分支保护
+On GitHub.com, the gate that refuses is branch protection,
+
+238
+00:13:16,048 --> 00:13:18,076
+加上必需的状态检查
+with required status checks.
+
+239
+00:13:18,317 --> 00:13:21,432
+打开 Settings 里的 Branches，给 main 加一条规则
+Go to Settings → Branches, and add a rule for main.
+
+240
+00:13:21,752 --> 00:13:24,902
+勾上这两项：Require a pull request before merging
+Tick the boxes "Require a pull request before merging",
+
+241
+00:13:24,902 --> 00:13:27,874
+还有 Require status checks to pass before merging
+and "Require status checks to pass before merging".
+
+242
+00:13:27,924 --> 00:13:32,034
+现在的页面可能叫它 classic 规则，或者改成提供 rulesets
+Today's page may call it a classic rule, or offer rulesets instead.
+
+243
+00:13:32,283 --> 00:13:33,854
+然后选出要用的检查
+Then pick the checks.
+
+244
+00:13:33,904 --> 00:13:37,521
+有一个小疏漏：选择列表按名字列出 job
+A small slip: the picker lists jobs by their names,
+
+245
+00:13:37,521 --> 00:13:40,490
+比如 Lint and Format Check 和 Unit Tests
+like Lint and Format Check and Unit Tests,
+
+246
+00:13:40,490 --> 00:13:42,090
+而不是 README 里的 ID
+not the README's IDs.
+
+247
+00:13:42,310 --> 00:13:44,507
+它们要在最近跑过一次 run 之后才会出现
+They appear only after a recent run.
+
+248
+00:13:44,827 --> 00:13:48,027
+在私有 repo 上，这需要付费套餐
+On a private repository this needs a paid plan.
+
+249
+00:13:48,267 --> 00:13:52,342
+然后测试一下：git checkout -b feature/test-protection
+Then test it: git checkout -b feature/test-protection.
+
+250
+00:13:52,662 --> 00:13:56,447
+单单 push 这个分支，什么也不会启动，触发条件那里你看到过
+Pushing that branch starts nothing, as you saw with the triggers;
+
+251
+00:13:56,447 --> 00:13:59,125
+run 在你打开 PR 时才开始
+the run starts when you open the pull request.
+
+252
+00:13:59,367 --> 00:14:03,356
+README 通过追加 def broken，assert False 来弄坏测试
+The README breaks the tests by appending def broken(): assert False.
+
+253
+00:14:03,676 --> 00:14:06,877
+在 image 里额外跑一次，结果还是 11 passed
+An extra run in the image still says 11 passed,
+
+254
+00:14:06,877 --> 00:14:11,441
+因为 pytest 只收集名字以 test 开头的函数
+because pytest only collects functions whose names start with test.
+
+255
+00:14:11,683 --> 00:14:14,819
+所以改名叫 test 下划线 broken，这是一个额外的修复
+So name it test_broken instead, an extra fix.
+
+256
+00:14:15,139 --> 00:14:17,166
+现在是 1 failed，11 passed
+Now 1 failed and 11 passed.
+
+257
+00:14:17,486 --> 00:14:21,610
+就是它让 PR 变红；开着保护
+That's the one that turns the pull request red, and with protection on,
+
+258
+00:14:21,610 --> 00:14:23,353
+合并按钮就一直锁着
+the merge button stays locked.
+
+259
+00:14:23,600 --> 00:14:25,100
+然后 git add .
+Then git add .,
+
+260
+00:14:25,100 --> 00:14:27,693
+git commit -m "Intentionally break tests"
+git commit -m "Intentionally break tests",
+
+261
+00:14:27,693 --> 00:14:30,853
+再 git push origin feature/test-protection
+and git push origin feature/test-protection.
+
+262
+00:14:31,173 --> 00:14:36,123
+在 GitHub 上打开 PR：测试通过之前，合并一直是锁着的
+Open the pull request on GitHub: the merge stays locked until the tests pass.
+
+263
+00:14:36,443 --> 00:14:38,476
+暂停一下，在你自己的 repo 上试一试
+Pause and try it on yours.
+
+264
+00:14:38,526 --> 00:14:41,093
+在这里，用 git checkout -- 把测试文件还原
+Here, git checkout -- puts the test file back.
+
+265
+00:14:42,233 --> 00:14:48,420
+课上许诺的转折：不确定性会进入每一个阶段，只要代码要训练模型
+The twist the lecture promised: non-determinism enters every stage when the code trains a model.
+
+266
+00:14:48,740 --> 00:14:50,970
+课上的答案是：一切都做版本管理
+Its answers: version everything;
+
+267
+00:14:50,970 --> 00:14:55,151
+自动化重新训练和测试，Milestone 5 就要求这个
+automate retraining and testing, which Milestone 5 asks for;
+
+268
+00:14:55,151 --> 00:14:57,380
+监控；还有谨慎上线
+monitor; and roll out with care.
+
+269
+00:14:57,616 --> 00:15:03,867
+持续部署是课上最后一节，它把发布自动化：那是第 23 讲
+Continuous deployment, the lecture's last section, automates the release: that's lecture 23.
+
+270
+00:15:04,116 --> 00:15:08,103
+收尾清理：切回 main，删掉 feature/test-protection 分支
+Clean up: switch to main, and delete the feature/test-protection branch here
+
+271
+00:15:08,103 --> 00:15:09,603
+这里和 GitHub 上都要删
+and on GitHub;
+
+272
+00:15:09,603 --> 00:15:11,391
+这样它的 PR 也就关闭了
+that closes its pull request.
+
+273
+00:15:11,711 --> 00:15:13,017
+把分支规则删掉
+Remove the branch rule,
+
+274
+00:15:13,017 --> 00:15:15,913
+还有 Slack 的 secret 和 webhook，如果你建了的话
+and the Slack secret and webhook, if you made them.
+
+275
+00:15:16,233 --> 00:15:19,081
+在私有 repo 上就停用这个工作流
+Disable the workflow on a private repository,
+
+276
+00:15:19,081 --> 00:15:21,738
+再跑一遍第 9 讲的 Docker 清理
+and run the Docker cleanup from lecture 9.
+
+277
+00:15:21,983 --> 00:15:23,512
+再看一遍循环
+Once more, the loop.
+
+278
+00:15:23,562 --> 00:15:25,162
+你的 push 就是事件
+Your push is the event.
+
+279
+00:15:25,354 --> 00:15:27,333
+每个 job 都有一台全新的机器
+Each job gets a fresh machine,
+
+280
+00:15:27,333 --> 00:15:29,706
+所以 image 要作为 artifact 来传
+so the image travels as an artifact.
+
+281
+00:15:30,026 --> 00:15:32,970
+每个步骤都是一道门禁，读的是退出码
+Every step is a gate that reads an exit code,
+
+282
+00:15:32,970 --> 00:15:35,914
+而汇总只听它 needs 里的 job
+and the summary hears only the jobs it needs.
+
+283
+00:15:36,150 --> 00:15:38,091
+自测一下，每道题都暂停想一想
+Test yourself, pausing on each.
+
+284
+00:15:38,411 --> 00:15:41,896
+第一题：说出代码进到共享 repo 的两种方式
+One: name two ways code reaches the shared repository
+
+285
+00:15:41,896 --> 00:15:44,065
+而且都不经过你的本地 hook
+without passing your local hooks.
+
+286
+00:15:44,385 --> 00:15:46,539
+这条 pipeline 重复了哪些检查？
+Which checks does this pipeline repeat?
+
+287
+00:15:46,783 --> 00:15:50,388
+第二题：分到一台全新机器的单位是哪个，job 还是步骤？
+Two: which unit gets a fresh machine, a job or a step?
+
+288
+00:15:50,708 --> 00:15:53,972
+为什么这就逼得每个检查 job 里都得做一次 docker load？
+And why does that force a docker load in every check job?
+
+289
+00:15:54,216 --> 00:15:58,184
+第三题：你的 run 是红的，但汇总说所有测试都通过了
+Three: your run is red, but the summary says all tests passed.
+
+290
+00:15:58,504 --> 00:16:00,766
+为什么会这样，那一行的修复又是什么？
+Why, and what is the one-line fix?
+
+291
+00:16:01,000 --> 00:16:04,625
+第四题：为什么 Flake8 失败了，它的 job 却不会失败
+Four: why can Flake8 fail without failing its job, and why
+
+292
+00:16:04,625 --> 00:16:07,250
+Black 失败时，你又为什么看不到它的输出？
+don't you see its output when Black fails?
+
+293
+00:16:07,983 --> 00:16:10,672
+第五题：由 push 触发的 run 是 pre-receive 检查
+Five: is a push-triggered run a pre-receive
+
+294
+00:16:10,672 --> 00:16:13,551
+还是 post-receive 检查，又是什么让它成为门禁？
+or a post-receive check, and what makes it a gate?
+
+295
+00:16:13,871 --> 00:16:17,050
+答案在练习和学习指南里
+Answers are in the exercises and the study guide.

@@ -1,0 +1,3 @@
+$ git status --short
+MM src/api-service/api/service.py
+[exit 0]

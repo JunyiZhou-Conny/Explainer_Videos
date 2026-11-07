@@ -1,0 +1,570 @@
+# zh narration for S08-S16 (part 2, group g2: build once and every job starts empty, gates speak in exit codes,
+# three test jobs, the summary listens only to tests, fix push green, the local conundrum --no-verify, webhooks
+# secrets and the Slack bell, branch protection, non-determinism CD next and recap), sentence-aligned to
+# script.md: one zh sentence per English sentence (explainer.voice.split_sentences; 83 SAY lines, 209 sentences).
+# Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (D9).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A6):
+# cheese-app-api:${{ github.sha }} -> cheese-app-api，冒号，再加 commit ID; if: always() -> if always;
+# $GITHUB_OUTPUT -> GitHub output; 2 times z -> 2 乘 z; SLACK_WEBHOOK_URL -> Slack webhook URL; *** -> 三个星号;
+# enabled=true / enabled=false -> enabled 为 true 或 false; def broken(): assert False -> def broken，assert False;
+# test_broken -> test 下划线 broken.
+# Log and terminal text the SAY quotes is copied in its screen form (A13): pull access denied; would reformat
+# utils.py; 1 file would be reformatted; failure / skipped; permission denied; 10 passed; 5 passed; All tests
+# passed; 1 failed, 9 passed; 2 failed, 3 passed; reformatted utils.py; 11 passed; 1 failed, 11 passed.
+# The instructor rule (A16): the narration of S08-S16 names no instructor (the lecture -> 课上, the slide -> 课件).
+# The video's hook (S11[3]) is 开头那个谜题, never hook (A7). Gate -> 门禁, bell -> 铃, suitcase -> 行李箱,
+# shunted aside -> 旁路, success tokens -> 三个 success (A7).
+# Ponders S08[8], S11[6], S13[10] give no hint (A10).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: runs-on:
+# ubuntu-latest, cheese-app-api:<commit ID>, docker save, docker load -i, "Load Docker image", "Run unit tests",
+# api/, continue-on-error, utils.py, service.py, if: always(), curl -f, localhost:9000, --network host,
+# $GITHUB_OUTPUT, pip install pre-commit, .git/hooks, pre-commit run --all-files, git diff, git add .,
+# git commit -m "quick fix", git status --short, git commit --no-verify -m "quick fix", --no-verify,
+# detect-private-key, Settings → Secrets and variables → Actions, SLACK_WEBHOOK_URL, ***, enabled=true /
+# enabled=false, GitHub.com, Settings → Branches, git checkout -b feature/test-protection,
+# def broken(): assert False, test_broken, git commit -m "Intentionally break tests",
+# git push origin feature/test-protection, git checkout --, feature/test-protection); null = the SAY text.
+S08:
+- en: "Part 2, job by job. First, build container: the lecture builds it first, so every check runs in the same environment, and build problems show up early."
+  zh:
+  - "第二部分，逐个 job 看。"
+  - "先看构建 container：课上把它放在最前面，这样每个检查都在同一个环境里运行，构建的问题也能尽早暴露。"
+- en: "The lecture speaks of one remote CI server. GitHub gives you a new one for every job: runs on, ubuntu latest, six times in this file. Each job starts on an empty machine."
+  zh:
+  - "课上说的是一台远程 CI 服务器。"
+  - "GitHub 给每个 job 一台新的：这个文件里六次写着 runs-on: ubuntu-latest。"
+  - "每个 job 都从一台空机器开始。"
+  en_display:
+  - null
+  - "GitHub gives you a new one for every job: runs-on: ubuntu-latest, six times in this file."
+  - null
+- en: "The README's build job builds the image once, tagged with the commit ID. It saves it as a tar file and uploads it as an artifact, so every other job gets the exact same image."
+  zh:
+  - "README 里 build 这个 job 只构建一次 image，用 commit ID 打 tag。"
+  - "它把 image 存成一个 tar 文件，作为 artifact 上传，这样其他每个 job 拿到的都是完全相同的 image。"
+- en: "On GitHub, click a job, then a step, to open its log. Docker builds the image from the Dockerfile and names it cheese app API, colon, the commit ID. That tag means this commit's image, nothing else."
+  zh:
+  - "在 GitHub 上，点一个 job，再点一个步骤，就能打开它的日志。"
+  - "Docker 用 Dockerfile 构建 image，把它命名为 cheese-app-api，冒号，再加 commit ID。"
+  - "这个 tag 只表示这个 commit 的 image，别的都不是。"
+  en_display:
+  - null
+  - "Docker builds the image from the Dockerfile, and names it cheese-app-api:<commit ID>."
+  - null
+- en: "A small slip: the README promises Buildx caching, but the build runs on the default builder, and nothing saves a cache, so every fresh machine rebuilds from scratch. The exercises show how."
+  zh:
+  - "有一个小疏漏：README 说有 Buildx 缓存，但构建用的是默认的构建器，也没有东西保存缓存，所以每台全新的机器都从头重建。"
+  - "练习里讲了怎么加。"
+- en: "Docker save folds the image into one file, about 176 megabytes. The upload step carries it to the artifact store, kept for one day. Then the build machine is thrown away."
+  zh:
+  - "用 docker save 把 image 打成一个文件，大约 176 MB。"
+  - "上传那一步把它送进 artifact 存储，保留一天。"
+  - "然后构建用的机器就被扔掉了。"
+  en_display:
+  - "docker save folds the image into one file, about 176 megabytes."
+  - null
+  - null
+- en: "Now step into a fresh check job. An extra command, docker images, shows just the header. No image at all."
+  zh:
+  - "现在进到一个全新的检查 job 里。"
+  - "一条额外的命令 docker images，只显示了表头。"
+  - "一个 image 也没有。"
+- en: "So every check job downloads the artifact and runs docker load, dash i, on the tar: the same tag, unpacked from the suitcase. That's artifact sharing. And the artifact expires after a day, so re-running a failed job tomorrow fails at the download."
+  zh:
+  - "所以每个检查 job 都要下载 artifact，再对这个 tar 跑 docker load -i：同一个 tag，从行李箱里拆出来。"
+  - "这就是 artifact 共享。"
+  - "而且 artifact 一天后过期，所以明天再重新运行一个失败的 job，会在下载那一步失败。"
+  en_display:
+  - "So every check job downloads the artifact and runs docker load -i on the tar: the same tag, unpacked from the suitcase."
+  - null
+  - null
+- en: "Your turn to predict. Delete the load docker image step from the unit tests job. Which step fails, and with what error?"
+  zh:
+  - "轮到你来预测。"
+  - "从 Unit Tests 这个 job 里删掉 Load Docker image 这一步。"
+  - "哪一步会失败，报什么错？"
+  en_display:
+  - null
+  - "Delete the \"Load Docker image\" step from the unit tests job."
+  - null
+- en: "The run unit tests step. Docker looks for the image on the machine and finds nothing, then asks Docker Hub, where no such image exists: pull access denied. Exit code 125: the step fails, so the job fails."
+  zh:
+  - "是 Run unit tests 这一步。"
+  - "Docker 在这台机器上找 image，什么也没找到，再去问 Docker Hub，那里也没有这个 image：pull access denied。"
+  - "退出码 125：这个步骤失败，job 也就失败了。"
+  en_display:
+  - "The \"Run unit tests\" step."
+  - null
+  - null
+S09:
+- en: "Next, lint and format. The lecture's coding standards are Black here, and its static code analysis is Flake8. Remember lecture 9: a formatter rewrites your code; a linter only reports."
+  zh:
+  - "接下来是 lint and format。"
+  - "课上说的编码规范，在这里就是 Black，静态代码分析就是 Flake8。"
+  - "还记得第 9 讲：格式化工具会改写你的代码；linter 只报告。"
+- en: "Both run inside the image, on the api folder, at 120 columns. The Black step says continue on error, false: it blocks. The Flake8 step says true: it's advisory, a warning that never fails the job."
+  zh:
+  - "两个都在 image 里运行，查 api 目录，都是 120 列。"
+  - "Black 这一步的 continue-on-error 写着 false：它会阻断。"
+  - "Flake8 这一步写的是 true：它只提示，是一个永远不会让 job 失败的警告。"
+  en_display:
+  - "Both run inside the image, on the api/ folder, at 120 columns."
+  - "The Black step says continue-on-error, false: it blocks."
+  - null
+- en: "How does a step fail? Every command ends with an exit code. Zero opens the gate. Anything else shuts it, and the red climbs from the step to the job to the whole run."
+  zh:
+  - "一个步骤是怎么失败的？"
+  - "每条命令结束时都有一个退出码。"
+  - "0 打开门禁。"
+  - "其他任何值都会关上它，红色从步骤爬到 job，再爬到整个 run。"
+- en: "Run 1, the Black step: would reformat utils dot py. One file would be reformatted. Exit code 1, so the gate shuts."
+  zh:
+  - "在 run 1 里，Black 这一步：would reformat utils.py。"
+  - "1 file would be reformatted。"
+  - "退出码 1，门禁关上了。"
+  en_display:
+  - "Run 1, the Black step: would reformat utils.py."
+  - "1 file would be reformatted."
+  - null
+- en: "The step list shows what happened next. Black, failure. Flake8, skipped. The steps below a failed step don't run, unless they ask to run always."
+  zh:
+  - "步骤列表显示了接下来发生的事。"
+  - "Black，failure。"
+  - "Flake8，skipped。"
+  - "失败步骤下面的步骤都不会运行，除非它们要求总是运行。"
+- en: "The cause is the mess you met in lecture 9, still in the repository on purpose: no space after the comma, and three blank lines where two belong."
+  zh:
+  - "原因就是你在第 9 讲见过的那处乱糟糟的格式，它是故意留在 repo 里的：逗号后面少了一个空格，该空两行的地方空了三行。"
+- en: "What would the skipped Flake8 have said? An extra run shows two warnings on those same lines. But even then it's advisory: only Black decides the job."
+  zh:
+  - "被跳过的 Flake8 本来会说什么？"
+  - "一次额外运行在同样那几行上给出两个警告。"
+  - "但即使那样它也只是提示：决定 job 的只有 Black。"
+- en: "So that's the whole rule: a step fails when its command exits with anything but zero. It's the only thing CI listens to."
+  zh:
+  - "这就是全部规则：一个步骤失败，是因为它的命令以非 0 的值退出。"
+  - "CI 只听这一样东西。"
+S10:
+- en: "Now the tests. The lecture's one test box is three jobs here, side by side, each at a different altitude."
+  zh:
+  - "现在看测试。"
+  - "课上那一个测试方框，在这里是三个并排的 job，各在不同的层级。"
+- en: "Unit tests check one function at a time, with no outside dependencies. The log collects 11 tests, and 11 pass."
+  zh:
+  - "单元测试一次检查一个函数，不依赖外部。"
+  - "日志里收集了 11 个测试，11 个都通过。"
+- en: "Then the coverage step runs them again, and all 11 pass again. But pytest hits an internal error: permission denied, writing into the coverage folder. Exit code 3."
+  zh:
+  - "接着覆盖率那一步又跑了一遍，11 个又全部通过。"
+  - "可是 pytest 碰到一个内部错误：permission denied，写不进覆盖率目录。"
+  - "退出码 3。"
+- en: "Yet the job is green. The step says continue on error, so the failure is shunted aside. Then the upload, marked if always, finds no files; on GitHub, a yellow warning says so."
+  zh:
+  - "可这个 job 是绿的。"
+  - "这一步写着 continue-on-error，所以失败被旁路到一边。"
+  - "然后标着 if always 的上传找不到文件；在 GitHub 上，会有一个黄色警告说明这一点。"
+  en_display:
+  - null
+  - "The step says continue-on-error, so the failure is shunted aside."
+  - "Then the upload, marked if: always(), finds no files; on GitHub, a yellow warning says so."
+- en: "The README has a small gap: it promises terminal, XML and HTML reports. Docker creates the missing coverage folder as root, and the container's user, app, can't write into it. Create the folder writable first; the exercises have the fix."
+  zh:
+  - "README 有一个小缺口：它承诺有终端、XML 和 HTML 三种报告。"
+  - "Docker 以 root 身份建出缺失的覆盖率目录，而 container 的用户 app 写不进去。"
+  - "先把目录建成可写的；练习里有修复方法。"
+- en: "Integration tests use the FastAPI test client: the app is called inside the same Python process. No server, no port. 10 passed."
+  zh:
+  - "集成测试用的是 FastAPI 的测试客户端：应用在同一个 Python 进程里被调用。"
+  - "没有服务器，也没有 port。"
+  - "10 passed。"
+- en: "System tests need the real thing. One container starts the server in the background and publishes port 9000 on the runner. An extra command, docker ps, shows it running, with 9000 mapped."
+  zh:
+  - "系统测试要真家伙。"
+  - "一个 container 在后台启动服务器并发布 port 9000。"
+  - "一条额外的命令 docker ps 显示它正在运行，9000 已经映射好了。"
+- en: "Then the job waits 10 seconds, and curl, dash f, knocks on localhost 9000. Only when the welcome message comes back does the next gate open."
+  zh:
+  - "然后 job 等 10 秒，用 curl -f 去敲 localhost:9000 的门。"
+  - "只有欢迎消息回来了，下一道门禁才会打开。"
+  en_display:
+  - "Then the job waits 10 seconds, and curl -f knocks on localhost:9000."
+  - null
+- en: "A second container runs the tests with network host: it shares the runner's network, so localhost 9000 reaches the server. 5 passed."
+  zh:
+  - "第二个 container 用 --network host 跑测试：它共用 runner 的网络，所以 localhost:9000 能连到服务器。"
+  - "5 passed。"
+  en_display:
+  - "A second container runs the tests with --network host: it shares the runner's network, so localhost:9000 reaches the server."
+  - null
+- en: "Two steps marked if always come last, even after a failure: show the server log, where every test request arrives, then stop and remove the container. That's the README's conditional execution."
+  zh:
+  - "最后是两个标着 if always 的步骤，就算前面失败也会运行：显示服务器日志，每个测试请求都会到达那里，然后停掉并删除 container。"
+  - "这就是 README 说的条件执行。"
+  en_display:
+  - "Two steps marked if: always() come last, even after a failure: show the server log, where every test request arrives, then stop and remove the container."
+  - null
+- en: "In lecture 9, a missing server made these tests skip quietly. Here the curl gate makes it fail loudly instead."
+  zh:
+  - "在第 9 讲，没有服务器时这些测试会悄悄跳过。"
+  - "在这里，curl 这道门禁让它大声地失败。"
+S11:
+- en: "Last job: the summary, which the lecture says collects the results and reports pass or fail. Its needs line names the three test jobs. And if always lets it run even when one of them failed: it runs, which isn't the same as passing."
+  zh:
+  - "最后一个 job：汇总，课上说它收集结果，报告通过还是失败。"
+  - "它的 needs 那一行写的是三个测试 job。"
+  - "而 if always 让它就算其中一个失败了也照样运行：它会运行，但运行不等于通过。"
+  en_display:
+  - null
+  - null
+  - "And if: always() lets it run even when one of them failed: it runs, which isn't the same as passing."
+- en: "Its script prints each job's result, writes a status to GitHub output for later steps, and exits with 1 if any result isn't success."
+  zh:
+  - "它的脚本打印每个 job 的结果，把一个状态写进 GitHub output 留给后面的步骤，并以 1 退出，只要有任何一个结果不是 success。"
+  en_display:
+  - "Its script prints each job's result, writes a status to $GITHUB_OUTPUT for later steps, and exits with 1 if any result isn't success."
+- en: "In run 1, three success tokens arrive: unit, integration, system. All tests passed."
+  zh:
+  - "在 run 1 里，到来的是三个 success：unit、integration、system。"
+  - "All tests passed。"
+- en: "And here is the hook, answered. Lint isn't in needs, so its failure never reaches the summary. The run is still red, because any failed job turns the whole run red."
+  zh:
+  - "开头那个谜题，现在有答案了。"
+  - "这个 lint 不在 needs 里，所以它的失败永远到不了汇总。"
+  - "这个 run 还是红的，因为任何一个失败的 job 都会让整个 run 变红。"
+- en: "The README says the summary checks the results of all test jobs, and that's literally true: lint isn't a test job. Add lint and format to needs and to the check if you want it counted."
+  zh:
+  - "README 说汇总检查所有测试 job 的结果，字面上这没错：lint 不是测试 job。"
+  - "把 lint and format 加进 needs 和检查里，如果你想让它算数的话。"
+- en: "Now the bug from class. In the demo commit, the distance function takes the square root of 2 times z, instead of z. We ran this one for you: just watch."
+  zh:
+  - "现在来看课上那个 bug。"
+  - "在演示 commit 里，距离函数取的是 2 乘 z 的平方根，而不是 z 的。"
+  - "这次我们替你跑过了：你只看就行。"
+- en: "Predict before the run. Which jobs turn red now, and what does Test Summary say?"
+  zh:
+  - "先预测，再看 run。"
+  - "现在哪些 job 会变红，Test Summary 又会说什么？"
+- en: "Integration: red, 1 failed and 9 passed. The distance for 3 and 4 came back as about 7, not 5."
+  zh:
+  - "Integration：红，1 failed，9 passed。"
+  - "3 和 4 的距离回来的是大约 7，不是 5。"
+- en: "System: red, 2 failed and 3 passed: 3 and 4 again, and the default point, 1 and 2, which came back too large as well. Unit: green, because only the power function has unit tests. Lint: red anyway, for utils dot py."
+  zh:
+  - "System：红，2 failed，3 passed：又是 3 和 4，还有默认点 1 和 2，回来的结果也太大了。"
+  - "Unit：绿，因为只有 power 函数有单元测试。"
+  - "Lint：照样红，因为 utils.py。"
+  en_display:
+  - null
+  - null
+  - "Lint: red anyway, for utils.py."
+- en: "And the summary now says some tests failed, and exits with 1. This time the summary heard it."
+  zh:
+  - "而汇总现在说有测试失败了，并以 1 退出。"
+  - "这一次，汇总听见了。"
+S12:
+- en: "Back to run 1 and the lecture's loop. The notification came back red, so now the developer fixes the code and commits again, and the loop goes around once more."
+  zh:
+  - "回到 run 1，还有课上那个循环。"
+  - "通知回来是红的，所以现在开发者修代码，再 commit 一次，循环再转一圈。"
+- en: "The fix is the tool from lecture 9, Part 4 of the same README, so these steps are extras here. Pip install pre-commit, then pre-commit install, which puts the hook into dot git, hooks."
+  zh:
+  - "修复用的是第 9 讲的工具，同一个 README 的 Part 4，所以这些步骤在这里是额外的。"
+  - "先 pip install pre-commit，再 pre-commit install，它把 hook 放进 .git/hooks。"
+  en_display:
+  - null
+  - "pip install pre-commit, then pre-commit install, which puts the hook into .git/hooks."
+- en: "Then pre-commit run, all files. The hygiene checks pass; Black fails, because it modified a file: reformatted utils dot py. Flake8 then passes. Pause and run it."
+  zh:
+  - "然后跑 pre-commit run --all-files。"
+  - "卫生检查都通过；Black 失败了，因为它改了一个文件：reformatted utils.py。"
+  - "接着 Flake8 通过了。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - "Then pre-commit run --all-files."
+  - "The hygiene checks pass; Black fails, because it modified a file: reformatted utils.py."
+  - null
+  - null
+- en: "Git diff shows exactly what Black changed: a space after the comma, and one blank line gone."
+  zh:
+  - "用 git diff 能看到 Black 到底改了什么：逗号后面加了空格，删掉了一个空行。"
+  en_display:
+  - "git diff shows exactly what Black changed: a space after the comma, and one blank line gone."
+- en: "Run it again, and every hook passes. Nothing is left to fix."
+  zh:
+  - "再跑一遍，所有 hook 都通过。"
+  - "没有要修的了。"
+- en: "Now git add dot, and git commit with a message: Format utils dot py with Black. The message is ours; the README has none. The hooks run on the commit and pass. Then git push. Pause and push yours."
+  zh:
+  - "现在 git add .，再 git commit，写上信息：Format utils.py with Black。"
+  - "这条信息是我们写的；README 里没有。"
+  - "这些 hook 在 commit 时运行，都通过了。"
+  - "然后 git push。"
+  - "暂停一下，push 你自己的。"
+  en_display:
+  - "Now git add ., and git commit with a message: Format utils.py with Black."
+  - null
+  - null
+  - null
+  - null
+- en: "Run 2: all six green. In the lint job, Black is happy, and this time Flake8 runs too, and passes. On a fork, this is your first run, and it's green."
+  zh:
+  - "再看 run 2：六个全绿。"
+  - "在 lint 这个 job 里，Black 满意了，这一次 Flake8 也跑了，而且通过了。"
+  - "在 fork 上，这是你的第一个 run，而且是绿的。"
+- en: "Now your run matches the README's screenshot. One turn of the loop: a red notification, a fix, a commit, and a green run."
+  zh:
+  - "现在你的 run 和 README 的截图一样了。"
+  - "循环转了一圈：一个红色的通知，一次修复，一个 commit，一个绿色的 run。"
+S13:
+- en: "The lecture calls this one the local conundrum. If the hooks already ran on your laptop, why run the same checks again on a server?"
+  zh:
+  - "课上把这个叫作本地难题。"
+  - "如果 hook 已经在你的笔记本上跑过了，为什么还要在服务器上再跑一遍同样的检查？"
+- en: "These steps are extras, and you can just watch. A quick edit squeezes the spaces out of one line in service dot py, and git diff shows it."
+  zh:
+  - "这些步骤都是额外的，你只看就行。"
+  - "快速改一下，把 service.py 里一行的空格挤掉，git diff 能看到。"
+  en_display:
+  - null
+  - "A quick edit squeezes the spaces out of one line in service.py, and git diff shows it."
+- en: "Git add dot, then git commit, dash m, quick fix. The Black hook fails and reformats the file, so the hook stopped the commit."
+  zh:
+  - "先 git add .，再 git commit -m \"quick fix\"。"
+  - "Black 这个 hook 失败了，并重新格式化了文件，所以 hook 拦下了这次 commit。"
+  en_display:
+  - "git add ., then git commit -m \"quick fix\"."
+  - null
+- en: "Git status, short, shows the letter M, for modified, twice. Black fixed your working copy, but the staged copy is still the messy one."
+  zh:
+  - "用 git status --short 看，显示两个字母 M，表示已修改。"
+  - "Black 修好了你工作区里的文件，但暂存的那份还是乱的。"
+  en_display:
+  - "git status --short shows the letter M, for modified, twice."
+  - null
+- en: "Now the lecture's command: git commit, no verify, dash m, quick fix. No hook ran, and the commit exists: no verify skips every pre-commit check."
+  zh:
+  - "现在是课上那条命令：git commit --no-verify -m \"quick fix\"。"
+  - "没有任何 hook 运行，commit 也生成了：--no-verify 跳过了所有 pre-commit 检查。"
+  en_display:
+  - "Now the lecture's command: git commit --no-verify -m \"quick fix\"."
+  - "No hook ran, and the commit exists: --no-verify skips every pre-commit check."
+- en: "We push it. Run 3: lint and format, red, on service dot py. The tests and the summary all pass."
+  zh:
+  - "我们把它 push 上去。"
+  - "再看 run 3：lint and format 红了，因为 service.py。"
+  - "测试和汇总全都通过。"
+  en_display:
+  - null
+  - "Run 3: lint and format, red, on service.py."
+  - null
+- en: "The skipped Flake8 would have flagged that line three times. CI caught what no verify let through: slide 31, at your terminal."
+  zh:
+  - "被跳过的 Flake8 本来会把那一行标出三次。"
+  - "被 --no-verify 放过去的，CI 抓住了：课件第 31 页，就在你的终端里。"
+  en_display:
+  - null
+  - "CI caught what --no-verify let through: slide 31, at your terminal."
+- en: "Clean up the experiment. Here, git restore only throws away Black's fix in the working copy. If you followed along, the messy commit is on your main now, pushed or not. Not pushed yet? Git reset, hard, head tilde 1, drops it. Pushed? Run pre-commit run, all files, then add, commit and push, before part 6."
+  zh:
+  - "收拾一下这个实验。"
+  - "在这里，git restore 只是扔掉了工作区里 Black 的修复。"
+  - "如果你跟着做了，那个乱的 commit 现在就在你的 main 上，不管 push 了没有。"
+  - "还没 push？"
+  - "用 git reset --hard HEAD~1 把它去掉。"
+  - "已经 push 了？"
+  - "先跑 pre-commit run --all-files，再 add、commit、push，然后再做 Part 6。"
+  en_display:
+  - null
+  - null
+  - null
+  - null
+  - "git reset --hard HEAD~1 drops it."
+  - null
+  - "Run pre-commit run --all-files, then add, commit and push, before part 6."
+- en: "But CI repeats only Black and Flake8, and only on the api folder. The seven hygiene hooks never run in CI: trailing whitespace, end of file, YAML, large files, JSON, merge markers, and private keys."
+  zh:
+  - "但 CI 只重复 Black 和 Flake8，而且只查 api 目录。"
+  - "七个卫生检查 hook 在 CI 里从来不跑：行尾空白、文件结尾、YAML、大文件、JSON、合并冲突标记和私钥。"
+  en_display:
+  - "But CI repeats only Black and Flake8, and only on the api/ folder."
+  - null
+- en: "One more gap: the hooks pin an older Black than the image installs. At the time of recording they agreed, but they can drift apart."
+  zh:
+  - "还有一个缺口：hook pin 住的 Black 比 image 里装的旧。"
+  - "录制时它们是一致的，但可能会慢慢分开。"
+- en: "A teammate commits a private key file with no verify and pushes to main. Which job of this pipeline catches it?"
+  zh:
+  - "一个队友用 --no-verify commit 了一个私钥文件，还 push 到了 main。"
+  - "这条 pipeline 里哪个 job 能抓住它？"
+  en_display:
+  - "A teammate commits a private key file with --no-verify and pushes to main."
+  - null
+- en: "None. Detect private key is a local hook only. The fix is one CI step, pre-commit run, all files: the very step that fails on the lecture's imagined Slack message. And rotate that key; it's already on GitHub."
+  zh:
+  - "一个也没有。"
+  - "这个 detect-private-key 只是本地 hook。"
+  - "解决办法是加一个 CI 步骤，pre-commit run --all-files：正是课上设想的那条 Slack 消息里失败的那一步。"
+  - "还要轮换那个密钥；它已经在 GitHub 上了。"
+  en_display:
+  - null
+  - "The detect-private-key hook is a local hook only."
+  - "The fix is one CI step, pre-commit run --all-files: the very step that fails on the lecture's imagined Slack message."
+  - null
+S14:
+- en: "That imagined message brings us back to the lecture's webhooks. A webhook is GitHub calling an outside address when something happens: to start an outside CI system such as Jenkins, to deploy, or to post to a chat."
+  zh:
+  - "那条设想中的消息，把我们带回课上的 webhook。"
+  - "所谓 webhook，就是 GitHub 去调用一个外部地址，在发生某件事的时候：用来启动像 Jenkins 这样的外部 CI 系统，用来部署，或者往聊天工具里发消息。"
+- en: "This part is optional: it needs your own Slack workspace. And this webhook works the other way round. Slack gives you an incoming webhook, an address, and the last steps of the test summary job call it. GitHub doesn't ring this bell; your workflow does."
+  zh:
+  - "这部分是可选的：需要你自己的 Slack 工作区。"
+  - "而这个 webhook 的方向是反过来的。"
+  - "Slack 给你一个 incoming webhook，也就是一个地址，Test Summary 这个 job 的最后几步去调用它。"
+  - "GitHub 不打这个铃；打铃的是你的工作流。"
+- en: "The lecture imagines a Slack channel told about every push, failures included, with the failed step, counts and duration. This workflow sends less: passed or failed, the repository, branch, commit and author, one mark per test job, and two links."
+  zh:
+  - "课上设想的是一个 Slack 频道，每次 push 都会收到通知，失败也包括在内，还附上失败的步骤、数量和耗时。"
+  - "这个工作流发的少一些：通过还是失败、repo、分支、commit 和作者、每个测试 job 一个标记，还有两个链接。"
+- en: "The webhook address is a secret. Add it under Settings, Secrets and variables, Actions, as a new repository secret named Slack webhook URL, not under Webhooks. It never goes in the repository, logs show it as three stars, and pull requests from forks don't get it."
+  zh:
+  - "这个 webhook 地址是一个 secret。"
+  - "在 Settings，Secrets and variables，Actions 下面，加一个名叫 Slack webhook URL 的新仓库 secret，别加在 Webhooks 页面里。"
+  - "它永远不进 repo，日志里显示成三个星号，来自 fork 的 PR 拿不到它。"
+  en_display:
+  - null
+  - "Add it under Settings → Secrets and variables → Actions, as a new repository secret named SLACK_WEBHOOK_URL, not under Webhooks."
+  - "It never goes in the repository, logs show it as ***, and pull requests from forks don't get it."
+- en: "The check step tests whether the secret is set, and writes enabled, true or false. Why not test the secret right in the if line? GitHub doesn't allow secrets there; the repository's own history tried it, and replaced it with this shell check."
+  zh:
+  - "检查那一步看有没有设这个 secret，然后写下 enabled 为 true 或 false。"
+  - "为什么不直接在 if 那一行里测这个 secret？"
+  - "GitHub 不允许在那里用 secret；这个 repo 自己的历史里就试过，后来换成了这个 shell 检查。"
+  en_display:
+  - "The check step tests whether the secret is set, and writes enabled=true or enabled=false."
+  - null
+  - null
+- en: "In run 1 there's no secret, so enabled is false, and the Slack step is skipped, as it should be."
+  zh:
+  - "在 run 1 里没有 secret，所以 enabled 为 false，Slack 那一步被跳过，本该如此。"
+- en: "Now the demo run. Check test results fails. The check step has no if always, so it's skipped too, enabled stays empty, and the Slack step's condition is false."
+  zh:
+  - "再看演示 commit 那次 run。"
+  - "Check test results 失败了。"
+  - "检查那一步没有 if always，所以它也被跳过，enabled 一直是空的，Slack 那一步的条件就是 false。"
+  en_display:
+  - null
+  - null
+  - "The check step has no if: always(), so it's skipped too, enabled stays empty, and the Slack step's condition is false."
+- en: "As written, the bell only rings for good news. The fix is one line: if always, on the check step. The exercises have a hardened version."
+  zh:
+  - "照现在这样写，这只铃只在有好消息时才响。"
+  - "修复只要一行：在检查那一步加上 if always。"
+  - "练习里有一个加固版。"
+  en_display:
+  - null
+  - "The fix is one line: if: always(), on the check step."
+  - null
+S15:
+- en: "Part 6 of the README is optional, and it's the lecture's gate. A push-triggered run is the post-receive bell. On GitHub dot com, the gate that refuses is branch protection, with required status checks."
+  zh:
+  - "README 的 Part 6 是可选的，它就是课上说的门禁。"
+  - "由 push 触发的 run，就是 post-receive 这只铃。"
+  - "在 GitHub.com 上，会拒绝的那道门禁是分支保护，加上必需的状态检查。"
+  en_display:
+  - null
+  - null
+  - "On GitHub.com, the gate that refuses is branch protection, with required status checks."
+- en: "Go to Settings, Branches, and add a rule for main. Tick the boxes Require a pull request before merging, and Require status checks to pass. Today's page may call it a classic rule, or offer rulesets instead."
+  zh:
+  - "打开 Settings 里的 Branches，给 main 加一条规则。"
+  - "勾上这两项：Require a pull request before merging，还有 Require status checks to pass before merging。"
+  - "现在的页面可能叫它 classic 规则，或者改成提供 rulesets。"
+  en_display:
+  - "Go to Settings → Branches, and add a rule for main."
+  - "Tick the boxes \"Require a pull request before merging\", and \"Require status checks to pass before merging\"."
+  - null
+- en: "Then pick the checks. A small slip: the picker lists jobs by their names, like Lint and Format Check and Unit Tests, not the README's IDs. They appear only after a recent run. On a private repository this needs a paid plan."
+  zh:
+  - "然后选出要用的检查。"
+  - "有一个小疏漏：选择列表按名字列出 job，比如 Lint and Format Check 和 Unit Tests，而不是 README 里的 ID。"
+  - "它们要在最近跑过一次 run 之后才会出现。"
+  - "在私有 repo 上，这需要付费套餐。"
+- en: "Then test it: git checkout, dash b, feature, test protection. Pushing that branch starts nothing, as you saw with the triggers; the run starts when you open the pull request."
+  zh:
+  - "然后测试一下：git checkout -b feature/test-protection。"
+  - "单单 push 这个分支，什么也不会启动，触发条件那里你看到过；run 在你打开 PR 时才开始。"
+  en_display:
+  - "Then test it: git checkout -b feature/test-protection."
+  - null
+- en: "The README breaks the tests by appending def broken, assert False. An extra run in the image still says 11 passed, because pytest only collects functions whose names start with test."
+  zh:
+  - "README 通过追加 def broken，assert False 来弄坏测试。"
+  - "在 image 里额外跑一次，结果还是 11 passed，因为 pytest 只收集名字以 test 开头的函数。"
+  en_display:
+  - "The README breaks the tests by appending def broken(): assert False."
+  - null
+- en: "So name it test broken instead, an extra fix. Now 1 failed and 11 passed. That's the one that turns the pull request red, and with protection on, the merge button stays locked."
+  zh:
+  - "所以改名叫 test 下划线 broken，这是一个额外的修复。"
+  - "现在是 1 failed，11 passed。"
+  - "就是它让 PR 变红；开着保护，合并按钮就一直锁着。"
+  en_display:
+  - "So name it test_broken instead, an extra fix."
+  - null
+  - null
+- en: "Then git add dot, git commit, dash m, Intentionally break tests, and git push origin feature, test protection. Open the pull request on GitHub: the merge stays locked until the tests pass. Pause and try it on yours. Here, git checkout puts the test file back."
+  zh:
+  - "然后 git add .，git commit -m \"Intentionally break tests\"，再 git push origin feature/test-protection。"
+  - "在 GitHub 上打开 PR：测试通过之前，合并一直是锁着的。"
+  - "暂停一下，在你自己的 repo 上试一试。"
+  - "在这里，用 git checkout -- 把测试文件还原。"
+  en_display:
+  - "Then git add ., git commit -m \"Intentionally break tests\", and git push origin feature/test-protection."
+  - null
+  - null
+  - "Here, git checkout -- puts the test file back."
+S16:
+- en: "The twist the lecture promised: non-determinism enters every stage when the code trains a model. Its answers: version everything; automate retraining and testing, which Milestone 5 asks for; monitor; and roll out with care."
+  zh:
+  - "课上许诺的转折：不确定性会进入每一个阶段，只要代码要训练模型。"
+  - "课上的答案是：一切都做版本管理；自动化重新训练和测试，Milestone 5 就要求这个；监控；还有谨慎上线。"
+- en: "Continuous deployment, the lecture's last section, automates the release: that's lecture 23."
+  zh:
+  - "持续部署是课上最后一节，它把发布自动化：那是第 23 讲。"
+- en: "Clean up: switch to main, and delete the test protection branch here and on GitHub; that closes its pull request. Remove the branch rule, and the Slack secret and webhook, if you made them. Disable the workflow on a private repository, and run the Docker cleanup from lecture 9."
+  zh:
+  - "收尾清理：切回 main，删掉 feature/test-protection 分支，这里和 GitHub 上都要删；这样它的 PR 也就关闭了。"
+  - "把分支规则删掉，还有 Slack 的 secret 和 webhook，如果你建了的话。"
+  - "在私有 repo 上就停用这个工作流，再跑一遍第 9 讲的 Docker 清理。"
+  en_display:
+  - "Clean up: switch to main, and delete the feature/test-protection branch here and on GitHub; that closes its pull request."
+  - null
+  - null
+- en: "Once more, the loop. Your push is the event. Each job gets a fresh machine, so the image travels as an artifact. Every step is a gate that reads an exit code, and the summary hears only the jobs it needs."
+  zh:
+  - "再看一遍循环。"
+  - "你的 push 就是事件。"
+  - "每个 job 都有一台全新的机器，所以 image 要作为 artifact 来传。"
+  - "每个步骤都是一道门禁，读的是退出码，而汇总只听它 needs 里的 job。"
+- en: "Test yourself, pausing on each. One: name two ways code reaches the shared repository without passing your local hooks. Which checks does this pipeline repeat?"
+  zh:
+  - "自测一下，每道题都暂停想一想。"
+  - "第一题：说出代码进到共享 repo 的两种方式，而且都不经过你的本地 hook。"
+  - "这条 pipeline 重复了哪些检查？"
+- en: "Two: which unit gets a fresh machine, a job or a step? And why does that force a docker load in every check job?"
+  zh:
+  - "第二题：分到一台全新机器的单位是哪个，job 还是步骤？"
+  - "为什么这就逼得每个检查 job 里都得做一次 docker load？"
+- en: "Three: your run is red, but the summary says all tests passed. Why, and what is the one-line fix?"
+  zh:
+  - "第三题：你的 run 是红的，但汇总说所有测试都通过了。"
+  - "为什么会这样，那一行的修复又是什么？"
+- en: "Four: why can Flake8 fail without failing its job, and why don't you see its output when Black fails?"
+  zh:
+  - "第四题：为什么 Flake8 失败了，它的 job 却不会失败；Black 失败时，你又为什么看不到它的输出？"
+- en: "Five: is a push-triggered run a pre-receive or a post-receive check, and what makes it a gate? Answers are in the exercises and the study guide."
+  zh:
+  - "第五题：由 push 触发的 run 是 pre-receive 检查还是 post-receive 检查，又是什么让它成为门禁？"
+  - "答案在练习和学习指南里。"

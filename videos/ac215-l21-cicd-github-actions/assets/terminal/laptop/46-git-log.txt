@@ -1,0 +1,6 @@
+$ git log --oneline -4
+2892b1b quick fix
+2289d89 Format utils.py with Black
+b8458ff demo class 1
+c3b227f demo class 1
+[exit 0]

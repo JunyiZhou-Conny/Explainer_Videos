@@ -1,0 +1,4 @@
+$ docker ps
+CONTAINER ID   IMAGE                                                     COMMAND                  CREATED        STATUS                  PORTS                    NAMES
+081d7fe53794   cheese-app-api:c3b227f43d3a523509262e5cc83dfc5a248eeb2d   "/bin/bash docker-en…"   1 second ago   Up Less than a second   0.0.0.0:9000->9000/tcp   api-server
+[exit 0]

@@ -1,0 +1,14 @@
+$ tar -xf /checkout.tar -C /home/runner/work/cheese-app-ci-cd/cheese-app-ci-cd && ls -A
+.github
+.gitignore
+.pre-commit-config.yaml
+Dockerfile
+README.md
+assets
+docker-entrypoint.sh
+docker-shell.sh
+pyproject.toml
+pytest.ini
+src
+tests
+[exit 0]

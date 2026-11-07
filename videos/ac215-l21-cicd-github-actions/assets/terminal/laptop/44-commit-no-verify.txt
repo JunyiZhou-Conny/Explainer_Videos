@@ -1,0 +1,4 @@
+$ git commit --no-verify -m "quick fix"
+[main 2892b1b] quick fix
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+[exit 0]

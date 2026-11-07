@@ -1,0 +1,8 @@
+$ ls -la coverage/ && docker run --rm cheese-app-api:2289d89d3cfe316334fe208cea10530c4f2378c6 id
+total 8
+drwxr-xr-x    2 root     root          4096 Nov  6 19:38 .
+drwxr-xr-x    7 root     root          4096 Nov  6 19:38 ..
+Container is running!!!
+Executing command: id
+uid=1000(app) gid=1000(app) groups=1000(app)
+[exit 0]

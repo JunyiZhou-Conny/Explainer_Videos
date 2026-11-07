@@ -1,0 +1,10 @@
+job: system-tests (name: System Tests) on a fresh capture runner, commit 2289d89d3cfe316334fe208cea10530c4f2378c6
+01  success   Checkout code
+02  success   Download Docker image
+03  success   Load Docker image
+04  success   Start API server container
+05  success   Wait for server to be ready
+06  success   Run system tests
+07  success   Show server logs
+08  success   Stop server container
+job result: success
