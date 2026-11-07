@@ -32,7 +32,7 @@ S09:
   - "这是课上讲 Pulumi 的那张图：命令行工具运行你的程序，程序产出期望状态，也就是一棵资源树。"
 - en: "Pulumi also loads its state, what it created last time, from your bucket. The refresh flag first checks that state against what really exists."
   zh:
-  - "Pulumi 还会从你的 bucket 里加载它的 state，也就是它上次创建了什么。"
+  - "Pulumi 还会加载它的 state，也就是它上次创建了什么，放在你的 bucket 里。"
   - "--refresh 参数会先拿这个 state 和实际存在的东西核对一遍。"
   en_display:
   - null
@@ -55,8 +55,8 @@ S09:
   zh:
   - "现在是 README 的命令：pulumi up --stack dev --refresh -y。"
   - "命令 up 先预览，再询问，然后执行。"
-  - "--stack dev 选定环境。"
-  - "--refresh 先让 state 和实际情况同步。"
+  - "参数 --stack dev 选定环境。"
+  - "参数 --refresh 先让 state 和实际情况同步。"
   en_display:
   - "Now the README's command: pulumi up --stack dev --refresh -y."
   - null
@@ -64,7 +64,7 @@ S09:
   - null
 - en: "Dash y answers yes to the question, do you want to perform this update, and skips your chance to check the plan. Step 3 shows when that matters. Preview stops before anything changes."
   zh:
-  - "-y 替你回答 do you want to perform this update 这个问题，也跳过了你检查计划的机会。"
+  - "-y 替你回答这个问题：do you want to perform this update，也跳过了你检查计划的机会。"
   - "第 3 步会告诉你这什么时候要紧。"
   - "命令 preview 在任何改动之前就停下。"
   en_display:
@@ -201,12 +201,12 @@ S11:
   - null
   - null
 S12:
-- en: "This is the one setup the slides skip. Pulumi will log in to the VM over SSH to run scripts and drive Docker. Who logs in? The deployment service account, through OS Login."
+- en: "This is the one setup the slides skip. Pulumi will log in to the VM over SSH to run scripts and drive Docker. Who logs in? The deployment service account, through OS Login: the VM accepts a key registered to that account's login profile, under a Linux username Google derives from it."
   zh:
   - "这是课件里唯一没讲的一项设置。"
   - "Pulumi 会通过 SSH 登录 VM，去运行脚本、驱动 Docker。"
   - "谁来登录？"
-  - "deployment 服务账号，通过 OS Login。"
+  - "deployment 服务账号，通过 OS Login：VM 接受登记在这个账号个人资料里的密钥，用的是 Google 据账号生成的一个 Linux 用户名。"
 - en: "First, turn OS Login on for the project. Typed as printed, the template fails with no such file. It is the angle bracket lesson again: replace the whole placeholder."
   zh:
   - "首先，为项目打开 OS Login。"
@@ -216,6 +216,9 @@ S12:
   zh:
   - "README 的例子用的是它自己的项目，你要改成你的。"
   - "我们的显示 no active account；你的会输出 Updated。"
+  en_display:
+  - null
+  - "Ours says no active account; yours prints Updated."
 - en: "Next, the key: in slash secrets, run ssh keygen with the name ssh key deployment, press Enter twice, and go back to slash app. No passphrase: Pulumi cannot type one."
   zh:
   - "接下来是密钥：在 /secrets 里运行 ssh-keygen，名字叫 ssh-key-deployment，按两次回车，再回到 /app。"
@@ -226,11 +229,11 @@ S12:
 - en: "The two files now sit in the secrets folder on your laptop: the private key, readable only by you, and the public half."
   zh:
   - "现在这两个文件就在你笔记本的 secrets 目录里：私钥只有你能读，另一半是公钥。"
-- en: "Then upload the public half to the OS Login profile. Ours stops at the same error; the README shows yours, ending in a username that starts with S A. Copy it: step 3 needs it."
+- en: "Then upload the public half to the OS Login profile. Ours stops at the same error; the README shows yours, ending in a username that starts with S A. Copy it: the VM stack's config needs it."
   zh:
   - "然后把公钥上传到 OS Login 的个人资料里。"
   - "我们的停在同一个报错；README 给出了你的输出，最后是一个以 sa_ 开头的用户名。"
-  - "复制下来：第 3 步要用。"
+  - "复制下来：VM 那个 stack 的 config 要用它。"
   en_display:
   - null
   - "Ours stops at the same error; the README shows yours, ending in a username that starts with sa_."
@@ -271,14 +274,14 @@ S13:
   - null
 - en: "Config set, preview and up all print: Pulumi access token must be set. To show them anyway, we use a local folder, pulumi login local: extra, and not for you."
   zh:
-  - "config set、preview 和 up 都会打印：Pulumi access token must be set。"
+  - "命令 config set、preview 和 up 都会打印：Pulumi access token must be set。"
   - "为了还是能展示它们，我们用一个本地目录，pulumi login --local：这是额外步骤，你不用照做。"
   en_display:
   - "Config set, preview and up all print: PULUMI_ACCESS_TOKEN must be set."
   - "To show them anyway, we use a local folder, pulumi login --local: extra, and not for you."
 - en: "Stack init answers created stack dev, and config set writes your project into Pulumi dot dev dot yaml."
   zh:
-  - "stack init 返回 Created stack dev，config set 把你的项目写进 Pulumi.dev.yaml。"
+  - "命令 stack init 返回 Created stack dev，config set 把你的项目写进 Pulumi.dev.yaml。"
   en_display:
   - "Stack init answers Created stack 'dev', and config set writes your project into Pulumi.dev.yaml."
 - en: "Now the program. Line 13 makes a timestamp, down to the second, and lines 14 and 15 build the registry address."
@@ -299,7 +302,7 @@ S13:
   - "额外的 preview，只有前端：五个 provider 插件，一个要创建的 image 和它带时间戳的 tag，还有一条警告：Skipping preview build。"
   - "一次 preview 从来不会构建。"
   en_display:
-  - "The extra preview, frontend only: five provider plugins, one image to create with its timestamped tag, and a warning: Skipping preview build because some inputs are unknown."
+  - "The extra preview, frontend only: five provider plugins, one image to create with its timestamped tag, and a warning: Skipping preview build."
   - null
 - en: "Up does build: the npm install, the Next.js build, then the push, which fails here with 403 forbidden. Yours builds all three images, slowly, and ends with each tag in the outputs. Pause and run it."
   zh:
@@ -386,13 +389,13 @@ S14:
 - en: "Because formatting erases. If this step ever ran again, after a new trigger or a replaced resource, plain formatting would wipe the data disk: the chat history and the model. Scripts Pulumi cannot inspect must be safe to run twice."
   zh:
   - "因为格式化会清空数据。"
-  - "如果这一步哪天又跑了一次，比如 trigger 变了，或者资源被替换了，直接格式化就会把数据磁盘清空：聊天记录和模型都没了。"
+  - "如果这一步哪天又跑了一次，在 trigger 变了或资源被替换以后，直接格式化就会把数据磁盘清空：聊天记录和模型都没了。"
   - "Pulumi 没法检查的脚本，必须跑两次也安全。"
 S15:
 - en: "Step 5: the containers. The VM program asks the images stack for its tags, through a stack reference to organization, deploy images, dev. So run up in deploy images first."
   zh:
   - "第 5 步：container。"
-  - "VM 的程序通过一个指向 organization/deploy-images/dev 的 stack reference，向 image 的 stack 要它的 tag。"
+  - "VM 的程序向 image 的 stack 要它的 tag，通过一个 stack reference，指向 organization/deploy-images/dev。"
   - "所以先在 deploy images 里运行 up。"
   en_display:
   - null
@@ -480,7 +483,7 @@ S16:
   - "课上最后有专门的一页：别忘了删除。"
 - en: "In deploy single VM, run pulumi destroy, stack dev, refresh, dash y. Pause and run yours. Ours shows the login error; on the local backend, with nothing to delete, it finishes in a second."
   zh:
-  - "在 deploy single VM 里，运行 pulumi destroy --stack dev --refresh -y。"
+  - "在 deploy single VM 里，运行：pulumi destroy --stack dev --refresh -y。"
   - "暂停一下，跑你的。"
   - "我们的显示登录报错；在本地 backend 上，没有东西可删，一秒钟就结束了。"
   en_display:
@@ -524,7 +527,7 @@ S16:
 - en: "Test yourself. Trace your instance IP slash api service slash status: which gate, which container, which location block, and which character makes the API see slash status?"
   zh:
   - "自测一下。"
-  - "跟着你的 instance IP/api-service/status 走一遍：经过哪道门、哪个 container、哪个 location 块，又是哪个字符让 API 看到的是 /status？"
+  - "跟着你的 instance IP 加上 /api-service/status 走一遍：经过哪道门、哪个 container、哪个 location 块，又是哪个字符让 API 看到的是 /status？"
   en_display:
   - null
   - "Trace your instance_ip/api-service/status: which gate, which container, which location block, and which character makes the API see /status?"

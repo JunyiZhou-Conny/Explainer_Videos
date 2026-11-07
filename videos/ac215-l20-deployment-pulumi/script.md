@@ -451,7 +451,7 @@ platforms · TensorFlow"), `frontend-react` (ticked "captured"), `vector-db-cli`
 captured here: two platforms"); above the two dashed crates the typed command `sh docker-hub.sh` is
 shown as a GREY ghost line with its folder prompt and no output. A YELLOW `▶ your turn` beside them; a
 GREY chip "check your Docker Hub page: three repositories".
-SAY: Run the same script in api service and vector db; we did not capture those two-platform builds. Pause, run all three, and check Docker Hub.
+SAY: Run the same script in api service and vector db; we did not capture those two-platform builds. Those two build for two chip types, one of them emulated: expect a long api service build, and on Linux register Q E M U first. Pause, run all three, and check Docker Hub.
 
 SHOW: The terminal fades. A GREY card: "README's VM commands use `dlops/…` public images → part 1
 works even if you skip this stage". A small GREY-dashed clock icon beside "a little older than the
@@ -575,7 +575,7 @@ SHOW: TRACKER [M] 10 · extra (the fix goes back to step 9's command). The strip
 23): the empty `docker-volumes/chromadb` (RED chip "empty") and `/data … chroma.sqlite3` (GREEN chip
 "here"). A GREY `erratum` tag on a GREY ghost of block 2's typed `-v …:/chroma/chroma`, with a GREEN
 fix chip, the exact flag `-v ./docker-volumes/chromadb:/data`. Fade; empty frame.
-SAY: And where inside? A small slip: Chroma saves to slash data, so the folder the README mounts stays empty. To keep the data on the VM disk, mount slash data instead, rerun the stop, remove and run lines, then the loader.
+SAY: But where inside that container? A small slip: Chroma saves to slash data, so the folder the README mounts stays empty. To keep the data on the VM disk, mount slash data instead, rerun the stop, remove and run lines, then the loader.
 
 ---
 
@@ -954,7 +954,7 @@ SAY: Last check: gcloud auth list. Ours says no credentialed accounts. Yours lis
 SHOW: TRACKER [P] 5. No lecture tag; a GREY chip "not on the slides". **V8**: the PURPLE key
 `ssh-key-deployment` appears beside the BLUE deployment key; a small sketch: the GREY laptop → PINK
 SSH line → an outlined BLUE VM, with a badge "who logs in? deployment, via OS Login".
-SAY: This is the one setup the slides skip. Pulumi will log in to the VM over SSH to run scripts and drive Docker. Who logs in? The deployment service account, through OS Login.
+SAY: This is the one setup the slides skip. Pulumi will log in to the VM over SSH to run scripts and drive Docker. Who logs in? The deployment service account, through OS Login: the VM accepts a key registered to that account's login profile, under a Linux username Google derives from it.
 
 SHOW: Terminal `laptop · toolbox`. It types `gcloud compute project-info add-metadata --project <YOUR
 GCP_PROJECT> --metadata enable-oslogin=TRUE` (folds) → TERM(b08: 2) RED; the `<` and `>` pulse PINK
@@ -984,7 +984,7 @@ SHOW: TRACKER [P] 7. It types `gcloud compute os-login ssh-keys add
 expected/oslogin: 2–10) slides in beside it (tag `expected · README:306–314`), `username:
 sa_000000000000000000000` YELLOW. V8: the `.pub` half flies up to a BLUE card "deployment · OS Login
 profile", which hands back a YELLOW name tag `sa_000…`. A YELLOW `▶ your turn`.
-SAY: Then upload the public half to the OS Login profile. Ours stops at the same error; the README shows yours, ending in a username that starts with S A. Copy it: step 3 needs it.
+SAY: Then upload the public half to the OS Login profile. Ours stops at the same error; the README shows yours, ending in a username that starts with S A. Copy it: the VM stack's config needs it.
 
 SHOW: TRACKER [P] 8. A README card (`README.md · lines 318–322`): "Deployment Setup · Add ssh user
 details in inventory.yml file …" with a GREY `erratum` tag. TRACKER [P] 8 · extra: it types line 1

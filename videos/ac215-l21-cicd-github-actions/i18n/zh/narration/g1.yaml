@@ -1,0 +1,342 @@
+# zh narration for S01-S07 (part 1, group g1: red run and green summary, hooks stay on your laptop, the CI loop
+# and the workflow file, when the pipeline wakes up, six jobs and one graph, push to a repo of your own, watch the
+# run), sentence-aligned to script.md: one zh sentence per English sentence (explainer.voice.split_sentences;
+# 57 SAY lines, 162 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (D9).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A6):
+# main -> main -> main 到 main.
+# Log and terminal text the SAY quotes is copied in its screen form (A13): unit tests / Integration tests /
+# System tests, success; All tests passed; job Lint and Format Check failed; nothing to commit, working tree
+# clean; permission denied; Everything up-to-date.
+# The instructor rule (A16): the narration of S01-S07 names no instructor (the lecture -> 课上, the slide -> 课件).
+# The video's hook (S07[8]) is 开头那个谜题, never hook (A7).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: src/, GitHub.com,
+# ci.yml, .github/workflows, runs-on: ubuntu-latest, actions/checkout, feature/login, git add ., git commit -m
+# "Add CI pipeline", git remote -v, main -> main, Everything up-to-date); null = the SAY text.
+S01:
+- en: "You push the course's own code, untouched, to a repository of your own. Soon after, one log says: unit tests, success. Integration tests, success. System tests, success. All tests passed."
+  zh:
+  - "你把课程自己的代码原封不动地 push 到一个你自己的 repo。"
+  - "不久之后，有一份日志写着：unit tests，success。"
+  - "Integration tests，success。"
+  - "System tests，success。"
+  - "All tests passed。"
+- en: "And the same file, run end to end, ends like this: job Lint and Format Check failed. Five machines green, one red, and the whole run red. The pipeline says every test passed, and the pipeline failed. Both are true."
+  zh:
+  - "而同一个文件从头跑到尾，结尾是这样的：job Lint and Format Check failed。"
+  - "五台机器绿，一台红，整个 run 是红的。"
+  - "这条 pipeline 说每个测试都通过了，而它自己失败了。"
+  - "两句都是真的。"
+- en: "So which machine said no, and why didn't the summary hear it? By the end of part 1 you will see this on your own push. In part 2 we open every log."
+  zh:
+  - "那么，是哪台机器说了不，汇总又为什么没听见？"
+  - "到第一部分结束时，你会在自己的 push 上看到这一幕。"
+  - "在第二部分，我们会打开每一份日志。"
+- en: "In lecture 9 these checks ran on your laptop, before a commit. Today they move to GitHub, and they run on every push to main, on fresh machines that nobody owns."
+  zh:
+  - "在第 9 讲，这些检查是在你的笔记本上跑的，在 commit 之前。"
+  - "今天它们搬到 GitHub 上，每次 push 到 main 都会运行，跑在不属于任何人的全新机器上。"
+- en: "Lecture 21 has four sections: remote Git hooks, GitHub webhooks, continuous integration, and continuous deployment. We follow it slide by slide, and the README Part 5 step by step."
+  zh:
+  - "第 21 讲分四节：远程 Git hook、GitHub webhook、持续集成和持续部署。"
+  - "我们一页一页地跟着课件走，一步一步地做 README 的 Part 5。"
+- en: "To follow along, you need a fresh clone of the course's repository, Docker running, a GitHub account, and a repository of your own. No cloud and no keys, and on a public repository, no bill."
+  zh:
+  - "要跟着做，你需要课程 repo 的一个新 clone，让 Docker 开着，一个 GitHub 账号，还有一个你自己的 repo。"
+  - "不用云，也不用密钥；在公开 repo 上，也不会有账单。"
+- en: "The tracker names the README step, code panels name their file and lines, and a yellow tag, your turn, means pause and run it. The runs you will see ran right here on fresh machines; the GitHub pages are drawings, and they say so."
+  zh:
+  - "进度条标出 README 的哪一步，代码面板标出文件和行号，黄色的 your turn 标签表示暂停一下，自己跑一遍。"
+  - "你会看到的 run，都是在这里的全新机器上真跑出来的；GitHub 的页面是示意图，上面也都标明了。"
+S02:
+- en: "The lecture opens with a recap: local Git hooks. A pre-commit hook runs on your laptop, before the commit even exists. A pre-push hook runs before your commits leave. In lecture 9 you installed this repo's set."
+  zh:
+  - "课上先做了个回顾：本地 Git hook。"
+  - "一个 pre-commit hook 在你的笔记本上运行，那时 commit 还根本不存在。"
+  - "一个 pre-push hook 会在你的 commit 离开之前运行。"
+  - "在第 9 讲，你装过这个 repo 的那一套。"
+- en: "Here is that chain, with this repo's boxes: seven hygiene checks, then Black, then Flake8, both at 120 columns, and only on files under src. The lecture's chain ends with tests. This repo's hooks run none: it leaves the tests to CI."
+  zh:
+  - "这里是那条链，换成了这个 repo 的方框：七项卫生检查，然后是 Black，然后是 Flake8，都是 120 列，而且只查 src 下的文件。"
+  - "课上那条链最后是测试。"
+  - "这个 repo 的 hook 一个测试都不跑：它把测试留给了 CI。"
+  en_display:
+  - "Here is that chain, with this repo's boxes: seven hygiene checks, then Black, then Flake8, both at 120 columns, and only on files under src/."
+  - null
+  - null
+- en: "The lecture's catch: hooks run only on a machine where someone ran pre-commit install. A teammate's laptop without them sends its commit through unchecked. So the checks depend on the laptop."
+  zh:
+  - "课上指出的问题是：hook 只在有人跑过 pre-commit install 的机器上运行。"
+  - "队友的笔记本没装它们，commit 就没经过检查直接发出去了。"
+  - "所以检查做不做，取决于是哪台笔记本。"
+- en: "That's where remote hooks come in: they run on the server that receives the push. A pre-receive hook runs before the push is accepted, so it can refuse it. The update hook does the same, one branch at a time."
+  zh:
+  - "这时就轮到远程 hook 了：它们运行在接收 push 的服务器上。"
+  - "一个 pre-receive hook 在 push 被接受之前运行，所以它可以拒绝这次 push。"
+  - "名叫 update 的 hook 也一样，只是一次一个分支。"
+- en: "A post-receive hook runs after the code is in, for integration tests, notifications and clean-up. It can report, but it can no longer say no."
+  zh:
+  - "一个 post-receive hook 在代码进来之后运行，用来跑集成测试、发通知和做清理。"
+  - "它能报告，但已经没法说不了。"
+- en: "One honest note: GitHub dot com doesn't run your own pre-receive scripts. It gives you two pieces instead: Actions, which runs after the push, and branch protection, which can say no."
+  zh:
+  - "如实说一句：GitHub.com 不会运行你自己写的 pre-receive 脚本。"
+  - "它给你的是另外两样东西：Actions，在 push 之后运行；还有分支保护，它能说不。"
+  en_display:
+  - "One honest note: GitHub.com doesn't run your own pre-receive scripts."
+  - null
+- en: "And hooks act only inside Git. To tell a chat what happened, the lecture reaches for webhooks."
+  zh:
+  - "而且 hook 只在 Git 内部起作用。"
+  - "要告诉聊天工具发生了什么，课上用的是 webhook。"
+- en: "Now the lecture's motivation, in three slides. On your laptop, the checks fire on every commit. Then you push, and on the shared repository, nothing runs them at all."
+  zh:
+  - "接下来是课上的动机，用了三页课件。"
+  - "在你的笔记本上，每次 commit 都会触发检查。"
+  - "然后你 push 了，到了共享的 repo 上，根本没有东西去跑它们。"
+- en: "So the checks move to the server: build a container, check the code, summarize the tests. Same idea, new home, for every push to main from every laptop. That move is continuous integration."
+  zh:
+  - "所以检查搬到了服务器上：构建 container，检查代码，汇总测试。"
+  - "想法不变，只是换了个家：每台笔记本每次 push 到 main，都会跑。"
+  - "这一步搬家，就是持续集成。"
+S03:
+- en: "The lecture defines continuous integration as a series of scripts that run automatically whenever the code changes. They integrate changes continuously, test automatically, enforce coding standards, and run static analysis."
+  zh:
+  - "课上把持续集成定义为一系列脚本，只要代码一变，它们就自动运行。"
+  - "它们持续地集成变更，自动测试，强制执行编码规范，还做静态分析。"
+- en: "In ordinary software, that buys faster releases, better code, and easier teamwork. Machine learning adds a twist; we come back to it at the end."
+  zh:
+  - "在普通软件里，这换来的是发布更快、代码更好、协作更容易。"
+  - "机器学习会带来一个转折；我们最后再回来讲。"
+- en: "Slide 21 draws it as a loop. Developers commit to the codebase; the codebase is built, then tested; and notifications flow back to the developers. For now, the way back is a question mark."
+  zh:
+  - "课件第 21 页把它画成一个循环。"
+  - "开发者把代码 commit 到代码库；代码库先构建，再测试；通知再流回开发者。"
+  - "现在，回来的那条路还是个问号。"
+- en: "The course's pipeline has five stages. A commit triggers it, the container is built, Black and Flake8 check the code, the tests run, and a summary reports pass or fail."
+  zh:
+  - "课程的 pipeline 有五个阶段。"
+  - "一个 commit 触发它，构建 container，Black 和 Flake8 检查代码，跑测试，最后汇总报告通过还是失败。"
+- en: "Now the README, Part 5: GitHub Actions, remote CI. It says all CI tests run inside Docker containers using Python 3.11, the same as production. This repo has no production yet: take it as the same image you would deploy."
+  zh:
+  - "现在看 README 的 Part 5：GitHub Actions，Remote CI。"
+  - "它说所有 CI 测试都在用 Python 3.11 的 Docker container 里运行，和生产环境一样。"
+  - "这个 repo 还没有生产环境：就把它理解成你要部署的那个 image。"
+- en: "This one isn't in the README, it's extra: list the workflows folder. One file, C I dot yaml, in dot github, workflows, at the root of the repository. GitHub looks only there; a workflow in a subfolder never runs."
+  zh:
+  - "这一步 README 里没有，是额外的：列出 workflows 目录。"
+  - "只有一个文件 ci.yml，在 repo 根目录的 .github/workflows 里。"
+  - "GitHub 只看那里；放在子目录里的工作流永远不会运行。"
+  en_display:
+  - null
+  - "One file, ci.yml, in .github/workflows, at the root of the repository."
+  - null
+- en: "Open it. The file gives the workflow a name, CI Pipeline. The key named on lists the events that start it. Under jobs, each job gets its own machine: runs on, ubuntu latest."
+  zh:
+  - "打开它。"
+  - "文件给工作流起了个名字：CI Pipeline。"
+  - "名叫 on 的那个键，列出了启动它的事件。"
+  - "在 jobs 下面，每个 job 都有自己的机器：runs-on: ubuntu-latest。"
+  en_display:
+  - null
+  - null
+  - null
+  - "Under jobs, each job gets its own machine: runs-on: ubuntu-latest."
+- en: "Inside a job, steps run in order. A step is either a shell script, under run, or a reusable action, under uses, like actions checkout, which copies your repository onto the machine. Event, workflow, jobs, steps: that is the whole grammar."
+  zh:
+  - "在一个 job 里，步骤按顺序运行。"
+  - "一个步骤要么是 shell 脚本，写在 run 下面；要么是可复用的 action，写在 uses 下面，比如 actions/checkout，它把你的 repo 拷到这台机器上。"
+  - "事件、工作流、job、步骤：这就是全部的语法。"
+  en_display:
+  - null
+  - "A step is either a shell script, under run, or a reusable action, under uses, like actions/checkout, which copies your repository onto the machine."
+  - null
+S04:
+- en: "When does the pipeline wake up? The slide says on every push or pull request. The file is more precise: pushes to main or develop, and pull requests into main or develop."
+  zh:
+  - "这条 pipeline 什么时候会醒来？"
+  - "课件说每次 push 或 PR 都会。"
+  - "文件写得更精确：push 到 main 或 develop，以及合并进 main 或 develop 的 PR。"
+- en: "Push to main, and a runner wakes up. Push to develop, the same. Push to a feature branch, and nothing happens: on any other branch, the pipeline waits for your pull request. A small note: the comment at the top of the file says main only; the triggers say main and develop."
+  zh:
+  - "往 main 上 push，就有一台 runner 醒来。"
+  - "往 develop 上 push，也一样。"
+  - "往 feature 分支上 push，什么也不会发生：在其他任何分支上，这条 pipeline 都会等你的 PR。"
+  - "说明一点：文件顶上的注释说只有 main，触发条件写的却是 main 和 develop。"
+- en: "Quick test. You push three commits to feature login. How many runs start? Then you open a pull request into main. How many now?"
+  zh:
+  - "小测验。"
+  - "你往 feature/login 上 push 了三个 commit。"
+  - "会启动几个 run？"
+  - "然后你开了一个合并进 main 的 PR。"
+  - "现在呢？"
+  en_display:
+  - null
+  - "You push three commits to feature/login."
+  - null
+  - null
+  - null
+- en: "None for the three pushes: the branch filter. One when the pull request opens, and one more for every later push while it stays open."
+  zh:
+  - "三次 push 一次也没有：因为分支过滤。"
+  - "PR 打开时一次，之后它开着的时候，每 push 一次再加一次。"
+- en: "And it doesn't test your branch tip. GitHub makes a temporary merge of your branch into main, and the commit ID the jobs see names that merge. What will land is what gets tested: each merge is tested, as the lecture says."
+  zh:
+  - "而且它测的不是你分支最新的 commit。"
+  - "GitHub 会把你的分支临时合并进 main，job 看到的 commit ID 指的就是这次合并。"
+  - "将要合进去的，就是被测试的：每次合并都会被测试，正如课上说的。"
+- en: "The lecture warns that integrating often costs compute. This file answers with a branch filter, one build shared by every job, and an image kept one day. On private repositories every run counts against your plan; public ones run free."
+  zh:
+  - "课上提醒，频繁集成要花算力。"
+  - "这个文件的回答是：分支过滤，所有 job 共用的一次构建，还有只保留一天的 image。"
+  - "在私有 repo 上，每个 run 都计入你的套餐额度；公开的免费。"
+- en: "And timing matters: the run starts after GitHub has accepted your push. It's the bell, not the gate: a red run doesn't undo the push."
+  zh:
+  - "而且时机很重要：run 是在 GitHub 接受了你的 push 之后才开始的。"
+  - "它是铃，不是门禁：一个红的 run 撤销不了这次 push。"
+S05:
+- en: "Next, the README: 6 jobs that run in parallel, except for dependencies. Each has an ID and a name: Build Docker Image, Lint and Format Check, Unit Tests, Integration Tests, System Tests, and Test Summary."
+  zh:
+  - "接下来看 README：6 个并行运行的 job，有依赖的除外。"
+  - "每个都有一个 ID 和一个名字：Build Docker Image、Lint and Format Check、Unit Tests、Integration Tests、System Tests 和 Test Summary。"
+- en: "Remember the names: GitHub shows them, not the IDs, and we'll need them to protect main."
+  zh:
+  - "记住这些名字：GitHub 显示的是名字，不是 ID，而保护 main 的时候要用到它们。"
+- en: "Start from the lecture's row of five. Commit drops out first: it's the event, not a job. Build Container stays on the left: it's the build job."
+  zh:
+  - "从课上那一排五个方框开始。"
+  - "Commit 先退出：它是事件，不是 job。"
+  - "Build Container 留在左边：它就是 build 这个 job。"
+- en: "Now each needs line draws one arrow. Lint and format needs build. Unit tests, integration tests and system tests each need build too. So after the build, four jobs run side by side, each on its own machine."
+  zh:
+  - "现在，每一行 needs 画出一条箭头。"
+  - "先看 lint and format，它需要 build。"
+  - "Unit tests、integration tests 和 system tests 也各自需要 build。"
+  - "所以 build 之后，四个 job 并排运行，各在自己的机器上。"
+- en: "Test summary needs the three test jobs. Look closely: the lint job isn't on that list. The lecture lists the stages in order; on GitHub, four of them run side by side, and the summary listens only to the tests. Keep that gap in mind."
+  zh:
+  - "Test Summary 需要三个测试 job。"
+  - "仔细看：lint 这个 job 不在那张列表上。"
+  - "课上按顺序列出各个阶段；在 GitHub 上，其中四个并排运行，而汇总只听测试 job 的。"
+  - "把这个缺口记在心里。"
+- en: "An extra check, not in the README: a tool called act, which you don't need, takes the same file and lists the jobs in stages. Stage 0, build. Stage 1, the four checks. Stage 2, the summary."
+  zh:
+  - "一个额外检查，README 里没有：一个叫 act 的工具，你用不着它，它拿同一个文件，把 job 按阶段列出来。"
+  - "第 0 阶段，build。"
+  - "第 1 阶段，四个检查。"
+  - "第 2 阶段，汇总。"
+- en: "Then the key concepts. Artifact sharing and unique image tags come with the build job; parallel execution, you just saw; conditional execution and network modes come with the system tests."
+  zh:
+  - "然后是关键概念。"
+  - "Artifact 共享和唯一的 image tag 跟着 build 这个 job 讲；并行执行，你刚刚看到了；条件执行和网络模式跟着系统测试讲。"
+- en: "The README's screenshot gives the times: about 2 minutes on the clock, with four jobs side by side. On a private repository, each job is billed and rounded up separately: about 6 billed minutes."
+  zh:
+  - "README 的截图给出了时间：实际大约 2 分钟，四个 job 并排运行。"
+  - "在私有 repo 上，每个 job 分别计费、分别向上取整：大约 6 分钟的计费时间。"
+S06:
+- en: "Time to push. Start from a fresh clone, not your lecture 9 folder: that one has the Black fix committed, and your first run would come out green. Clone, change into the folder, and git status says the tree is clean."
+  zh:
+  - "该 push 了。"
+  - "从一个新的 clone 开始，别用你第 9 讲的目录：那个目录里已经 commit 了 Black 的修复，你的第一个 run 会是绿的。"
+  - "先 clone，进到目录里，git status 显示工作区是干净的。"
+- en: "Your prompt shows your own user. Two extra checks first: the pinned commit is still the head of main on the course's repository, and the last two commits are both called demo class 1. The second undid a bug planted in class; we'll run it later."
+  zh:
+  - "你的提示符显示的是你自己的用户。"
+  - "先做两个额外检查：pin 住的 commit 仍然是课程 repo 上 main 的最新 commit，而且最后两个 commit 都叫 demo class 1。"
+  - "第二个撤销了课上埋下的一个 bug；我们后面会跑它。"
+- en: "Now the README block, Push to GitHub. Git add dot: no output. Then git commit, dash m, Add CI pipeline. And Git answers: nothing to commit, working tree clean."
+  zh:
+  - "现在是 README 的那一段：Push to GitHub。"
+  - "先 git add .：没有输出。"
+  - '然后是 git commit -m "Add CI pipeline"。'
+  - "而 Git 的回答是：nothing to commit, working tree clean。"
+  en_display:
+  - null
+  - "git add .: no output."
+  - 'Then git commit -m "Add CI pipeline".'
+  - null
+- en: "A small slip, and a harmless one: in a clone or a fork, the pipeline is already committed, so there is nothing to add."
+  zh:
+  - "有一个小疏漏，而且无害：在 clone 或 fork 里，pipeline 早就 commit 过了，所以没什么可加的。"
+- en: "Before the README's git push, an extra check: git remote, dash v. Origin is still the course's repository, and you can't write to it. GitHub would refuse a push from here: permission denied."
+  zh:
+  - "在 README 的 git push 之前，先做一个额外检查：git remote -v。"
+  - "这里的 origin 还是课程的 repo，你没有写权限。"
+  - "GitHub 会拒绝从这里发出的 push：permission denied。"
+  en_display:
+  - "Before the README's git push, an extra check: git remote -v."
+  - null
+  - null
+- en: "So point origin at a repository you own. Either fork the course's repository and enable workflows on its Actions tab, or create a new empty repository. Either way, run git remote set-url origin, with your own address. Pause and set yours up."
+  zh:
+  - "所以把 origin 指向一个你自己的 repo。"
+  - "要么 fork 课程的 repo，再到它的 Actions 标签页启用工作流，要么新建一个空 repo。"
+  - "不管选哪个，都运行 git remote set-url origin，后面跟你自己的地址。"
+  - "暂停一下，把你的设置好。"
+- en: "This recording machine can't push to GitHub, so an empty repository on the same machine stands in for yours. From now on we just say your repository."
+  zh:
+  - "录制用的这台机器没法 push 到 GitHub，所以由同一台机器上的一个空 repo 代替你的。"
+  - "从现在起，我们就说你的 repo。"
+- en: "Now the README's git push. New branch, main to main. This push is the event, and run 1 starts now. Pause and push yours."
+  zh:
+  - "现在是 README 的 git push。"
+  - "显示 new branch，main 到 main。"
+  - "这次 push 就是事件，run 1 现在开始。"
+  - "暂停一下，push 你自己的。"
+  en_display:
+  - null
+  - "New branch, main -> main."
+  - null
+  - null
+- en: "On a fork, that commit is already on GitHub, so git push says everything up to date and starts nothing. Your first run then comes with the fix in part 2."
+  zh:
+  - "在 fork 上，那个 commit 已经在 GitHub 上了，所以 git push 显示 Everything up-to-date，什么也不会启动。"
+  - "那你的第一个 run 要等到第二部分的修复才来。"
+  en_display:
+  - "On a fork, that commit is already on GitHub, so git push says Everything up-to-date and starts nothing."
+  - null
+S07:
+- en: "Watch GitHub Actions: go to your repository, and click the Actions tab. Your run is listed under the commit message, with a yellow dot: in progress. A green checkmark means success; a red X means failure. Pause and open yours."
+  zh:
+  - "看 GitHub Actions：打开你的 repo，点 Actions 标签页。"
+  - "你的 run 列在 commit 信息下面，带一个黄点：进行中。"
+  - "绿色的对勾表示成功；红叉表示失败。"
+  - "暂停一下，打开你自己的。"
+- en: "Click it, and GitHub draws the run as the graph you just built: build first, four jobs side by side, the summary last."
+  zh:
+  - "点开它，GitHub 会把这个 run 画成你刚搭出来的那张图：先是 build，四个 job 并排，最后是汇总。"
+- en: "A word on how we show it. We ran every job of this file right here, each on a brand-new machine with an empty Docker, as GitHub does. And a tool called act ran the whole file a second way, with the same verdict."
+  zh:
+  - "说一下我们是怎么展示的。"
+  - "这个文件的每个 job，我们都在这里跑过，每个都在一台 Docker 是空的全新机器上，和 GitHub 一样。"
+  - "还有一个叫 act 的工具，用第二种方式跑了整个文件，结论相同。"
+- en: "So the GitHub pages you see are drawings built from the workflow file, marked illustration. Every log line in them is real."
+  zh:
+  - "所以你看到的 GitHub 页面，是根据工作流文件画的示意图，标着 illustration。"
+  - "里面每一行日志都是真的。"
+- en: "A question, before the colors come in. You already know this run turns red. Is your push on main in your repository now, or did the red run refuse it?"
+  zh:
+  - "颜色出来之前，先问一个问题。"
+  - "你已经知道这个 run 会变红。"
+  - "你的 push 现在在你 repo 的 main 上吗，还是被这个红的 run 拒绝了？"
+- en: "Yes, it's on main: the push landed before any job started, and a red run can't undo it. Build: green. Lint and Format Check: red. The three tests and Test Summary: green. The run: red."
+  zh:
+  - "在，它在 main 上：push 在任何 job 开始之前就落地了，一个红的 run 撤销不了它。"
+  - "Build：绿。"
+  - "Lint and Format Check：红。"
+  - "三个测试和 Test Summary：绿。"
+  - "整个 run：红。"
+- en: "Those checks and crosses next to your commit are the lecture's notifications. And act, the second witness, agrees: five jobs succeeded, one failed."
+  zh:
+  - "你 commit 旁边的那些对勾和叉，就是课上说的通知。"
+  - "而第二个证人 act 也同意：五个 job 成功，一个失败。"
+- en: "A kind note: the README's screenshot is all green. It shows an earlier version of the code. Your first run is red, and in part 2 you turn it green."
+  zh:
+  - "提一句：README 的截图是全绿的。"
+  - "它拍的是早先版本的代码。"
+  - "你的第一个 run 是红的，在第二部分里，你会把它变绿。"
+- en: "And here is the hook, on your own push: two of these six machines disagree. In part 2 we open every log, one job at a time."
+  zh:
+  - "开头那个谜题，就出现在你自己的 push 上：这六台机器里有两台意见不一。"
+  - "在第二部分，我们会打开每一份日志，一次一个 job。"

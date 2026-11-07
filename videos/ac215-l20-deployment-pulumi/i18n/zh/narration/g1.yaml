@@ -32,7 +32,7 @@ S01:
   - "用户需要的是一台服务器。"
 - en: "You need cheese app version 3 with your secrets folder beside it, a Google Cloud project with billing, and a Docker Hub account. This costs real money, so each part ends by deleting everything."
   zh:
-  - "你需要 cheese-app-v3，旁边放着你的 secrets 目录，还要一个开通了结算的 Google Cloud 项目和一个 Docker Hub 账号。"
+  - "你需要 cheese-app-v3，旁边放着你的 secrets 目录，还要一个开通了结算的 Google Cloud 项目，和一个 Docker Hub 账号。"
   - "这会花真钱，所以每个部分最后都会把所有东西删掉。"
   en_display:
   - "You need cheese-app-v3 with your secrets folder beside it, a Google Cloud project with billing, and a Docker Hub account."
@@ -75,7 +75,7 @@ S02:
   - "如果你最近跟过第 18 讲，它现在讲的是重构过的 v2；这里你跑的是 v3，用的是这个 repo 自己的脚本。"
 - en: "We follow main, the branch the course site links; on recording day it was this November 2025 commit. READMEs change; git log shows which one you have."
   zh:
-  - "我们跟着 main 分支走，也就是课程网站链接的那个分支；录制当天它停在 2025 年 11 月的这个 commit 上。"
+  - "我们跟着 main 分支走，也就是课程网站链接的那个分支；录制当天，它停在 2025 年 11 月的这个 commit 上。"
   - "README 会变；git log 能告诉你手上的是哪一版。"
 S03:
 - en: "Stage 1: push the images. Create an access token in your Docker Hub account settings; it is a password for scripts, so never show it."
@@ -118,12 +118,14 @@ S03:
   zh:
   - "接着是 push：access denied。"
   - "我们不是 dlops，也没有登录；换成你的用户名并登录后，这里会显示 pushed。"
-- en: "Run the same script in api service and vector db; we did not capture those two-platform builds. Pause, run all three, and check Docker Hub."
+- en: "Run the same script in api service and vector db; we did not capture those two-platform builds. Those two build for two chip types, one of them emulated: expect a long api service build, and on Linux register Q E M U first. Pause, run all three, and check Docker Hub."
   zh:
   - "在 api-service 和 vector-db 里跑同一个脚本；那两个双平台构建我们没有录。"
+  - "这两个要为两种芯片构建，其中一种靠模拟：api-service 会构建很久；在 Linux 上，先注册 QEMU。"
   - "暂停一下，三个都跑一遍，再去 Docker Hub 上看看。"
   en_display:
   - "Run the same script in api-service and vector-db; we did not capture those two-platform builds."
+  - "Those two build for two chip types, one of them emulated: expect a long api-service build, and on Linux register QEMU first."
   - null
 - en: "Skip this stage and part 1 still works, using the public dlops images, which are a little older than the code. If you pushed yours, replace dlops with your user name in the VM commands."
   zh:
@@ -133,7 +135,7 @@ S04:
 - en: "Stage 2: set up the VM. In the console, create a VM instance with the defaults, except machine type N 2 D, a 50 gigabyte disk, and HTTP and HTTPS allowed."
   zh:
   - "第 2 阶段：配置 VM。"
-  - "在控制台里用默认值创建一个 VM 实例，只有几处不同：机器类型 N2D、50 GB 的磁盘，并允许 HTTP 和 HTTPS 流量。"
+  - "在控制台里用默认值创建一个 VM 实例，只是机器类型改成 N2D、磁盘 50 GB，并允许 HTTP 和 HTTPS 流量。"
   en_display:
   - null
   - "In the console, create a VM instance with the defaults, except machine type N2D, a 50 GB disk, and HTTP and HTTPS allowed."
@@ -237,7 +239,7 @@ S05:
   - "不会。"
   - "加载器只是把它们发过去；它们待在向量数据库的 container 里，而那个 container 一直在跑。"
   - "删掉它，加载器就得重新填一个新的。"
-- en: "And where inside? A small slip: Chroma saves to slash data, so the folder the README mounts stays empty. To keep the data on the VM disk, mount slash data instead, rerun the stop, remove and run lines, then the loader."
+- en: "But where inside that container? A small slip: Chroma saves to slash data, so the folder the README mounts stays empty. To keep the data on the VM disk, mount slash data instead, rerun the stop, remove and run lines, then the loader."
   zh:
   - "那存在里面的哪儿？"
   - "有一个小疏漏：Chroma 存到 /data，所以 README 挂载的目录一直是空的。"
@@ -367,7 +369,7 @@ S07:
   zh:
   - "现在回答开头的谜题。"
   - "Web 服务器只在启动时查一次 frontend 和 api-service 的地址。"
-  - "前端停了，重启时这次查找就失败，直接退出，API 的路由也跟着没了。"
+  - "前端停了，重启时这次查找失败并直接退出，API 的路由也跟着没了。"
   en_display:
   - null
   - "The web server looks up frontend and api-service once, at start."
@@ -394,7 +396,7 @@ S08:
 - en: "That is infrastructure as code. You describe the servers, the networks and the software in a real programming language, Python here, and keep it in Git to share. No YAML file, no special language."
   zh:
   - "这就是基础设施即代码。"
-  - "你用一门真正的编程语言，这里是 Python，来描述服务器、网络和软件，并放进 Git 里共享。"
+  - "你描述服务器、网络和软件，用的是一门真正的编程语言，这里是 Python，并放进 Git 里共享。"
   - "没有 YAML 文件，也没有专门的语言。"
 - en: "An earlier version of the course did these same stages as Ansible playbooks, written in YAML. This version does them with Pulumi, one to one."
   zh:

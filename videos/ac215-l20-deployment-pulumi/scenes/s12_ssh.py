@@ -30,7 +30,7 @@ Beats (script.md "## S12", one voiceover block each):
    '▶ your turn' under the name tag.
 6. TRACKER [P] 8. README card (README.md · lines 318–322) top left with a GREY erratum tag,
    'inventory.yml' underlined RED. TRACKER [P] 8 · extra: b13 (folds) -> TERM(b13: 2) RED. A
-   GREY-dashed chip 'earlier · Ansible' and a GREEN arrow to 'Pulumi config · step 3'. Fade; empty
+   GREY-dashed chip 'earlier · Ansible' and a GREEN arrow to 'Pulumi config · VM stack'. Fade; empty
    frame.
 
 Deviations from SHOW:
@@ -41,8 +41,8 @@ Deviations from SHOW:
 - Beat 5: the EXPECTED panel cannot sit beside a full-width terminal: the terminal shrinks to a 2-row
   strip holding the RED error, and the panel fills the right of the frame; the SshKey profile and its
   name tag move to the left of it.
-- Beat 6: the GREEN arrow's target reads 'Pulumi config · step 3' instead of '(S14)' (a scene number
-  means nothing to a viewer; beat 5's SAY calls it step 3). The README card shows line 319's empty
+- Beat 6: the GREEN arrow's target reads 'Pulumi config · VM stack' instead of '(S14)' (a scene number
+  means nothing to a viewer; beat 5's SAY calls it the VM stack's config). The README card shows line 319's empty
   bullet as '•'.
 """
 
@@ -334,7 +334,7 @@ class SshKeys(VoiceScene):
             assert yt.get_bottom()[1] > t.box.get_top()[1] + 0.1 and yt.get_right()[0] < panel.frame.get_left()[0] - 0.1
             self.play(FadeIn(yt, shift=UP * 0.1), run_time=0.4)
             flash_tag(self, yt, TURN)
-            vo.wait_until("step 3 needs it")
+            vo.wait_until("the VM stack's config needs it")
             self.play(Indicate(sk.name_tag, color=TURN, scale_factor=1.12), run_time=0.6)
             sk.heal(self)
 
@@ -346,7 +346,7 @@ class SshKeys(VoiceScene):
         inv = [word(r, "inventory.yml") for r in body[2:]]
         unders = VGroup(*[under(g, ERR, stroke=3) for g in inv])
         past = dashed_chip("earlier · Ansible")
-        cfg = ok_chip("Pulumi config · step 3")
+        cfg = ok_chip("Pulumi config · VM stack")
         right_x = (rc.get_right()[0] + 6.5) / 2
         past.move_to([right_x, 1.0, 0])
         cfg.move_to([right_x, -0.35, 0])

@@ -35,8 +35,10 @@ Beats (script.md "## S03", one voiceover block each):
 7. The panel fades and the terminal shrinks to a strip. Three TEAL crates in README order:
    api-service (GREY-dashed, 'not captured here: / two platforms · TensorFlow'), frontend-react
    (GREEN tick 'captured'), vector-db-cli (GREY-dashed, 'not captured here: / two platforms'); above
-   them the two folder prompts with `sh docker-hub.sh` as GREY ghost lines (no output). YELLOW
-   `▶ your turn` and a GREY chip 'check your Docker Hub page: three repositories'.
+   them the two folder prompts with `sh docker-hub.sh` as GREY ghost lines (no output). On "on Linux
+   register Q E M U first" a row 'on Linux, first:' + GREY mono chip `docker run --privileged --rm
+   tonistiigi/binfmt --install all` under the notes. YELLOW `▶ your turn` and a GREY chip 'check
+   your Docker Hub page: three repositories'.
 8. The terminal and crates fade. A GREY card: "README's VM commands use dlops/… public images /
    → part 1 works even if you skip this stage"; a GREY-dashed clock 'a little older than the code';
    then a GREY chip `dlops/cheese-app-…` → `<you>/cheese-app-…`. Fade; empty frame.
@@ -52,6 +54,8 @@ Deviations from SHOW:
   strip, and two side-by-side panels do not fit the frame at >= 20 pt. The frontend panel therefore
   narrows to its own lines 31–35 when the API panel comes, the long lines cut/elided ('…'). Beat 5's
   terminal is the script's "new window".
+- Beat 7: the binfmt chip is not in script.md's SHOW (whole-video QA 04:02 added the QEMU sentence to
+  SAY; the chip is the QA's fix; Docker's documented one-time QEMU registration, no capture).
 - Beat 5: the GREY row status reads 'same command' (not '… · block 8', which means nothing on screen);
   the chip on the title bar reads 'not a docker shell' (the title already says 'new terminal').
 """
@@ -98,6 +102,7 @@ assert "linux/amd64,linux/arm64 --push" in excerpt(API, 35, 35)
 BETTER = 'echo "$TOKEN" | docker login -u <you> --password-stdin'   # extra (no capture, no output)
 READ = "read -s TOKEN"   # defines $TOKEN without echo or shell history (QA 03:12: $TOKEN was undefined)
 GHOST_PROMPTS = (P_API, P_VDB)
+BINFMT = "docker run --privileged --rm tonistiigi/binfmt --install all"   # QA 04:02: QEMU for the emulated platform
 
 
 def token_page() -> VGroup:
@@ -453,9 +458,14 @@ class DockerHub(VoiceScene):
         assert ghosts.get_left()[0] > -6.5 and ghosts.get_right()[0] < 6.5, (ghosts.get_left(), ghosts.get_right())
         yt = your_turn()
         chk = grey_chip("check your Docker Hub page: three repositories")
-        foot = VGroup(yt, chk).arrange(RIGHT, buff=0.35).move_to([0, -0.85, 0])
-        assert foot.get_bottom()[1] > STRIP_TOP + 0.1 and foot.get_top()[1] < notes.get_bottom()[1] - 0.15, \
-            (foot.get_top(), notes.get_bottom())
+        qchip = grey_chip(BINFMT, mono_font=True)
+        qemu = VGroup(label("on Linux, first:", 20, S.GREY), qchip).arrange(RIGHT, buff=0.25)
+        qemu.move_to([0, notes.get_bottom()[1] - 0.2 - qemu.height / 2, 0])
+        foot = VGroup(yt, chk).arrange(RIGHT, buff=0.35)
+        foot.move_to([0, qemu.get_bottom()[1] - 0.2 - foot.height / 2, 0])
+        assert qemu.get_left()[0] > -6.5 and qemu.get_right()[0] < 6.5, (qemu.get_left(), qemu.get_right())
+        assert foot.get_bottom()[1] > strip_top(3, 20) + 0.1 and foot.get_top()[1] < qemu.get_bottom()[1] - 0.1, \
+            (foot.get_bottom(), strip_top(3, 20), qemu.get_bottom())
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(hub_g, box_, yours)), run_time=0.4)
             self.remove(hub_g, box_, yours)
@@ -468,6 +478,11 @@ class DockerHub(VoiceScene):
             self.play(FadeIn(notes[0]), FadeIn(notes[2]), run_time=0.5)
             self.play(Indicate(notes[0][1], color=S.GREY, scale_factor=1.05),
                       Indicate(notes[2][1], color=S.GREY, scale_factor=1.05), run_time=0.7)
+            vo.wait_until("expect a long api service build")
+            self.play(Indicate(notes[0][1], color=S.GREY, scale_factor=1.1), run_time=0.6)
+            vo.wait_until("on Linux register")
+            self.play(FadeIn(qemu, shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(qchip, color=INK, scale_factor=1.04), run_time=0.7)   # whole chip: text stays inside its box
             vo.wait_until("Pause, run all three")
             self.play(FadeIn(yt, shift=RIGHT * 0.2), run_time=0.4)
             flash_tag(self, yt, TURN)
@@ -492,8 +507,8 @@ class DockerHub(VoiceScene):
         swc.move_to([0, -2.0, 0])
         assert sc.get_top()[1] < TRACK_BOTTOM - 0.1 and swc.get_bottom()[1] > -3.5
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(t2, bar_tag, crates, notes, ghosts, foot)), run_time=0.6)
-            self.remove(t2, bar_tag, crates, notes, ghosts, foot)
+            self.play(FadeOut(VGroup(t2, bar_tag, crates, notes, ghosts, qemu, foot)), run_time=0.6)
+            self.remove(t2, bar_tag, crates, notes, ghosts, qemu, foot)
             self.play(FadeIn(sc, shift=UP * 0.15), run_time=0.6)
             self.play(Indicate(ln2, color=INK, scale_factor=1.05), run_time=0.6)
             self.add(sc)

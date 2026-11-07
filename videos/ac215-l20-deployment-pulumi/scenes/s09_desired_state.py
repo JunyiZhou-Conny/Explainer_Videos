@@ -125,6 +125,20 @@ def relabel(card, text: str):
     return Transform(card.text, t)
 
 
+def fade_others(others, src, tgt) -> list:
+    """FadeOuts for the parts of a tree that do not transform; a ghost's dash travels with its card
+    to the card's new place (and size) instead of fading behind where the card was."""
+    to = {id(getattr(a, "dash", None)): b for a, b in zip(src, tgt) if getattr(a, "dash", None) is not None}
+    out_ = []
+    for m in others:
+        b = to.get(id(m))
+        if b is None:
+            out_.append(FadeOut(m))
+        else:
+            out_.append(FadeOut(m, target_position=b.box.get_center(), scale=b.box.width / m.width))
+    return out_
+
+
 def cmd_strip(s: str, size: float = 28) -> VGroup:
     """A command on a dark strip (not a terminal: the README's command decoded). .line .frame"""
     ln = mono_line(s, size, INK)
@@ -393,7 +407,7 @@ class DesiredState(VoiceScene):
             others = [m for m in e.submobjects if m not in src_set]
             self.remove(e)
             self.add(*e.submobjects)
-            self.play(*[ReplacementTransform(a, b) for a, b in zip(src, tgt)], *[FadeOut(m) for m in others],
+            self.play(*[ReplacementTransform(a, b) for a, b in zip(src, tgt)], *fade_others(others, src, tgt),
                       FadeOut(ref14), FadeIn(ref15), run_time=1.0)
             self.remove(*tgt, *others)
             self.add(ce)
@@ -531,7 +545,7 @@ class DesiredState(VoiceScene):
             others = [m for m in ce.submobjects if m not in set(src)]
             self.remove(ce)
             self.add(*ce.submobjects)
-            self.play(*[ReplacementTransform(a, b) for a, b in zip(src, tgt)], *[FadeOut(m) for m in others],
+            self.play(*[ReplacementTransform(a, b) for a, b in zip(src, tgt)], *fade_others(others, src, tgt),
                       run_time=0.9)
             self.remove(*tgt, *others)
             self.add(e2)

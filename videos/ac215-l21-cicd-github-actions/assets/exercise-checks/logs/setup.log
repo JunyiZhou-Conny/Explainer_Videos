@@ -1,0 +1,43 @@
+$ cd $SCRATCH/dlops/cheese-app-ci-cd && git rev-parse b8458ff && git ls-remote https://github.com/dlops-io/cheese-app-ci-cd.git refs/heads/main
+b8458ff0cc1898700b32a873b4665f43f50df71e
+b8458ff0cc1898700b32a873b4665f43f50df71e	refs/heads/main
+[exit 0]
+
+$ docker image inspect --format "{{index .RepoDigests 0}}" mirror.gcr.io/library/python:3.11-slim-bookworm
+mirror.gcr.io/library/python@sha256:a83ba18aef0f865b1a4a611c2cf460fe446f2795673bbb9fe43be570439e3b39
+[exit 0]
+
+$ cd $W && docker build --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-context python:3.11-slim-bookworm=docker-image://l21ex/py311-ca:check -t $IMG . 2>&1 | grep -E "^#[0-9]+ \[|naming to|ERROR|DONE [0-9.]+s$" | grep -v "^#[0-9]* DONE" | tail -20
+#1 [internal] load build definition from Dockerfile
+#2 [context python:3.11-slim-bookworm] load metadata for l21ex/py311-ca:check
+#3 [internal] load .dockerignore
+#4 [internal] load build context
+#5 [context python:3.11-slim-bookworm] l21ex/py311-ca:check
+#4 [internal] load build context
+#6 [ 9/11] COPY --chown=app:app docker-entrypoint.sh ./
+#7 [ 8/11] COPY --chown=app:app pytest.ini ./
+#8 [ 5/11] RUN pip install --no-cache-dir --user .
+#9 [ 1/11] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends         build-essential         curl &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip
+#10 [ 6/11] COPY --chown=app:app src/api-service/api/ ./api/
+#11 [ 2/11] RUN useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#12 [ 3/11] WORKDIR /app
+#13 [ 7/11] COPY --chown=app:app tests/ ./tests/
+#14 [ 4/11] COPY --chown=app:app pyproject.toml ./
+#15 [10/11] RUN chmod +x docker-entrypoint.sh
+#16 naming to docker.io/library/cheese-app-api:b8458ff-l21ex done
+[exit 0]
+
+$ docker run --rm $IMG bash -c "python --version; pip list 2>/dev/null | grep -iE \"^(black|flake8|pytest|pytest-cov|fastapi|uvicorn|httpx|pre.commit) \""
+Container is running!!!
+Executing command: bash -c python --version; pip list 2>/dev/null | grep -iE "^(black|flake8|pytest|pytest-cov|fastapi|uvicorn|httpx|pre.commit) "
+Python 3.11.18
+black              26.10.1
+fastapi            0.162.0
+flake8             7.5.0
+httpx              0.28.1
+pre_commit         4.7.0
+pytest             9.2.0
+pytest-cov         7.1.0
+uvicorn            0.54.0
+[exit 0]
+

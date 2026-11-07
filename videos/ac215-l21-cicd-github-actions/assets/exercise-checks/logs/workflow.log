@@ -1,0 +1,74 @@
+## actionlint on the tutorial's file and on the exercises' version
+$ actionlint -version | head -1
+1.7.12
+[exit 0]
+
+$ cp /src/.github/workflows/ci.yml .github/workflows/ci.yml && actionlint -shellcheck= -pyflakes= .github/workflows/ci.yml && echo "no findings"
+no findings
+[exit 0]
+
+$ cp /checks/ci-exercises.yml .github/workflows/ci.yml && actionlint -shellcheck= -pyflakes= .github/workflows/ci.yml && echo "no findings"
+no findings
+[exit 0]
+
+## C2: the first Slack attempt (199abd9), the secret tested in the step's if:
+$ cp /hist/199abd9-ci.yml .github/workflows/ci.yml && grep -n "secrets.SLACK_WEBHOOK_URL" .github/workflows/ci.yml; actionlint -shellcheck= -pyflakes= .github/workflows/ci.yml
+195:        if: always() && secrets.SLACK_WEBHOOK_URL != ''
+247:          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+.github/workflows/ci.yml:195:25: context "secrets" is not allowed here. available contexts are "env", "github", "inputs", "job", "matrix", "needs", "runner", "steps", "strategy", "vars". see https://docs.github.com/en/actions/learn-github-actions/contexts#context-availability for more details [expression]
+    |
+195 |         if: always() && secrets.SLACK_WEBHOOK_URL != ''
+    |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+[exit 1]
+
+## B2: the exercises' Check test results with run 1's results (lint failed, the tests passed)
+$ export GITHUB_OUTPUT=/tmp/out1 GITHUB_STEP_SUMMARY=/tmp/sum1; python3 /checks/runstep.py /checks/ci-exercises.yml test-summary test-results needs.lint-and-format.result=failure needs.unit-tests.result=success needs.integration-tests.result=success needs.system-tests.result=success > /tmp/s1.sh && bash --noprofile --norc -eo pipefail /tmp/s1.sh; e=$?; echo "--- GITHUB_OUTPUT:"; cat $GITHUB_OUTPUT; echo "--- GITHUB_STEP_SUMMARY:"; cat $GITHUB_STEP_SUMMARY; exit $e
+Lint and Format: failure
+Unit Tests: success
+Integration Tests: success
+System Tests: success
+❌ Some tests failed!
+--- GITHUB_OUTPUT:
+status=failure
+--- GITHUB_STEP_SUMMARY:
+| Job | Result |
+|---|---|
+| Lint and Format | failure |
+| Unit | success |
+| Integration | success |
+| System | success |
+[exit 1]
+
+## B2: the same step with run 2's results (all six green)
+$ export GITHUB_OUTPUT=/tmp/out2 GITHUB_STEP_SUMMARY=/tmp/sum2; python3 /checks/runstep.py /checks/ci-exercises.yml test-summary test-results needs.lint-and-format.result=success needs.unit-tests.result=success needs.integration-tests.result=success needs.system-tests.result=success > /tmp/s2.sh && bash --noprofile --norc -eo pipefail /tmp/s2.sh; e=$?; echo "--- GITHUB_OUTPUT:"; cat $GITHUB_OUTPUT; exit $e
+Lint and Format: success
+Unit Tests: success
+Integration Tests: success
+System Tests: success
+✅ All tests passed!
+--- GITHUB_OUTPUT:
+status=success
+[exit 0]
+
+## B2: the original step: the summary never sees lint (run 1's results)
+$ export GITHUB_OUTPUT=/tmp/out3; python3 /checks/runstep.py /src/.github/workflows/ci.yml test-summary test-results needs.unit-tests.result=success needs.integration-tests.result=success needs.system-tests.result=success > /tmp/s3.sh && bash --noprofile --norc -eo pipefail /tmp/s3.sh
+Unit Tests: success
+Integration Tests: success
+System Tests: success
+✅ All tests passed!
+[exit 0]
+
+## C1: the hardened Slack check reads the secret from env:, unset and set (placeholder)
+$ export GITHUB_OUTPUT=/tmp/out4; python3 /checks/runstep.py /checks/ci-exercises.yml test-summary slack-check > /tmp/s4.sh && cat /tmp/s4.sh && SLACK_WEBHOOK_URL= bash -eo pipefail /tmp/s4.sh && cat $GITHUB_OUTPUT
+if [ -n "$SLACK_WEBHOOK_URL" ]; then
+  echo "enabled=true" >> $GITHUB_OUTPUT
+else
+  echo "enabled=false" >> $GITHUB_OUTPUT
+fi
+enabled=false
+[exit 0]
+
+$ export GITHUB_OUTPUT=/tmp/out5; SLACK_WEBHOOK_URL="https://hooks.slack.com/services/<your-webhook-path>" bash -eo pipefail /tmp/s4.sh && cat $GITHUB_OUTPUT
+enabled=true
+[exit 0]
+
