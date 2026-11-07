@@ -223,9 +223,10 @@ class PushIt(VoiceScene):
                                color=TURN, scale_factor=1.08), run_time=0.6)
             vo.wait_until("The second undid a bug")
             self.play(Circumscribe(logs[0], color=TURN, buff=0.06), run_time=0.8)
-            vo.wait_until("we'll run it later")
             later = beside(row_tag("→ part 2"), logs[1], buff=0.4)
-            pin(self, logs[1], later)
+            pin(self, logs[1], later, anim=FadeIn(later, shift=LEFT * 0.1))
+            self.play(Indicate(substring(logs[1], C03.line(3)[:7]), color=TURN, scale_factor=1.1), run_time=0.6)
+            vo.wait_until("we'll run it later")
             flash_tag(self, later)
 
         # ========================================================== 2. the README's block
@@ -439,7 +440,8 @@ class PushIt(VoiceScene):
             self.play(FadeOut(gone), lap2.animate.move_to(lap_to), run_time=0.6)
             self.remove(gone, *gone.get_family())
             vo.wait_until("On a fork")
-            self.play(FadeIn(fk, shift=DOWN * 0.2), run_time=0.5)
+            self.play(FadeIn(fk, shift=DOWN * 0.2), VGroup(*[m for r in pushed for m in r.family_members_with_points()
+                                if not isinstance(m, Rectangle)]).animate.set_opacity(0.35), run_time=0.5)
             ghost = route(lap2.get_right() + RIGHT * 0.1, fk.get_left() + LEFT * 0.1, color=S.GREY, dashed=True)
             self.play(Create(ghost), run_time=0.6)
             vo.wait_until("so git push says everything up to date")

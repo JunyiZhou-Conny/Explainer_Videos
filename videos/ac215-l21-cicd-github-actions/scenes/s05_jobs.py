@@ -135,9 +135,10 @@ class SixJobs(VoiceScene):
         ids = VGroup(*[chips[j].id for j in JOB_IDS])
         s15 = grey_chip("GitHub shows the names · S15", size=22).move_to([0, -2.85, 0])
         with self.voiceover(SAY[1]) as vo:
-            cap_copy = tr.caption.copy()
-            self.play(ReplacementTransform(card, cap_copy), run_time=0.6)
-            self.remove(cap_copy, card)
+            # the card shrinks into the tracker caption (no text morph: a morph garbles the caption)
+            self.play(FadeOut(card, scale=0.15, target_position=tr.caption.get_center()),
+                      Indicate(tr.caption, color=TURN, scale_factor=1.05), run_time=0.6)
+            self.remove(card, *card.get_family())
             self.add(tr)
             vo.wait_until("GitHub shows them")
             self.play(names.animate.set_color(TURN), run_time=0.4)
@@ -382,6 +383,9 @@ class SixJobs(VoiceScene):
                                   lag_ratio=0.1), run_time=0.8)
             vo.wait_until("On a private repository")
             row = gantt.billed(self)
+            vo.wait_until("each job is billed")
+            self.play(LaggedStart(*[Indicate(b, color=COST, scale_factor=1.08) for b in row[0]], lag_ratio=0.12),
+                      run_time=1.0)
             ctag = cost_tag("private repos · public: free · digest §2, not measured here")
             ctag.next_to(row, DOWN, buff=0.25).align_to(row, LEFT)
             vo.wait_until("about 6 billed minutes")

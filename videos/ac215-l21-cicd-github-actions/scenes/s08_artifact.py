@@ -141,6 +141,14 @@ def morph_code(scene, cur, new, run_time: float = 0.5):
     return new
 
 
+def span_bar(code_m, a: int, b: int, color, opacity: float):
+    """One translucent bar over code lines a..b (0-based): no stripes where per-line bars overlap."""
+    top, bot = line_bar(code_m, a, color, opacity), line_bar(code_m, b, color, opacity)
+    y0, y1 = top.get_top()[1], bot.get_bottom()[1]
+    return Rectangle(width=top.width, height=y0 - y1, stroke_width=0).set_fill(color, opacity) \
+        .move_to([top.get_center()[0], (y0 + y1) / 2, 0])
+
+
 def mask_chip(row, sub: str, text: str):
     """A GREY chip laid over the glyphs of `sub` in a log row (the exact bytes masked)."""
     g = substring(row, sub)
@@ -240,7 +248,7 @@ class BuildOnce(VoiceScene):
             self.play(FadeOut(cb), run_time=0.2)
             self.remove(cb)
             cur = morph_code(self, c2, c3)
-            cb = VGroup(*[line_bar(c3.code, k, TURN, 0.18) for k in range(6)])
+            cb = span_bar(c3.code, 0, 5, TURN, 0.18)
             self.play(FadeIn(cb), run_time=0.3)
             vo.wait_until("so every other job gets")
             hb4 = hl_bar(card.rows[294], TURN, 0.22)
@@ -416,12 +424,12 @@ class BuildOnce(VoiceScene):
             self.play(FadeOut(x1), FadeIn(c49), run_time=0.5)
             self.remove(x1, *x1.get_family())
             vo.wait_until("downloads the artifact")
-            pk = VGroup(*[line_bar(c49.code, k, ROUTE, 0.25) for k in range(0, 5)])
+            pk = span_bar(c49.code, 0, 4, ROUTE, 0.25)
             self.play(FadeIn(pk), run_time=0.3)
             self.play(FadeIn(drop_case, shift=DOWN * 0.3), run_time=0.3)
             self.play(drop_case.animate.next_to(big_shelf.board, UP, buff=0.04), run_time=0.6)
             vo.wait_until("and runs docker load")
-            tl = VGroup(*[line_bar(c49.code, k, IMAGE, 0.25) for k in range(6, 9)])
+            tl = span_bar(c49.code, 6, 8, IMAGE, 0.25)
             self.play(FadeIn(tl), run_time=0.3)
             self.play(ReplacementTransform(drop_case, big_cube), run_time=0.6)
             vo.wait_until("the same tag, unpacked")
@@ -430,13 +438,17 @@ class BuildOnce(VoiceScene):
             ltag = substring(lf03.row(2), "cheese-app-api:")
             self.play(ltag.animate.set_color(IMAGE), Indicate(big_cube, color=IMAGE, scale_factor=1.1), run_time=0.5)
             vo.wait_until("That's artifact sharing")
-            self.play(FadeOut(VGroup(lf03, big_t, big_shelf, xt, big_cube)),
-                      ReplacementTransform(big, lint.frame.copy()), FadeIn(im), run_time=0.8)
-            self.remove(*[m for m in self.mobjects if m is not tr and m is not strip and m is not im])
-            self.add(im)
+            # zoom out in two clean steps: the log leaves, then the big room shrinks back into its
+            # place (frame, shelf and cube each become the small one) while the other rooms return
+            self.play(FadeOut(VGroup(lf03, big_t, xt)), run_time=0.35)
+            self.remove(lf03, *lf03.get_family(), big_t, xt)
             lc = cube_glyph(0.3).next_to(lint.shelf.board, UP, buff=0.03)
+            g_frame, g_shelf = lint.frame.copy(), lint.shelf.copy()
+            self.play(ReplacementTransform(big, g_frame), ReplacementTransform(big_shelf, g_shelf),
+                      ReplacementTransform(big_cube, lc), FadeIn(im), run_time=0.8)
+            self.remove(g_frame, *g_frame.get_family(), g_shelf, *g_shelf.get_family(), big, big_shelf, big_cube)
+            self.add(im)
             im.cubes["lint-and-format"] = lc
-            self.play(FadeIn(lc), run_time=0.2)
             im.keep(self, lc)
             im.deliver(self, jobs=TEST_JOBS, run_time=0.8)
             cbs = {j: cube_glyph(0.3).next_to(rooms[j].shelf.board, UP, buff=0.03) for j in TEST_JOBS}
@@ -474,6 +486,9 @@ class BuildOnce(VoiceScene):
             im.drop(self, ucube, run_time=0.5)
             vo.wait_until("Which step fails")
             self.play(Indicate(unit.shelf, color=INK, scale_factor=1.15), run_time=0.8)
+            # the centred ponder card would cover the strip's lower edge: the strip leaves first
+            self.play(FadeOut(VGroup(c84, strikes), shift=UP * 0.1), run_time=0.4)
+            self.remove(c84, *c84.get_family(), strikes)
         card8 = ponder(self, PONDER_Q, seconds=8)
 
         # ========================================================== 9. the answer: pull access denied
@@ -485,8 +500,9 @@ class BuildOnce(VoiceScene):
         hub.move_to(HUB_POS)
         rows3 = VGroup(*n2.rows[1:])
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(card8), FadeOut(VGroup(c84, strikes)), FadeIn(n1, shift=DOWN * 0.15), run_time=0.6)
-            self.remove(card8, c84, strikes)
+            self.play(FadeOut(card8), run_time=0.4)
+            self.remove(card8)
+            self.play(FadeIn(n1, shift=DOWN * 0.15), run_time=0.5)
             self.play(Indicate(n1.title, color=INK, scale_factor=1.04), run_time=0.6)
             vo.wait_until("Docker looks for the image")
             self.play(*morph_log(n1, n2, rows_in=False), run_time=0.6)

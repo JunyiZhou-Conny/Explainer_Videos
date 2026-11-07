@@ -29,8 +29,8 @@ Beats (script.md "## S09", one voiceover block each):
    Format Check · extra: Flake8, if it had run"): `7:15 … E231` and `13:1 … E303` light. V6: the
    ghost gate holds up `1`, a GREY shunt arc carries the flow around it (continue-on-error), a small
    YELLOW warning dot on the job badge; the Black gate and the job badge pulse.
-7. The log leaves; V6 moves to the centre and condenses into one line "exit code ≠ 0 → the step
-   fails" (≠ 0 RED). Fade; empty frame.
+7. The log leaves; V6 moves to the centre, the line "exit code ≠ 0 → the step fails" (≠ 0 RED)
+   appears under it, and the column shrinks into the line, which moves to the centre. Fade; empty frame.
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -38,6 +38,7 @@ from manim import *  # noqa: F401,F403  (manim first, then common: common's name
 from explainer.scene import VoiceScene
 
 from common import *  # noqa: F401,F403
+from common import _gate_open  # V6's gate swing (not exported by *)
 
 SAY = NARRATION["S09"]
 
@@ -256,10 +257,17 @@ class ExitCodes(VoiceScene):
             self.play(ReplacementTransform(demo, eg), run_time=0.9)
             self.remove(demo)
             self.add(eg)
+            # Checkout, Download, Load hold up 0 together (one by one, hold() put the log 1.5 s behind
+            # "would reformat")
+            zeros = [chip("0", PASS, size=22, font=MONO).next_to(eg.gates[i], RIGHT, buff=0.3) for i in range(3)]
+            self.play(LaggedStart(*[FadeIn(z, shift=UP * 0.2) for z in zeros], lag_ratio=0.25), run_time=0.45)
+            self.play(*[_gate_open(eg.gates[i]) for i in range(3)], run_time=0.4)
+            for i, z in enumerate(zeros):
+                eg.opened.add(i)
+                eg.codes[i] = z
+            eg.keep(self, *zeros)
             vo.wait_until("the Black step")
             right_zone(log, zl)
-            for i in range(3):
-                eg.hold(self, i, 0)
             self.play(FadeIn(log, shift=LEFT * 0.2), Indicate(eg.names[3], color=TOOL, scale_factor=1.15),
                       run_time=0.6)
             vo.wait_until("would reformat utils dot py")
@@ -347,7 +355,7 @@ class ExitCodes(VoiceScene):
             out_g = VGroup(xlog, xt, hbs)
             self.play(FadeOut(out_g), run_time=0.5)
             self.remove(out_g, *out_g.get_family())
-            self.play(eg.animate.move_to([0, -0.3, 0]), run_time=0.7)
+            self.play(eg.animate.move_to([0, -0.4, 0]), run_time=0.7)
             vo.wait_until("a step fails when its command exits")
             under_t = rule2.copy().next_to(eg, DOWN, buff=0.25)
             if under_t.get_bottom()[1] < -3.5:
@@ -356,10 +364,11 @@ class ExitCodes(VoiceScene):
             vo.wait_until("anything but zero")
             self.play(Indicate(under_t[1], color=ERR, scale_factor=1.2), run_time=0.7)
             vo.wait_until("It's the only thing CI listens to")
-            self.play(ReplacementTransform(eg, rule2), ReplacementTransform(under_t, rule2.copy()), run_time=0.9)
-            self.remove(*[m for m in self.mobjects if m not in (tr, strip)])
-            self.add(rule2)
-            self.play(Indicate(rule2, color=INK, scale_factor=1.06), run_time=0.8)
+            # the column condenses into its line: it shrinks into the text, which takes the centre
+            self.play(eg.animate.scale(0.15).move_to(under_t).set_opacity(0),
+                      under_t.animate.move_to(rule2), run_time=0.9)
+            self.remove(eg, *eg.get_family())
+            self.play(Indicate(under_t, color=INK, scale_factor=1.06), run_time=0.8)
 
         self.wait(0.3)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)

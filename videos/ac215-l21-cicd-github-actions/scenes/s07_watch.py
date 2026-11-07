@@ -235,7 +235,7 @@ class WatchTheRun(VoiceScene):
             vo.wait_until("and GitHub draws the run")
             cap = tr.caption.copy()
             rest = VGroup(tab, ill, leg, turn, tips, cur)
-            self.play(ReplacementTransform(card, cap), FadeOut(rest), run_time=0.6)
+            self.play(FadeTransform(card, cap), FadeOut(rest), run_time=0.6)
             self.remove(cap, card, rest, *rest.get_family())
             self.add(tr)
             self.play(FadeIn(g, shift=UP * 0.2), run_time=0.6)
@@ -288,7 +288,7 @@ class WatchTheRun(VoiceScene):
         note = grey_chip("drawn from ci.yml · log lines real").next_to(gs.tag, DOWN, buff=0.15).align_to(gs.tag, RIGHT)
         with self.voiceover(SAY[3]) as vo:
             vo.wait_until("are drawings built from the workflow file")
-            self.play(ReplacementTransform(inset, note), run_time=0.9)
+            self.play(FadeTransform(inset, note), run_time=0.9)
             self.remove(inset, *inset.get_family())
             self.add(note)
             vo.wait_until("marked illustration")
@@ -303,7 +303,7 @@ class WatchTheRun(VoiceScene):
             swap_graph(self, gs, g, FadeOut(note))
             self.remove(note)
             vo.wait_until("You already know this run turns red")
-            self.play(Indicate(g.badge.text, color=ERR, scale_factor=1.08), run_time=0.7)
+            self.play(Indicate(g.badge, color=INK, scale_factor=1.08), run_time=0.7)   # no colors change
             vo.wait_until("Is your push on main")
             self.play(FadeIn(door, scale=0.8), run_time=0.5)
             self.play(Indicate(door, color=GITHUB, scale_factor=1.08), run_time=0.6)
@@ -368,10 +368,9 @@ class WatchTheRun(VoiceScene):
                       run_time=0.8)
             vo.wait_until("And act, the second witness")
             gone = VGroup(gs, lp, flying, ref)
-            self.play(FadeOut(gone), track(tr, 7, True), run_time=0.5)
+            self.play(FadeOut(gone), track(tr, 7, True), FadeIn(t, shift=UP * 0.2), run_time=0.6)
             self.remove(gone, *gone.get_family())
-            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)
-            typed = type_capture(self, t, C62, type_time=1.0)
+            typed = type_capture(self, t, C62, type_time=0.8)
             last = typed[-1]
             last = last.rows[-1] if hasattr(last, "rows") else last
             xt = beside(extra_row("act"), last, buff=0.4)
@@ -394,8 +393,8 @@ class WatchTheRun(VoiceScene):
         gs.shift(np.array([-6.45 - gs.get_left()[0], 0.2 - VGroup(*gs.nodes.values()).get_center()[1], 0]))
         rec = recorded_graph()
         rec.shift(np.array([6.4 - rec.get_right()[0], 0.2 - VGroup(*rec.graph.nodes.values()).get_center()[1], 0]))
-        err = erratum_tag("erratum · an earlier version of the code").next_to(rec, DOWN, buff=0.25)
-        err.align_to(rec, RIGHT)
+        err = erratum_tag("erratum · an earlier version of the code").next_to(rec, UP, buff=0.3)
+        err.align_to(rec, RIGHT)          # above: below it would crowd the graph's illustration tag
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(t, shift=DOWN * 0.2), track(tr, 8, False), run_time=0.5)
             self.remove(t, *t.get_family())
@@ -428,6 +427,8 @@ class WatchTheRun(VoiceScene):
             vo.wait_until("In part 2 we open every log")
             self.play(g.pulse("lint-and-format", ERR), g.pulse("test-summary", PASS),
                       Indicate(qc.text, color=TURN, scale_factor=1.04), run_time=0.9)
+            vo.wait_until("one job at a time")
+            self.play(LaggedStart(*[g.pulse(j, GITHUB) for j in JOB_IDS], lag_ratio=0.3), run_time=1.6)
         everything = Group(*self.mobjects)
         self.play(FadeOut(everything), run_time=0.8)
         self.remove(*self.mobjects)
