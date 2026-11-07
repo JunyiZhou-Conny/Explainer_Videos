@@ -183,9 +183,7 @@ class CiPipeline(VoiceScene):
             self.remove(*chips)
             for g, ic, cp, cue in zip(glyphs, icons, caps, PAYOFF_CUES):
                 vo.wait_until(cue)
-                tgt = ic.get_center().copy()
-                ic.move_to(g)
-                self.play(ic.animate.move_to(tgt), FadeIn(ic), light(g, TURN), run_time=0.55)
+                self.play(FadeIn(ic, target_position=g.get_center()), light(g, TURN), run_time=0.55)
                 self.play(FadeIn(cp, shift=UP * 0.15), run_time=0.3)
             vo.wait_until("Machine learning adds a twist")
             self.play(FadeIn(ml, shift=UP * 0.2), run_time=0.4)
@@ -298,6 +296,7 @@ class CiPipeline(VoiceScene):
             vo.wait_until("in dot github")
             dy = STRIP_TOP - t.box.get_top()[1]
             resize(self, t, 3, keep=[cmd, ci_row], extra=[bar_tag.animate.shift(UP * dy)])
+            self.add(bar_tag)            # resize re-adds the terminal on top of its bar tag
             self.play(FadeIn(tree.rows[0], shift=RIGHT * 0.15), run_time=0.35)
             self.play(FadeIn(tree.rows[1], shift=RIGHT * 0.15), run_time=0.35)
             vo.wait_until("workflows, at the root")
