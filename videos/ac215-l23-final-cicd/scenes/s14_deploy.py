@@ -13,7 +13,7 @@ Beats (script.md "## S14", one voiceover block each):
 2. TRACKER C 6. Laptop terminal (11 rows), heading row "ci_cd_aws.yml · lines 110–131 · run by
    hand", `extra` on the title bar, "the workflow's own commands, run by hand" above it →
    TERM(laptop/53: 22–27, 29–30): the tag GREEN, `drwx------` / `-rw-------` flash, 29 (wrapped)
-   and 30 RED. The terminal shrinks to a 3-row strip (22, the last row of 29, 30); the chain returns
+   and 30 RED. The terminal shrinks to a 3-row strip (22, the first row of 29, 30); the chain returns
    above it: three beads GREEN, the ECR bead RED, the two playbook beads GREY dashed + chip "never ran".
 3. V6 TimestampTrail (deploy): the GREEN tag card is stamped above 'GitHub runner · date', rides
    DOCKER_TAG → toolbox → 'ansible-playbook · docker_tag=…' (that line YELLOW); the S09 fork small and
@@ -154,6 +154,8 @@ def run_page():
     rows = VGroup()
     for nm in STEP_NAMES:
         m = state_mark("idle", 0.3)
+        m.remove(m[1])           # its inner is an empty VMobject (no position): a tick would fly in from
+        m.add(Dot(m[0].get_center(), radius=0.01).set_opacity(0))   # the origin; grow it from the ring
         t = label(nm, 20, INK)
         r = VGroup(m, t).arrange(RIGHT, buff=0.18)
         r.mark, r.text = m, t
@@ -273,7 +275,7 @@ class FollowTheTag(VoiceScene):
             self.play(Indicate(substring(r29[0], "UnrecognizedClientException"), color=ERR, scale_factor=1.08),
                       run_time=0.6)
             new_bar_y = STRIP_TOP - t.bar_h / 2
-            resize(self, t, 3, keep=[r22, r29[-1], r30],
+            resize(self, t, 3, keep=[r22, r29[0], r30],
                    extra=[xtag.animate.set_y(new_bar_y), bh.animate.set_y(STRIP_TOP + 0.12 + bh.height / 2)],
                    run_time=0.7)
             self.add(xtag)            # resize re-adds the terminal on top: keep `extra` on its bar

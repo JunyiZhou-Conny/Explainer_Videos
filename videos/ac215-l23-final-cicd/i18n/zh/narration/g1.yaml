@@ -41,7 +41,7 @@ S01:
 - en: "This is the course's last lecture: final deployment and review, in three parts. Its motivation is a playful prediction web page; our reading of it: even a toy prediction app is only useful when it runs somewhere, and stays current."
   zh:
   - "这是这门课的最后一讲：最终部署与回顾，分三节。"
-  - "它的动机是一个好玩的预测网页；我们的理解是：哪怕是一个玩具级的预测应用，也只有在某个地方跑着、并且保持最新时才有用。"
+  - "它的动机是一个好玩的预测网页；我们的理解是，哪怕是一个玩具级的预测应用，也只有在某个地方跑着、并且保持最新时才有用。"
 - en: "This recording machine has no AWS account. Everything on the laptop ran for real. Every command that talks to AWS ran exactly as the README writes it, up to its real first error. The consoles, the server and GitHub are drawings, marked illustration."
   zh:
   - "我们录制用的这台机器没有 AWS 账号。"
@@ -65,7 +65,7 @@ S02:
   zh:
   - "课件讲的是 Google Cloud；我们跟的是 AWS 的 repo，和第 15 讲一样。"
   - "现在把同一张总图换成 AWS 的说法。"
-  - "Kubernetes 集群变成了一台跑着 Docker container 的 EC2 服务器。"
+  - "Kubernetes 集群变成了一台 EC2 服务器，上面跑着 Docker container。"
   - "image registry 变成了 ECR，里面有三个仓库。"
   - "Pulumi 变成了 Ansible 的 playbook。"
   en_display:
@@ -77,7 +77,7 @@ S02:
 - en: "The service account key becomes two secrets: an IAM access key and an E C 2 key pair. The keyword becomes slash run deploy app, and the ingress becomes one nginx container at the front door."
   zh:
   - "服务账号密钥变成了两份密钥：一个 IAM 访问密钥和一个 EC2 密钥对。"
-  - "关键词变成了 /run-deploy-app，Ingress 变成了站在前门的一个 nginx container。"
+  - "关键词变成了 /run-deploy-app，Ingress 变成了前门的一个 nginx container。"
   en_display:
   - "The service account key becomes two secrets: an IAM access key and an EC2 key pair."
   - "The keyword becomes /run-deploy-app, and the ingress becomes one nginx container at the front door."
@@ -237,10 +237,10 @@ S05:
 - en: "Run it as cloned, and it stops: credentials file not found. Four dot dots from the deployment folder end at slash home, one level too far."
   zh:
   - "照 clone 下来的原样运行，它就停了：credentials file not found。"
-  - "从 deployment 目录往上四个 ..，就到了 /home，多上了一层。"
+  - "从 deployment 目录往上四个 ../，就到了 /home，多上了一层。"
   en_display:
   - null
-  - "Four .. from the deployment folder end at /home, one level too far."
+  - "Four ../ from the deployment folder end at /home, one level too far."
 - en: "Step 2 is that fix: three levels up, with sed or your editor. Now the file is found."
   zh:
   - "第 2 步就是这个修复：往上三层，用 sed 或者你的编辑器改。"
@@ -280,11 +280,11 @@ S05:
 - en: "Surprise 3: inside the toolbox, slash secrets is empty. Line 26 has the same four dot dots, so Docker mounted an empty folder. The prompt ID changes on every start."
   zh:
   - "意外 3：在工具箱容器里，/secrets 是空的。"
-  - "第 26 行也是同样的四个 ..，所以 Docker 挂载了一个空目录。"
+  - "第 26 行也是同样的四个 ../，所以 Docker 挂载了一个空目录。"
   - "提示符里的 ID 每次启动都会变。"
   en_display:
   - "Surprise 3: inside the toolbox, /secrets is empty."
-  - "Line 26 has the same four .., so Docker mounted an empty folder."
+  - "Line 26 has the same four ../, so Docker mounted an empty folder."
   - null
 - en: "So fix line 26 like line 10, and put your own account ID on line 17. AWS S T S get caller identity shows it, once your keys work."
   zh:
@@ -305,7 +305,7 @@ S06:
   zh:
   - "工具箱容器是怎么启动的？"
   - "第 36 行挂载了 Docker socket。"
-  - "然后是挂到 /app 的 deployment 目录、你的密钥，还有三个应用目录。"
+  - "然后是 deployment 目录，挂在 /app，再是你的密钥和三个应用目录。"
   - "第 43 到 46 行把你的密钥作为环境变量传进去。"
   en_display:
   - null
@@ -329,7 +329,7 @@ S06:
 - en: "Without quotes, the greater than sign in that pip install is a shell redirect. So the root folder holds a file whose name starts with an equals sign: pip wrote its log there, and installed Ansible 6, on an old Python. Quoting fixes it, but leave it for now: the provision playbook relies on this old Ansible."
   zh:
   - "不加引号的话，那条 pip install 里的大于号就是 shell 的重定向。"
-  - "所以根目录里有一个以等号开头的文件：pip 把它的日志写到了那里，装上的是 Ansible 6，跑在一个旧版 Python 上。"
+  - "所以根目录里有一个名字以等号开头的文件：pip 把日志写在那里，装的是旧版 Python 上的 Ansible 6。"
   - "加上引号就能修好，但先别动：provision 那个 playbook 依赖这个旧 Ansible。"
 - en: "That explains the warnings: the old Python, a collection that doesn't support this Ansible, and an old module name. We hide them from now on."
   zh:
@@ -368,7 +368,7 @@ S07:
   - null
 - en: "Then it builds the frontend from slash frontend react, the folder the script mounted, names the image with that tag, and pushes it. The API and the vector D B tool follow. Last, it saves the tag in a file: dot docker tag."
   zh:
-  - "然后它从 /frontend-react，也就是脚本挂载的那个目录，构建前端，用这个 tag 给 image 命名，再 push 上去。"
+  - "然后它构建前端，用的是 /frontend-react，也就是脚本挂载的那个目录，用这个 tag 给 image 命名，再 push 上去。"
   - "API 和向量数据库工具紧随其后。"
   - "最后，它把 tag 存进一个文件：.docker-tag。"
   en_display:
@@ -416,7 +416,7 @@ S08:
   zh:
   - "第 6 步从 localhost 出发，通过 AWS 的 API 创建服务器。"
   - "首先是一个安全组，port 22、80 和 443 对所有人开放，再加一块 50 GB 的磁盘。"
-  - "然后是一个 t2.large 实例，用你的密钥对，自带两块 100 GB 的磁盘。"
+  - "然后是一个 t2.large 实例，用的是你的密钥对，还自带两块 100 GB 的磁盘。"
   - "最后，它尝试把那块 50 GB 的磁盘附加上去。"
   en_display:
   - null
@@ -593,7 +593,12 @@ S10:
   - "第 14 步：在浏览器里打开你服务器的地址。"
   - "真正干活的只有 port 80。"
   - "Port 443 是开着的，也转发给了 nginx，但 nginx 在那里什么都不提供：还没有 HTTPS。"
-- en: "That's part 1: about a dozen commands and five playbooks, by hand. Next, a commit message does the redeploy."
+- en: "That's part 1: about a dozen commands and five playbooks, by hand. If you stop here, terminate the instance and delete its 50 gigabyte volume in the E C 2 console today: the README's delete step fails, as part 2 shows. Next, a commit message does the redeploy."
   zh:
   - "这就是第 1 部分：大约十几条命令和五个 playbook，全部手动。"
+  - "如果你就停在这里，今天就在 EC2 控制台里终止实例，并删掉它那个 50 GB 的 volume：README 的删除步骤会失败，第 2 部分会讲到。"
   - "接下来，由一条 commit 信息来完成重新部署。"
+  en_display:
+  - null
+  - "If you stop here, terminate the instance and delete its 50 gigabyte volume in the EC2 console today: the README's delete step fails, as part 2 shows."
+  - null

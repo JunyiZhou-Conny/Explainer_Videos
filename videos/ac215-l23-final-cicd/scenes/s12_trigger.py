@@ -11,10 +11,10 @@ Beats (script.md "## S12", one voiceover block each):
    tiles fades in under it; the 'deploy' tile is circled on "the last step"; line 100 YELLOW and the
    second, smaller sieve forms out of it over the 'deploy' tile only.
 2. The panel leaves; V1 settles at full size (ECR shelf and the EC2 server fade in); a GREY
-   "push to" + BLUE `main` chip with a PINK arrow feeds the ribbons. Both sieves flash on "Two
+   "push to" + BLUE `main` chip with a PINK arrow feeds the ribbons. Both sieves are circled on "Two
    sieves". Ribbon 1 `update readme` slides off the first sieve; the job dims and a GREY chip "job
    skipped · nothing runs" sits on it.
-3. The job comes back; ribbon 2 `fix typo /run-tests` hovers above the sieves. PONDER (8 s).
+3. The chip stays until "You push"; then the job comes back and ribbon 2 `fix typo /run-tests` hovers above the sieves. PONDER (8 s).
 4. The card leaves. Ribbon 2 passes the first sieve (GREEN flash), a PINK dot enters the job (the
    job is circled), the build tiles are circled, three TEAL cubes land on the ECR shelf, GOLD
    cost_tag("three new images in ECR per /run- push") under the shelf; the dot stops on the second
@@ -31,7 +31,7 @@ Beats (script.md "## S12", one voiceover block each):
    keyword moves out right with a GREY chip "the Google Cloud repo's keyword", and a PINK
    `/run-deploy-app` takes its place in the card; under the card the three lines `git add .`,
    `git commit -m "your message /run-deploy-app"`, `git push` (GREY) with the GREY chip "the slide's
-   three commands, with a dot and this repo's keyword · typed in S14".
+   three commands, with a dot and this repo's keyword · you type them later".
 8. LECTURE off. The sieves and the job come back (without ECR and server). Three ribbons arrive as
    one push; the first two turn GREY and leave, only the last is fed (GREEN flash); GREY chip
    "head_commit = the last commit of the push" under the sieves. Then `/RUN-DEPLOY-APP` passes
@@ -42,7 +42,7 @@ whole piece is shifted down 0.7, and sieve 1 a further step down in beat 0), and
 built position in beat 2. Beats 4 and 5 replay KeywordSieves.drop()'s stop-1 and stop-2 sequences
 step by step in the scene (with the piece's own flash/images/_recreate), so each step lands on its
 clause. Beat 8 brings back only the sieves and the job (ECR and server stay away) so that the two
-chips fit under the sieves. Beat 7's rings on the dot and the keyword and its "typed in S14" chip come
+chips fit under the sieves. Beat 7's rings on the dot and the keyword and its "you type them later" chip come
 in a 2.3 s hold right after the block (the narration reaches "Here it's" only 2 s before it ends).
 Beat 8's three-commit push is 'update readme', 'fix typo', '/run-deploy-app' (the SHOW names no
 messages); only the last, '/run-deploy-app', is fed to sieve 1.
@@ -157,7 +157,8 @@ class TwoSieves(VoiceScene):
                       FadeIn(push, shift=RIGHT * 0.15), GrowArrow(feed), run_time=0.7)
             k._reseat(self)
             vo.wait_until("Two sieves")
-            self.play(k.flash(0, True), k.flash(1, True), run_time=0.8)
+            self.play(Circumscribe(s1.rim, color=TOOL, buff=0.12), Circumscribe(s2.rim, color=TOOL, buff=0.12),
+                      run_time=0.8)
             vo.wait_until("The message update readme")
             r1 = k.hover(self, RIBBONS[0][0])
             self.play(Indicate(feed, color=ROUTE), run_time=0.5)
@@ -171,10 +172,10 @@ class TwoSieves(VoiceScene):
 
         # ========================================================== 3. your turn: fix typo /run-tests
         with self.voiceover(SAY[3]) as vo:
+            vo.wait_until("You push")
             self.play(FadeOut(skipped), fade_to(VGroup(k.job, k.tiles), 1 / 0.35), run_time=0.5)
             self.remove(skipped, *skipped.get_family())
             k._reseat(self)
-            vo.wait_until("You push")
             r2 = k.hover(self, RIBBONS[1][0])
             self.play(Indicate(feed, color=ROUTE), Indicate(r2.text, color=INK, scale_factor=1.08), run_time=0.7)
             vo.wait_until("Nothing, build and push")
@@ -294,7 +295,7 @@ class TwoSieves(VoiceScene):
             gnote.shift(LEFT * (gnote.get_right()[0] - 6.5))
         gl = VGroup(*[mono(s, 22, S.GREY) for s in GIT_LINES]).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
         gl.next_to(cframe, DOWN, buff=0.8).align_to(cframe, LEFT).shift(RIGHT * 0.4)
-        gnote2 = grey_chip("the slide's three commands, with a dot and this repo's keyword · typed in S14", size=20)
+        gnote2 = grey_chip("the slide's three commands, with a dot and this repo's keyword · you type them later", size=20)
         gnote2.next_to(gl, DOWN, buff=0.35).align_to(gl, LEFT)
         dot_hl = ring(gl[0][-1], TURN, buff=0.06)
         kw_hl = ring(gl[1][-1 - len(KEYWORD):-1], ROUTE, buff=0.05)

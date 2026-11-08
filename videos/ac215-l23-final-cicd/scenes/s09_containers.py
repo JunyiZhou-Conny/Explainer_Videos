@@ -95,6 +95,13 @@ assert C64.line(4).endswith("ready for start up") and '"GET /api/newsletters' in
 assert readme(120).startswith("You can SSH into the server from the GCP console")
 
 SECOND = "second laptop terminal"
+# the rest of each check (file lines after the docker run line): typed as continuation rows, the
+# output under the curl that printed it, then the cleanup (else the next docker run hits a name clash)
+V60, H60, RM60 = C60.raw[2], C60.raw[3], C60.raw[5]     # laptop/60 lines 3, 4, 6
+V61, H61, RM61 = C61.raw[1], C61.raw[2], C61.raw[3]     # laptop/61 lines 2, 3, 4
+assert V60 == "curl -s localhost:8000/api/v2/version; echo" and H60.endswith("localhost:8000/api/v1/heartbeat")
+assert V61 == "curl -s localhost:8000/api/v1/version; echo" and H61.endswith("localhost:8000/api/v1/heartbeat")
+assert RM60 == RM61 == "docker rm -f vector-db >/dev/null"
 L29 = from_phrase(C60.line(29), '"message"')
 L63_3 = cut(C63.line(3), "80->80/tcp,")
 
@@ -104,6 +111,14 @@ def drop_all(scene, *mobs, run_time: float = 0.4, shift=ORIGIN):
     scene.play(*[FadeOut(m, shift=shift) for m in mobs], run_time=run_time)
     for m in mobs:
         scene.remove(m, *m.get_family())
+
+
+def cleanup(scene, t: Terminal, cmd: str):
+    """PLAYS: the check's last row, `docker rm -f vector-db`, typed, dimmed GREY, with a GREY tag."""
+    ln = type_cmd(scene, t, cmd, type_time=0.5, prompt=False)
+    scene.play(ln.animate.set_color(S.GREY), run_time=0.3)
+    pin(scene, ln, beside(row_tag("clean up before the next test"), ln))
+    return ln
 
 
 def find_row(rows, sub):
@@ -225,7 +240,8 @@ class SetupContainers(VoiceScene):
         p151.move_to([0, -3.45 + p151.height / 2, 0])
         c151 = code_chip("line 151 · image", [("chromadb/chroma:latest", SHARED)])
         left_col(c151, top=2.55)
-        t = term(P_LAPTOP, rows=6, size=T20)
+        t = term(P_LAPTOP, rows=7, size=T20)
+        assert t.box.get_top()[1] < sv.frame.get_bottom()[1] - 0.05, (t.box.get_top(), sv.frame.get_bottom())
         tags1 = bar_tags(t, extra_row(), row_tag(SECOND))
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(ck9), FadeOut(done), track(tr, 10, True), run_time=0.5)
@@ -239,13 +255,17 @@ class SetupContainers(VoiceScene):
             self.play(ReplacementTransform(p151, c151), run_time=0.7)
             self.play(FadeIn(t, shift=UP * 0.15), FadeIn(tags1), run_time=0.4)
             type_capture(self, t, C60, type_time=1.2)
+            type_cmd(self, t, V60, type_time=0.5, prompt=False)
             o28 = out(self, t, C60.at(28), run_time=0.3)
             pin(self, o28[0], beside(time_row(), o28[0]))
             sv.version(self, "1.0.0")
             vo.wait_until("which answers the old API")
+            h60 = type_cmd(self, t, H60, type_time=0.5, prompt=False)
             o29 = out(self, t, [(L29, ERR)], run_time=0.3)
             sv.request(self, "/api/v1/heartbeat", "410", ok=False)
-            self.play(Indicate(substring(o29[0], "HTTP 410"), color=ERR, scale_factor=1.15), run_time=0.6)
+            self.play(Indicate(substring(o29[0], "HTTP 410"), color=ERR, scale_factor=1.15),
+                      Indicate(substring(h60, "/api/v1/heartbeat"), color=ERR, scale_factor=1.08), run_time=0.6)
+            cleanup(self, t, RM60)
 
         # ========================================================== 2. extra: 0.5.18 answers 200
         act = VGroup(label("edit line 151 → chromadb/chroma:0.5.18", 20, INK),
@@ -261,11 +281,16 @@ class SetupContainers(VoiceScene):
         left_col(edits, top=2.55)
         with self.voiceover(SAY[2]) as vo:
             type_capture(self, t, C61, type_time=1.2)
-            o40 = out(self, t, [C61.at(40)[0], (C61.at(41)[0], PASS)], run_time=0.4)
+            type_cmd(self, t, V61, type_time=0.5, prompt=False)
+            o40a = out(self, t, [C61.at(40)[0]], run_time=0.3)
+            type_cmd(self, t, H61, type_time=0.5, prompt=False)
+            o40b = out(self, t, [(C61.at(41)[0], PASS)], run_time=0.3)
+            o40 = VGroup(o40a[0], o40b[0])
             vo.wait_until("which answers 200")
             sv.version(self, "0.5.18", OWN)
             sv.request(self, "/api/v1/heartbeat", "200", ok=True)
             self.play(Indicate(substring(o40[1], "HTTP 200"), color=PASS, scale_factor=1.15), run_time=0.5)
+            cleanup(self, t, RM61)
             vo.wait_until("So change line 151")
             self.play(FadeOut(c151, shift=UP * 0.1), FadeIn(action, shift=UP * 0.1), run_time=0.6)
             self.remove(c151)
@@ -498,23 +523,40 @@ class SetupContainers(VoiceScene):
 
         # ========================================================== 9. the stand-in on the laptop
         t9 = term(P_LAPTOP, rows=11, size=T20)
-        tg9 = bar_tags(t9, standin_row())
+        tg9 = bar_tags(t9, row_tag("extra · laptop stand-ins, made off screen"))
+        assert tg9.get_left()[0] > t9.title.get_right()[0] + 0.2, (tg9.get_left(), t9.title.get_right())
         later = under_term(t9, grey_chip("nginx: after the next step"))
+        # what the IMAGE column reads on a real server (playbook lines 134 and 178; the loader's too)
+        assert excerpt(SC, 134, 134).strip().endswith('/cheese-app-frontend-react:{{ docker_tag }}"')
+        tag_l1 = VGroup(label("on your server:", 20, S.GREY), mono("…/cheese-app-frontend-react:", 20, INK),
+                        mono("<your tag>", 20, OWN)).arrange(RIGHT, buff=0.12)
+        tag_l2 = label("same for api-service and vector-db-cli", 20, S.GREY)
+        tag_in = VGroup(tag_l1, tag_l2).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
+        tag_fr = box(tag_in.width + 0.4, tag_in.height + 0.3, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+        tag_in.move_to(tag_fr)
+        srv = VGroup(tag_fr, tag_in)
+        srv.next_to(t9.box, UP, buff=0.12).align_to(t9.box, LEFT)
+        assert srv.get_top()[1] < tr.get_bottom()[1] - 0.05 and srv.get_right()[0] < later.get_left()[0] - 0.15, \
+            (srv.get_top(), srv.get_right(), later.get_left())
         with self.voiceover(SAY[9]) as vo:
             drop_all(self, rp8, ul, et8, turn8, run_time=0.4)
             self.play(track(tr, 11, True), FadeIn(t9, shift=UP * 0.2), FadeIn(tg9), run_time=0.5)
             type_capture(self, t9, C63, type_time=0.9)
             o63 = out(self, t9, [C63.line(2), L63_3, C63.line(4).rstrip(), C63.line(5).rstrip()], run_time=0.5)
+            self.play(o63[1].glyphs.animate.set_opacity(0.35), run_time=0.3)      # nginx: started in step 13
             vo.wait_until("The image column")
             img_cells = [substring(o63[0], "IMAGE"), substring(o63[1], "nginx:stable"),
                          substring(o63[2], "python:3.12-slim-bookworm"), substring(o63[3], "python:3.12-slim-bookworm")]
             self.play(*[g.animate.set_color(TURN) for cell in img_cells for g in cell], run_time=0.5)
             self.play(each(img_cells, TURN, scale=1.06), run_time=0.8)
+            vo.wait_until("check it there")
+            self.play(FadeIn(srv, shift=DOWN * 0.1), run_time=0.4)
+            self.play(Indicate(tag_l1[2], color=OWN, scale_factor=1.12), run_time=0.6)
             type_capture(self, t9, C64, type_time=0.7)
             o64 = out(self, t9, [C64.line(4), from_phrase(C64.line(5), '"GET'), from_phrase(C64.line(6), '"GET')],
                       run_time=0.5)
             vo.wait_until("The nginx lines")
-            self.play(FadeIn(later, shift=UP * 0.1), run_time=0.4)
+            self.play(FadeIn(later, shift=UP * 0.1), o63[1].glyphs.animate.set_opacity(1), run_time=0.4)
             self.play(Indicate(VGroup(o64[1], o64[2]), color=S.GREY, scale_factor=1.03), run_time=0.7)
         self.wait(0.6)
 

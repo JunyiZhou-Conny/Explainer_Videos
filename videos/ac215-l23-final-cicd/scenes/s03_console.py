@@ -412,7 +412,7 @@ class ConsoleSetup(VoiceScene):
             err_t.next_to(fix, UP, buff=0.06).align_to(fix, LEFT).shift(RIGHT * 0.2)
             self.play(FadeIn(fix, shift=DOWN * 0.15), FadeIn(err_t), run_time=0.6)
             vo.wait_until("so the file is")
-            self.play(Indicate(fix1[1], color=TURN, scale_factor=1.15), run_time=0.8)
+            self.play(Indicate(fix1[1], color=TURN, scale_factor=1.06), run_time=0.8)
 
         # ========================================================== 8. chmod 400
         with self.voiceover(SAY[8]) as vo:

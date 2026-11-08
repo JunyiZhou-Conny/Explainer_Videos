@@ -22,15 +22,16 @@ Beats (script.md "## S15", one voiceover block each):
    CD challenge".
 4. LECTURE off. The card continues: ECR, IAM, GitHub rows slide in and tick.
 5. TRACKER B 15 · extra. The last row "Locally: docker image rm cheese-app-deployment · 2.52 GB"
-   ticks; the card leaves; the laptop terminal (4 rows) types `cd /home/student/cheese-app-aws &&
+   ticks; the card leaves; the laptop terminal (4 rows, then 5) types `cd /home/student/cheese-app-aws &&
    git status --short` (extra) → TERM(laptop/49: 2–4); S05's "your edits" checklist slides in above
    it and collapses into these three rows; GREY chips "keep, or git restore" and "yours also:
    deploy-setup-containers.yml (the Chroma pin), .docker-tag (after a real step 5)". Fade; empty frame.
 
 Deviations from SHOW: cost tags sit only on the card lines that run a meter
 (instance, volumes, ECR): security groups, key pairs, IAM and secrets carry no charge, and cost_tag
-names meters only. The laptop terminal in beat 5 has 4 rows, not 3, so the folded command's second
-row stays visible above its three output rows (the "your edits" card needs the rest of the frame). The disk size "2.52 GB" is shown without the capture name.
+names meters only. The laptop terminal in beat 5 has 4 rows while the "your edits" card is up and grows to 5 as
+the card collapses into the output, so both rows of the folded command (the prompt with `cd`, then its
+tail) stay visible above the three output rows: the command stays copyable. The disk size "2.52 GB" is shown without the capture name.
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -337,7 +338,8 @@ class Teardown(VoiceScene):
             tick(self, ck, 5)
 
         # ========================================================== 5. locally: the image, your edits
-        lt = laptop_term(4)
+        lt = laptop_term(4)                  # grows to 5 rows as the card collapses: the whole command stays
+        lt5 = laptop_term(5)                 # (geometry only) 2 folded command rows + 3 output rows
         ex = on_bar(lt, extra_row())
         ed = edits_card()
         with self.voiceover(SAY[5]) as vo:
@@ -356,17 +358,23 @@ class Teardown(VoiceScene):
             assert ed.frame.get_bottom()[1] > lt.box.get_top()[1] + 0.1, (ed.frame.get_bottom(), lt.box.get_top())
             self.play(FadeIn(ed, shift=LEFT * 0.4), run_time=0.6)
             self.play(Indicate(ed.head, color=OWN, scale_factor=1.08), run_time=0.6)
-            room(self, lt, 3)                  # the prompt row scrolls off; the command's tail stays
-            res = VGroup()                     # the three output rows, placed but not yet shown
+            assert len(lt.lines) == 2, [r.text for r in lt.lines]    # prompt + `cd \`, then the tail
+            d = lt5.box.get_top()[1] - lt.box.get_top()[1]          # the top edge rises one row; bottom fixed
+            res = VGroup()                     # the three output rows, placed in the 5-row strip, not yet shown
             for s_ in C49.at(2, 3, 4):
                 guard(s_)
                 ln = mono_line(s_, lt.size, OUTPUT)
-                lt._place(ln, len(lt.lines))
-                lt.lines.add(ln)
+                lt5._place(ln, len(lt.lines) + len(res))
                 res.add(ln)
-            assert len(lt.lines) <= lt.rows, len(lt.lines)
-            self.play(FadeTransform(ed, res), run_time=1.0)
+            self.play(Transform(lt.box, lt5.box),
+                      VGroup(lt.bar, lt.dots, lt.title, lt.lines, ex).animate.shift(UP * d),
+                      FadeTransform(ed, res), run_time=1.0)
             self.remove(res, ed, *ed.get_family())
+            lt.rows = 5
+            for ln in res:
+                lt.lines.add(ln)
+            assert len(lt.lines) <= lt.rows and abs(lt.lines[0].get_top()[1] - lt5._slot(0)[1]) < 0.15, \
+                [r.text for r in lt.lines]
             self.add(lt, ex)
             self.play(LaggedStart(*[Indicate(r, color=OWN, scale_factor=1.04) for r in res], lag_ratio=0.25),
                       run_time=0.9)

@@ -41,7 +41,8 @@ Beats (script.md "## S05"; one voiceover block each):
 10  TRACKER B 3 · extra. `exit` (from 28: 42–43; GREY chip "exit the toolbox"); prompt back to
     P_LAPTOP, title `laptop`; checklist rows 4 "docker-shell.sh:26 · three ../" and 5
     "docker-shell.sh:17 · your account ID"; the extra sed (laptop/30, folded) → 30: 2–4: line 3
-    ORANGE, line 4 GREEN (row 4 ticked); GREY chip "your account ID: aws sts get-caller-identity".
+    ORANGE, line 4 GREEN (row 4 ticked); GREY chip "your account ID: aws sts get-caller-identity";
+    on "once your keys work" a second GREY chip above it: "no AWS CLI yet? AWS console, account menu".
 11  TRACKER B 3. The checklist leaves; a fresh 13-row terminal: ▶ your turn; `bash docker-shell.sh`
     → "[+] Building … FINISHED" (31: 3, GREY); the toolbox prompt (31: 35) and its command → 31: 36,
     39–42, 44–45 (43, AWS_CA_BUNDLE, cropped): the .pem and the CSV GREEN, GREY chip "yours:
@@ -571,6 +572,7 @@ class StartToolbox(VoiceScene):
         # ========================================================== 10. fix 26 and 17, back on the laptop
         assert X28.raw[42 - 1] == f"{X28.prompt} exit" and X28.line(43) == "exit"
         sts = grey_chip("your account ID: aws sts get-caller-identity")
+        con = grey_chip("no AWS CLI yet? AWS console, account menu (top right)")
         with self.voiceover(SAY[10]) as vo:
             e9[2].remove(r9, emp)
             run9.remove(idl)
@@ -597,7 +599,9 @@ class StartToolbox(VoiceScene):
             self.play(FadeIn(sts, shift=DOWN * 0.1), run_time=0.4)
             ck.tick(self, 0)
             vo.wait_until("once your keys work")
-            self.play(Indicate(sts.text, color=INK, scale_factor=1.06), run_time=0.7)
+            con.next_to(sts, UP, buff=0.12).align_to(sts, LEFT)
+            self.play(Indicate(sts.text, color=INK, scale_factor=1.06), FadeIn(con, shift=DOWN * 0.1),
+                      run_time=0.7)
 
         # ========================================================== 11. run it again: the toolbox works
         t11 = term(P_LAPTOP, rows=12, size=T20)
@@ -607,8 +611,8 @@ class StartToolbox(VoiceScene):
         box_c = crate(T_TOOLBOX, box_w=box_c.frame.width + 0.9)
         box_c.text.shift(RIGHT * 0.4)
         with self.voiceover(SAY[11]) as vo:
-            drop_tags(self, t, ex, FadeOut(t), FadeOut(ck), FadeOut(sts), track(tr, 3), run_time=0.6)
-            self.remove(t, ck, sts)
+            drop_tags(self, t, ex, FadeOut(t), FadeOut(ck), FadeOut(sts), FadeOut(con), track(tr, 3), run_time=0.6)
+            self.remove(t, ck, sts, con)
             self.play(FadeIn(t11, shift=UP * 0.2), run_time=0.4)
             type_folded(self, t11, C31.cmd, type_time=0.5)
             turn = bar_tags(self, t11, turn_row())[0]

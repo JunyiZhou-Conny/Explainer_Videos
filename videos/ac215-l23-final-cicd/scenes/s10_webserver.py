@@ -21,8 +21,9 @@ Beats (script.md "## S10"; one voiceover block each):
    highlighter paints yellow, turns WHITE so the slash stands out); the request enters through door 80, nginx cuts
    `/api` off (falls away RED), `/newsletters` rides on to api-service. TRACKER B 12 · extra. V7
    leaves; a 10-row laptop terminal (bar tag "extra · stand-in on the laptop") types laptop/62
-   line 1 (folded) → 62: 34 GREEN, 36, 38 YELLOW, each with a GREY row tag naming its request
-   (lines 2, 4, 6 of the capture); "HTTP 301" flashes on "a redirect".
+   line 1 (folded by hand, ROWS62) and then each curl with its answer under it: line 2 → 34 GREEN,
+   line 4 → 36, line 6 → 38 YELLOW (each curl folds after `curl`; the docker rows scroll off as the
+   curls arrive); "HTTP 301" flashes on "a redirect".
 4. TRACKER B 12. CODE(.env.production: 2) replaces line 37 (`NEXT_PUBLIC_BASE_API_URL=/api`
    GREEN); a drawing: Browser → PINK `<EXTERNAL_IP>/api/…` → nginx → PINK `/…` → api-service;
    then CODE(api-service/api/service.py: 25) with `prefix="/newsletters"` GREEN and a GREEN ✓
@@ -38,7 +39,7 @@ Beats (script.md "## S10"; one voiceover block each):
    container ls, logs api-service". V7: ':3000 :8000 :9000' painted inside the wall (no hole),
    door 80 GREEN; door 443 ORANGE "open" and nginx's ":443" flash, a GREY dashed chip "nginx
    serves nothing here · no HTTPS".
-7. V7 leaves; the browser shrinks into a text-free browser glyph; GREY caption "Part 1 · about a
+7. V7 leaves; the browser shrinks to its address row (URL still 20 pt); GREY caption "Part 1 · about a
    dozen commands · five playbooks · by hand"; a PINK ribbon `/run-deploy-app` drifts in from the
    right edge and stops; it flashes on "Next, a commit message". Fade; empty frame.
 
@@ -46,16 +47,18 @@ Deviations from SHOW: V7 is shifted down 0.8 for the whole scene so line 37 can 
 block 2. In V7 the API branch runs as an arc under nginx and api-service (their slots are 0.2
 apart). Block 3 drives the request by hand instead of VmLayout.route() (its chip would cross the
 wall and overlap the api-service box at this offset): the cut happens as the request reaches the
-door, then `/newsletters` passes through nginx to api-service. Block 3 adds GREY row tags naming which curl
-each printed line answers (capture lines 2, 4, 6 are the requests; they are not typed). Block 4
+door, then `/newsletters` passes through nginx to api-service. Block 3 also types the curls of capture
+lines 2, 4, 6 (the requests), each answer printed under its own curl (lines 3 and 5, /api/chat/llm and
+/chat, are skipped). Line 1's 94-character -v value is split by hand with a backslash and no space, so
+the rows paste back as one command (Terminal.fold would hard-break it into two arguments). Block 4
 adds CODE(service.py: 25) for "the API mounts its routes without the prefix". Block 5's tiles light
 WHITE, not in an Ansible state colour (nothing ran: no state is claimed). Block 6: the browser sits
 above V7, not beside it (a browser whose address is >= 20 pt is 6.3 wide; V7 is 10.7); doors 3000,
 8000 and 9000 are V7's ':3000 :8000 :9000' painted inside the wall (V7 has no door glyphs for
 them); nginx sits against the wall, so "443 forwarded to nginx" is door 443 plus nginx's ':443'
 flashing together, not a line. The browser's tags sit off its top edge (on it they covered the
-address and touched the tracker caption). Block 7: "the browser shrinks" = it turns into a text-free browser glyph (its text cannot
-go under 20 pt).
+address and touched the tracker caption). Block 7: "the browser shrinks" = its page collapses and only the address row stays (its text cannot
+go under 20 pt, so it is not scaled).
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -128,9 +131,19 @@ def span_bar(c, k0: int, k1: int, color: str) -> Rectangle:
         .set_fill(color, 0.16).move_to([a.get_x(), (a.get_top()[1] + b.get_bottom()[1]) / 2, 0])
 
 
-def tag_for(path: str) -> VGroup:
-    """A GREY row tag naming the request a printed line answers."""
-    return row_tag([("for", "label"), (path, "mono")])
+# laptop/62 line 1, folded by hand: the 94-character -v value is split right after `nginx-conf/`
+# with a backslash and NO space, and the next row starts with no indent, so the rows paste back as
+# the same single word (Terminal.fold would hard-break it as `ngin \` + `    x/…`: two arguments).
+ROWS62 = [
+    "docker run -d \\",
+    "    --name nginx --network appnetwork -p 80:80 -p 443:443 \\",
+    "    -v /home/student/cheese-app-aws/src/deployment/nginx-conf/\\",
+    "nginx/nginx.conf:/etc/nginx/nginx.conf nginx:stable >/dev/null \\",
+    "    && sleep 3",
+]
+# the shell's own reading: backslash-newline vanishes, runs of spaces separate words
+assert " ".join("".join(r[:-1] if r.endswith("\\") else r for r in ROWS62).split()) == C62.cmd, \
+    "ROWS62 must paste back as laptop/62 line 1"
 
 
 class FrontDoor(VoiceScene):
@@ -292,15 +305,18 @@ class FrontDoor(VoiceScene):
             vo.wait_until("Our stand-ins on the laptop")
             drop_all(self, v, brw, routes, keep_, run_time=0.4)
             self.play(track(tr, 12, True), FadeIn(t3, shift=UP * 0.2), FadeIn(sb), run_time=0.5)
-            type_capture(self, t3, C62, type_time=1.6)
-            o3 = out(self, t3, [(C62.line(34), PASS), C62.line(36), (C62.line(38), TURN)], run_time=0.5)
-            tg = [beside(tag_for(pth), ln) for pth, ln in zip(("/api/newsletters", "/", "/api"), o3)]
-            self.play(*[FadeIn(x, shift=LEFT * 0.1) for x in tg], run_time=0.4)
-            for x, ln in zip(tg, o3):
-                attach(self, ln, x)
-            self.play(Indicate(substring(o3[0], "/newsletters"), color=PASS, scale_factor=1.15), run_time=0.6)
+            for k, row in enumerate(ROWS62):
+                type_cmd(self, t3, row, type_time=0.5, prompt=(k == 0))
+            # each result under its own curl (capture lines 2, 4, 6 -> 34, 36, 38)
+            type_cmd(self, t3, C62.line(2), type_time=0.5)
+            o34 = out(self, t3, [(C62.line(34), PASS)], run_time=0.3)
+            self.play(Indicate(substring(o34[0], "/newsletters"), color=PASS, scale_factor=1.15), run_time=0.6)
+            type_cmd(self, t3, C62.line(4), type_time=0.4)
+            out(self, t3, [C62.line(36)], run_time=0.3)
             vo.wait_until("and slash API without its last slash")
-            self.play(Indicate(substring(o3[2], "HTTP 301"), color=TURN, scale_factor=1.2), run_time=0.7)
+            type_cmd(self, t3, C62.line(6), type_time=0.6)
+            o38 = out(self, t3, [(C62.line(38), TURN)], run_time=0.3)
+            self.play(Indicate(substring(o38[0], "HTTP 301"), color=TURN, scale_factor=1.2), run_time=0.7)
 
         # ========================================================== 4. the frontend calls /api on the same host
         penv = code(ENV, 2, 2)
@@ -422,20 +438,25 @@ class FrontDoor(VoiceScene):
             self.play(Indicate(none.text, color=S.GREY, scale_factor=1.06), run_time=0.6)
 
         # ========================================================== 7. part 1 ends; a commit message next
-        small = VGroup(*[m.copy() for m in (bw.frame, bw[1], bw[2])])
-        small_target = small.copy().scale(0.45).move_to([0, 1.4, 0])
-        small_target[0].set_stroke(S.GREY, width=2, opacity=1)
+        # the browser shrinks to its address row: the frame collapses onto the bar, the URL keeps 20 pt
+        small = VGroup(bw.frame, bw[2], bw[3], bw.address)          # frame, dots, address field, URL
+        bar_h = bw[1].get_y() - bw.frame.get_top()[1]
+        small_target = small.copy()
+        small_target[0].become(RoundedRectangle(width=bw.frame.width, height=-bar_h, corner_radius=0.14,
+                                                stroke_color=S.GREY, stroke_width=2).set_fill(PANEL, 1)
+                               .align_to(bw.frame, UP).set_x(bw.frame.get_x()))
+        small_target.move_to([0, 1.4, 0])
         part = note("Part 1 · about a dozen commands · five playbooks · by hand")
         part.move_to([0, 0.2, 0])
         rib = ribbon(KEYWORD)
         rib.move_to([7.4 + rib.width / 2, -1.2, 0])
         with self.voiceover(SAY[7]) as vo:
             drop_all(self, v, none, hint, turn6, run_time=0.4)
-            others = [m for m in bw if m not in (bw.frame, bw[1], bw[2])]
-            self.add(small)
-            self.play(*[FadeOut(m) for m in others], FadeOut(page), FadeOut(page_t),
-                      FadeOut(VGroup(bw.frame, bw[1], bw[2])), run_time=0.3)
-            self.remove(bw, page, page_t)
+            others = [m for m in bw if m not in small]
+            for m in others:
+                bw.remove(m)
+            self.play(*[FadeOut(m) for m in others], FadeOut(page), FadeOut(page_t), run_time=0.3)
+            self.remove(*others, page, page_t)
             self.play(Transform(small, small_target), run_time=0.8)
             self.play(FadeIn(part, shift=UP * 0.1), run_time=0.5)
             self.play(rib.animate.move_to([0, -1.2, 0]), run_time=3.0, rate_func=rate_functions.ease_out_cubic)

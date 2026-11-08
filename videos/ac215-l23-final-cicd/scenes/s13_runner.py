@@ -5,8 +5,10 @@ Beats (script.md "## S13", one voiceover block each):
 0. TRACKER C 2. ▶ your turn. CONSOLE("GitHub › New repository"; name cheese-app-aws, Private),
    illustration. A 4-row laptop terminal at P_REPO shows `git remote set-url origin
    https://github.com/<your-user>/cheese-app-aws.git` and `git push -u origin main`, written out,
-   not run (bar tags `extra` + `written out, not run`). GREY chips "a fork works too · then Actions ›
-   enable workflows" and "its last message is 'cleanup': no /run-, nothing runs" (laptop/03: 2).
+   not run (bar tags `extra` + `written out, not run`). GREY chips "not a fork: a fork of a public repo
+   is public" (QA fix; script.md's "a fork works too" was wrong: S14 commits a secret) and "its last
+   message is 'cleanup': no /run-, nothing runs" (laptop/03: 2); a dashed chip above the terminal
+   on the push: 'push refused "without `workflow` scope"? the token needs that scope · not tested'.
 1. TRACKER C 2. ▶ your turn. CONSOLE("GitHub › your repository › Settings › Secrets and variables ›
    Actions"): the four secret rows (`***`) appear one per phrase; erratum chip "not in the README ·
    names from ci_cd_aws.yml:21–22, 33, 81, 102–108".
@@ -119,26 +121,33 @@ class RunnerSecrets(VoiceScene):
                              [("Repository name", REPO), ("check", "Private", True)], where="github")
         c0.shift(np.array([-6.4 - c0.get_left()[0], 2.75 - c0.get_top()[1], 0]))
         turn0 = your_turn().next_to(c0.frame, RIGHT, buff=0.3).align_to(c0.frame, UP)
-        fork = grey_chip("a fork works too · then Actions › enable workflows")
+        # QA (2026-11-08): not "a fork works too": a fork of the public repo is public, and S14
+        # commits line 24's secret ("keep it private").
+        fork = grey_chip("not a fork: a fork of a public repo is public")
         fork.next_to(turn0, DOWN, buff=0.35).align_to(turn0, LEFT)
         clean = grey_chip("its last message is 'cleanup': no /run-, nothing runs")
         clean.next_to(fork, DOWN, buff=0.25).align_to(fork, LEFT)
         t0 = term(P_REPO, rows=4)
         bar0 = VGroup(row_tag("extra"), row_tag("written out, not run")).arrange(RIGHT, buff=0.15)
         on_bar(t0, bar0)
+        # QA: the push carries .github/workflows/ci_cd_aws.yml; a token without the workflow scope
+        # is refused. Not captured, so a dashed chip in the gap above the terminal.
+        scope = dashed_chip('push refused "without `workflow` scope"? the token needs that scope · not tested')
+        scope.next_to(t0, UP, buff=0.18).align_to(t0, RIGHT)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=RIGHT * 0.2), FadeIn(c0, shift=UP * 0.2), run_time=0.7)
             self.play(Indicate(c0.where, color=CLOUD, scale_factor=1.1), run_time=0.7)
             vo.wait_until("Pause, create an empty private one")
             self.play(FadeIn(turn0, shift=LEFT * 0.15), run_time=0.4)
             self.play(Circumscribe(c0.rows[0], color=TURN, buff=0.06), run_time=0.7)
-            self.play(Indicate(c0.rows[1].text, color=TURN, scale_factor=1.15), run_time=0.6)
+            self.play(Indicate(c0.rows[1].text, color=TURN, scale_factor=1.15),
+                      FadeIn(fork, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("point origin at it")
             self.play(FadeIn(t0, shift=UP * 0.2), FadeIn(bar0), run_time=0.5)
             type_cmd(self, t0, SET_URL, type_time=1.0)
             vo.wait_until("and push main")
             type_cmd(self, t0, PUSH, type_time=0.6)
-            self.play(FadeIn(fork, shift=LEFT * 0.15), run_time=0.4)
+            self.play(FadeIn(scope, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Its last message")
             self.play(FadeIn(clean, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("so nothing runs yet")
@@ -157,7 +166,7 @@ class RunnerSecrets(VoiceScene):
         err1 = erratum_tag("not in the README · names from ci_cd_aws.yml:21–22, 33, 81, 102–108")
         err1.next_to(c1.frame, DOWN, buff=0.35)
         with self.voiceover(SAY[1]) as vo:
-            gone(self, c0, turn0, fork, clean, t0, bar0)
+            gone(self, c0, turn0, fork, clean, scope, t0, bar0)
             self.play(FadeIn(shell1, shift=UP * 0.2), FadeIn(turn1, shift=LEFT * 0.15), run_time=0.7)
             # walk the breadcrumb, one segment per spoken word: the lit segment is where you click
             walk = [("in your repository", "your repository"), ("settings, secrets", "Settings"),

@@ -885,7 +885,7 @@ SAY: Step 14: open your server's address in a browser. Only port 80 does the wor
 SHOW: The browser shrinks; a GREY caption "Part 1 · about a dozen commands · five playbooks · by
 hand". A PINK commit ribbon `/run-deploy-app` drifts in from the right edge and stops. Fade; empty
 frame.
-SAY: That's part 1: about a dozen commands and five playbooks, by hand. Next, a commit message does the redeploy.
+SAY: That's part 1: about a dozen commands and five playbooks, by hand. If you stop here, terminate the instance and delete its 50 gigabyte volume in the E C 2 console today: the README's delete step fails, as part 2 shows. Next, a commit message does the redeploy.
 
 ---
 

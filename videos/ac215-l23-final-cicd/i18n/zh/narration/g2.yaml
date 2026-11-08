@@ -104,7 +104,7 @@ S12:
 - en: "Build and push only. It passes the first sieve, so the runner builds three new images and pushes them to E C R, where they cost storage. It stops at the second sieve, so the server keeps the old tag."
   zh:
   - "只构建和 push。"
-  - "它通过了第一道筛子，所以 runner 构建三个新 image，push 到 ECR，在那里它们会产生存储费用。"
+  - "它通过了第一道筛子，所以 runner 构建三个新 image，再 push 到 ECR，在那里它们会产生存储费用。"
   - "它停在了第二道筛子，所以服务器还是用旧的 tag。"
   en_display:
   - null
@@ -154,11 +154,11 @@ S13:
   - "Its last message has no /run-, so nothing runs yet."
 - en: "First, give GitHub your secrets: in your repository, settings, secrets and variables, actions. Add four: the access key ID, the secret key, your account ID, and AWS S S H key, the whole pem file. The names come from the workflow."
   zh:
-  - "先把你的 secret 交给 GitHub：在你的 repo 里，进 Settings，Secrets and variables，Actions。"
+  - "先把你的 secret 交给 GitHub：在你的 repo 里，打开 Settings，Secrets and variables，Actions。"
   - "加四个：访问密钥 ID、私有访问密钥、你的账号 ID，还有 AWS SSH key，也就是整个 pem 文件。"
   - "这些名字来自工作流文件。"
   en_display:
-  - null
+  - "First, give GitHub your secrets: in your repository, Settings, Secrets and variables, Actions."
   - "Add four: the access key ID, the secret key, your account ID, and AWS_SSH_KEY, the whole pem file."
   - null
 - en: "Your badge has a third copy now, in a vault on GitHub, and your key a second. Every copy is one more place to protect."
@@ -168,7 +168,7 @@ S13:
 - en: "The runner is a fresh Ubuntu machine. An action from AWS sets up its credentials from two secrets. Then it checks who it is, lists S3, and logs Docker in to your E C R registry."
   zh:
   - "这个 runner 是一台全新的 Ubuntu 机器。"
-  - "一个来自 AWS 的 action 用两个 secret 配好它的凭据。"
+  - "一个来自 AWS 的 action，用两个 secret 配好它的凭据。"
   - "然后它检查自己的身份，列出 S3，再让 Docker 登录你的 ECR registry。"
   en_display:
   - null
@@ -177,8 +177,8 @@ S13:
 - en: "Then it builds the same toolbox, from the committed Dockerfile. So the Helm fix from part 1 belongs in your commit. We didn't test whether runners hit the same certificate error."
   zh:
   - "然后它用 commit 进去的 Dockerfile 构建同一个工具箱容器。"
-  - "所以第 1 部分的 Helm 修复要放进你的 commit 里。"
-  - "我们没有测试 runner 会不会遇到同样的证书错误。"
+  - "所以第 1 部分对 Helm 的修复，要放进你的 commit 里。"
+  - "我们没测试过：runner 会不会遇到同样的证书错误。"
 - en: "Next, a fresh tag from the date, written to dot docker tag and to a file GitHub keeps between steps. Run by hand, it gives a timestamp."
   zh:
   - "接下来，用日期生成一个新的 tag，写进 .docker-tag，也写进一个 GitHub 在步骤之间保留的文件。"
@@ -260,7 +260,7 @@ S14:
   - "git add . also commits your account ID and NEXTAUTH_SECRET, so keep the repository private."
 - en: "Then the slide's three commands, with this repo's keyword: git add dot, git commit with slash run deploy app in the message, and git push. Pause, and push."
   zh:
-  - "然后是课件上的三条命令，换上这个 repo 的关键词：git add .、git commit，信息里写上 /run-deploy-app，再 git push。"
+  - "然后是课件上的三条命令，换上这个 repo 的关键词：git add .，git commit -m 的信息里写上 /run-deploy-app，再 git push。"
   - "暂停一下，push。"
   en_display:
   - "Then the slide's three commands, with this repo's keyword: git add ., git commit -m \"…\" with /run-deploy-app in the message, and git push."
@@ -286,7 +286,7 @@ S15:
 - en: "Back to the README, for its last step: delete. It runs the same playbook with cluster state equals absent. Look at the when lines. Which of these three tasks run?"
   zh:
   - "回到 README，看它的最后一步：删除。"
-  - "它用 cluster state 设为 absent 来跑同一个 playbook。"
+  - "它跑的还是同一个 playbook，只是 cluster state 设为 absent。"
   - "看看那些 when 行。"
   - "这三个 task 里，哪些会运行？"
   en_display:
@@ -410,12 +410,12 @@ S16:
   - "为什么工具箱容器能把你笔记本的磁盘填满？"
 - en: "Four: follow one timestamp from the date command to a running container. How does the server choose between the variable and the file?"
   zh:
-  - "第四：跟着一个时间戳，从 date 命令走到一个运行中的 container。"
+  - "第四：跟着一个时间戳走，从 date 命令一直走到一个运行中的 container。"
   - "服务器怎么在变量和文件之间做选择？"
 - en: "Five: which of these deploy? Update readme, fix typo slash run tests, slash run deploy app in capitals, and backslash run deploy app. And is this pipeline delivery or deployment? Answers are in the exercises."
   zh:
   - "第五：下面哪几个会触发部署？"
-  - "四条信息：update readme、fix typo /run-tests、大写的 /RUN-DEPLOY-APP，还有 \\run-deploy-app。"
+  - "四条信息分别是 update readme、fix typo /run-tests、大写的 /RUN-DEPLOY-APP，还有 \\run-deploy-app。"
   - "还有，这条 pipeline 是持续交付还是持续部署？"
   - "答案在练习里。"
   en_display:
