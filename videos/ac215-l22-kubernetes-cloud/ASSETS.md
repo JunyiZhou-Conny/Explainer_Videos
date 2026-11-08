@@ -108,7 +108,7 @@ README), `frontend-simple/`, the vector-db books.
 | `src/deployment/{pyproject.toml, uv.lock, .python-version, .gitignore, .docker-tag, docker_config.json, README.md}` | the toolbox's Python deps (pulumi, pulumi-gcp, -kubernetes, -command, -docker-build); `.gitignore` ignores `/pulumi-*` |
 | `src/api-service/{Dockerfile, docker-entrypoint.sh, pyproject.toml}`, `api/service.py`, `api/utils/{chat_utils,llm_rag_utils,llm_cnn_utils,llm_utils}.py`, `api/routers/llm_rag_chat.py` | `ROOT_PATH` mount and `/status` → `{"version": "3.0"}` (`service.py`), `CHROMADB_HOST`/`PORT`, the CNN model download, `/persistent` paths |
 | `src/frontend-react/{Dockerfile, next.config.js}`, `src/components/layout/Footer.jsx`, `src/services/{DataService,Common}.js`, `src/app/chat/page.jsx` | the footer's `/api-service/status` call, the chat page's default model |
-| `src/frontend-react/.env.production` | **one deviation:** line 3 `NEXTAUTH_SECRET=` keeps its key but its committed value is replaced by `<value not copied: see ASSETS.md>` (credential-like, series rule); line 2 `NEXT_PUBLIC_BASE_API_URL=/api-service` unchanged |
+| `src/frontend-react/.env.production` (tracked as `env.production`: `.gitignore` drops `.env.*`) | **one deviation:** line 3 `NEXTAUTH_SECRET=` keeps its key but its committed value is replaced by `<value not copied: see ASSETS.md>` (credential-like, series rule); line 2 `NEXT_PUBLIC_BASE_API_URL=/api-service` unchanged |
 | `src/vector-db/{Dockerfile, docker-entrypoint.sh, pyproject.toml, cli.py}` | the loader the Job runs (`--download --load`) |
 | `.gitignore` | the repo root's |
 

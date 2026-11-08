@@ -656,6 +656,12 @@ def _src(path: str) -> Path:
     p = SOURCE / path
     if p.exists() and p.is_file():
         return p
+    # .gitignore drops '.env.*', so the (redacted) copies are tracked without the leading dot:
+    # 'frontend-react/.env.production' is read from 'frontend-react/env.production'.
+    if p.name.startswith(".env."):
+        alias = p.with_name(p.name[1:])
+        if alias.is_file():
+            return alias
     raise FileNotFoundError(f"assets/source/{path}")
 
 
