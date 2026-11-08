@@ -346,7 +346,9 @@ class SetupContainers(VoiceScene):
             self.play(FadeIn(rc, shift=UP * 0.1), run_time=0.4)
             self.play(rc.flash("unreachable"), run_time=0.7)
             vo.wait_until("here is what it does")
-            self.play(Indicate(t4.box, color=S.GREY, scale_factor=1.0), run_time=0.5)
+            # a ring round the terminal, not Indicate (which recolours the filled box and washed out the
+            # red UNREACHABLE lines for 0.3 s): same 0.5 s beat
+            self.play(Circumscribe(t4.box, color=S.GREY, buff=0.06, stroke_width=3), run_time=0.5)
 
         # ========================================================== 5. on a real server: keys, network, disk, ECR
         cap = note("what success looks like")

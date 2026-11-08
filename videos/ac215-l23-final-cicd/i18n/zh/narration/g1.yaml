@@ -11,6 +11,9 @@
 # Terminal text the SAY quotes is copied in its screen form (A15): credentials file not found, redirection
 # unexpected, Gathering Facts, AWS was not able to validate the provided access credentials, UNREACHABLE, Could not
 # resolve hostname external IP, 410 Gone; paraphrases are translated (安全令牌无效, docker login 收到的是一个空密码).
+# Final-review exceptions (bilingual band, 30-unit Chinese line, G3): S08[2].1 translates the AWS error (AWS 无法验证
+# 所提供的访问凭据, 33 units verbatim) and S07[3].0 drops -i inventory.yml (the full command is 37.6 units), so neither is
+# cut mid-phrase; the English line under them shows the verbatim error and the full command.
 # The instructor rule (A16): the narration of S01-S10 names no instructor (the lecture -> 课上, the slides -> 课件).
 # en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: /run-deploy-app, EC2,
 # ECR, SSH, CSV, GCP, us-east-1, t2.large, cheese-app-deployment, ansible-playbook and its playbook files,
@@ -183,7 +186,7 @@ S04:
 - en: "A playbook is a list of plays. Each play names its hosts and holds tasks, and each task calls one module. The hosts line decides where tasks run: localhost means inside your toolbox; appserver means on the server, over S S H."
   zh:
   - "一个 playbook 就是一串 play。"
-  - "每个 play 写明它的 hosts，里面装着 task，每个 task 调用一个模块。"
+  - "每个 play 写明它的 hosts，也装着 task，而每个 task 调用一个模块。"
   - "其中 hosts 这一行决定 task 在哪里运行：localhost 表示在你的工具箱容器里；appserver 表示在服务器上，通过 SSH。"
   en_display:
   - null
@@ -305,7 +308,7 @@ S06:
   zh:
   - "工具箱容器是怎么启动的？"
   - "第 36 行挂载了 Docker socket。"
-  - "然后是 deployment 目录，挂在 /app，再是你的密钥和三个应用目录。"
+  - "然后是挂在 /app 的 deployment 目录、你的密钥，再是三个应用目录。"
   - "第 43 到 46 行把你的密钥作为环境变量传进去。"
   en_display:
   - null
@@ -377,7 +380,7 @@ S07:
   - "Last, it saves the tag in a file: .docker-tag."
 - en: "Step 5: ansible playbook, deploy docker images, dash i, inventory dot yaml. Pause and run it."
   zh:
-  - "第 5 步：ansible-playbook deploy-docker-images.yml -i inventory.yml。"
+  - "第 5 步：ansible-playbook deploy-docker-images.yml。"
   - "暂停一下，自己跑一遍。"
   en_display:
   - "Step 5: ansible-playbook deploy-docker-images.yml -i inventory.yml."
@@ -431,7 +434,7 @@ S08:
 - en: "Pause and run step 6. Gathering facts works, then it fails: AWS was not able to validate the provided access credentials. With real keys, watch the untested attach task. If it fails, the server still works; delete that spare disk when you clean up."
   zh:
   - "暂停一下，跑第 6 步。"
-  - "Gathering Facts 能通过，接着就失败了：AWS was not able to validate the provided access credentials。"
+  - "Gathering Facts 能通过，接着就失败了：AWS 无法验证所提供的访问凭据。"
   - "用真实的密钥时，留意那个没测试过的附加 task。"
   - "如果它失败了，服务器照样能用；清理的时候把那块备用磁盘删掉。"
 - en: "A kind note: the heading says G C P; it came over from the Google Cloud README."
@@ -441,7 +444,7 @@ S08:
   - "A kind note: the heading says GCP; it came over from the Google Cloud README."
 - en: "Step 7: copy the public I P address of your instance from the E C 2 console into the inventory, under appserver hosts. Ours is a placeholder name."
   zh:
-  - "第 7 步：从 EC2 控制台复制你实例的公有 IP 地址，填进 inventory，放在 appserver 的 hosts 下面。"
+  - "第 7 步：把你实例的公有 IP 地址从 EC2 控制台复制进 inventory，放在 appserver 的 hosts 下面。"
   - "我们填的是一个占位名。"
   en_display:
   - "Step 7: copy the public IP address of your instance from the EC2 console into the inventory, under appserver hosts."
@@ -522,7 +525,7 @@ S09:
   - null
 - en: "It pulls the three images and starts the frontend on port 3000 and Chroma on 8000. A throwaway container fills the vector database, then the API starts on 9000. The security group keeps those ports shut."
   zh:
-  - "它 pull 那三个 image，在 port 3000 上启动前端，在 8000 上启动 Chroma。"
+  - "它 pull 那三个 image，前端起在 port 3000，Chroma 起在 8000。"
   - "一个一次性的 container 把向量数据库填好，然后 API 在 9000 上启动。"
   - "安全组让这些 port 保持关闭。"
 - en: "Step 11: look around on the server. Where the README says G C P console, use S S H as ubuntu with your key, or E C 2 Instance Connect. Then list containers, follow logs, or open a shell."
@@ -596,7 +599,7 @@ S10:
 - en: "That's part 1: about a dozen commands and five playbooks, by hand. If you stop here, terminate the instance and delete its 50 gigabyte volume in the E C 2 console today: the README's delete step fails, as part 2 shows. Next, a commit message does the redeploy."
   zh:
   - "这就是第 1 部分：大约十几条命令和五个 playbook，全部手动。"
-  - "如果你就停在这里，今天就在 EC2 控制台里终止实例，并删掉它那个 50 GB 的 volume：README 的删除步骤会失败，第 2 部分会讲到。"
+  - "如果你就停在这里，那就终止实例，删掉它那个 50 GB 的 volume，在 EC2 控制台里今天就做：README 的删除步骤会失败，第 2 部分会讲到。"
   - "接下来，由一条 commit 信息来完成重新部署。"
   en_display:
   - null

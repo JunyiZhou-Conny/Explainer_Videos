@@ -203,7 +203,7 @@ class Teardown(VoiceScene):
             self.play(Create(thread), FadeIn(gid, shift=LEFT * 0.1), run_time=0.7)
             vo.wait_until("Which of these three tasks run")
             self.play(Circumscribe(card.tiles, color=TURN, buff=0.08), run_time=0.9)
-        q = ponder_right(self, PONDER_Q, seconds=8)
+        q = ponder_right(self, PONDER_Q, seconds=8, fade=rd)    # the README card leaves as the card lands
         assert q.get_left()[0] > card.frame.get_right()[0] + 0.15 and q.get_bottom()[1] > reg.get_top()[1] + 0.15, \
             (q.get_corner(DL), card.frame.get_right(), reg.get_top())
 
@@ -211,7 +211,7 @@ class Teardown(VoiceScene):
         t = toolbox_term("48", rows=13)
         pic = VGroup(card, nowhen, reg, gid, thread)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(q), FadeOut(rd), FadeOut(pic), run_time=0.5)
+            self.play(FadeOut(q), FadeOut(pic), run_time=0.5)
             self.remove(q, rd, pic, *q.get_family(), *rd.get_family(), *pic.get_family())
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)
             cmd = type_cmd(self, t, CMD, type_time=1.6)
@@ -398,13 +398,17 @@ class Teardown(VoiceScene):
         self.wait(0.3)
 
 
-def ponder_right(scene, question: str, seconds: float = 8.0) -> VGroup:
-    """PLAYS: the ponder timer as a narrower card in the free right-hand space (over the README card,
-    whose cluster_state=absent the question repeats), so the three tiles and the register thread stay
-    visible while the viewer answers. Same look and timing as pause_and_ponder."""
+def ponder_right(scene, question: str, seconds: float = 8.0, fade=None) -> VGroup:
+    """PLAYS: the ponder timer as a narrower card in the free right-hand space (where the README card
+    was, whose cluster_state=absent the question repeats), so the three tiles and the register thread
+    stay visible while the viewer answers. Same look and timing as pause_and_ponder. `fade`: a mobject
+    that fades out while the card fades in (the README card and its header chip, which the card
+    would otherwise half cover)."""
     c = ponder_card(question, width=5.4)
     c.move_to([3.78, 1.25, 0])
-    scene.play(FadeIn(c, scale=0.95), run_time=0.6)
+    scene.play(FadeIn(c, scale=0.95), *([FadeOut(fade)] if fade is not None else []), run_time=0.6)
+    if fade is not None:
+        scene.remove(fade, *fade.get_family())
     bar = c[3]
     scene.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
                run_time=seconds)

@@ -188,7 +188,7 @@ S13:
   - null
 - en: "Then plain docker build, docker tag and docker push for the frontend, and the same for the other two images. In C I, the runner builds the app images, not the playbook."
   zh:
-  - "然后对前端就是普通的 docker build、docker tag 和 docker push，另外两个 image 也一样。"
+  - "然后前端用普通的 docker build、docker tag 和 docker push，另外两个 image 也一样。"
   - "在 CI 里，构建应用 image 的是 runner，不是 playbook。"
   en_display:
   - null
@@ -250,7 +250,7 @@ S14:
   - "撤销第 9 步：打开第 4 行，关掉第 7 行。"
   - "Helm 的修复。"
   - "Chroma 的 pin。"
-  - "执行 git add . 也会把你的账号 ID 和 NextAuth secret 一起 commit 进去，所以 repo 要保持私有。"
+  - "git add . 也会 commit 你的账号 ID 和 NextAuth secret，所以 repo 要保持私有。"
   en_display:
   - null
   - "Your server address on line 30: CI deploys whatever is committed."
@@ -271,7 +271,7 @@ S14:
   - "重新加载你的网站，再到服务器的 image 那一列里找新的 tag。"
 - en: "In the lecture's words: is typing slash run deploy app continuous delivery, or continuous deployment? What would make it the other?"
   zh:
-  - "用课上的话说：敲 /run-deploy-app，算持续交付，还是持续部署？"
+  - "用课上的话说：敲 /run-deploy-app 算持续交付，还是持续部署？"
   - "怎样才能让它变成另一个？"
   en_display:
   - "In the lecture's words: is typing /run-deploy-app continuous delivery, or continuous deployment?"
@@ -286,7 +286,7 @@ S15:
 - en: "Back to the README, for its last step: delete. It runs the same playbook with cluster state equals absent. Look at the when lines. Which of these three tasks run?"
   zh:
   - "回到 README，看它的最后一步：删除。"
-  - "它跑的还是同一个 playbook，只是 cluster state 设为 absent。"
+  - "它跑的还是同一个 playbook，cluster state 设为 absent。"
   - "看看那些 when 行。"
   - "这三个 task 里，哪些会运行？"
   en_display:
