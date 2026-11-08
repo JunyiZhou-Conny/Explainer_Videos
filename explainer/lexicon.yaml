@@ -492,4 +492,4 @@ sslip dot io: {ipa: "ˈɛs slˈɪp dˈɑːt ˌaɪˈoʊ", say: "S slip dot I O"}
 # L14 block. Phrase keys only: neither phrase is in another video's SAY (grep videos/*/script.md,
 # 2026-11-08). L23's SAY writes AWS, IAM and AC215 as words (existing keys) instead of spaced letters.
 underscore 2024: {ipa: "ˌʌndɚskˈɔːɹ twˈɛnti twˈɛnti fˈɔːɹ", say: "underscore twenty twenty-four"}
-status 410: {ipa: "stˈæɾəs fˈɔːɹ tˈɛn", say: "status four ten"}
+status 410: {ipa: "stˈæɾəs fˈɔːɹ wˈʌn ˈoʊ", say: "status four one oh"}
