@@ -1,0 +1,24 @@
+$ python --version
+Python 3.8.20
+[exit 0]
+
+$ pip install -q --dry-run --no-deps --ignore-installed --report - ansible | python -c "import json,sys; print(\"ansible          ->\", [i[\"metadata\"][\"version\"] for i in json.load(sys.stdin)[\"install\"]])"
+ansible          -> ['6.7.0']
+[exit 0]
+
+$ pip install -q --dry-run --no-deps --ignore-installed "ansible>=9.0.0" 2>&1 | grep -oE "9\.0\.1 Requires-Python [^;]*|8\.7\.0 Requires-Python [^;]*|ERROR: No matching distribution.*"
+8.7.0 Requires-Python >=3.9
+9.0.1 Requires-Python >=3.10
+ERROR: No matching distribution found for ansible>=9.0.0
+[exit 0]
+
+$ python --version; ansible --version | head -1
+Python 3.12.16
+ansible [core 2.17.14]
+[exit 0]
+
+$ cd /w && ansible-playbook warnbook.yml 2>&1 | grep -E "TASK|changed:|ok:|fatal|Unsupported"
+TASK [Remove Docker repositories from /etc/apt/sources.list.d/] ****************
+fatal: [localhost]: FAILED! => {"changed": false, "msg": "Unsupported parameters for (ansible.legacy.command) module: warn. Supported parameters include: _raw_params, _uses_shell, argv, chdir, creates, executable, expand_argument_vars, removes, stdin, stdin_add_newline, strip_empty_ends."}
+[exit 0]
+

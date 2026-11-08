@@ -1,0 +1,13 @@
+$ python3 -I trigger.py ../../source/.github/workflows/ci_cd_aws.yml
+line 9:   job runs if the message contains '/run-'
+line 100: last step runs if it also contains '/run-deploy-app'
+
+head_commit.message              job (build+push)  deploy step
+update readme                    skipped           -
+fix typo /run-tests              runs              skipped
+/run-deploy-app                  runs              runs
+/RUN-DEPLOY-APP                  runs              runs
+\run-deploy-app                  skipped           -
+deploy /run-deploy               runs              skipped
+redeploy: /run-deploy-app-now    runs              runs
+[exit 0]

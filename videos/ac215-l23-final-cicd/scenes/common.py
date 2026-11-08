@@ -57,29 +57,34 @@ Trackers (script.md conventions; placed top-left)
     slide(s) …' tag (top right; only while that slide's picture is on screen).
 
 Captures (assets/terminal/laptop/NN-*.txt; capture-only/ refused)
-    c = capture("40") / capture("laptop/40"): .cmd_lines .cmd .k .lines .exit .raw .path ·
+    c = capture("40") / capture("laptop/40"): .cmd_lines .cmd .k .lines .exit .raw .path .nn ·
         c.at(*spec) output by FILE line numbers (ints, (a, b), '…'), refuses the command lines ·
         c.line(n) · c.pick(*ranges) L1-style (body index = file line - k). 51-53 are the workflow's
-        own run: scripts: c.typed is False and type_capture() refuses them (show heading_row()).
+        own run: scripts: c.typed is False and type_capture() refuses them (put_heading() instead).
     Toolbox files (28, 31-38, 40, 42, 44, 46-48): x = toolbox_capture("40") ->
-        x.prompt 'root@…:/app#' (line 35) · x.cmds [(file line, typed command)] · x.cmd (the first) ·
-        x.at(*spec, crypto=False, warnings=False) like Capture.at but drops lines 1-34 (the build log),
-        the CryptographyDeprecationWarning pair BY TEXT and, unless warnings=True, the
-        community.general block (also by text); the capture-only AWS_CA_BUNDLE line is always dropped ·
-        x.msg(n) the 'fatal: [host]: FAILED! =>' / 'UNREACHABLE! =>' head of FILE line n plus its
-        stderr_lines (or msg) text, one item per line (wrap with out(..., wrap=True)) ·
-        x.recap() -> (host, {ok, changed, unreachable, failed, skipped, ...}) from its PLAY RECAP.
-        tbx_lines(name, *spec, **kw) = toolbox_capture(name).at(...). toolbox_prompt(name).
-    task_names(playbook) the task list of laptop/37 for one playbook file (11 for
-        deploy-docker-images.yml, 9 create, 38 provision, ... 4 webserver).
+        x.prompt 'root@…:/app#' (line 35) · x.cmds [(file line, typed command)] (32 has six) · x.cmd
+        (the first) · x.at(*spec, crypto=False, warnings=False) like Capture.at but refuses the build
+        log (lines 1-34) and prompt lines, drops BY TEXT the CryptographyDeprecationWarning pair
+        (crypto=True keeps it), the community.general block (warnings=True keeps it) and the
+        capture-only AWS_CA_BUNDLE line; every line goes through ansible_line() (the '****' after
+        PLAY / TASK headings dropped, RECAP columns squeezed: still ~90 characters, so cut() it or
+        show a PlayRecap) · x.msg(n) the 'fatal: [host]: FAILED! =>' / 'UNREACHABLE! =>' head of
+        FILE line n plus its stderr_lines (or msg) text, one item per line (out(..., wrap=True)) ·
+        x.recap() -> (host, {ok, changed, unreachable, failed, skipped, ...}).
+        tbx_lines(name, *spec, **kw) = toolbox_capture(name).at(...) · toolbox_prompt(name).
+        e.g. 42 line 45 (the AuthFailure exception): cut(x.at(45)[0], "access credentials").
+    task_names(playbook) the task list of laptop/37 for one playbook (docker-images 11, create 9,
+        provision 38, setup-containers 25, setup-webserver 4).
     crop(s) 40/64-hex ids -> 7 characters + '…' · cut(s, after) · from_phrase(s, phrase) ·
-    soft(lines, n) · strip_ansi(s) · squeeze_spaces(s).
+    soft(lines, n) · strip_ansi(s) · squeeze_spaces(s) · guard(s) (raises on secrets).
 
-Sources (assets/source/ = the repo at 5950118, repo-relative paths)
-    code(path, a, b=None, font_size=22, focus=) CODE() panel, <= 12 lines, must fit 12.6 (22 pt ~65
-        characters, 20 pt ~72; a wider one raises and names the line). code(".github/workflows/
-        ci_cd_aws.yml", 3, 9); .code .header; highlight with line_bar(p.code, k, colour) or
-        code_span(p.code, k, "x"), k = file line - a.
+Sources (assets/source/ = the repo at 5950118, repo-relative paths; masked copies)
+    code(path, a, b=None, font_size=22, focus=, trim=None) CODE() panel, <= 12 lines, must fit
+        12.6 (22 pt ~65 characters, 20 pt ~72; a wider one raises and names the line). Tabs are
+        expanded to 4 (nginx.conf). trim=N cuts lines longer than N to N-1 + '…' (inventory.yml:7 is
+        118 characters: code("src/deployment/inventory.yml", 1, 11, font_size=20, trim=70); nginx.conf
+        36: trim=60). '<value not copied: see ASSETS.md>' shows as '<nextauth-secret>'. .code .header;
+        highlight with line_bar(p.code, k, colour) or code_span(p.code, k, "x"), k = file line - a.
     code_strip(path, line) a one-line panel · excerpt(path, a, b) · source_text(path) · readme(n) ·
     readme_lines(a, b) · readme_panel(a, b, lines=None, card_w=None, colors=None) the GREY README
     card ('README.md · lines a–b'); .frame .head .body .rows{n: row}.
@@ -87,22 +92,23 @@ Sources (assets/source/ = the repo at 5950118, repo-relative paths)
         BLUE frame, a top label 'AWS · us-east-1' or 'GitHub', the GREY breadcrumb `title`, rows,
         and its 'illustration' tag on the top edge. fields: ('Name', 'value') a field, ('button',
         'Download .csv file'), ('check', 'AmazonS3FullAccess', True), ('chip', 'text', colour), a
-        plain string = a GREY note. ~7 x (rows x 0.62 + 1.4). .frame .where .crumb .rows .tag;
-        .rows[i] has .value (fields) / .box (buttons) / .text.
-    browser(url, page_w=7.0, page_h=4.2) a schematic browser with its 'illustration' tag
-        (.frame .address .content .tag).
+        plain string = a GREY note. Width = its content + 0.8 (one field ~6.3 x 2.3; +0.55 per row).
+        .frame .where .crumb .rows .tag; .rows[i] has .value (fields) / .box (buttons) / .text.
+    browser(url='http://<EXTERNAL_IP>/', page_w=7.0, page_h=4.2) a schematic browser with its
+        'illustration' tag (.frame .address .content .tag).
 
 Terminals (house: 12.6 wide, 22 pt = 65 characters a row)
     term(prompt=P_LAPTOP, rows=10, title='laptop') / laptop_term(rows, prompt) /
     toolbox_term(name_or_prompt, rows) (title 'cheese-app-deployment') · resize(scene, t, rows)
-    PLAYS · room · bare_prompt · type_cmd(scene, t, cmd) · type_capture(scene, t, cap) · out(scene,
-    t, lines, wrap=) (refuses rows that do not fit unless wrap; refuses secrets) · cd_prompt(scene,
-    t, prompt) · set_toolbox(scene, t, name) the prompt becomes the capture's toolbox prompt and the
-    title 'cheese-app-deployment' · beside / pin / unpin / on_bar / under_term for tags at a row ·
-    row_tag, turn_row, extra_row, time_row, standin_row (tags sized for a 22 pt row) ·
-    heading_row(text) a GREY 20 pt heading line for the run-by-hand captures ('ci_cd_aws.yml ·
-    lines 47–50 · run by hand'): out(scene, t, [heading(…)]) is not needed: use put_heading(scene, t,
-    text) PLAYS.
+    PLAYS · room · bare_prompt · type_cmd(scene, t, cmd) · type_capture(scene, t, cap) (a toolbox
+    capture types x.cmd at the toolbox prompt) · out(scene, t, lines, wrap=) (refuses rows that do
+    not fit unless wrap; refuses secrets) · cd_prompt(scene, t, prompt) · set_toolbox(scene, t,
+    name) PLAYS (prompt = the capture's 'root@…:/app#', title 'cheese-app-deployment') ·
+    retitle(scene, t, title) PLAYS (back: t.set_prompt(P_LAPTOP); retitle(self, t, T_LAPTOP)) ·
+    put_heading(scene, t, text) PLAYS a GREY 20 pt heading row ('ci_cd_aws.yml · lines 47–50 · run
+    by hand') · beside / pin / unpin / on_bar / under_term for tags at a row · row_tag, turn_row,
+    extra_row, time_row, standin_row (tags sized for a 22 pt row). At P_LAPTOP a typed line is
+    long (the prompt is 48 characters): put its tag with on_bar(t, extra_row()), not beside().
 
 Tags and chips (GREY unless said; 20-22 pt)
     your_turn() YELLOW · extra_tag(kind) · illustration_tag(s) · recording_tag() 'at the time of
@@ -111,114 +117,135 @@ Tags and chips (GREY unless said; 20-22 pt)
     not_tested_tag() · expected_tag(source) · cost_tag(text) GOLD (raises on '$', 'cents', 'free
     tier') · grey_chip · dashed_chip (GCP words, the future, skipped) · tool_chip PURPLE · ok_chip
     GREEN · err_chip RED · route_chip PINK · image_chip TEAL · shared_chip ORANGE · cloud_chip BLUE ·
-    label_box(lines, colour, dashed=False) a box holding 1-3 centred lines (two-line labels) ·
-    question_card(text) YELLOW · ponder(scene, q, seconds=8) PLAYS (pause_and_ponder; FadeOut the
-    card at the next block) · flash_tag(scene, tg).
+    label_box(lines, colour, dashed=False, box_w=None, mono_font=False, pad=0.22) a box holding 1-3
+    centred lines ('one EC2 server\nDocker containers') · question_card(text) YELLOW ·
+    ponder(scene, q, seconds=8) PLAYS (pause_and_ponder; FadeOut the card at the next block) ·
+    flash_tag(scene, tg) · each / under / hl_bar / ring / strike.
 
 Glyphs (text-free unless named; sizes in scene units)
-    badge_glyph(h) the WHITE access-key badge · key_glyph(h) the WHITE key-pair key · cube_glyph(side)
-    TEAL image · disk_glyph(h, colour) GREEN disk · runner_icon(h, lit=) BLUE machine · laptop_icon(w)
-    · broom_glyph(h, colour) · hand_glyph(h) GREY hand pointing down · release_button(size) RED pill
-    'RELEASE' (.frame .text) · auto_ring(r) GREEN ring with an arrow + 'auto' (.ring .text) ·
-    ribbon(text, colour) a commit-message ribbon (.frame .text) · tag_card(text, colour) the GREEN
-    timestamp card (.frame .text .hole) · crate(name, box_w, box_h) a TEAL container box with its
-    mono name (.frame .text) · aws_box(text='AWS · us-east-1', box_w, box_h) BLUE (.frame .text) ·
-    github_box(text='GitHub') BLUE · vault_glyph(h) BLUE · door_glyph(text, colour) · spark(colour)
-    · state_mark(state, h) · dot(colour) · outline_box(w, h, colour, solid=) · arrow / route(a, b, arc,
-    dashed=) / travel / bounce · ring / under / strike / hl_bar · dashed_copy(group) · key_file(h).
+    badge_glyph(h=0.42) the WHITE access-key badge · key_glyph(h=0.42) the WHITE key-pair key ·
+    cube_glyph(side) TEAL image · disk_glyph(h, colour) GREEN disk · runner_icon(h, lit=) BLUE
+    machine · laptop_icon(w) · broom_glyph(h, colour) · hand_glyph(h) GREY hand pointing down ·
+    release_button(size) RED pill 'RELEASE' (.frame .text) · auto_ring(r) GREEN ring with an arrow
+    + 'auto' (.ring .text) · ribbon(text, colour) a commit-message ribbon (.frame .text .msg) ·
+    tag_card(text, colour) the GREEN timestamp card (.frame .text .hole) · crate(name, box_w, box_h,
+    sub=None) a TEAL container box, mono name (+ GREY sub-line) (.frame .text .sub) · aws_box(text=
+    'AWS · us-east-1', box_w, box_h) BLUE (.frame .text .body) · github_box(text='GitHub') BLUE ·
+    vault_glyph(h) BLUE · door_glyph(text, colour) · key_file(h) · spark(colour) · state_mark(state,
+    h) · dot(colour) · outline_box(w, h, colour, solid=) · arrow / route(a, b, arc, dashed=) / travel
+    / bounce · dashed_copy(group) · CostDial(radius, caption) the GOLD dial (no digits; .run .freeze).
     Animating ONE member of a filled box (Indicate(box.frame) …) re-adds it on top of its text and
     hides the text: animate the whole box, or Circumscribe + Indicate(text).
 
 Small pieces (each a Piece: .drop(scene, part))
     PlayRecap(counts=None|dict|RECAP line, host=None, size=20) V4's counters 'ok=N changed=N
-        unreachable=N failed=N skipped=N' (~9.6 x 0.5; with host ~11.4). Colours: failed /
+        unreachable=N failed=N skipped=N', centred (~9.9 x 0.5; with host 11.9). Colours: failed /
         unreachable > 0 RED, == 0 GREEN; ok > 0 GREEN; changed > 0 YELLOW; else GREY.
         play_recap(line_or_capture_name) builds one from a real RECAP line (play_recap("40")).
-        PLAYS set(scene, name, n). ANIM flash(name). .cells{name} .host
-    Checklist(title, items, color=S.GREY, tag_text='illustration'|None, dashed=(), card_w=None)
-        the teardown card (color=COST), S05's 'your edits' list, S14's commit list. PLAYS tick(scene,
-        i, colour) · add_row(scene, text) · strike_row(scene, i). .frame .head .rows (.box .text) .tag
-    ScoreCards(items=AUTOMATION, card_w=2.4) slide 6's five cards (~12.4 x 1.1). PLAYS mark(scene, i,
-        ok, note=None) (GREEN check, or GREY dashed cross + dashed note chip) · bracket(scene, i, j,
-        text) (a brace over cards i..j). .cards
-    BeadChain(items, size=20) S14's '&&' chain: beads in a row joined by '&&' links (~11 x 0.6
-        for CHAIN_ITEMS). ANIM light(i, colour) · PLAYS state(scene, i, 'ok'|'fail'|'never').
-        .beads (.frame .text)
+        PLAYS set(scene, name, n). ANIM flash(name). .cells{name} .host .row .counts
+    Checklist(title, items, color=S.GREY, tag_text='illustration'|None, dashed=(), card_w=None,
+        mono_items=False) the clean-up card (color=COST), S05's 'your edits', S14's commit list.
+        PLAYS tick(scene, i, colour) · add_row(scene, text) · strike_row(scene, i).
+        .frame .head .rows (.box .text) .tag
+    ScoreCards(items=AUTOMATION, card_w=2.4) slide 6's five cards (12.4 x 1.0). PLAYS mark(scene, i,
+        ok, note=None) (GREEN check on the corner, or GREY cross + dashed card + dashed note chip) ·
+        bracket(scene, i, j, text) (a brace over cards i..j). .cards
+    BeadChain(items=CHAIN_ITEMS, size=20, max_w=12.4) S14's '&&' chain: beads joined by '&&',
+        wrapped into rows no wider than max_w (CHAIN_ITEMS: two rows, 9.8 x 1.4). ANIM light(i,
+        colour) · PLAYS state(scene, i, 'ok'|'fail'|'never'). .beads (.frame .text) .links
 
-Set pieces (V numbers = BRIEF; each class doc gives its exact layout and every method). Every piece
-is centred on its anchor unless said; sizes are width x height.
-    V1 KeywordSieves(teaser=False) full: 12.2 x 5.3 (x -6.0 .. 6.2, y -2.75 .. 2.55); teaser: 7.9 x
-        4.2. PLAYS hover(scene, text) (a ribbon waits above sieve 1; returns it) · drop(scene, text_or
-        ribbon, stop, miss='bounce'|'slide') stop 0 = stopped by sieve 1 (job skipped), 1 = passes
-        sieve 1, three images to ECR, stopped by sieve 2, 2 = passes both, the server's containers
-        are recreated · stream(scene, n=33, run_time=3.0) (teaser: n small dots pass, the server
-        lights) · images(scene) (three cubes onto the ECR shelf; GOLD tag is the scene's).
-        ANIM flash(i, ok). .sieves[i] (.rim .mesh .text) .job .tiles .ecr .server .containers .entry
-    V2 TermMap() slide 19 in series style, 12.7 x 5.0 (y -2.4 .. 2.6). PLAYS draw_flow(scene) ·
-        draw_chain(scene) · source(scene) (the GREY 'slides: Google Cloud' chip -> BLUE 'this video:
-        AWS …') · gcp(scene, key) (shows a GCP word not drawn by default: 'registry', 'pulumi',
-        'key', 'keyword', 'ingress') · relabel(scene, key) (GCP word -> AWS word, TERM_PAIRS) ·
-        fade_ml(scene). .flow{dev github actions cloud users} .chain[6] .labels{key} .arrows
-        .chain_arrows .cloud_rows .src_chip
-    V3 KeyJourney(places=None) the snake of places PLACES (8 boxes, 12.3 x 3.6; a subset of <= 4
-        keys lays out in one row). PLAYS start(scene) (badge + key appear in ~/secrets/) ·
-        send(scene, which, src, dst, leave=True, arc=0) ('badge' | 'key'; a PINK arrow, the glyph
-        rides it, a copy stays at dst) · counter(scene, text) (GREY caption under the piece) ·
-        overlay(scene, 'role'|'oidc') (GREY dashed boxes; the copies they cover fade). .places{key}
-        .copies{key: [glyphs]} .arrows
-    V4 AnsibleMachine() inventory tree + two play cards + toolbox + AWS + server, 13.0 x 5.4. PLAYS
-        fire(scene, card, tile, state='changed') (localhost: PURPLE spark in the toolbox, a PINK dot
-        to AWS; appserver: the dot rides the SSH arrow into the server) · ssh(scene) (draws the SSH
-        arrow + chip 'ubuntu + your key'). .tree .cards[0..1] .toolbox .aws .server .ssh_arrow
+Set pieces (V numbers = BRIEF; each class doc gives its exact layout and every method). Sizes are
+width x height, measured as built.
+    V1 KeywordSieves(teaser=False) full: 11.2 x 4.2 (x -5.1 .. 6.1, y -2.6 .. 1.6; ribbons appear at
+        y 2.3); teaser: 8.2 x 3.1 (x -3.9 .. 4.3, y -2.2 .. 0.9; ribbons at (-1.6, 2.0)). PLAYS
+        hover(scene, text) (a ribbon waits above sieve 1; returns it) · drop(scene, text_or_ribbon,
+        stop, miss='bounce'|'slide') stop 0 = stopped by sieve 1 (job skipped), 1 = passes sieve 1,
+        three cubes to ECR, stopped by sieve 2, 2 = passes both, the server's containers are
+        recreated · stream(scene, n=33, run_time=3.0) (teaser: n small dots pass, the server lights)
+        · images(scene) (three cubes onto the ECR shelf; the GOLD tag is the scene's). ANIM flash(i,
+        ok). .sieves[i] (.rim .mesh .text) .job .tiles .ecr .server .containers .entry .ecr_items
+    V2 TermMap() slide 19 in series style, built EMPTY at the origin, 12.7 x 5.6 once drawn (y -2.9
+        .. 2.7). Do not move or scale it (hidden words keep their built positions; text < 20 pt):
+        fade it and draw what follows. PLAYS draw_flow(scene) · draw_chain(scene) · source(scene)
+        (1st call: GREY 'slides: Google Cloud · cheese-app-v4', top right y 2.5; 2nd: -> BLUE 'this
+        video: AWS · cheese-app-aws · as in L15') · gcp(scene, key) (shows a GCP word not drawn by
+        default: 'registry', 'pulumi', 'key', 'keyword', 'ingress') · relabel(scene, key) (GCP word
+        -> AWS word, TERM_PAIRS; also 'kubernetes') · fade_ml(scene). .flow{dev github actions cloud
+        users} .chain[6] .labels{key} .flow_arrows .chain_arrows .cloud_rows .src_chip
+    V3 KeyJourney(places=None) the snake of places SNAKE (8 boxes, 12.2 x 3.0, rows y +1.0 / -1.0);
+        places=(keys…) <= 4 keys in one row (PLACES also has 'runner_ssh', 'toolbox_ssh'). PLAYS
+        start(scene) (badge + key appear in ~/secrets/) · send(scene, which, src, dst, leave=True,
+        arc=0) ('badge' | 'key'; a PINK arrow, the glyph rides it, a copy stays at dst) ·
+        counter(scene, text) (GREY caption above the piece) · overlay(scene, 'role'|'oidc') (GREY
+        dashed boxes, label below; the badge copies they cover fade). .places{key} .copies{key}
+        .arrows .caption .overlays
+    V4 AnsibleMachine() inventory tree (left) + two play cards (middle) + a right column 'AWS ·
+        us-east-1' / toolbox / server (x 3.8 .. 6.2); 12.7 x 5.2 (x -6.5 .. 6.2, y -2.8 .. 2.4).
+        PLAYS fire(scene, card, tile, state='changed') (localhost: PURPLE spark in the toolbox, a
+        PINK dot up to AWS; appserver: the dot rides the SSH arrow down into the server) ·
+        ssh(scene) (the SSH arrow + chip 'ubuntu + your key' under the server).
+        .tree .cards[0..1] .toolbox .aws .server .ssh_arrow .api_arrow
     V4 InventoryTree(host=EXTERNAL_IP, dashed_host=False) GREEN tree all -> appserver -> host
-        (~2.6 x 2.6). .all .group .leaf .edges. PLAYS set_host(scene, text, dashed).
-    V4 PlayCard(file, title, hosts, tiles, cols=2, tile_w=None) a playbook card: GREY file name,
-        the play title, a hosts chip (localhost TEAL, appserver BLUE), task tiles (str or (name,
-        sub) with a GREY mono sub-line such as a when: line). ANIM set_state(i, state) state in
-        'changed' YELLOW, 'ok' GREEN, 'failed' RED, 'unreachable' RED, 'skipped' GREY dashed, 'idle'.
-        PLAYS skip(scene, i) (tile turns GREY dashed) · chip(scene, i, text, colour) (under tile).
-        .tiles (.frame .text .sub) .hosts_chip .head
-    V5 SiblingContainers(host='laptop'|'runner') 9.0 x 5.2: the host frame, its folders (left),
-        the TEAL crate (top right) with its mount points, the PINK socket down to the Docker
-        engine shelf (bottom). PLAYS mount(scene, key) · mounts(scene, keys=None) · hover_spark(
-        scene) · build(scene, spark=None) (spark down the socket, a TEAL cube lands on the shelf +
-        GREEN chip 'sibling') · prune_ghost(scene) (RED dashed spark, a broom sweeps a ghost, undone)
-        · dash(scene, keys) (mounts + folders turn GREY dashed) · badge_in(scene) (badge glyph from
-        the secrets folder into the crate). Keys: laptop 'socket' 'app' 'secrets' 'api' 'frontend'
-        'vectordb'; runner 'socket' 'deployment' 'ssh' 'api' 'frontend' 'vectordb' (app folders
-        dashed). .frame .folders{key} .points{key} .lines{key} .crate .shelf .images
-    V6 TimestampTrail(mode='build'|'deploy', tag_text=TAG_FMT) build: 12.6 x 5.2 (stamp, card,
-        three images, the ECR box with three shelves, .docker-tag file, the registry line). PLAYS
-        stamp(scene) · clip(scene, i) · push(scene, i) · push_all(scene) · save(scene, text=None)
-        (the committed tag struck GREY, the card's copy GREEN). deploy: 12.6 x 5.0 (runner 'date',
-        DOCKER_TAG, toolbox, Ansible on top; ECR and the server below). PLAYS stamp(scene) ·
-        ride(scene) (card through the stations) · pull(scene) (three PINK pulls ECR -> server) ·
-        recreate(scene, i=None, gap_chip=True) (old blinks out, a dashed gap, new in). .card
-        .images .ecr .shelves .file .stations{key} .server .containers
-    V7 VmLayout(box_w=6.4, box_h=4.4) the EC2 server 9.3 x 4.9 (wall + doors left, '0.0.0.0/0'
-        outside, GOLD meter right). Built empty (frame + title); PLAYS wall(scene) · engine(scene) ·
-        disk(scene) · network(scene) · container(scene, key, chip=None) key in 'nginx' 'frontend'
-        'api' 'vectordb' 'loader' · version(scene, key, text, colour) (chip under the container,
-        replaced on the next call) · request(scene, src, dst, path, result, ok) (a PINK request
-        chip and its coloured answer) · loader_run(scene) · route(scene, path, cut=None, dst='api')
-        (a browser request through door 80 and nginx; `cut` falls away RED) · door(scene, port,
-        state) 'open' ORANGE 'used' GREEN 'shut' GREY · recreate(scene, key) · meter_run(scene,
-        turns, secs) · badge_on(scene, key, text, colour=TURN) (S16's review badges; returns it) ·
-        ssh_arrow(start) a PINK arrow to door 22 (mobject). .frame .doors{port} .wall .slots{key}
-        .containers{key} .disk_box .net .meter .title
-    V8 ReleaseLoop() slide 7's loop, 12.6 x 4.6 (y -2.3 .. 2.3). PLAYS add_release(scene) (Release
-        slides in between Test and Deploy, everything re-lays out) · go_around(scene) · this_repo(
-        scene) · ms5(scene) · chip(scene, key, text, colour) (under the box; replaced per key).
-        ANIM light(key, colour). .boxes{key} .devs .notify .brackets .commits
-    V8 ReleaseToggle() slide 12's conveyor (~10 x 2.6). PLAYS delivery(scene) · deployment(scene)
-        · ends(scene) (both ends side by side, unlabelled) · hover_ribbon(scene, text) · into_hand(
-        scene) · name(scene, text) (label under the end). .belt .cards .button .hand .ring
+        (2.7 x 3.1). .all .group .leaf .edges. PLAYS set_host(scene, text, dashed).
+    V4 PlayCard(file, title, hosts, tiles, cols=2, tile_w=None, card_w=None, mono_tiles=False) a
+        playbook card: GREY file name, the play title, a hosts chip (localhost TEAL, appserver
+        BLUE), task tiles (str or (name, sub) with a GREY mono sub-line such as a when: line);
+        tile_w=None (all as wide as the widest), a number, or 'fit' (each its own width; one row
+        when cols >= len(tiles)). 11 task_names in 2 cols: ~7.4 x 3.4. ANIM set_state(i, state)
+        ('changed' YELLOW, 'ok' GREEN, 'failed' / 'unreachable' RED, 'skipped' GREY dashed, 'idle').
+        PLAYS skip(scene, i) · light_all(scene, state, lag) · chip(scene, i, text, colour,
+        side=RIGHT) (right of the card at tile i's height: leave room; side=DOWN/UP: by the tile).
+        .tiles (.frame .text .sub .state) .hosts_chip .head .title .frame
+    V5 SiblingContainers(host='laptop'|'runner') 9.0 x 5.2: the host frame, its folders (left,
+        each at its mount point's height), the TEAL crate (x -0.2 .. 3.9, top) with its mount points,
+        the PINK socket under the crate's left edge down to the 'Docker engine' shelf (y -1.95) that
+        holds the toolbox's own image. PLAYS mount(scene, key) · mounts(scene, keys=None) ·
+        hover_spark(scene) · build(scene, spark=None) (spark down the socket, a TEAL cube lands on
+        the shelf + GREEN chip 'sibling') · prune_ghost(scene) (RED 'docker system prune -a' down the
+        socket, a broom sweeps a ghost, undone) · dash(scene, keys) (mounts + folders turn GREY) ·
+        badge_in(scene) (badge glyph from the secrets folder into the crate). Keys: laptop 'socket'
+        'app' 'secrets' 'api' 'frontend' 'vectordb'; runner 'socket' 'deployment' 'ssh' (+ the app
+        folders, GREY, never mounted). .frame .title .folders{key} .mpoints{key} (mount points)
+        .lines{key} .socket .crate .shelf .images
+    V6 TimestampTrail(mode='build'|'deploy', tag_text=TAG_FMT) build: 12.9 x 4.9 (x -6.4 .. 6.5, y
+        -2.4 .. 2.5: stamp chip, card, three image chips, the ECR box with three named shelves,
+        .docker-tag file, the registry line). PLAYS stamp(scene) · clip(scene, i) · push(scene, i) ·
+        push_all(scene) · save(scene, text=None) (the committed tag struck GREY, the card's copy
+        GREEN under it). deploy (tag_text=TAG_CI): 12.2 x 4.7 (y -2.6 .. 2.1; stations on top:
+        runner 'date', DOCKER_TAG, toolbox, ansible-playbook; ECR and the server below; the card
+        rises to ~2.7). PLAYS stamp(scene) · ride(scene) · pull(scene) · recreate(scene, i=None,
+        gap_chip=True) (old blinks out, a dashed gap + 'short gap', new in with ':new').
+        .card .images .ecr .shelves .file .stations{key} .server .containers
+    V7 VmLayout() the EC2 server, box 7.0 x 4.4 at x -3.0 .. 4.0, y -2.3 .. 2.1, built EMPTY (frame +
+        title); with wall(), '0.0.0.0/0' sits outside at x ~-5.6; meter() puts the GOLD dial right
+        at x ~4.8 (10.7 x 4.6 in all). PLAYS wall(scene) · engine(scene) · disk(scene) ·
+        network(scene) · container(scene, key, chip=None) key in 'nginx' 'frontend' 'api' 'vectordb'
+        'loader' · version(scene, key, text, colour) (chip under the container; a second call swaps
+        it) · request(scene, src, dst, path, result, ok) (rides between the two, turns into the
+        answer, kept as .answer) · loader_run(scene) · route(scene, path, cut=None, dst='api') (a
+        browser request through door 80 to nginx; `cut` falls away RED; kept as .req) · door(scene,
+        port, state) 'open' ORANGE 'used' GREEN 'shut' GREY · recreate(scene, key) · meter(scene) ·
+        meter_run(scene, turns, secs) (freeze with v.dial.freeze()) · ports_inside(scene) (':3000
+        :8000 :9000' painted inside the wall, no hole) · badge_on(scene, target, text, colour=TURN)
+        (S16; a tag on a container / 'box' / 'disk' / 'wall', returned NOT kept: FadeOut it
+        yourself) · ssh_arrow(start) (a PINK arrow mobject to door 22). .frame .title .doors{port}
+        .sg (the wall) .slots{key} .containers{key} .disk_box (.folders{name}) .net .dial
+    V8 ReleaseLoop(release=False) slide 7's loop, 12.6 x 3.7 (x -6.2 .. 6.4, y -1.8 .. 1.9; chips
+        go down to ~-1.0). PLAYS add_release(scene) (Release slides in between Test and Deploy,
+        everything re-lays out) · go_around(scene) · this_repo(scene) · ms5(scene) · chip(scene,
+        key, text, colour, dashed=False, level=0) (under the box, level k is 0.48 lower; replaced
+        per key). ANIM light(key, colour). .boxes{key} .devs .notify .brackets .commits .chips
+    V8 ReleaseToggle() slide 12's conveyor: belt and cards 6.8 x 1.0 (x -4.6 .. 2.2); the button
+        sits at x 3.4 (ends(): button 3.1, ring 5.2), the hand 1.0 above it. PLAYS delivery(scene) ·
+        deployment(scene) · ends(scene) (both ends side by side, unlabelled) · hover_ribbon(scene,
+        text) · into_hand(scene) · label_end(scene, text, at='button'|'ring').
+        .belt .cards .button .hand .ring .names
 
 Capture folder names: assets/terminal/laptop (every README command and the extras, on a fresh
 Ubuntu 24.04.5 'laptop' with Docker Engine 29.9.3, user student; toolbox files start with the
 `bash docker-shell.sh` build log, line 35 = the toolbox prompt + the typed command). laptop/
 capture-only/ is plumbing and refused. Sources: assets/source/ (README.md, .github/workflows/
-ci_cd_aws.yml, src/...).
+ci_cd_aws.yml, src/...). The workbench build/common_test.py plays every helper and piece.
 """
 
 from __future__ import annotations
@@ -398,7 +425,7 @@ VERSIONS = {"docker (laptop)": "29.9.3", "aws-cli": "2.39.6", "ansible": "6.7.0"
             "kubectl": "v1.28.15", "nginx:stable": "1.30.6", "chromadb/chroma:latest": "1.0.0",
             "chroma pin": "0.5.18", "ubuntu (laptop)": "24.04.5"}
 AUTOMATION = ("data pipeline\njobs", "model training\n& deployment", "frontend\ndeployment",
-              "backend\ndeployment", "building & pushing\ncontainers")       # slide 6
+              "backend\ndeployment", "building &\npushing containers")       # slide 6
 CHAIN_ITEMS = ("cd /deployment", "permissions", "ls", "ECR login", "setup-containers", "setup-webserver")
 
 # ------------------------------------------------------------------ trackers (script.md)
@@ -450,7 +477,8 @@ def tracker(key: str, step: int | None = None, extra=False) -> ReadmeTracker:
         new = mono("workflow", tr.size, S.GREY).move_to(old).align_to(old, LEFT)
         tr.head.remove(old)
         tr.head.submobjects.insert(0, new)
-        tr.head.arrange(RIGHT, buff=0.12).align_to(tr.dots, LEFT)
+        tr.head.arrange(RIGHT, buff=0.12)
+        tr.head.next_to(tr.dots, UP, buff=0.14, aligned_edge=LEFT)
     if step:
         tr.set_step(step)
     tr.remove(tr.caption)
@@ -1565,15 +1593,22 @@ def broom_glyph(h: float = 0.8, color=ERR) -> VGroup:
 
 
 def hand_glyph(h: float = 0.7, color=S.GREY) -> VGroup:
-    """A hand pointing down (a person about to press RELEASE). Text-free."""
-    palm = RoundedRectangle(width=h * 0.62, height=h * 0.5, corner_radius=h * 0.12, stroke_color=color,
+    """A hand pointing down (a person about to press RELEASE): a sleeve, a palm with three folded
+    knuckles, a thumb and a long index finger. Text-free."""
+    sleeve = Rectangle(width=h * 0.46, height=h * 0.22, stroke_color=color, stroke_width=2.5).set_fill(color, 0.5)
+    palm = RoundedRectangle(width=h * 0.56, height=h * 0.42, corner_radius=h * 0.12, stroke_color=color,
                             stroke_width=2.5).set_fill(color, 0.25)
-    finger = RoundedRectangle(width=h * 0.16, height=h * 0.42, corner_radius=h * 0.07, stroke_color=color,
+    palm.next_to(sleeve, DOWN, buff=0)
+    knuckles = VGroup(*[Circle(radius=h * 0.07, stroke_color=color, stroke_width=2).set_fill(color, 0.25)
+                        for _ in range(3)]).arrange(RIGHT, buff=h * 0.01)
+    knuckles.next_to(palm, DOWN, buff=-h * 0.07).align_to(palm, RIGHT).shift(LEFT * h * 0.03)
+    finger = RoundedRectangle(width=h * 0.14, height=h * 0.48, corner_radius=h * 0.06, stroke_color=color,
                               stroke_width=2.5).set_fill(color, 0.25)
-    finger.next_to(palm, DOWN, buff=-0.02).align_to(palm, LEFT).shift(RIGHT * h * 0.05)
-    cuff = Rectangle(width=h * 0.5, height=h * 0.16, stroke_color=color, stroke_width=2.5).set_fill(color, 0.5)
-    cuff.next_to(palm, UP, buff=0)
-    return VGroup(cuff, palm, finger)
+    finger.next_to(palm, DOWN, buff=-h * 0.1).align_to(palm, LEFT).shift(RIGHT * h * 0.04)
+    thumb = RoundedRectangle(width=h * 0.12, height=h * 0.3, corner_radius=h * 0.05, stroke_color=color,
+                             stroke_width=2.5).set_fill(color, 0.25).rotate(0.5)
+    thumb.next_to(palm, LEFT, buff=-h * 0.06).shift(DOWN * h * 0.05)
+    return VGroup(sleeve, thumb, palm, knuckles, finger)
 
 
 def release_button(size: float = 22, color=ERR) -> VGroup:
@@ -1857,6 +1892,7 @@ class PlayRecap(Piece):
             self.add(self.host)
         self.add(row)
         self.row = row
+        self.move_to(ORIGIN)
 
     def _cell(self, k, n):
         return chip(f"{k}={n}", _recap_color(k, n), size=self.size, font=MONO)
@@ -1933,11 +1969,12 @@ class PlayCard(Piece):
             tt = mono(name, size, INK) if mono_tiles else label(name, size, INK)
             st = mono(sub, size, S.GREY) if sub else None
             texts.append((tt, st))
-        tw = tile_w or max(max(a.width, b.width if b is not None else 0) for a, b in texts) + 0.4
+        fit = tile_w == "fit"
+        tw = None if fit else (tile_w or max(max(a.width, b.width if b is not None else 0) for a, b in texts) + 0.4)
         self.tiles = VGroup()
         for tt, st in texts:
-            txt = VGroup(tt, st).arrange(DOWN, buff=0.06) if st is not None else VGroup(tt)
-            fr = box(tw, txt.height + 0.26, S.GREY, fill_opacity=0.06, radius=0.08)
+            txt = VGroup(tt, st).arrange(DOWN, buff=0.06, aligned_edge=LEFT) if st is not None else VGroup(tt)
+            fr = box(txt.width + 0.4 if fit else tw, txt.height + 0.26, S.GREY, fill_opacity=0.06, radius=0.08)
             txt.move_to(fr)
             if st is not None:
                 txt.align_to(fr, LEFT).shift(RIGHT * 0.18)
@@ -1945,7 +1982,10 @@ class PlayCard(Piece):
             t.frame, t.text, t.sub, t.state = fr, tt, st, "idle"
             self.tiles.add(t)
         rows = (len(self.tiles) + cols - 1) // cols
-        self.tiles.arrange_in_grid(rows=rows, cols=cols, buff=(0.14, 0.12), flow_order="rd" if cols > 1 else "dr")
+        if fit and rows == 1:
+            self.tiles.arrange(RIGHT, buff=0.14)
+        else:
+            self.tiles.arrange_in_grid(rows=rows, cols=cols, buff=(0.14, 0.12), flow_order="rd" if cols > 1 else "dr")
         inner = VGroup(self.head, self.title, self.hosts_chip, self.tiles).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         w = max(card_w or 0, inner.width + 0.5)
         self.frame = box(w, inner.height + 0.45, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
@@ -1975,9 +2015,12 @@ class PlayCard(Piece):
     def light_all(self, scene, state: str = "ok", lag: float = 0.25):
         scene.play(LaggedStart(*[self.set_state(i, state) for i in range(len(self.tiles))], lag_ratio=lag))
 
-    def chip(self, scene, i: int, text: str, color=S.GREY, run_time: float = 0.4, side=DOWN):
+    def chip(self, scene, i: int, text: str, color=S.GREY, run_time: float = 0.4, side=RIGHT):
         c = chip(text, color, size=self.size, font=MONO)
-        c.next_to(self.tiles[i], side, buff=0.08)
+        if side is RIGHT or (isinstance(side, np.ndarray) and np.allclose(side, RIGHT)):
+            c.next_to(self.frame, RIGHT, buff=0.15).set_y(self.tiles[i].get_y())
+        else:
+            c.next_to(self.tiles[i], side, buff=0.08)
         scene.play(FadeIn(c, shift=UP * 0.1), run_time=run_time)
         self.keep(scene, c)
         return c
@@ -1994,7 +2037,7 @@ class Checklist(Piece):
     def __init__(self, title: str, items, color=S.GREY, tag_text: str | None = "illustration",
                  dashed=(), card_w: float | None = None, size: float = 20, mono_items: bool = False, **kw):
         super().__init__(**kw)
-        self.size, self.mono_items, self.color = size, mono_items, color
+        self.size, self.mono_items, self.edge_color = size, mono_items, color
         self.head = label(title, 22, INK)
         self.rows = VGroup(*[self._row(it, i in dashed) for i, it in enumerate(items)])
         self.rows.arrange(DOWN, aligned_edge=LEFT, buff=0.16)
@@ -2038,7 +2081,7 @@ class Checklist(Piece):
         r.next_to(self.rows, DOWN, buff=0.16).align_to(self.rows, LEFT)
         grow = r.height + 0.16
         w = max(self.card_w, r.get_right()[0] - self.frame.get_left()[0] + 0.4)
-        new_fr = box(w, self.frame.height + grow, self.color, fill=S.GREY_DARKER, fill_opacity=1)
+        new_fr = box(w, self.frame.height + grow, self.edge_color, fill=S.GREY_DARKER, fill_opacity=1)
         new_fr.align_to(self.frame, UP).align_to(self.frame, LEFT)
         anims = [Transform(self.frame, new_fr), FadeIn(r, shift=UP * 0.1)]
         if self.tag is not None:
@@ -2081,13 +2124,15 @@ class ScoreCards(Piece):
     def mark(self, scene, i: int, ok: bool, note: str | None = None, run_time: float = 0.5):
         c = self.cards[i]
         anims = []
+        disc = Circle(radius=0.22, stroke_width=0).set_fill(S.BG, 1).move_to(c.frame.get_corner(UR) + np.array([-0.1, 0.05, 0]))
+        anims.append(FadeIn(disc))
         if ok:
-            m = check_mark(0.32, PASS, stroke=5).move_to(c.frame.get_corner(UR) + np.array([-0.25, -0.22, 0]))
-            anims += [Create(m), c.frame.animate.set_stroke(PASS)]
+            m = VGroup(disc, check_mark(0.3, PASS, stroke=5).move_to(disc))
+            anims += [Create(m[1]), c.frame.animate.set_stroke(PASS)]
         else:
-            m = cross_mark(0.28, S.GREY, stroke=4).move_to(c.frame.get_corner(UR) + np.array([-0.25, -0.22, 0]))
+            m = VGroup(disc, cross_mark(0.26, S.GREY, stroke=4).move_to(disc))
             dashed = outline_box(c.frame.width, c.frame.height, S.GREY).move_to(c.frame)
-            anims += [Create(m), Transform(c.frame, dashed), c.text.animate.set_color(S.GREY)]
+            anims += [Create(m[1]), Transform(c.frame, dashed), c.text.animate.set_color(S.GREY)]
         new = [m]
         if note:
             n = (ok_chip if ok else dashed_chip)(note, size=self.size)
@@ -2112,7 +2157,7 @@ class BeadChain(Piece):
     ~11.6 x 0.55 for CHAIN_ITEMS. ANIM light(i, colour) · PLAYS state(scene, i, 'ok'|'fail'|'never')
     ('never' turns the bead GREY dashed). .beads (.frame .text) .links"""
 
-    def __init__(self, items=CHAIN_ITEMS, size: float = 20, color=TOOL, **kw):
+    def __init__(self, items=CHAIN_ITEMS, size: float = 20, color=TOOL, max_w: float = 12.4, **kw):
         super().__init__(**kw)
         self.beads = VGroup(*[crate(s, size=size, color=color, box_h=0.5) for s in items])
         parts = []
@@ -2123,7 +2168,15 @@ class BeadChain(Piece):
                 ln = mono("&&", size, S.GREY)
                 self.links.add(ln)
                 parts.append(ln)
-        VGroup(*parts).arrange(RIGHT, buff=0.1)
+        rows, cur, w = [], [], 0.0
+        for m in parts:
+            if cur and w + m.width + 0.1 > max_w:
+                rows.append(VGroup(*cur).arrange(RIGHT, buff=0.1))
+                cur, w = [], 0.0
+            cur.append(m)
+            w += m.width + 0.1
+        rows.append(VGroup(*cur).arrange(RIGHT, buff=0.1))
+        VGroup(*rows).arrange(DOWN, buff=0.3, aligned_edge=LEFT).move_to(ORIGIN)
         self.add(self.beads, self.links)
         self.size = size
 
@@ -2165,7 +2218,8 @@ class KeywordSieves(Piece):
     'build images' 'push to ECR' 'deploy'; sieve 2 (small, over the 'deploy' tile, label
     "'/run-deploy-app'" right of the job box); an ECR shelf under the job box (y -2.2) and a BLUE
     server with three TEAL containers at the right (x 3.3 .. 6.1). Overall ~12.2 x 5.3.
-    Teaser (S01): sieve 1 only at (0, 0.7) and a small BLUE server under it; ~7.9 x 4.2.
+    Teaser (S01): sieve 1 only (rim 4.6 at (-1.6, 0.7), label right of it) and a small BLUE server
+    under it at (-1.6, -1.55); ~8.6 x 3.6 (x -3.9 .. 4.7).
 
     PLAYS hover(scene, text) a ribbon waits above sieve 1 (returns it) · drop(scene, ribbon_or_text,
     stop, miss='bounce') stop 0: stopped by sieve 1 (RED flash; 'bounce' = up and away RED, 'slide' =
@@ -2182,12 +2236,12 @@ class KeywordSieves(Piece):
         self.sieves = VGroup()
         self.ecr_items = VGroup()
         if teaser:
-            s1 = _sieve(5.0, "contains(…, '/run-')", size)
-            s1.text.next_to(s1.rim, UP, buff=0.18)
-            s1.move_to([0, 0.7, 0])
+            s1 = _sieve(4.6, "contains(…, '/run-')", size)
+            s1.move_to([-1.6, 0.7, 0])
+            s1.text.next_to(s1.rim, RIGHT, buff=0.3)
             self.sieves.add(s1)
-            self.server = self._server(2.6, 1.3).move_to([0, -1.55, 0])
-            self.entry = np.array([0, 2.0, 0])
+            self.server = self._server(2.6, 1.3).move_to([-1.6, -1.55, 0])
+            self.entry = np.array([-1.6, 2.0, 0])
             self.job = self.tiles = self.ecr = None
             self.add(s1, self.server)
             return
@@ -2270,6 +2324,7 @@ class KeywordSieves(Piece):
     def stream(self, scene, n: int = 33, run_time: float = 3.0):
         s1 = self.sieves[0]
         dots = VGroup(*[dot(ROUTE, 0.06).move_to(self.entry + RIGHT * ((k * 0.37) % 3.0 - 1.5)) for k in range(n)])
+        dots.set_x(s1.rim.get_x())
         target = self.server.frame.get_top() + DOWN * 0.1
         anims = [Succession(FadeIn(d, run_time=0.1),
                             d.animate(run_time=0.5, rate_func=linear).move_to([d.get_x(), s1.rim.get_y() - 0.3, 0]),
@@ -2347,7 +2402,8 @@ class TermMap(Piece):
     above Commits, 'ingress' in the cloud) · relabel(scene, key) GCP word -> AWS word (TERM_PAIRS;
     'key' becomes the badge + key glyphs with 'IAM access key' / 'EC2 key pair') · fade_ml(scene)
     the four ML boxes and Vertex AI turn GREY dashed + 'not in this repo · the AWS ML pipeline was
-    L15'; the Model Deploy → Backend API arrow goes dashed + chip. .flow{dev github actions cloud
+    L15' (top left, y 2.5); the Model Deploy → Backend API arrow goes dashed + a chip above the chain
+    (y 2.5; the source chip leaves). .flow{dev github actions cloud
     users} .chain[0..5] .chain_arrows .flow_arrows .labels{key} .cloud_rows{key} .src_chip"""
 
     CHAIN = ("Data\nCollector", "Data\nProcessor", "Model\nTraining", "Model\nDeploy", "Backend\nAPI", "Frontend")
@@ -2378,18 +2434,21 @@ class TermMap(Piece):
             r = dashed_chip(s, PAST, size)
             rows[k] = r
             col.add(r)
-        col.arrange(DOWN, buff=0.1)
-        cf = box(3.1, col.height + 0.75, CLOUD, fill_opacity=0.06)
+        slots = (0.5, 0.5, 0.5, 0.86, 0.5)               # Kubernetes gets room for two lines
+        cf = box(3.2, sum(slots) + 0.4 + 0.5, CLOUD, fill_opacity=0.06).move_to([2.55, y - 0.2, 0])
         ct = label("cloud", size, CLOUD).move_to(cf.get_top() + DOWN * 0.25)
-        col.next_to(ct, DOWN, buff=0.12)
-        cloud = VGroup(cf, ct, col).move_to([2.5, y, 0])
+        yy = ct.get_bottom()[1] - 0.12
+        for (k, _s), h in zip(names, slots):
+            rows[k].move_to([cf.get_x(), yy - h / 2, 0])
+            yy -= h + 0.1
+        cloud = VGroup(cf, ct, col)
         self.cloud_rows = rows
         users = VGroup(person_icon(LAPTOP, 0.42), label("Users", size, LAPTOP)).arrange(DOWN, buff=0.1).move_to([5.75, y, 0])
         self.flow = {"dev": dev, "github": github, "actions": actions, "cloud": cloud, "users": users}
         order = [dev, github, actions, cloud, users]
         self.flow_arrows = VGroup(*[arrow(a.get_right(), b.get_left(), ROUTE if i == 0 else S.GREY, 3)
                                     for i, (a, b) in enumerate(zip(order, order[1:]))])
-        self.commits_label = label("Commits", size, ROUTE).next_to(self.flow_arrows[0], DOWN, buff=0.12)
+        self.commits_label = label("Commits", size, ROUTE).next_to(self.flow_arrows[0], UP, buff=0.12)
         self.chain = VGroup(*[label_box(s, INK, size=size, box_w=1.62) for s in self.CHAIN])
         hmax = max(c.height for c in self.chain)
         for i, c in enumerate(self.chain):
@@ -2404,7 +2463,7 @@ class TermMap(Piece):
         # hidden GCP words
         self.labels = {}
         self.labels["pulumi"] = dashed_chip("Pulumi (L20)", PAST, size).next_to(actions, DOWN, buff=0.15)
-        self.labels["key"] = dashed_chip("service-account key", PAST, size).move_to([-1.5, 0.35, 0])
+        self.labels["key"] = dashed_chip("service-account key", PAST, size).move_to([-1.2, 0.4, 0])
         self.labels["keyword"] = dashed_chip(SLIDES_KEYWORD, ROUTE, size, mono_font=True).move_to([-5.1, 0.35, 0])
         self.labels["registry"] = rows["registry"]
         self.labels["ingress"] = rows["ingress"]
@@ -2470,13 +2529,13 @@ class TermMap(Piece):
         if key == "key":
             a = VGroup(badge_glyph(0.36), label("IAM access key", self.size, INK)).arrange(RIGHT, buff=0.14)
             b = VGroup(key_glyph(0.36), label("EC2 key pair", self.size, INK)).arrange(RIGHT, buff=0.14)
-            new = VGroup(a, b).arrange(RIGHT, buff=0.4).move_to(old)
+            new = VGroup(a, b).arrange(DOWN, buff=0.12, aligned_edge=LEFT).move_to(old)
         elif key == "keyword":
             new = route_chip(KEYWORD, self.size).move_to(old)
         else:
             lines = TERM_PAIRS[key][1]
             color = IMAGE if key == "ingress" else CLOUD
-            new = label_box(list(lines), color, size=self.size).move_to(old)
+            new = label_box(list(lines), color, size=self.size, pad=0.1).move_to(old)
         scene.play(ReplacementTransform(old, new), run_time=run_time)
         for owner in [self, *self.get_family()]:
             if old in owner.submobjects:
@@ -2501,9 +2560,14 @@ class TermMap(Piece):
         note_ = label("not in this repo · the AWS ML pipeline was L15", self.size, S.GREY)
         note_.move_to([-6.3 + note_.width / 2, 2.5, 0])
         ch = grey_chip("a fixed model file, not a pipeline", self.size)
-        ch.move_to([a.get_center()[0] + 0.6, 0.85, 0])
+        ch.move_to([a.get_center()[0] + 0.6, 2.5, 0])
         anims += [FadeIn(note_), FadeIn(ch, shift=DOWN * 0.1)]
+        if self.src_chip is not None and self.src_chip in self.get_family():
+            anims.append(FadeOut(self.src_chip))
         scene.play(*anims, run_time=run_time)
+        if self.src_chip is not None and self.src_chip in self.get_family():
+            self._gone(scene, self.src_chip)
+            self.src_chip = None
         self.ml_note, self.ml_chip = note_, ch
         self.keep(scene, note_, ch)
         return VGroup(note_, ch)
@@ -2533,9 +2597,10 @@ class KeyJourney(Piece):
     PLAYS start(scene) (badge and key appear in 'secrets'; the place must exist) · send(scene, which,
     src, dst, leave=True, arc=0.0) ('badge' or 'key': a PINK arrow src -> dst, the glyph rides it,
     a copy stays at dst (top-right corner; several copies sit side by side)) · counter(scene, text)
-    a GREY caption under the piece (replaced on the next call) · overlay(scene, 'role'|'oidc') a
+    a GREY caption ABOVE the piece (replaced on the next call) · overlay(scene, 'role'|'oidc') a
     GREY dashed box over the server places ('instance role · short-lived credentials') or the
-    vault ('GitHub OIDC · no stored AWS keys'); the badge copies inside fade.
+    vault ('GitHub OIDC · no stored AWS keys'), its label under it for the bottom row; the badge
+    copies inside fade. Boxes widen for long texts (runner_ssh ~3.5).
     .places{key} (.frame .text) .copies{key: VGroup} .arrows"""
 
     def __init__(self, places=None, place_w: float = 2.8, size: float = 20, **kw):
@@ -2545,15 +2610,14 @@ class KeyJourney(Piece):
         self.places, self.copies = {}, {}
         for k in keys:
             lines, col = PLACES[k]
-            p = label_box(list(lines), col, size=size, box_w=place_w, mono_font=False)
+            tw = max(label(x, size).width for x in lines)
+            p = label_box(list(lines), col, size=size, box_w=max(place_w, tw + 0.35), mono_font=False)
             p.text[0].set_color(col)
             p.text[1].set_color(S.GREY)
             self.places[k] = p
             self.copies[k] = VGroup()
         if len(keys) <= 4:
-            xs = np.linspace(-(len(keys) - 1) * (place_w + 0.35) / 2, (len(keys) - 1) * (place_w + 0.35) / 2, len(keys))
-            for k, x in zip(keys, xs):
-                self.places[k].move_to([x, 0, 0])
+            VGroup(*[self.places[k] for k in keys]).arrange(RIGHT, buff=0.45).move_to(ORIGIN)
         else:
             top, bot = keys[:4], keys[4:]
             xs = [-4.725, -1.575, 1.575, 4.725]
@@ -2564,7 +2628,7 @@ class KeyJourney(Piece):
         hmax = max(p.height for p in self.places.values())
         for p in self.places.values():
             if abs(p.frame.height - hmax) > 0.01:
-                fr = box(place_w, hmax, p.text[0].get_color(), fill_opacity=0.1).move_to(p)
+                fr = box(p.frame.width, hmax, p.text[0].get_color(), fill_opacity=0.1).move_to(p)
                 p.remove(p.frame)
                 p.frame = fr
                 p.add_to_back(fr)
@@ -2617,7 +2681,7 @@ class KeyJourney(Piece):
 
     def counter(self, scene, text: str, run_time: float = 0.4):
         t = label(text, self.size, S.GREY)
-        t.next_to(VGroup(*self.places.values()), DOWN, buff=0.3)
+        t.next_to(VGroup(*self.places.values()), UP, buff=0.45)
         if self.caption is None:
             scene.play(FadeIn(t), run_time=run_time)
         else:
@@ -2635,7 +2699,11 @@ class KeyJourney(Piece):
         ob = outline_box(g.width + 0.3, g.height + 0.3, S.GREY).move_to(g)
         t = label("instance role · short-lived credentials" if kind == "role" else "GitHub OIDC · no stored AWS keys",
                   self.size, S.GREY)
-        t.next_to(ob, UP, buff=0.08)
+        t.next_to(ob, DOWN if ob.get_y() < VGroup(*self.places.values()).get_y() - 0.1 else UP, buff=0.08)
+        if t.get_left()[0] < -6.5:
+            t.shift(RIGHT * (-6.5 - t.get_left()[0]))
+        if t.get_right()[0] > 6.5:
+            t.shift(LEFT * (t.get_right()[0] - 6.5))
         gone = [c for k in keys for c in self.copies[k] if getattr(c, "kind", "") == "badge"]
         bg = Rectangle(width=t.width + 0.2, height=t.height + 0.1, stroke_width=0).set_fill(S.BG, 0.9).move_to(t)
         scene.play(Create(ob.frame), FadeIn(bg), FadeIn(t), *[FadeOut(c) for c in gone], run_time=run_time)
@@ -2651,8 +2719,9 @@ class AnsibleMachine(Piece):
     """V4 (S04): left the InventoryTree (x -6.5 .. -3.9); middle two PlayCards stacked
     ('deploy-create-instance.yml' / 'Create App Application Machine' / localhost / ec2_group ec2_vol
     ec2_instance; 'deploy-provision-instance.yml' / 'Configure app server instance' / appserver /
-    apt mount shell), x -3.6 .. 1.3; a small TEAL toolbox crate (x ~2.6); right a BLUE 'AWS ·
-    us-east-1' box (top) and a BLUE server (bottom), x 4.1 .. 6.5. ~13.0 x 5.4.
+    apt mount shell), x ~-3.6 .. 3.1; right column (x 3.8 .. 6.2): a BLUE 'AWS · us-east-1' box
+    (top), the small TEAL toolbox (middle; PINK API arrow up), a BLUE server (bottom; PINK SSH arrow
+    down). ~12.8 x 5.0.
     PLAYS fire(scene, card, tile, state='changed') · ssh(scene) (the PINK SSH arrow toolbox ->
     server + chip 'ubuntu + your key'; fire() on the appserver card calls it if needed).
     .tree .cards .toolbox .aws .server .ssh_arrow .ssh_chip .api_arrow"""
@@ -2660,22 +2729,22 @@ class AnsibleMachine(Piece):
     def __init__(self, size: float = 20, **kw):
         super().__init__(**kw)
         self.size = size
-        self.tree = InventoryTree(size=size).move_to([-5.2, 0, 0])
+        self.tree = InventoryTree(size=size).move_to([-5.2, -0.2, 0])
         c1 = PlayCard("deploy-create-instance.yml", "Create App Application Machine", "localhost",
-                      ("ec2_group", "ec2_vol", "ec2_instance"), cols=2, mono_tiles=True, card_w=4.9, size=size)
+                      ("ec2_group", "ec2_vol", "ec2_instance"), cols=3, tile_w="fit", mono_tiles=True, size=size)
         c2 = PlayCard("deploy-provision-instance.yml", "Configure app server instance", "appserver",
-                      ("apt", "mount", "shell"), cols=2, mono_tiles=True, card_w=4.9, size=size)
-        self.cards = VGroup(c1, c2).arrange(DOWN, buff=0.25).move_to([-1.15, 0, 0])
-        self.toolbox = crate("toolbox", size=size, box_h=0.9).move_to([2.6, 0, 0])
-        self.aws = aws_box("AWS · us-east-1", 2.4, 1.2, size).move_to([5.3, 1.4, 0])
-        sv = aws_box("server", 2.4, 1.2, size).move_to([5.3, -1.4, 0])
+                      ("apt", "mount", "shell"), cols=3, tile_w="fit", mono_tiles=True, card_w=c1.frame.width, size=size)
+        self.cards = VGroup(c1, c2).arrange(DOWN, buff=0.25).move_to([-0.25, -0.2, 0])
+        self.toolbox = crate("toolbox", size=size, box_h=0.8).move_to([5.0, -0.2, 0])
+        self.aws = aws_box("AWS · us-east-1", 2.4, 1.0, size).move_to([5.0, 1.75, 0])
+        sv = aws_box("server", 2.4, 1.2, size).move_to([5.0, -2.2, 0])
         server_glyph = VGroup(*[RoundedRectangle(width=1.2, height=0.16, corner_radius=0.04, stroke_color=CLOUD,
                                                  stroke_width=2).set_fill(PANEL, 1) for _ in range(2)])
         server_glyph.arrange(DOWN, buff=0.06).move_to(sv.body)
         sv.add(server_glyph)
         sv.glyph = server_glyph
         self.server = sv
-        self.api_arrow = route(self.toolbox.get_right(), self.aws.frame.get_left(), arc=0.3, stroke=3)
+        self.api_arrow = route(self.toolbox.get_top(), self.aws.frame.get_bottom(), stroke=3)
         self.ssh_arrow = None
         self.ssh_chip = None
         self.add(self.tree, self.cards, self.toolbox, self.aws, self.server)
@@ -2683,9 +2752,8 @@ class AnsibleMachine(Piece):
     def ssh(self, scene, run_time: float = 0.6):
         if self.ssh_arrow is not None:
             return self.ssh_arrow
-        ar = route(self.toolbox.get_right(), self.server.frame.get_left(), arc=-0.3, stroke=3)
-        ch = grey_chip("ubuntu + your key", self.size).next_to(self.server, UP, buff=0.12)
-        ch.align_to(self.server, RIGHT)
+        ar = route(self.toolbox.get_bottom(), self.server.frame.get_top(), stroke=3)
+        ch = grey_chip("ubuntu + your key", self.size).next_to(self.server, DOWN, buff=0.1)
         scene.play(GrowArrow(ar), FadeIn(ch), run_time=run_time)
         self.ssh_arrow, self.ssh_chip = ar, ch
         self.keep(scene, ar, ch)
@@ -2695,7 +2763,7 @@ class AnsibleMachine(Piece):
         c = self.cards[card]
         sp = spark(TOOL, 0.3).move_to(self.toolbox.frame)
         scene.play(c.set_state(tile, state), FadeIn(sp, scale=0.5), run_time=run_time * 0.3)
-        d = dot(ROUTE).move_to(self.toolbox.frame.get_right())
+        d = dot(ROUTE).move_to(self.toolbox.frame.get_top())
         if card == 0:
             if self.api_arrow not in self.submobjects:
                 scene.play(GrowArrow(self.api_arrow), run_time=0.3)
@@ -2722,13 +2790,15 @@ _MOUNTS = {
 class SiblingContainers(Piece):
     """V5: one crate, the host's Docker. Host frame (9.0 x 5.2; GREY 'laptop' or BLUE 'GitHub
     runner'); its folders as mono chips down the left (x ~-3.0); the TEAL crate
-    'cheese-app-deployment' top right (x -0.2 .. 3.9, y 0.1 .. 2.4) listing its mount points; under
-    it the PINK socket line '/var/run/docker.sock' down to the 'Docker engine' shelf (y -1.9), which
-    holds the toolbox's own image (a cube + 'cheese-app-deployment'). Runner: the three app folders
+    'cheese-app-deployment' top right (x -0.2 .. 3.9, y -0.2 .. 2.4) listing its mount points; under
+    its left edge the PINK socket line '/var/run/docker.sock' down to the 'Docker engine' shelf (a
+    board across the frame, y -1.95), which holds the toolbox's own image (a cube +
+    'cheese-app-deployment', left); build() puts each new image right of it. Runner: the three app folders
     start GREY dashed ('the runner built them already') and their mount lines are never drawn.
     PLAYS mount(scene, key) · mounts(scene, keys=None) · hover_spark(scene) · build(scene,
     spark=None) · prune_ghost(scene) · dash(scene, keys) · badge_in(scene).
-    .frame .title .folders{key} .points{key} .lines{key} .socket .crate .shelf .images"""
+    .frame .title .folders{key} .mpoints{key} (mount points in the crate) .lines{key} .socket .crate
+    .shelf .images"""
 
     def __init__(self, host: str = "laptop", size: float = 20, **kw):
         super().__init__(**kw)
@@ -2738,7 +2808,7 @@ class SiblingContainers(Piece):
         self.title = label("laptop" if host == "laptop" else "GitHub runner", size, col)
         self.title.move_to(self.frame.get_corner(UL) + np.array([0, -0.3, 0])).align_to(self.frame, LEFT).shift(RIGHT * 0.25)
         spec = _MOUNTS[host]
-        self.folders, self.points, self.lines = {}, {}, {}
+        self.folders, self.mpoints, self.lines = {}, {}, {}
         dashed_keys = ("api", "frontend", "vectordb") if host == "runner" else ()
         fcol = VGroup()
         for k, src, _dst in spec:
@@ -2751,7 +2821,7 @@ class SiblingContainers(Piece):
         pts = VGroup()
         for k, _src, dst in spec:
             p = mono(dst, size, S.GREY if k in dashed_keys else INK)
-            self.points[k] = p
+            self.mpoints[k] = p
             pts.add(p)
         pts.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         inner = VGroup(ct, pts).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
@@ -2761,9 +2831,9 @@ class SiblingContainers(Piece):
         self.crate = VGroup(cf, inner)
         self.crate.frame, self.crate.text = cf, ct
         for k, _src, _dst in spec:
-            self.folders[k].set_y(self.points[k].get_y())
+            self.folders[k].set_y(self.mpoints[k].get_y())
             self.folders[k].align_to(self.frame, LEFT).shift(RIGHT * 0.35)
-        board = Line([-0.7, -1.95, 0], [4.2, -1.95, 0], color=LAPTOP if host == "laptop" else CLOUD, stroke_width=4)
+        board = Line([-3.9, -1.95, 0], [4.2, -1.95, 0], color=LAPTOP if host == "laptop" else CLOUD, stroke_width=4)
         cap = label("Docker engine", size, S.GREY).next_to(board, DOWN, buff=0.1).align_to(board, LEFT)
         self.shelf = VGroup(board, cap)
         self.shelf.board, self.shelf.text = board, cap
@@ -2771,8 +2841,8 @@ class SiblingContainers(Piece):
         own.next_to(board, UP, buff=0.04).align_to(board, LEFT).shift(RIGHT * 0.3)
         own_t = mono(T_TOOLBOX, size, IMAGE).next_to(own, RIGHT, buff=0.15)
         self.images = VGroup(VGroup(own, own_t))
-        sock_top = np.array([1.1, cf.get_bottom()[1], 0])
-        sock_bot = np.array([1.1, board.get_y() + 0.75, 0])
+        sock_top = np.array([cf.get_left()[0] + 0.45, cf.get_bottom()[1], 0])
+        sock_bot = np.array([cf.get_left()[0] + 0.45, board.get_y() + 0.75, 0])
         self.socket = Line(sock_top, sock_bot, color=ROUTE, stroke_width=8)
         self.socket_label = mono("/var/run/docker.sock", size, ROUTE).next_to(self.socket, RIGHT, buff=0.15)
         self.socket_on = False
@@ -2787,7 +2857,7 @@ class SiblingContainers(Piece):
             return self.socket
         if key in self.dashed_keys:
             return None
-        f, p = self.folders[key], self.points[key]
+        f, p = self.folders[key], self.mpoints[key]
         ln = Line(f.get_right() + RIGHT * 0.05, p.get_left() + LEFT * 0.1, color=ROUTE, stroke_width=3)
         scene.play(Create(ln), Indicate(p, color=ROUTE, scale_factor=1.05), run_time=run_time)
         self.lines[key] = ln
@@ -2833,7 +2903,7 @@ class SiblingContainers(Piece):
         the shelf and the images turn to dashed ghosts, then everything comes back (undone)."""
         if not self.socket_on:
             self.mount(scene, "socket")
-        t = mono("docker system prune -a", self.size, ERR).next_to(self.crate.frame, DOWN, buff=0.12).align_to(self.crate.frame, LEFT)
+        t = mono("docker system prune -a", self.size, ERR).next_to(self.socket, LEFT, buff=0.15)
         d = spark(ERR, 0.25).move_to(self.socket.get_start())
         scene.play(FadeIn(t), FadeIn(d), run_time=0.3)
         scene.play(MoveAlongPath(d, self.socket.copy()), run_time=run_time * 0.25)
@@ -2854,7 +2924,7 @@ class SiblingContainers(Piece):
             if k in self.lines:
                 ln = self.lines[k]
                 anims.append(Transform(ln, DashedLine(ln.get_start(), ln.get_end(), color=S.GREY, stroke_width=2.5)))
-            anims.append(self.points[k].animate.set_color(S.GREY))
+            anims.append(self.mpoints[k].animate.set_color(S.GREY))
         scene.play(*anims, run_time=run_time)
 
     def badge_in(self, scene, run_time: float = 0.8):
@@ -2862,7 +2932,7 @@ class SiblingContainers(Piece):
         src = self.folders.get("secrets", self.folders.get("ssh"))
         b = badge_glyph(0.32).move_to(src)
         scene.play(FadeIn(b, scale=1.3), run_time=0.3)
-        scene.play(b.animate.move_to(self.crate.frame.get_corner(UR) + np.array([-0.4, -0.3, 0])), run_time=run_time)
+        scene.play(b.animate.move_to(self.crate.frame.get_corner(DR) + np.array([-0.45, 0.32, 0])), run_time=run_time)
         self.keep(scene, b)
         self.badge = b
         return b
@@ -2872,7 +2942,7 @@ class SiblingContainers(Piece):
 class TimestampTrail(Piece):
     """V6: one timestamp tag. mode='build' (S07, 12.6 x 5.2): a GREEN stamp chip
     'date +%Y%m%d%H%M%S' (top left, y 2.2) and the tag card (hidden until stamp()); three TEAL image
-    chips (middle column, x ~-1.4, y 1.2 / 0.2 / -0.8); the BLUE ECR box (x 1.9 .. 6.5, y -1.3 .. 2.3)
+    chips (middle column, x ~-0.9, y 1.2 / 0.2 / -0.8); the BLUE ECR box (x 1.9 .. 6.5, y -1.6 .. 2.5)
     with three named shelves; the '.docker-tag' file (bottom left, committed text TAG_COMMITTED); the
     registry line under it all (y -2.3). PLAYS stamp(scene) · clip(scene, i) (a copy of the card
     clips onto image i) · push(scene, i) (image i with its tag flies to shelf i) · push_all(scene) ·
@@ -2902,12 +2972,12 @@ class TimestampTrail(Piece):
                 bd = Line(LEFT * (w - 0.4) / 2, RIGHT * (w - 0.4) / 2, color=CLOUD, stroke_width=3)
                 nm = mono(n, self.size, S.GREY).next_to(bd, DOWN, buff=0.08).align_to(bd, LEFT)
                 sh = VGroup(bd, nm)
-                sh.name, sh.board = nm, bd
+                sh.caption, sh.board = nm, bd
             else:
                 sh = image_chip(n + ":<tag>", self.size)
-                sh.name, sh.board = sh.text, sh.box
+                sh.caption, sh.board = sh.text, sh.box
             shelves.add(sh)
-        shelves.arrange(DOWN, buff=0.62 if boards else 0.12)
+        shelves.arrange(DOWN, buff=0.85 if boards else 0.12)
         shelves.next_to(t, DOWN, buff=0.62 if boards else 0.15)
         g = VGroup(fr, t, shelves)
         g.frame, g.text = fr, t
@@ -2919,7 +2989,7 @@ class TimestampTrail(Piece):
         self.images = VGroup(*[image_chip(n, sz) for n in SHORT_IMAGES])
         for i, im in enumerate(self.images):
             im.move_to([-0.9, 1.2 - i * 1.0, 0])
-        self.ecr, self.shelves = self._ecr(4.6, 3.6, IMAGES, [4.2, 0.5, 0])
+        self.ecr, self.shelves = self._ecr(4.6, 4.1, IMAGES, [4.2, 0.45, 0])
         f = file_glyph(0.42, OWN)
         ft = mono(".docker-tag", sz, OWN)
         val = mono(TAG_COMMITTED, sz, INK)
@@ -3039,8 +3109,8 @@ class TimestampTrail(Piece):
 
 
 # ================================================================== V7 · one server, one front door
-_SLOTS = {"nginx": (-1.85, -0.45), "frontend": (0.25, 1.05), "api": (0.25, -0.45),
-          "vectordb": (2.3, -0.45), "loader": (2.3, 1.05)}
+_SLOTS = {"nginx": (-1.85, -0.55), "frontend": (0.25, 1.1), "api": (0.25, -0.55),
+          "vectordb": (2.3, -0.55), "loader": (2.3, 1.1)}
 
 
 class CostDial(VGroup):
@@ -3077,38 +3147,39 @@ class CostDial(VGroup):
 
 
 class VmLayout(Piece):
-    """V7: the EC2 server. Box x -3.0 .. 3.4, y -2.3 .. 2.1 (centred on its anchor + (0.2, -0.1)),
+    """V7: the EC2 server. Box x -3.0 .. 4.0, y -2.3 .. 2.1 (7.0 x 4.4, centred at (0.5, -0.1)),
     title 'EC2 · t2.large · cheese-app-demo' (top left inside). Built EMPTY (frame + title); reveal:
     wall(scene) the security group: a thick BLUE wall on the left edge with three ORANGE doors 22, 80,
     443 (y 1.0 / 0 / -1.0) and an ORANGE '0.0.0.0/0' chip outside; engine(scene) a GREY 'Docker'
-    label (top right inside); disk(scene) the GREEN '/mnt/disk-1' band (y -1.75) with slots
-    'persistent', 'chromadb'; network(scene) the PINK 'appnetwork' line (y 0.3); container(scene, key,
-    chip=None) a TEAL box (1.9 x 0.9: name + port, mono 20) at its slot: 'nginx' (-1.85, -0.45),
-    'frontend' (0.25, 1.05), 'api' (0.25, -0.45), 'vectordb' (2.3, -0.45), 'loader' (2.3, 1.05).
+    label (top right inside); disk(scene) the GREEN '/mnt/disk-1' band (y -1.9) with slots
+    'persistent', 'chromadb' (y -1.9); network(scene) the PINK 'appnetwork' line (y 0.3, label under its left end); container(scene, key,
+    chip=None) a TEAL box (1.9 x 1.0: name + port, mono 20) at its slot: 'nginx' (-1.85, -0.55),
+    'frontend' (0.25, 1.1), 'api' (0.25, -0.55), 'vectordb' (2.3, -0.55), 'loader' (2.3, 1.1).
     PLAYS version(scene, key, text, colour) (chip under the container; replaces the last one) ·
-    request(scene, src, dst, path, result, ok) · loader_run(scene) · route(scene, path, cut=None,
+    request(scene, src, dst, path, result, ok) (the chip rides between the two containers, then turns
+    into the coloured answer, kept as .answer) · loader_run(scene) · route(scene, path, cut=None,
     dst='api') (a PINK request from outside through door 80 to nginx; `cut` falls away RED; the rest
     goes to dst) · door(scene, port, state) ('open' ORANGE, 'used' GREEN, 'shut' GREY, 'idle') ·
     recreate(scene, key) · meter(scene) (the GOLD CostDial right of the box) · meter_run(scene,
     turns, secs) · badge_on(scene, target, text, colour=TURN) (a tag on a container / 'box' / 'disk'
     / 'wall'; returns it; drop it yourself) · ports_inside(scene) (':3000 :8000 :9000' painted on
     the inner wall, no hole). ssh_arrow(start) -> a PINK arrow from `start` to door 22 (a mobject).
-    .frame .title .doors{port} .wall .slots{key} .containers{key} .disk_box .net .dial .ip_chip"""
+    .frame .title .doors{port} .sg (the wall) .slots{key} .containers{key} .disk_box .net .dial .ip_chip"""
 
     def __init__(self, size: float = 20, title: str = "EC2 · t2.large · cheese-app-demo", **kw):
         super().__init__(**kw)
         self.size = size
-        self.frame = box(6.4, 4.4, CLOUD, fill_opacity=0.05).move_to([0.2, -0.1, 0])
+        self.frame = box(7.0, 4.4, CLOUD, fill_opacity=0.05).move_to([0.5, -0.1, 0])
         self.title = label(title, size, CLOUD)
         self.title.move_to(self.frame.get_corner(UL) + np.array([0, -0.3, 0])).align_to(self.frame, LEFT).shift(RIGHT * 0.3)
         self.add(self.frame, self.title)
         self.slots = {k: np.array([x, y, 0]) for k, (x, y) in _SLOTS.items()}
         self.containers, self.doors, self.ver = {}, {}, {}
-        self.wall = self.disk_box = self.net = self.dial = self.ip_chip = None
+        self.sg = self.disk_box = self.net = self.dial = self.ip_chip = None
 
     def _o(self):
         """Offset of the piece (its frame centre minus the design centre)."""
-        return self.frame.get_center() - np.array([0.2, -0.1, 0])
+        return self.frame.get_center() - np.array([0.5, -0.1, 0])
 
     def wall(self, scene, run_time: float = 0.8):
         o = self._o()
@@ -3125,12 +3196,12 @@ class VmLayout(Piece):
         cidr = shared_chip("0.0.0.0/0", self.size, mono_font=True)
         cidr.next_to(doors, LEFT, buff=0.15).set_y(1.75 + o[1])
         sg = label("security group", self.size, S.GREY).next_to(cidr, DOWN, buff=0.12).align_to(cidr, RIGHT)
-        self.wall = VGroup(wl, doors, cidr, sg)
-        self.wall.line, self.wall.cidr = wl, cidr
+        self.sg = VGroup(wl, doors, cidr, sg)
+        self.sg.line, self.sg.cidr = wl, cidr
         scene.play(Create(wl), LaggedStart(*[FadeIn(d) for d in doors], lag_ratio=0.2), FadeIn(cidr), FadeIn(sg),
                    run_time=run_time)
-        self.keep(scene, self.wall)
-        return self.wall
+        self.keep(scene, self.sg)
+        return self.sg
 
     def engine(self, scene, run_time: float = 0.4):
         t = label("Docker", self.size, S.GREY)
@@ -3142,11 +3213,14 @@ class VmLayout(Piece):
 
     def disk(self, scene, run_time: float = 0.6):
         o = self._o()
-        fr = box(5.6, 0.62, OWN, fill_opacity=0.12).move_to(np.array([0.3, -1.78, 0]) + o)
-        t = mono("/mnt/disk-1", self.size, OWN).move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.2)
+        t = mono("/mnt/disk-1", self.size, OWN)
         f1 = VGroup(folder_glyph(0.22, OWN), mono("persistent", self.size, INK)).arrange(RIGHT, buff=0.08)
         f2 = VGroup(folder_glyph(0.22, OWN), mono("chromadb", self.size, INK)).arrange(RIGHT, buff=0.08)
-        fs = VGroup(f1, f2).arrange(RIGHT, buff=0.3).next_to(t, RIGHT, buff=0.35)
+        fs = VGroup(f1, f2).arrange(RIGHT, buff=0.25)
+        row = VGroup(t, fs).arrange(RIGHT, buff=0.3)
+        fr = box(row.width + 0.4, 0.6, OWN, fill_opacity=0.12)
+        fr.move_to([self.frame.get_x() + 0.1, -1.9 + o[1], 0])
+        row.move_to(fr)
         self.disk_box = VGroup(fr, t, fs)
         self.disk_box.frame, self.disk_box.folders = fr, {"persistent": f1, "chromadb": f2}
         scene.play(FadeIn(fr), FadeIn(t), run_time=run_time * 0.6)
@@ -3156,8 +3230,8 @@ class VmLayout(Piece):
 
     def network(self, scene, run_time: float = 0.6):
         o = self._o()
-        ln = Line(np.array([-2.6, 0.32, 0]) + o, np.array([3.2, 0.32, 0]) + o, color=ROUTE, stroke_width=3)
-        t = mono("appnetwork", self.size, ROUTE).next_to(ln.get_start(), UP, buff=0.08).align_to(ln, LEFT)
+        ln = Line(np.array([-2.6, 0.32, 0]) + o, np.array([3.7, 0.32, 0]) + o, color=ROUTE, stroke_width=3)
+        t = mono("appnetwork", self.size, ROUTE).next_to(ln.get_start(), DOWN, buff=0.06).align_to(ln, LEFT)
         self.net = VGroup(ln, t)
         self.net.line, self.net.text = ln, t
         scene.play(Create(ln), FadeIn(t), run_time=run_time)
@@ -3182,22 +3256,28 @@ class VmLayout(Piece):
         if key in self.ver:
             old = self.ver[key]
             c.move_to(old)
-            scene.play(Transform(old, c), run_time=run_time)
-            return old
-        scene.play(FadeIn(c, shift=UP * 0.1), run_time=run_time)
+            scene.play(FadeOut(old, shift=UP * 0.15), FadeIn(c, shift=UP * 0.15), run_time=run_time)
+            self._gone(scene, old)
+        else:
+            scene.play(FadeIn(c, shift=UP * 0.1), run_time=run_time)
         self.ver[key] = c
         self.keep(scene, c)
         return c
 
     def request(self, scene, src: str, dst: str, path: str, result: str, ok: bool, run_time: float = 1.4):
         a, b = self.containers[src], self.containers[dst]
-        q = route_chip(path, self.size).move_to(a.get_top() + UP * 0.3)
+        q = route_chip(path, self.size)
+        mid = (a.get_center() + b.get_center()) / 2
+        q.move_to(mid)
+        q.shift(RIGHT * min(0.0, self.frame.get_right()[0] - 0.1 - q.get_right()[0]))
+        start = q.get_center() + (a.get_center() - mid) * 0.5
+        q.move_to(start)
         scene.play(FadeIn(q, scale=0.8), run_time=run_time * 0.15)
-        scene.play(q.animate.move_to(b.get_top() + UP * 0.3), run_time=run_time * 0.35)
+        scene.play(q.animate.move_to(start + (b.get_center() - a.get_center()) * 0.5), run_time=run_time * 0.35)
         col = PASS if ok else ERR
         ans = chip(result, col, size=self.size, font=MONO).move_to(q)
         scene.play(ReplacementTransform(q, ans), run_time=run_time * 0.2)
-        scene.play(ans.animate.move_to(a.get_top() + UP * 0.3), run_time=run_time * 0.3)
+        scene.play(ans.animate.move_to(start), run_time=run_time * 0.3)
         self.answer = ans
         self.keep(scene, ans)
         return ans
@@ -3227,6 +3307,8 @@ class VmLayout(Piece):
         d80, ng = self.doors[80], self.containers["nginx"]
         q = route_chip(path, self.size)
         q.next_to(d80.text, LEFT, buff=0.2)
+        if q.get_left()[0] < -6.5:
+            q.shift(RIGHT * (-6.5 - q.get_left()[0]) + UP * 0.5)
         scene.play(FadeIn(q, shift=RIGHT * 0.3), run_time=run_time * 0.15)
         scene.play(q.animate.move_to(ng.get_left() + RIGHT * q.width / 2 + UP * 0.6), run_time=run_time * 0.25)
         rest = path[len(cut):] if cut and path.startswith(cut) else path
@@ -3271,16 +3353,16 @@ class VmLayout(Piece):
         self.dial.run(scene, turns, seconds)
 
     def ports_inside(self, scene, run_time: float = 0.5):
-        x = self.frame.get_left()[0] + 0.15
-        t = VGroup(*[mono(p, self.size, S.GREY) for p in (":3000", ":8000", ":9000")]).arrange(DOWN, buff=0.06)
-        t.move_to([x + t.width / 2, self.frame.get_bottom()[1] + 1.4, 0])
+        x = self.frame.get_left()[0] + 0.4
+        t = VGroup(*[mono(p, self.size, S.GREY) for p in (":3000", ":8000", ":9000")]).arrange(DOWN, buff=0.02)
+        t.move_to([x + t.width / 2, self.slots["frontend"][1] + self._o()[1] + 0.05, 0])
         scene.play(FadeIn(t), run_time=run_time)
         self.inner_ports = t
         self.keep(scene, t)
         return t
 
     def badge_on(self, scene, target: str, text: str, color=TURN, run_time: float = 0.4):
-        m = {"box": self.frame, "disk": self.disk_box, "wall": self.wall}.get(target)
+        m = {"box": self.frame, "disk": self.disk_box, "wall": self.sg}.get(target)
         if m is None:
             m = self.containers[target]
         t = tag(text, color)
@@ -3435,7 +3517,7 @@ class ReleaseLoop(Piece):
     def chip(self, scene, key: str, text: str, color=S.GREY, run_time: float = 0.4, dashed: bool = False,
              level: int = 0):
         c = (dashed_chip(text, color, self.size) if dashed else chip(text, color, size=self.size))
-        c.next_to(self.boxes[key], DOWN, buff=0.2 + level * 0.55)
+        c.next_to(self.boxes[key], DOWN, buff=0.15 + level * 0.48)
         if c.get_right()[0] > 6.5:
             c.shift(LEFT * (c.get_right()[0] - 6.5))
         if key in self.chips:
@@ -3464,8 +3546,8 @@ class ReleaseLoop(Piece):
         anims += self._set_box("test", S.GREY, dashed=True)
         scene.play(*anims, run_time=run_time * 0.5)
         self.chip(scene, "test", "L21", S.GREY, dashed=True)
-        self.chip(scene, "release", "tagged images land in ECR", CLOUD)
-        self.chip(scene, "monitor", "the run's color + your own check", S.GREY, level=1)
+        self.chip(scene, "release", "tagged images land in ECR", CLOUD, level=1)
+        self.chip(scene, "monitor", "the run's color + your own check", S.GREY, level=2)
 
     def ms5(self, scene, run_time: float = 0.8):
         scene.play(*self._set_box("test", PASS, fill=0.2), run_time=run_time * 0.6)
@@ -3479,7 +3561,7 @@ class ReleaseToggle(Piece):
     PLAYS delivery(scene) · deployment(scene) (button + hand swap for the ring; the cards stream
     off the end) · ends(scene) (button+hand and ring side by side, no names) · hover_ribbon(scene,
     text=KEYWORD) (a PINK ribbon above the two ends) · into_hand(scene) (the ribbon drops into the
-    hand; the button pulses) · name(scene, text, at='button'|'ring') (a 20 pt label under that end).
+    hand; the button pulses) · label_end(scene, text, at='button'|'ring') (a 20 pt label under that end).
     .belt .cards .button .hand .ring .names"""
 
     def __init__(self, size: float = 20, **kw):
@@ -3492,7 +3574,7 @@ class ReleaseToggle(Piece):
         self.cards = VGroup(*[self._card() for _ in range(3)]).arrange(RIGHT, buff=0.7)
         self.cards.move_to([-2.0, 0.05, 0])
         self.button = release_button(self.size).move_to([3.4, -0.2, 0])
-        self.hand = hand_glyph(0.7).next_to(self.button, UP, buff=0.12)
+        self.hand = hand_glyph(1.0).next_to(self.button, UP, buff=0.08)
         self.ring = auto_ring(0.45, PASS, self.size).move_to([3.4, -0.1, 0])
         self.names = VGroup()
         self.mode = None
@@ -3522,7 +3604,7 @@ class ReleaseToggle(Piece):
 
     def ends(self, scene, run_time: float = 0.6):
         self.button.move_to([3.1, -0.2, 0])
-        self.hand.next_to(self.button, UP, buff=0.12)
+        self.hand.next_to(self.button, UP, buff=0.08)
         self.ring.move_to([5.2, -0.1, 0])
         scene.play(FadeIn(self.button), FadeIn(self.hand), FadeIn(self.ring), run_time=run_time)
         self.keep(scene, self.button, self.hand, self.ring)
@@ -3541,7 +3623,7 @@ class ReleaseToggle(Piece):
         scene.play(Indicate(self.button.text, color=INK), self.button.frame.animate(rate_func=there_and_back).set_fill(ERR, 0.9),
                    run_time=run_time * 0.4)
 
-    def name(self, scene, text: str, at: str = "button", run_time: float = 0.4):
+    def label_end(self, scene, text: str, at: str = "button", run_time: float = 0.4):
         target = self.button if at == "button" else self.ring
         t = label(text, self.size, INK).next_to(target, DOWN, buff=0.25)
         scene.play(FadeIn(t), run_time=run_time)

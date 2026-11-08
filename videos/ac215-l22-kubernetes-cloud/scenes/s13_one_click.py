@@ -25,12 +25,12 @@ Beats (script.md "## S13", one voiceover block each):
    GREY-dashed under api and are crossed out. CODE(api/service.py: 13) inset bottom-left, GREEN chip
    'ROOT_PATH=/api-service' (setup_containers.py:310–311) above it; the inset swaps to (service.py: 50);
    the api answers a PINK bubble '{"version": "3.0"}' back to the browser.
-6. A packet '/' reaches frontend; a GREY page returns to the browser and spawns a new packet
+6. A packet '/' reaches frontend and becomes a GREY page that returns to the browser and spawns a new packet
    '/api-service/…' from the browser to api. CODE(.env.production: 2) inset, the value YELLOW.
 7. A PINK packet 'vector-db:8000' rides api → vdb; S08's DNS card flashes bottom-left ('as in S08').
 8. A packet 'http://<IP>/' (no .sslip.io) rides to nginx; a YELLOW 'What answers?' card. PONDER 4 (8 s).
-9. The ponder card leaves. A GREY chip 'Host: <IP>' left of the routing card with a RED '≠'; the card's
-   header flashes RED; the packet bounces back as a RED '404'. GREEN chip 'app_url · http://<IP>.sslip.io'.
+9. The ponder card leaves. The card's header flashes RED; the packet bounces back as a RED '404'; on "The
+   rule matches" a GREY chip 'Host: <IP>' left of the routing card with a RED '≠', the header flashes again. GREEN chip 'app_url · http://<IP>.sslip.io'.
 10. The journey leaves; the AsksChecklist grows to the centre, 'Load balancing' ticks YELLOW with the GREY
    note 'cloud LB at the door · nginx · Services across Pods'. Fade; empty frame.
 
@@ -173,16 +173,21 @@ class OneClick(VoiceScene):
             rj.heal(self)
             vo.wait_until("Your IP dot sslip dot io")
             rj.dns(self)
+            vo.wait_until("points back to that same IP")
+            self.play(Indicate(VGroup(*rj.dns_b.text[-4:]), color=ROUTE, scale_factor=1.25), run_time=0.6)
+            rj.heal(self)
             vo.wait_until("with no setup at all")
-            self.play(Indicate(rj.dns_b, color=ROUTE, scale_factor=1.06), run_time=0.6)
+            self.play(Indicate(rj.dns_b.text, color=ROUTE, scale_factor=1.06), run_time=0.6)
             rj.heal(self)
             vo.wait_until("The packet passes")
+            rj.drop(self, rj.dns_b, run_time=0.2)
+            pk = rj.send(self, HOST_PH, ["browser", "lb"], per=0.4)
             self.play(FadeIn(VGroup(cpa, ctl, lamp, cap)), run_time=0.4)
             self.play(lamp.animate.set_color(OWN), GrowArrow(a1), run_time=0.4)
             self.play(a1.animate.set_color(OWN), GrowArrow(a2), run_time=0.4)
             self.play(a2.animate.set_color(OWN), Indicate(lbh.text, color=OWN, scale_factor=1.06), run_time=0.4)
-            rj.drop(self, rj.dns_b, run_time=0.2)
-            pk = rj.send(self, HOST_PH, ["browser", "lb", "nginx"], per=0.4)
+            rj.heal(self)
+            self.play(pk.animate.move_to(rj._above("nginx", pk)), run_time=0.4)
             vo.wait_until("lands on the nginx controller")
             helm = grey_chip("installed by Helm")
             helm.next_to(ngx, DOWN, buff=0.2)
@@ -290,10 +295,17 @@ class OneClick(VoiceScene):
         val = code_span(env.code, 0, "/api-service")
         with self.voiceover(SAY[6]) as vo:
             pk = rj.send(self, "/", ["browser", "lb", "nginx", "front"], per=0.3)
-            rj.drop_packet(self, pk)
+            pg = file_glyph(0.6, S.GREY).move_to(pk)
+            self.play(ReplacementTransform(pk, pg), run_time=0.4)
+            self.remove(pk)
+            self.play(pg.animate.next_to(rj.hops["browser"], UP, buff=0.62), run_time=0.8)
+            rj.heal(self)
             vo.wait_until("then your browser calls the API")
-            self.play(FadeIn(env, shift=UP * 0.2), val.animate.set_color(TURN), run_time=0.5)
-            pk = rj.page_spawn(self)
+            self.play(FadeIn(env, shift=UP * 0.2), val.animate.set_color(TURN), Indicate(pg, color=S.GREY),
+                      run_time=0.5)
+            pk = rj.send(self, "/api-service/…", ["browser", "lb", "nginx", "api"])
+            self.play(FadeOut(pg), run_time=0.2)
+            self.remove(pg)
             vo.wait_until("at slash api service")
             self.play(Indicate(val, color=TURN, scale_factor=1.1), run_time=0.5)
         rj.drop_packet(self, pk)
@@ -310,7 +322,7 @@ class OneClick(VoiceScene):
             pk = rj.send(self, f"vector-db:{PORTS['vdb']}", ["api", "vdb"], per=0.6)
             vo.wait_until("by its Service name")
             self.play(FadeIn(dc, shift=UP * 0.2), FadeIn(s08, shift=UP * 0.2), run_time=0.5)
-            self.play(Indicate(dc, color=ROUTE, scale_factor=1.05), run_time=0.7)
+            self.play(Indicate(dc[1], color=ROUTE, scale_factor=1.05), run_time=0.7)
             vo.wait_until("on port 8000")
             self.play(Indicate(rj.hops["vdb"].text, color=ROUTE, scale_factor=1.06), run_time=0.6)
             rj.heal(self)
@@ -347,10 +359,17 @@ class OneClick(VoiceScene):
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(pc), run_time=0.4)
             self.remove(pc)
+            self.play(Indicate(rcard.head, color=ERR, scale_factor=1.1), run_time=0.6)
+            bad = rj.reject(self, pk)
+            vo.wait_until("The rule matches only that host name")
             self.play(FadeIn(hc, shift=RIGHT * 0.2), run_time=0.4)
             self.play(FadeIn(ne), Indicate(rcard.head, color=ERR, scale_factor=1.1), run_time=0.7)
-            vo.wait_until("The rule matches only that host name")
-            bad = rj.reject(self, pk)
+            vo.wait_until("so the same door")
+            self.play(Indicate(lbh.text, color=CLOUD, scale_factor=1.06), run_time=0.6)
+            rj.heal(self)
+            self.play(Indicate(hc, color=ERR, scale_factor=1.06), run_time=0.6)
+            self.play(Indicate(bad.text, color=ERR, scale_factor=1.15), run_time=0.6)
+            rj.heal(self)
             vo.wait_until("Use the app URL")
             self.play(FadeIn(url, shift=UP * 0.2), run_time=0.5)
             self.play(Indicate(url, color=OWN, scale_factor=1.05), run_time=0.6)

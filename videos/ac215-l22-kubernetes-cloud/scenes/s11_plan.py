@@ -160,8 +160,16 @@ def mark_extra(scene, t, line, tg):
     if row.strut.get_right()[0] + 0.45 + tg.width < t.box.get_right()[0] - 0.12:
         pin(scene, line, beside(tg, line))
         return None
-    on_bar(t, tg)
+    bar_tag(t, tg)
     scene.play(FadeIn(tg), run_time=0.3)
+    return tg
+
+
+def bar_tag(t, tg):
+    """on_bar() plus a z-index: every `scene.add(t)` (re-seating the terminal after an Indicate)
+    puts the terminal's filled box on top again, which hid a bar tag added before it."""
+    on_bar(t, tg)
+    tg.set_z_index(4)
     return tg
 
 
@@ -297,7 +305,7 @@ class ClusterPlan(VoiceScene):
             flash_tag(self, dft, INK, 1.06)
             # the local block (extra): the same three keys, no output
             xb = extra_row()
-            on_bar(t, xb)
+            bar_tag(t, xb)
             ok = ok_chip("✓ local · same three keys")
             ok.next_to(dft, LEFT, buff=0.3)
             assert ok.get_left()[0] > -6.5 and ok.get_top()[1] < TRACK_BOTTOM - 0.05, ok.get_corner(UL)
@@ -361,8 +369,11 @@ class ClusterPlan(VoiceScene):
                 pin(self, row[8], beside(un, row[8], buff=0.3))
             else:
                 un = None
-            self.play(Indicate(row[3], color=S.GREY, scale_factor=1.04),
-                      Indicate(row[8], color=S.GREY, scale_factor=1.04), run_time=0.7)
+            vo.wait_until("setup SSL")
+            self.play(Indicate(row[3], color=S.GREY, scale_factor=1.04), run_time=0.6)
+            self.add(t)
+            vo.wait_until("and an SSH user")
+            self.play(Indicate(row[8], color=S.GREY, scale_factor=1.04), run_time=0.6)
             self.add(t)
             vo.wait_until("A typo in a key name")
             self.play(*[k.animate.set_color(TURN) for k in keys], run_time=0.4)
@@ -382,7 +393,7 @@ class ClusterPlan(VoiceScene):
             self.play(track(trk, 3, True), run_time=0.3)
             type_capture(self, t, C13, type_time=0.5)
             x13 = extra_row()
-            on_bar(t, x13)
+            bar_tag(t, x13)
             self.play(FadeIn(x13), run_time=0.25)
             g13 = out(self, t, [C13.line(7), C13.line(10), "…"], wrap=True, run_time=0.4)
             tb13 = out(self, t, [C13.line(31), C13.line(32), C13.line(33), (C13.line(34), ERR)], run_time=0.5)
@@ -430,6 +441,10 @@ class ClusterPlan(VoiceScene):
             vo.wait_until("Skipping it is safe")
             sp.fill_outputs(self)
             sp.join(self)
+            # the note under the box said 'init + preview only, no up': now it would contradict
+            # the filled box, so it becomes what happened
+            note = label("after pulumi up", 20, OWN).move_to(sp.out_note)
+            self.play(Transform(sp.out_note, note), run_time=0.4)
             assert sp.get_bottom()[1] > t.box.get_top()[1] + 0.05, (sp.get_bottom(), t.box.get_top())
 
         # ========================================================== 6. the real plan: + 23 to create
@@ -440,7 +455,7 @@ class ClusterPlan(VoiceScene):
             self.remove(sp)
             resize(self, t, 3, run_time=0.4)
             x20 = extra_row()
-            on_bar(t, x20)
+            bar_tag(t, x20)
             ph.next_to(t.box, UP, buff=0.12).align_to(t.box, LEFT)
             self.play(FadeIn(x20), FadeIn(ph, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("with placeholder tags")

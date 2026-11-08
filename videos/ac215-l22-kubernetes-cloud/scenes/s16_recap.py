@@ -49,7 +49,8 @@ Deviations from SHOW:
   "destroy failed: 'resource is in use'? / delete these, then destroy again".
 - Beat 3: RecapAsks (below) builds the full card wide enough for the GREEN answers; common.py's
   AsksChecklist keeps the frame of the old one-liners and 'cloud LB · nginx Ingress · Services' ran
-  past its edge (requested as a shared fix). Each answer flashes again on its second clause.
+  past its edge (requested as a shared fix). Each answer flashes again on its second clause (Load balancing on
+  'nginx and the Services').
 - Beat 1: the audit card's tag is re-added above the card after typing (the card's opaque frame,
   re-seated, would hide it).
 - Beat 4: thumbnails are text-free glyphs (text never shrinks below 20 pt), and the 'TransformFromCopy'
@@ -214,6 +215,14 @@ class RecapAsks(AsksChecklist):
         return card_
 
 
+def text_span(t: Text, sub: str) -> VGroup:
+    """The glyphs of `sub` in a Text (Text keeps no glyphs for spaces)."""
+    flat = t.original_text.replace(" ", "")
+    i = flat.index(sub.replace(" ", ""))
+    assert len(flat) == len(t.submobjects), (len(flat), len(t.submobjects))
+    return VGroup(*t.submobjects[i:i + len(sub.replace(" ", ""))])
+
+
 def vm_icon() -> VGroup:
     """L20's VM as a small GREY-dashed memory icon. .frame .text"""
     return boxed(["L20 · one VM", "if it still runs"], PAST, dashed=True, k=0.05)
@@ -342,7 +351,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(r15), FadeIn(ac), run_time=0.5)
             ac.grow(self, center=(0, 0.0))
             for i, (cue, more) in enumerate((("Failover", "and node auto repair"),
-                                             ("Load balancing", None),
+                                             ("Load balancing", "nginx and the Services"),
                                              ("Scaling", "and kubectl scale in your hands"))):
                 vo.wait_until(cue)
                 ac.light(self, i, run_time=0.5)
@@ -454,8 +463,11 @@ class Recap(VoiceScene):
             self.play(FadeOut(ans, shift=UP * 0.2), run_time=0.4)
             self.remove(ans)
             self.play(FadeIn(road, shift=LEFT * 1.2), run_time=0.7)
+            vo.wait_until("in version 4 of the app")
+            self.play(Indicate(text_span(road.text, "cheese-app-v4"), color=INK, scale_factor=1.08), run_time=0.7)
             vo.wait_until("run from GitHub Actions")
-            self.play(Indicate(road.text, color=INK, scale_factor=1.04), run_time=0.8)
+            self.play(Indicate(text_span(road.text, "GitHub Actions, on every merge"), color=INK,
+                               scale_factor=1.06), run_time=0.8)
         self.wait(0.4)
         self.play(FadeOut(road), run_time=0.8)
         self.remove(*self.mobjects)

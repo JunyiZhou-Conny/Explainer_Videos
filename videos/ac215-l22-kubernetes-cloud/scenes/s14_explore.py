@@ -52,8 +52,11 @@ Deviations from SHOW:
 - Beat 3: README:492 (92 characters) wraps inside the README card after '--tty' (an indented second
   row that starts with the Pod name); the YELLOW chip sits between the card and the terminal with an
   arrow up to that struck name.
-- Beat 4: the terminal shrinks to 3 rows (b45's refusal and, after `exit`, the bare prompt) to make
-  room for the recall card and the GREEN card; '▶ your turn' sits under the ROOT_PATH chip.
+- Beat 4: the terminal shrinks to an empty 3-row strip (keeping b45's last rows left a dangling fold
+  row without its prompt) to make room for the recall card and the GREEN card; after `exit` the bare
+  prompt returns in it; '▶ your turn' sits under the ROOT_PATH chip.
+- Beat 1: on "gcloud container clusters" the typed command's rows flash (the narration reads it out);
+  the 'erratum' chip comes with the '--zone' underline, in the place the GREEN card then arrives above.
 - Beat 5: CODE shows lines 46–49 instead of 43–49: seven code lines plus the 8-row Outputs panel do
   not fit the frame at >= 20 pt, and side by side neither fits the width. 46–49 hold the three names
   the narration compares (namespace, ingress_name, ip_address) and app_url. The c20:40 inset is a GREY
@@ -193,16 +196,21 @@ class ExploreApp(VoiceScene):
             e52 = out(self, t, [(B52.line(2), ERR)], wrap=True, run_time=0.3)
             self.play(Indicate(substring(row_with(e52, "active account"), "active account"), color=ERR,
                                scale_factor=1.12), run_time=0.6)
-            self.add(t)
+            self.add(t, xr)                                 # keep the 'extra' tag above the bar
+            vo.wait_until("gcloud container clusters")
+            _cr = rows_of(typed)
+            _parts = [substring(_cr[0], "gcloud container clusters")] + [substring(r, r.text.strip().rstrip(" \\"))
+                                                                          for r in _cr[1:]]
+            self.play(each(_parts, TURN, 1.08, 0.35), run_time=1.4)
+            self.add(t, xr)                                 # keep the 'extra' tag above the bar
             vo.wait_until("The code passes the region")
             zrow = row_with(rows_of(typed), "--zone")
             zu = under(substring(zrow, "--zone us-central1"), ERR)
-            self.play(Create(zu), run_time=0.4)
+            self.play(Create(zu), FadeIn(slip, shift=UP * 0.1), run_time=0.5)
             attach(self, zrow, zu)
             vo.wait_until("write region")
             self.play(FadeIn(fix, shift=DOWN * 0.15), FadeIn(fix_tag), run_time=0.5)
             self.play(Indicate(substring(fix.body[1], "--region"), color=TURN, scale_factor=1.2), run_time=0.6)
-            self.play(FadeIn(slip, shift=UP * 0.1), run_time=0.4)
         self.play(FadeOut(VGroup(t, xr, fix, fix_tag, slip, ref)), track(trk, 5), run_time=0.5)
         self.remove(t, xr, fix, fix_tag, slip, ref)
 
@@ -242,7 +250,9 @@ class ExploreApp(VoiceScene):
             vo.wait_until("because the app sits")
             self.play(FadeIn(th3, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("With dash n")
-            self.play(FadeIn(rows2[1], shift=RIGHT * 0.1), run_time=0.4)
+            self.play(FadeIn(rows2[1][0], shift=RIGHT * 0.1), run_time=0.4)
+            vo.wait_until("yours lists the frontend")
+            self.play(FadeIn(VGroup(rows2[1][1], rows2[1][2]), shift=RIGHT * 0.1), run_time=0.4)
             vo.wait_until("and nginx controller")
             self.play(FadeIn(rows2[2][1], shift=RIGHT * 0.1), run_time=0.3)
             vo.wait_until("and a loader Pod")
@@ -300,7 +310,7 @@ class ExploreApp(VoiceScene):
         root.next_to(inside, RIGHT, buff=0.4).align_to(inside, UP).shift(DOWN * 0.1)
         yt = your_turn().next_to(root, DOWN, buff=0.25).align_to(root, LEFT)
         with self.voiceover(SAY[4]) as vo:
-            resize(self, t, 3, run_time=0.5)
+            resize(self, t, 3, keep=[], run_time=0.5)   # a fresh 3-row strip: no dangling fold row
             self.play(FadeIn(rec, shift=RIGHT * 0.15), FadeIn(rec_tag), run_time=0.5)
             vo.wait_until("just as we did in the game")
             self.play(Indicate(rec_rows[2], color=POD, scale_factor=1.1), run_time=0.6)
@@ -400,6 +410,8 @@ class ExploreApp(VoiceScene):
             vo.wait_until("A footer that says")
             self.play(FadeIn(page, lag_ratio=0.2), run_time=0.8)
             self.play(Indicate(footer, color=TURN, scale_factor=1.15), run_time=0.6)
+            vo.wait_until("proves the whole path works")
+            self.play(ShowPassingFlash(ring(bw.frame, ROUTE, buff=0.06, stroke=6), time_width=0.6), run_time=1.4)
             vo.wait_until("it asks slash api service")
             self.play(GrowArrow(st_ar), FadeIn(st, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("Then pick the RAG model")

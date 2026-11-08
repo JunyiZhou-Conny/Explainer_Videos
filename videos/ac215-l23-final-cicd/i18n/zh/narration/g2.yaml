@@ -1,0 +1,425 @@
+# zh narration for S11-S16 (part 2, group g2: CI, CD and who presses release, two sieves on one commit message,
+# secrets and the runner, follow one tag to the server, the delete that deletes nothing, the course on one server
+# and recap), sentence-aligned to script.md v2 (2026-11-08): one zh sentence per English sentence
+# (explainer.voice.split_sentences; 53 SAY lines, 147 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (D9).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A9):
+# ci_cd_aws.yml -> ci cd aws.yml, head_commit -> head commit, AWS_SSH_KEY -> AWS SSH key, DOCKER_TAG -> Docker tag
+# 变量, NEXTAUTH_SECRET -> NextAuth secret, cluster_state=absent -> cluster state 设为 absent, group_id -> group ID.
+# Terminal text the SAY quotes is copied in its screen form (A15): skipping, no attribute group ID.
+# The instructor rule (A16): the narration of S11-S16 names no instructor (the lecture -> 课上, the slides -> 课件).
+# Ponders without hints (A12): S12[3] 轮到你了。, S14[9], S15[0]; answers in the question's words (只构建和 push。,
+# 持续交付。). Sentences never open with a lower-case artifact (A8): 这条信息 update readme, 四条信息：update readme.
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: CI, CD, CI/CD, ECR, EC2,
+# EBS, SSH, OIDC, ci_cd_aws.yml, /run-, /run-deploy-app, \run-deploy-app, /RUN-DEPLOY-APP, /deploy-app,
+# fix typo /run-tests, .github/workflows, head_commit, AWS_SSH_KEY, .docker-tag, /deployment, /root/.ssh,
+# ac215_2024.pem, DOCKER_TAG, deploy-setup-containers / deploy-setup-webserver, git add ., git commit -m "…",
+# NEXTAUTH_SECRET, cluster_state=absent, when:, group_id, sh docker-shell.sh); null = the SAY text.
+S11:
+- en: "Part 2 starts with the lecture's loop. Developers commit to the codebase. It is built and tested: that's the C I half. Then it is deployed and monitored: the C D half. Every stage sends notifications back."
+  zh:
+  - "第 2 部分从课上的循环开始。"
+  - "开发者把代码 commit 到代码库。"
+  - "接着构建、测试：这是 CI 那一半。"
+  - "然后部署、监控：这是 CD 那一半。"
+  - "每个阶段都会把通知发回来。"
+  en_display:
+  - null
+  - null
+  - "It is built and tested: that's the CI half."
+  - "Then it is deployed and monitored: the CD half."
+  - null
+- en: "The version in the review adds one box between test and deploy: release, the moment a tested version is handed over for deployment."
+  zh:
+  - "回顾部分的版本在测试和部署之间多加了一个方框：发布，也就是把测试过的版本交出去部署的那一刻。"
+- en: "Continuous integration runs scripts on every push. Many developers share one repository, and every change passes automated tests, coding standards, and static analysis, which finds defects without running code. You built this in lectures 9 and 21."
+  zh:
+  - "持续集成会在每次 push 时运行脚本。"
+  - "很多开发者共享一个 repo，每个改动都要通过自动化测试、编码规范和静态分析，静态分析不用运行代码就能找出缺陷。"
+  - "你在第 9 讲和第 21 讲里搭过它。"
+- en: "Then delivery and deployment. Continuous delivery keeps every change ready to release, but a person presses the button. Continuous deployment ships every passing change by itself."
+  zh:
+  - "然后是交付和部署。"
+  - "持续交付让每个改动都随时可以发布，但按下按钮的是一个人。"
+  - "持续部署会自己把每个通过的改动上线。"
+- en: "For machine learning, C I also checks data quality and model performance, which makes it expensive. And C D releases a model only when its metrics are within a tolerance, and must cope with data drift. This repo deploys an app, not a model; lecture 15 was the model."
+  zh:
+  - "对机器学习来说，CI 还要检查数据质量和模型性能，所以成本很高。"
+  - "而 CD 只有在指标处于容差范围内时才发布模型，还必须应对数据漂移。"
+  - "这个 repo 部署的是应用，不是模型；模型是第 15 讲。"
+  en_display:
+  - "For machine learning, CI also checks data quality and model performance, which makes it expensive."
+  - "And CD releases a model only when its metrics are within a tolerance, and must cope with data drift."
+  - null
+- en: "Now this repo on the loop. Build, release and deploy light up; release is when the tagged images land in E C R. Test stays dashed: the workflow is named continuous integration and continuous deployment, but runs no test. It's the C D half. And monitor is the color of the run, plus your own check of the site."
+  zh:
+  - "现在把这个 repo 放到循环上。"
+  - "构建、发布和部署亮了起来；发布就是带 tag 的 image 落进 ECR 的时候。"
+  - "测试这一格还是虚线：这个工作流叫持续集成和持续部署，却一个测试都不跑。"
+  - "它是 CD 那一半。"
+  - "而监控就是这次 run 的颜色，再加上你自己去网站上看一看。"
+  en_display:
+  - null
+  - "Build, release and deploy light up; release is when the tagged images land in ECR."
+  - null
+  - "It's the CD half."
+  - null
+- en: "The lecture names several C I C D services; the course uses GitHub Actions, to build the deployment container and run it, on every commit that asks. The workflow file stays thin; the deploy logic is the playbooks you just ran."
+  zh:
+  - "课上列了好几个 CI/CD 服务；这门课用的是 GitHub Actions，构建部署 container 并运行它，在每一个提出要求的 commit 上。"
+  - "工作流文件保持得很薄；部署逻辑就是你刚刚跑过的那些 playbook。"
+  en_display:
+  - "The lecture names several CI/CD services; the course uses GitHub Actions, to build the deployment container and run it, on every commit that asks."
+  - null
+S12:
+- en: "The workflow file, C I C D AWS dot yaml, isn't in the README, so every step on this tracker is extra. It starts on every push to main, but the job runs only if the commit message contains slash run dash."
+  zh:
+  - "这个工作流文件 ci cd aws.yml 不在 README 里，所以这个进度条上的每一步都是额外的。"
+  - "每次 push 到 main 它都会启动，但这个 job 只在 commit 信息包含 /run- 时才运行。"
+  en_display:
+  - "The workflow file, ci_cd_aws.yml, isn't in the README, so every step on this tracker is extra."
+  - "It starts on every push to main, but the job runs only if the commit message contains /run-."
+- en: "And the last step, run deployment container, has its own condition on the same message: it must contain slash run deploy app."
+  zh:
+  - "而最后一步，Run Deployment Container，对同一条信息有它自己的条件：必须包含 /run-deploy-app。"
+  en_display:
+  - "And the last step, Run Deployment Container, has its own condition on the same message: it must contain /run-deploy-app."
+- en: "Two sieves, one sentence. The message update readme has no slash run dash, so the job is skipped and nothing runs."
+  zh:
+  - "两道筛子，一句话。"
+  - "这条信息 update readme 里没有 /run-，所以这个 job 被跳过，什么都不运行。"
+  en_display:
+  - null
+  - "The message update readme has no /run-, so the job is skipped and nothing runs."
+- en: "Your turn. You push fix typo, slash run tests, to main. Nothing, build and push only, or a full deploy?"
+  zh:
+  - "轮到你了。"
+  - "你把 fix typo /run-tests push 到 main。"
+  - "什么都不发生，只构建和 push，还是完整部署？"
+  en_display:
+  - null
+  - "You push fix typo /run-tests to main."
+  - null
+- en: "Build and push only. It passes the first sieve, so the runner builds three new images and pushes them to E C R, where they cost storage. It stops at the second sieve, so the server keeps the old tag."
+  zh:
+  - "只构建和 push。"
+  - "它通过了第一道筛子，所以 runner 构建三个新 image，push 到 ECR，在那里它们会产生存储费用。"
+  - "它停在了第二道筛子，所以服务器还是用旧的 tag。"
+  en_display:
+  - null
+  - "It passes the first sieve, so the runner builds three new images and pushes them to ECR, where they cost storage."
+  - null
+- en: "Slash run deploy app passes both sieves: new images, and the containers on the server are recreated."
+  zh:
+  - "/run-deploy-app 两道筛子都能通过：有新的 image，服务器上的 container 也会被重新创建。"
+  en_display:
+  - "/run-deploy-app passes both sieves: new images, and the containers on the server are recreated."
+- en: "And the commit from the opening? Its slash is a backslash. The text slash run dash isn't in it, so it bounces off the first sieve. That's the one character."
+  zh:
+  - "那开头那个 commit 呢？"
+  - "它的斜杠是反斜杠。"
+  - "里面没有 /run- 这段文字，所以它在第一道筛子就被弹了回去。"
+  - "这就是那一个字符。"
+  en_display:
+  - null
+  - null
+  - "The text /run- isn't in it, so it bounces off the first sieve."
+  - null
+- en: "The tutorial slide says the same: a workflow file in dot github, workflows, and a keyword in the commit message. Its keyword, slash deploy app, belongs to the Google Cloud repo. Here it's slash run deploy app."
+  zh:
+  - "教程那一页课件说的也一样：.github/workflows 里的一个工作流文件，加上 commit 信息里的一个关键词。"
+  - "它的关键词 /deploy-app 属于 Google Cloud 那个 repo。"
+  - "这里是 /run-deploy-app。"
+  en_display:
+  - "The tutorial slide says the same: a workflow file in .github/workflows, and a keyword in the commit message."
+  - "Its keyword, /deploy-app, belongs to the Google Cloud repo."
+  - "Here it's /run-deploy-app."
+- en: "Head commit means the last commit of a push, so three commits are judged by the last message only. And the match ignores case."
+  zh:
+  - "所谓 head commit，指的是一次 push 里的最后一个 commit，所以三个 commit 只按最后一条信息来判断。"
+  - "而且匹配不区分大小写。"
+  en_display:
+  - "head_commit means the last commit of a push, so three commits are judged by the last message only."
+  - null
+S13:
+- en: "Part 2 needs your own GitHub repository. Pause, create an empty private one, point origin at it, and push main. Its last message has no slash run dash, so nothing runs yet."
+  zh:
+  - "第 2 部分需要你自己的 GitHub repo。"
+  - "暂停一下，建一个空的私有 repo，把 origin 指向它，再 push main。"
+  - "它最后一条信息里没有 /run-，所以暂时什么都不会运行。"
+  en_display:
+  - null
+  - null
+  - "Its last message has no /run-, so nothing runs yet."
+- en: "First, give GitHub your secrets: in your repository, settings, secrets and variables, actions. Add four: the access key ID, the secret key, your account ID, and AWS S S H key, the whole pem file. The names come from the workflow."
+  zh:
+  - "先把你的 secret 交给 GitHub：在你的 repo 里，进 Settings，Secrets and variables，Actions。"
+  - "加四个：访问密钥 ID、私有访问密钥、你的账号 ID，还有 AWS SSH key，也就是整个 pem 文件。"
+  - "这些名字来自工作流文件。"
+  en_display:
+  - null
+  - "Add four: the access key ID, the secret key, your account ID, and AWS_SSH_KEY, the whole pem file."
+  - null
+- en: "Your badge has a third copy now, in a vault on GitHub, and your key a second. Every copy is one more place to protect."
+  zh:
+  - "你的徽章现在有了第三份副本，在 GitHub 上的保险库里，你的钥匙也有了第二份。"
+  - "每多一份副本，就多一个要保护的地方。"
+- en: "The runner is a fresh Ubuntu machine. An action from AWS sets up its credentials from two secrets. Then it checks who it is, lists S3, and logs Docker in to your E C R registry."
+  zh:
+  - "这个 runner 是一台全新的 Ubuntu 机器。"
+  - "一个来自 AWS 的 action 用两个 secret 配好它的凭据。"
+  - "然后它检查自己的身份，列出 S3，再让 Docker 登录你的 ECR registry。"
+  en_display:
+  - null
+  - null
+  - "Then it checks who it is, lists S3, and logs Docker in to your ECR registry."
+- en: "Then it builds the same toolbox, from the committed Dockerfile. So the Helm fix from part 1 belongs in your commit. We didn't test whether runners hit the same certificate error."
+  zh:
+  - "然后它用 commit 进去的 Dockerfile 构建同一个工具箱容器。"
+  - "所以第 1 部分的 Helm 修复要放进你的 commit 里。"
+  - "我们没有测试 runner 会不会遇到同样的证书错误。"
+- en: "Next, a fresh tag from the date, written to dot docker tag and to a file GitHub keeps between steps. Run by hand, it gives a timestamp."
+  zh:
+  - "接下来，用日期生成一个新的 tag，写进 .docker-tag，也写进一个 GitHub 在步骤之间保留的文件。"
+  - "手动跑一下，它给出的是一个时间戳。"
+  en_display:
+  - "Next, a fresh tag from the date, written to .docker-tag and to a file GitHub keeps between steps."
+  - null
+- en: "Then plain docker build, docker tag and docker push for the frontend, and the same for the other two images. In C I, the runner builds the app images, not the playbook."
+  zh:
+  - "然后对前端就是普通的 docker build、docker tag 和 docker push，另外两个 image 也一样。"
+  - "在 CI 里，构建应用 image 的是 runner，不是 playbook。"
+  en_display:
+  - null
+  - "In CI, the runner builds the app images, not the playbook."
+- en: "So the toolbox only deploys. Compared with your laptop: same toolbox, same socket. But the deployment folder sits at slash deployment, the keys at slash root slash dot S S H, and no app folders."
+  zh:
+  - "所以工具箱容器只负责部署。"
+  - "和你的笔记本相比：同一个工具箱容器，同一个 socket。"
+  - "但 deployment 目录在 /deployment，密钥在 /root/.ssh，也没有应用目录。"
+  en_display:
+  - null
+  - null
+  - "But the deployment folder sits at /deployment, the keys at /root/.ssh, and no app folders."
+- en: "Last, the S S H key. The step writes an S S H config, and your key as AC215 underscore 2024 dot pem, with mode 600. It copies both into the deployment folder, on the runner only, never committed."
+  zh:
+  - "最后是 SSH 密钥。"
+  - "这一步写出一份 SSH 配置，把你的密钥写成 ac215_2024.pem，权限 600。"
+  - "它把两个文件都拷进 deployment 目录，只在 runner 上，从不 commit。"
+  en_display:
+  - "Last, the SSH key."
+  - "The step writes an SSH config, and your key as ac215_2024.pem, with mode 600."
+  - null
+S14:
+- en: "The deploy step runs the toolbox on the runner, with the socket, two folders, and five environment variables, docker tag among them."
+  zh:
+  - "部署这一步在 runner 上运行工具箱容器，带上 socket、两个目录和五个环境变量，其中就有 Docker tag 变量。"
+  en_display:
+  - "The deploy step runs the toolbox on the runner, with the socket, two folders, and five environment variables, DOCKER_TAG among them."
+- en: "Inside, one long command: fix permissions, log in to E C R, run deploy setup containers with the new tag, then deploy setup webserver. Each link runs only if the one before succeeded."
+  zh:
+  - "里面是一长串命令：修好权限，登录 ECR，用新 tag 运行 deploy-setup-containers，再运行 deploy-setup-webserver。"
+  - "每一环只有在前一环成功时才运行。"
+  en_display:
+  - "Inside, one long command: fix permissions, log in to ECR, run deploy-setup-containers with the new tag, then deploy-setup-webserver."
+  - null
+- en: "Run by hand, as an extra, it prints the tag and lists the key, then stops at the E C R login with our placeholder key. Neither playbook runs."
+  zh:
+  - "手动跑一下，作为额外步骤，它打印出 tag，列出密钥，然后在 ECR 登录这一步，因为我们的占位密钥停了下来。"
+  - "两个 playbook 都没有运行。"
+  en_display:
+  - "Run by hand, as an extra, it prints the tag and lists the key, then stops at the ECR login with our placeholder key."
+  - null
+- en: "Follow one tag. The date stamps it on the runner. It reaches Ansible as an extra variable, which beats anything the playbook sets, so the server pulls the three images at that tag."
+  zh:
+  - "跟着一个 tag 走。"
+  - "日期在 runner 上给它盖上时间戳。"
+  - "它作为 extra vars 进入 Ansible，优先级高于 playbook 里设的任何值，所以服务器会按这个 tag pull 那三个 image。"
+- en: "Then each container is recreated: the old one stops, the new one starts, with a short gap between."
+  zh:
+  - "然后每个 container 都被重新创建：旧的停掉，新的启动，中间有一小段空档。"
+- en: "The slides deploy to a Kubernetes cluster, where, as in lecture 22, a rolling update starts new pods before the old ones go. One machine can only swap; it doesn't roll."
+  zh:
+  - "课件部署到一个 Kubernetes 集群上，在那里，和第 22 讲一样，滚动更新会先启动新的 Pod，再让旧的离开。"
+  - "一台机器只能直接替换；它滚动不起来。"
+- en: "Commit four things. Your server address on line 30: C I deploys whatever is committed. Step 9 undone: line 4 on, line 7 off. The Helm fix. The Chroma pin. Git add dot also commits your account ID and Next auth secret, so keep the repository private."
+  zh:
+  - "要 commit 四样东西。"
+  - "你服务器的地址，填在第 30 行：CI 部署的是 commit 进去的任何东西。"
+  - "撤销第 9 步：打开第 4 行，关掉第 7 行。"
+  - "Helm 的修复。"
+  - "Chroma 的 pin。"
+  - "执行 git add . 也会把你的账号 ID 和 NextAuth secret 一起 commit 进去，所以 repo 要保持私有。"
+  en_display:
+  - null
+  - "Your server address on line 30: CI deploys whatever is committed."
+  - null
+  - null
+  - null
+  - "git add . also commits your account ID and NEXTAUTH_SECRET, so keep the repository private."
+- en: "Then the slide's three commands, with this repo's keyword: git add dot, git commit with slash run deploy app in the message, and git push. Pause, and push."
+  zh:
+  - "然后是课件上的三条命令，换上这个 repo 的关键词：git add .、git commit，信息里写上 /run-deploy-app，再 git push。"
+  - "暂停一下，push。"
+  en_display:
+  - "Then the slide's three commands, with this repo's keyword: git add ., git commit -m \"…\" with /run-deploy-app in the message, and git push."
+  - null
+- en: "A green run means every step that ran exited with zero, not that the app works. Reload your site, and find the new tag in the server's image column."
+  zh:
+  - "一次绿色的 run，意思是每个跑过的步骤都以 0 退出，并不代表应用能用。"
+  - "重新加载你的网站，再到服务器的 image 那一列里找新的 tag。"
+- en: "In the lecture's words: is typing slash run deploy app continuous delivery, or continuous deployment? What would make it the other?"
+  zh:
+  - "用课上的话说：敲 /run-deploy-app，算持续交付，还是持续部署？"
+  - "怎样才能让它变成另一个？"
+  en_display:
+  - "In the lecture's words: is typing /run-deploy-app continuous delivery, or continuous deployment?"
+  - null
+- en: "Delivery. A person decides each release by typing the keyword, and nothing is tested first. Deploy every merge to main, behind the tests from lecture 21, and it becomes continuous deployment. That is Milestone 5."
+  zh:
+  - "持续交付。"
+  - "每次发布都由一个人敲关键词来决定，而且之前什么都没测试。"
+  - "把每次合并到 main 都部署出去，前面挡着第 21 讲的测试，它就变成了持续部署。"
+  - "这就是 Milestone 5。"
+S15:
+- en: "Back to the README, for its last step: delete. It runs the same playbook with cluster state equals absent. Look at the when lines. Which of these three tasks run?"
+  zh:
+  - "回到 README，看它的最后一步：删除。"
+  - "它用 cluster state 设为 absent 来跑同一个 playbook。"
+  - "看看那些 when 行。"
+  - "这三个 task 里，哪些会运行？"
+  en_display:
+  - null
+  - "It runs the same playbook with cluster_state=absent."
+  - "Look at the when: lines."
+  - null
+- en: "Run it exactly as written. Security group, skipping. E B S volume, skipping. Then the instance task has no when line, and fails: no attribute group ID. That is before any AWS call."
+  zh:
+  - "完全照着写的来跑。"
+  - "安全组，skipping。"
+  - "EBS volume，skipping。"
+  - "然后实例那个 task 没有 when 行，结果失败了：no attribute group ID。"
+  - "这发生在任何 AWS 调用之前。"
+  en_display:
+  - null
+  - null
+  - "EBS volume, skipping."
+  - "Then the instance task has no when: line, and fails: no attribute group_id."
+  - null
+- en: "The skipped task never set the security group, so the instance task trips over it. Even past that, the removal needs a volume ID that only a create run registers, and no task terminates the instance. So clean up by hand."
+  zh:
+  - "被跳过的 task 从来没有设好安全组，所以实例那个 task 被它绊倒了。"
+  - "就算过了这一关，删除还需要一个只有创建时才会 register 的 volume ID，而且没有任何 task 去终止实例。"
+  - "所以要手动清理。"
+- en: "In the E C 2 console, terminate the instance, then delete the 50 gigabyte volume, which outlives it, the security group and your key pair. Cost is one of the lecture's challenges for C D, and this server bills until you do this."
+  zh:
+  - "在 EC2 控制台里，终止实例，然后删除那个 50 GB 的 volume，实例没了它还在，再删掉安全组和你的密钥对。"
+  - "成本是课上说的 CD 的挑战之一，而这台服务器会一直计费，直到你做完这些。"
+  en_display:
+  - "In the EC2 console, terminate the instance, then delete the 50 gigabyte volume, which outlives it, the security group and your key pair."
+  - "Cost is one of the lecture's challenges for CD, and this server bills until you do this."
+- en: "In E C R, delete the three repositories. In IAM, deactivate and delete the access key, and the user and the policy if you made them only for this. On GitHub, delete the four secrets."
+  zh:
+  - "在 ECR 里，删掉那三个仓库。"
+  - "在 IAM 里，先停用再删除访问密钥，还有用户和策略，如果它们只是为这一讲建的。"
+  - "在 GitHub 上，删掉那四个 secret。"
+  en_display:
+  - "In ECR, delete the three repositories."
+  - null
+  - null
+- en: "On your laptop, remove the toolbox image, two and a half gigabytes, and keep or restore your edited files."
+  zh:
+  - "在你的笔记本上，删掉工具箱容器的 image，2.5 GB，你改过的文件可以留着，也可以恢复原样。"
+S16:
+- en: "The lecture ends with a review of the course, on the server you deployed."
+  zh:
+  - "这一讲最后是整门课的回顾，就在你部署的这台服务器上。"
+- en: "Virtual machines and containers, lectures 1 and 2. A shared bucket, lecture 3. And the images the senior developer pushed by hand: the runner pushes them now."
+  zh:
+  - "虚拟机和 container，第 1 讲和第 2 讲。"
+  - "一个共享的 bucket，第 3 讲。"
+  - "还有那位资深开发者手动 push 的 image：现在由 runner 来 push。"
+- en: "The solution architecture: frontend and API execute; E C R and the disk hold state. Retrieval, lecture 5, is the loader and Chroma; agents, lectures 6 and 7. Labeling and fine tuning aren't here: the API calls ready-made models through Bedrock, plus the cheese classifier trained earlier, as a file."
+  zh:
+  - "解决方案架构：前端和 API 负责执行；ECR 和磁盘保存状态。"
+  - "检索，第 5 讲，就是加载器和 Chroma；agent，第 6 讲和第 7 讲。"
+  - "标注和微调不在这里：API 通过 Bedrock 调用现成的模型，再加上之前训练好的奶酪分类器，以文件的形式。"
+  en_display:
+  - "The solution architecture: frontend and API execute; ECR and the disk hold state."
+  - null
+  - null
+- en: "Training and pipelines, lectures 13 and 15, sit beside this server. The API and frontend containers, lecture 18. The C I loop, lectures 9 and 21. Routing, lectures 20 and 22: today's nginx."
+  zh:
+  - "训练和 pipeline，第 13 讲和第 15 讲，在这台服务器旁边。"
+  - "API 和前端的 container，第 18 讲。"
+  - "CI 循环，第 9 讲和第 21 讲。"
+  - "路由，第 20 讲和第 22 讲：就是今天的 nginx。"
+  en_display:
+  - null
+  - null
+  - "The CI loop, lectures 9 and 21."
+  - null
+- en: "Where next? Put the tests from lecture 21 in front, and deploy every merge to main. Replace the copied keys: a role for the server, and O I D C for GitHub. And add HTTPS."
+  zh:
+  - "下一步做什么？"
+  - "把第 21 讲的测试放在前面，再把每次合并到 main 都部署出去。"
+  - "替换掉这些复制来复制去的密钥：给服务器一个角色，给 GitHub 用 OIDC。"
+  - "再加上 HTTPS。"
+  en_display:
+  - null
+  - null
+  - "Replace the copied keys: a role for the server, and OIDC for GitHub."
+  - null
+- en: "Once more, the path. Two secrets on your laptop. A toolbox using your laptop's Docker. Plays on localhost, or on the server over S S H. One tag, from the date command to a recreated container. One sentence that presses release. And clean up by hand."
+  zh:
+  - "再把这条路走一遍。"
+  - "你笔记本上的两份密钥。"
+  - "一个用你笔记本上 Docker 的工具箱容器。"
+  - "在 localhost 上，或者通过 SSH 在服务器上运行的 play。"
+  - "一个 tag，从 date 命令一直到重新创建的 container。"
+  - "一句按下发布按钮的话。"
+  - "还有手动清理。"
+  en_display:
+  - null
+  - null
+  - null
+  - "Plays on localhost, or on the server over SSH."
+  - null
+  - null
+  - null
+- en: "Test yourself. One: name the two secrets, what each opens, and three places the access key ends up. What would a role and O I D C remove?"
+  zh:
+  - "自测一下。"
+  - "第一：说出那两份密钥，各自打开什么，以及访问密钥最后会出现在哪三个地方。"
+  - "角色和 OIDC 能去掉什么？"
+  en_display:
+  - null
+  - null
+  - "What would a role and OIDC remove?"
+- en: "Two: why does S H, docker shell dot S H, fail on Ubuntu but work on a Mac? And what did that unquoted pip install actually do?"
+  zh:
+  - "第二：为什么 sh docker-shell.sh 在 Ubuntu 上失败，在 Mac 上却能用？"
+  - "那条没加引号的 pip install 到底做了什么？"
+  en_display:
+  - "Two: why does sh docker-shell.sh fail on Ubuntu but work on a Mac?"
+  - null
+- en: "Three: where do the tasks of a localhost play run, and of an appserver play? And why can the toolbox fill the disk of your laptop?"
+  zh:
+  - "第三：localhost 的 play 里的 task 在哪里运行，appserver 的 play 呢？"
+  - "为什么工具箱容器能把你笔记本的磁盘填满？"
+- en: "Four: follow one timestamp from the date command to a running container. How does the server choose between the variable and the file?"
+  zh:
+  - "第四：跟着一个时间戳，从 date 命令走到一个运行中的 container。"
+  - "服务器怎么在变量和文件之间做选择？"
+- en: "Five: which of these deploy? Update readme, fix typo slash run tests, slash run deploy app in capitals, and backslash run deploy app. And is this pipeline delivery or deployment? Answers are in the exercises."
+  zh:
+  - "第五：下面哪几个会触发部署？"
+  - "四条信息：update readme、fix typo /run-tests、大写的 /RUN-DEPLOY-APP，还有 \\run-deploy-app。"
+  - "还有，这条 pipeline 是持续交付还是持续部署？"
+  - "答案在练习里。"
+  en_display:
+  - null
+  - "Update readme, fix typo /run-tests, /RUN-DEPLOY-APP in capitals, and \\run-deploy-app."
+  - null
+  - null

@@ -65,6 +65,12 @@ Deviations from SHOW:
   scaled down. The lecture tag is shown again for this block (script: 'LECTURE (held)').
 - Beat 7: the GKE kubeconfig is a card of create_cluster.py:107–110 (the dict that yaml.dump writes),
   with its source in the header.
+- Tree12 (below): the app card opens below its box, the network card hugs the left edge, and the GOLD
+  clock sits beside a two-row caption under the cluster box (common.py's corner clock covers '×2').
+  Beat 6 closes the ingress card while the V1 inset plays and reopens it for cheese-app-ingress, so
+  the filled app group is not hidden for 14 s.
+- Boxes are flashed by their words plus an outline pulse (pulse/box_flash): Indicate on a whole
+  opaque box floods its fill and hides its words.
 - Beat 9: the 'if yours stops' card and the success chip come after the narration ends (about 7 s,
   each line flashing in turn), since the SAY line is short.
 """
@@ -155,6 +161,54 @@ class JobCousin(ControllerLoop):
         self.heal(scene)
 
 
+def pulse(fb, color, width: float = 7):
+    """ANIM: pulse a frame_box's outline (Indicate on a whole box floods its fill and hides its words)."""
+    return fb.edge.animate(rate_func=there_and_back).set_stroke(color, width=width)
+
+
+def box_flash(b, color, scale: float = 1.08):
+    """ANIMS for a boxed(): its words flash and its outline pulses."""
+    return [Indicate(b.text, color=color, scale_factor=scale), pulse(b.frame, color)]
+
+
+class Tree12(ResourceTree):
+    """V6 with two S12 layout tweaks (requested as shared fixes):
+    - cards: the network card hugs the left safe edge (it would cover more of 'identity'); the 7-member
+      app card opens BELOW its box (common.py pushes it up over 'ingress'; nothing is under the tree
+      while it is open in S12);
+    - clock: the GOLD ring sits beside a two-row caption under the cluster box, left of the provider →
+      identity arrow (common.py puts it on the box's corner, over its '×2')."""
+
+    def _card(self, key):
+        c = super()._card(key)
+        g = self.groups[key]
+        if key == "network":
+            c.shift(LEFT * (c.get_left()[0] + 6.55))
+        elif key == "app":
+            c.next_to(g.box, DOWN, buff=0.08).align_to(g.box, LEFT)
+            keep_inside(c)
+            assert c.get_top()[1] < self.groups["storage"].box.get_bottom()[1] or \
+                c.get_left()[0] > self.groups["storage"].box.get_right()[0]
+        return c
+
+    def clock(self, scene):
+        g = self.groups["cluster"]
+        c = clock_face(0.2, COST, hour=4)
+        rg = Circle(radius=0.27, stroke_color=COST, stroke_width=3)
+        t = VGroup(label("15–25 min", 20, COST), label("our estimate", 20, COST)).arrange(DOWN, aligned_edge=LEFT,
+                                                                                        buff=0.06)
+        row = VGroup(rg, t).arrange(RIGHT, buff=0.14)
+        row.next_to(g.box, DOWN, buff=0.08)
+        row.shift(RIGHT * (-1.35 - row.get_right()[0]))
+        c.move_to(rg)
+        assert row.get_left()[0] > self.groups["network"].box.get_right()[0] + 0.05 and row.get_bottom()[1] > self.groups["identity"].box.get_top()[1] + 0.05, \
+            (row.get_right(), row.get_bottom())
+        self.clock_g = VGroup(rg, c, t)
+        self.show(scene, self.clock_g, run_time=0.5)
+        scene.play(Rotate(c.hands[1], -TAU, about_point=c[0].get_center()), run_time=1.0)
+        self.heal(scene)
+
+
 def row_with(rows, s: str):
     """The first printed row whose text contains s."""
     return next(r for r in rows if s in r.text)
@@ -236,7 +290,7 @@ class PulumiUp(VoiceScene):
         self.remove(t, xr, ph, why, ar, yt, cost)
 
         # ========================================================== 2. network, then router/NAT and the cluster
-        rt = ResourceTree()
+        rt = Tree12()
         ref = lref("24–25")
         ill = illustration_tag().move_to([0.65, 3.2, 0])
         assert ill.get_left()[0] > trk.get_right()[0] + 0.2 and ill.get_right()[0] < ref.get_left()[0] - 0.2
@@ -250,7 +304,8 @@ class PulumiUp(VoiceScene):
             vo.wait_until("and its subnet")
             rt.fill_member(self, "network", "cheese-app-subnet")
             vo.wait_until("Then, side by side")
-            self.play(Indicate(rt.groups["cluster"].box, color=CLOUD, scale_factor=1.05), run_time=0.6)
+            self.play(pulse(rt.groups["cluster"].box, CLOUD), Indicate(rt.groups["cluster"].text, color=CLOUD),
+                      run_time=0.8)
             rt.heal(self)
             vo.wait_until("the router with its NAT gateway")
             rt.fill_member(self, "network", "cheese-app-router")
@@ -290,7 +345,7 @@ class PulumiUp(VoiceScene):
             vo.wait_until("A Kubernetes provider")
             kc = card(["kubeconfig, built from the cluster's outputs"], S.GREY, size=20)
             kc.move_to([0.0, -0.4, 0])
-            self.play(FadeIn(kc, shift=UP * 0.2), Indicate(cb, color=CLOUD, scale_factor=1.04), run_time=0.6)
+            self.play(FadeIn(kc, shift=UP * 0.2), pulse(cb, CLOUD), run_time=0.6)
             rt.heal(self)
             pv = rt.groups["provider"].box
             self.play(kc.animate.move_to(pv.get_center() + DOWN * 0.05).set_opacity(0), run_time=0.9)
@@ -350,7 +405,7 @@ class PulumiUp(VoiceScene):
             job.hourglass(self)
             vo.wait_until("the Job completes")
             self.play(Indicate(job.jpod.status, color=INK, scale_factor=1.15),
-                      Indicate(job.api_card, color=OWN, scale_factor=1.05), run_time=0.8)
+                      *box_flash(job.api_card, OWN), run_time=0.8)
             job.heal(self)
             vo.wait_until("lines 319 to 321")
             self.play(FadeIn(sp, shift=UP * 0.15), run_time=0.4)
@@ -370,6 +425,7 @@ class PulumiUp(VoiceScene):
             rt.expand(self, "ingress", run_time=0.35)
             rt.fill_member(self, "ingress", "nginx-f5")
             vo.wait_until("Its Service asks for a load balancer")
+            rt.collapse(self)
             self.play(FadeIn(parts["outline"]), FadeIn(parts["svc"], shift=UP * 0.1),
                       FadeIn(parts["ctl"], shift=UP * 0.1), run_time=0.6)
             self.play(GrowArrow(parts["ask"]), run_time=0.4)
@@ -384,10 +440,11 @@ class PulumiUp(VoiceScene):
             self.play(FadeIn(parts["door"], shift=LEFT * 0.3), run_time=0.4)
             self.play(Write(parts["host"]), run_time=0.6)
             vo.wait_until("and the Ingress comes last")
+            rt.expand(self, "ingress", run_time=0.3)
             rt.fill_member(self, "ingress", "cheese-app-ingress")
             rt.collapse(self)
             rt.fill(self, "ingress")
-            self.play(Indicate(rt.groups["ingress"].box, color=OWN, scale_factor=1.05), run_time=0.6)
+            self.play(pulse(rt.groups["ingress"].box, OWN), Indicate(rt.groups["ingress"].text, color=OWN), run_time=0.6)
             rt.heal(self)
         self.play(FadeOut(VGroup(rt, nodes, inset, ref, ill)), run_time=0.6)
         self.remove(rt, nodes, inset, ref, ill)
@@ -420,7 +477,7 @@ class PulumiUp(VoiceScene):
             path = VMobject().set_points_as_corners([a1.get_start(), kcard.get_left(), kcard.get_right(), a2.get_end()])
             self.play(FadeIn(dot), run_time=0.15)
             self.play(travel(dot, path, run_time=1.2))
-            self.play(FadeOut(dot), Indicate(api, color=CLOUD, scale_factor=1.06), run_time=0.4)
+            self.play(FadeOut(dot), *box_flash(api, CLOUD), run_time=0.5)
             self.remove(dot)
             vo.wait_until("through the GKE auth plugin")
             plug = rows[2][1][1]
@@ -441,12 +498,14 @@ class PulumiUp(VoiceScene):
         pod.move_to([-4.6, 0.55, 0])
         pod_l = label("api Pod", SIZE, INK).next_to(pod, DOWN, buff=0.15)
         badge = chip("api-ksa", OWN, size=SIZE, font=MONO).next_to(pod, RIGHT, buff=0.25)
-        vtx = boxed(["Vertex AI"], CLOUD, size=22).move_to([4.6, 0.55, 0])
+        vtx = boxed(["Vertex AI"], CLOUD, size=22).move_to([5.25, 0.55, 0])
         edge_x = cl.get_right()[0]
         door_ = Rectangle(width=0.16, height=1.0, stroke_width=0).set_fill(CLOUD, 0.85).move_to([edge_x, 0.55, 0])
         key = key_icon("service", name="gcp-service")
         key.move_to([edge_x + 1.2, 0.55, 0])
         wi = label("Workload Identity", SIZE, OWN).next_to(key, UP, buff=0.3)
+        wi.set_x(max(key.get_x(), edge_x + 0.3 + wi.width / 2))
+        assert wi.get_right()[0] < vtx.get_left()[0] - 0.1
         nojson = grey_chip("no JSON key inside the cluster").move_to([-2.5, -2.15, 0])
         assert nojson.get_top()[1] < cl.get_bottom()[1] - 0.1
         assert key.get_right()[0] < vtx.get_left()[0] - 0.1, (key.get_right(), vtx.get_left())
@@ -459,10 +518,9 @@ class PulumiUp(VoiceScene):
             vo.wait_until("which Workload Identity swaps")
             self.play(FadeIn(vtx, shift=LEFT * 0.2), FadeIn(door_), run_time=0.4)
             self.play(badge.animate.move_to([edge_x - badge.width / 2 - 0.15, 0.55, 0]), run_time=0.8)
-            self.play(FadeIn(wi, shift=DOWN * 0.1), FadeOut(badge), FadeIn(key, shift=RIGHT * 0.3), run_time=0.6)
-            self.remove(badge)
+            self.play(FadeIn(wi, shift=DOWN * 0.1), ReplacementTransform(badge, key), run_time=0.8)
             vo.wait_until("at the door to Vertex AI")
-            self.play(Indicate(vtx, color=CLOUD, scale_factor=1.06), Indicate(key, color=OWN, scale_factor=1.1),
+            self.play(*box_flash(vtx, CLOUD), Indicate(key, color=OWN, scale_factor=1.1),
                       run_time=0.7)
             vo.wait_until("No JSON key sits in the cluster")
             self.play(FadeIn(nojson, shift=UP * 0.1), run_time=0.4)
@@ -506,7 +564,7 @@ class PulumiUp(VoiceScene):
         self.play(FadeIn(stops, shift=UP * 0.15), run_time=0.6)
         for item in stops.items:
             self.play(Indicate(item, color=TURN, scale_factor=1.04), run_time=0.9)
-            self.wait(0.6)
+            self.wait(0.4)
         self.play(FadeIn(ok, shift=UP * 0.1), run_time=0.4)
         flash_tag(self, ok, OWN, 1.04)
         self.wait(1.0)

@@ -1,0 +1,599 @@
+# zh narration for S01-S10 (part 1, group g1: thirty-three commits and one backslash, the lecture's map in AWS
+# words, a policy, a user and two keys, Ansible in one picture, the toolbox's three surprises, whose Docker, three
+# images and one timestamp, create a server then provision it, five containers on one network, nginx as the one
+# front door), sentence-aligned to script.md v2 (2026-11-08): one zh sentence per English sentence
+# (explainer.voice.split_sentences; 83 SAY lines, 213 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (D9).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A9):
+# NEXTAUTH_SECRET -> NextAuth secret, here-string (<<<) -> here string, EXTERNAL_IP -> external IP,
+# DOCKER_TAG -> Docker tag 变量, failed=1 / failed=0 -> failed 为 1 / failed 为 0; ansible>=9.0.0 is never written.
+# Terminal text the SAY quotes is copied in its screen form (A15): credentials file not found, redirection
+# unexpected, Gathering Facts, AWS was not able to validate the provided access credentials, UNREACHABLE, Could not
+# resolve hostname external IP, 410 Gone; paraphrases are translated (安全令牌无效, docker login 收到的是一个空密码).
+# The instructor rule (A16): the narration of S01-S10 names no instructor (the lecture -> 课上, the slides -> 课件).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: /run-deploy-app, EC2,
+# ECR, SSH, CSV, GCP, us-east-1, t2.large, cheese-app-deployment, ansible-playbook and its playbook files,
+# CheeseAppECRPolicy, deployment-ac215-user, cheese-app-ac215-key-pair, ac215_2024(.pem), chmod 400, NEXTAUTH_SECRET,
+# docker-shell.sh, sh / bash docker-shell.sh, .., /home, here-string (<<<), set -e, /secrets, aws sts
+# get-caller-identity, /app, /frontend-react, .docker-tag, docker system prune -a, -f, public IP address, EXTERNAL_IP,
+# /mnt/disk-1, aws configure, deploy-setup-containers.yml:151, docker run -it, -it, DOCKER_TAG, /api/, /api,
+# /api/newsletters, /newsletters, nginx.conf); null = the SAY text.
+S01:
+- en: "This repository has 39 commits, and 33 of them carry the same message: slash run deploy app. That sentence is a button. Pushed to main, it rebuilds the app and redeploys a server."
+  zh:
+  - "这个 repo 有 39 个 commit，其中 33 个带着同一条信息：/run-deploy-app。"
+  - "这句话就是一个按钮。"
+  - "push 到 main 以后，它会重新构建应用，再重新部署一台服务器。"
+  en_display:
+  - "This repository has 39 commits, and 33 of them carry the same message: /run-deploy-app."
+  - null
+  - null
+- en: "And once, the slash leans the other way. To the workflow, that is a different sentence, and nothing runs at all. One character."
+  zh:
+  - "有一次，斜杠倒向了另一边。"
+  - "对工作流来说，那是另一句话，什么都不会运行。"
+  - "就差一个字符。"
+- en: "How does a sentence deploy a server, and why did one character stop it? By the end of part 2, you'll push that sentence yourself."
+  zh:
+  - "一句话是怎么部署一台服务器的，一个字符又为什么拦住了它？"
+  - "到第 2 部分结束时，你会亲手 push 这句话。"
+- en: "This is the course's last lecture: final deployment and review, in three parts. Its motivation is a playful prediction web page; our reading of it: even a toy prediction app is only useful when it runs somewhere, and stays current."
+  zh:
+  - "这是这门课的最后一讲：最终部署与回顾，分三节。"
+  - "它的动机是一个好玩的预测网页；我们的理解是：哪怕是一个玩具级的预测应用，也只有在某个地方跑着、并且保持最新时才有用。"
+- en: "This recording machine has no AWS account. Everything on the laptop ran for real. Every command that talks to AWS ran exactly as the README writes it, up to its real first error. The consoles, the server and GitHub are drawings, marked illustration."
+  zh:
+  - "我们录制用的这台机器没有 AWS 账号。"
+  - "笔记本上的一切都是真实运行的。"
+  - "每条和 AWS 打交道的命令，都照 README 写的原样跑了，一直跑到它真实的第一个报错。"
+  - "控制台、服务器和 GitHub 都是示意图，标着 illustration。"
+- en: "You need Docker, your own AWS account with billing, and for part 2, a GitHub repository. This lecture runs a server until you delete it. The tracker names the README step, and your turn means pause and run it."
+  zh:
+  - "你需要 Docker、一个你自己的、开通了结算的 AWS 账号，第 2 部分还需要一个 GitHub repo。"
+  - "这一讲会让一台服务器一直运行，直到你删掉它。"
+  - "进度条标出 README 的哪一步，your turn 表示暂停一下，自己跑一遍。"
+S02:
+- en: "Here is the lecture's map. The dev team commits to GitHub, GitHub Actions builds and deploys to the cloud, and users reach the app there."
+  zh:
+  - "这是课上的总图。"
+  - "开发团队把代码 commit 到 GitHub，GitHub Actions 负责构建并部署到云上，用户在那里访问应用。"
+- en: "Above it, the app as one chain, from data to frontend."
+  zh:
+  - "在它上面，是画成一条链的应用，从数据一直到前端。"
+- en: "The slides speak Google Cloud; we follow the AWS repository, as in lecture 15. Now the same map in AWS words. The Kubernetes cluster becomes one E C 2 server running Docker containers. The image registry becomes E C R, with three repositories. Pulumi becomes Ansible playbooks."
+  zh:
+  - "课件讲的是 Google Cloud；我们跟的是 AWS 的 repo，和第 15 讲一样。"
+  - "现在把同一张总图换成 AWS 的说法。"
+  - "Kubernetes 集群变成了一台跑着 Docker container 的 EC2 服务器。"
+  - "image registry 变成了 ECR，里面有三个仓库。"
+  - "Pulumi 变成了 Ansible 的 playbook。"
+  en_display:
+  - null
+  - null
+  - "The Kubernetes cluster becomes one EC2 server running Docker containers."
+  - "The image registry becomes ECR, with three repositories."
+  - null
+- en: "The service account key becomes two secrets: an IAM access key and an E C 2 key pair. The keyword becomes slash run deploy app, and the ingress becomes one nginx container at the front door."
+  zh:
+  - "服务账号密钥变成了两份密钥：一个 IAM 访问密钥和一个 EC2 密钥对。"
+  - "关键词变成了 /run-deploy-app，Ingress 变成了站在前门的一个 nginx container。"
+  en_display:
+  - "The service account key becomes two secrets: an IAM access key and an EC2 key pair."
+  - "The keyword becomes /run-deploy-app, and the ingress becomes one nginx container at the front door."
+- en: "There's no Kubernetes and no Pulumi here: one server, set up by Ansible, and no machine learning lane."
+  zh:
+  - "这里没有 Kubernetes，也没有 Pulumi：一台服务器，由 Ansible 配置好，也没有机器学习那条线。"
+- en: "The lecture lists five things to automate. For this repo: pipeline jobs and model training, no, those were lecture 15. Frontend and backend deployment, yes, always together. Building and pushing containers, yes: three app images."
+  zh:
+  - "课上列了五件要自动化的事。"
+  - "对这个 repo 来说：pipeline 的 job 和模型训练，没有，那是第 15 讲的事。"
+  - "前端和后端的部署，有，而且总是一起。"
+  - "构建和 push container，有：三个应用 image。"
+- en: "The lecture's plan: we already have a deployment container, so let GitHub Actions run it. Here it's called cheese app deployment."
+  zh:
+  - "课上的计划是：我们已经有了一个部署 container，那就让 GitHub Actions 来运行它。"
+  - "在这里，它叫 cheese-app-deployment。"
+  en_display:
+  - null
+  - "Here it's called cheese-app-deployment."
+- en: "The slides say: invoke the command line in that container. Here, that means ansible playbook commands. In part 1 you type them; in part 2, they arrive as one long command."
+  zh:
+  - "课件上说：在那个 container 里调用命令行。"
+  - "在这里，就是 ansible-playbook 命令。"
+  - "第 1 部分由你来敲；第 2 部分，它们会作为一长串命令送过来。"
+  en_display:
+  - null
+  - "Here, that means ansible-playbook commands."
+  - null
+S03:
+- en: "These first commands are extra; the README has no clone step. One branch, unchanged since we pinned it, and inside src, the deployment folder."
+  zh:
+  - "最开始这几条命令是额外的；README 里没有 clone 这一步。"
+  - "只有一个分支，从我们固定版本以来没有变过；src 里面就是 deployment 目录。"
+- en: "The list of APIs to enable sits inside a comment; on AWS there's nothing to switch on. One check: the API calls Bedrock models in U S East 1, chosen in 2024, so check your account can still use them."
+  zh:
+  - "要启用的 API 列表写在一段注释里；在 AWS 上没有什么需要打开的。"
+  - "检查一下：API 调用的是 us-east-1 里的 Bedrock 模型，那是 2024 年选的，所以确认一下你的账号还能用它们。"
+  en_display:
+  - null
+  - "One check: the API calls Bedrock models in us-east-1, chosen in 2024, so check your account can still use them."
+- en: "Step 2, in the IAM console: create a policy from this JSON. It allows one identity check and nine E C R actions, to log in, push and pull, on any resource."
+  zh:
+  - "第 2 步，在 IAM 控制台里：用这段 JSON 创建一个策略。"
+  - "它允许一次身份检查和九个 ECR 操作，用来登录、push 和 pull，对任何资源都适用。"
+  en_display:
+  - null
+  - "It allows one identity check and nine ECR actions, to log in, push and pull, on any resource."
+- en: "Name it cheese app E C R policy, and pause to create it; an extra check shows the JSON parses. It can't create a repository, so you'll make three by hand later."
+  zh:
+  - "把它命名为 CheeseAppECRPolicy，暂停一下，把它创建好；一个额外检查表明这段 JSON 能正常解析。"
+  - "它不能创建仓库，所以稍后你要手动建三个。"
+  en_display:
+  - "Name it CheeseAppECRPolicy, and pause to create it; an extra check shows the JSON parses."
+  - null
+- en: "Step 3: create a user, deployment AC215 user. It gets three policies AWS manages: full access to S3, E C 2 and Bedrock. And your own E C R policy."
+  zh:
+  - "第 3 步：创建一个用户，deployment-ac215-user。"
+  - "给它挂上三个 AWS 托管策略：S3、EC2 和 Bedrock 的完全访问权限。"
+  - "再加上你自己的 ECR 策略。"
+  en_display:
+  - "Step 3: create a user, deployment-ac215-user."
+  - "It gets three policies AWS manages: full access to S3, EC2 and Bedrock."
+  - "And your own ECR policy."
+- en: "Step 4: create an access key for a third party service, and download the C S V file. Save it in a secrets folder beside your clone, not inside it, so it can never be committed."
+  zh:
+  - "第 4 步：为第三方服务创建一个访问密钥，再下载 CSV 文件。"
+  - "把它存进你 clone 旁边的一个 secrets 目录里，不是 clone 里面，这样它就永远不会被 commit。"
+  en_display:
+  - "Step 4: create an access key for a third party service, and download the CSV file."
+  - null
+- en: "Step 5: create an E C 2 key pair, and save its pem file there too. The badge talks to the AWS API; the key opens the S S H door of your server."
+  zh:
+  - "第 5 步：创建一个 EC2 密钥对，把它的 pem 文件也存到那里。"
+  - "徽章负责和 AWS 的 API 打交道；钥匙打开你服务器的 SSH 门。"
+  en_display:
+  - "Step 5: create an EC2 key pair, and save its pem file there too."
+  - "The badge talks to the AWS API; the key opens the SSH door of your server."
+- en: "An extra check shows a small gap. The README names the key pair cheese app AC215 key pair. The code expects AC215 underscore 2024, in three files. Easiest fix: use that name, so the file is AC215 underscore 2024 dot pem."
+  zh:
+  - "一个额外检查暴露出一个小出入。"
+  - "README 把密钥对叫作 cheese-app-ac215-key-pair。"
+  - "代码要的却是 ac215_2024，三个文件里都是。"
+  - "最省事的修法：就用这个名字，这样文件就是 ac215_2024.pem。"
+  en_display:
+  - null
+  - "The README names the key pair cheese-app-ac215-key-pair."
+  - "The code expects ac215_2024, in three files."
+  - "Easiest fix: use that name, so the file is ac215_2024.pem."
+- en: "Extra: change mode 400 on the pem file. S S H refuses a private key that others can open."
+  zh:
+  - "额外一步：对 pem 文件执行 chmod 400。"
+  - "SSH 会拒绝一个别人也能打开的私钥。"
+  en_display:
+  - "Extra: chmod 400 on the pem file."
+  - "SSH refuses a private key that others can open."
+S04:
+- en: "Step 6, deployment setup, brings a new tool: Ansible. Pulumi, in lecture 20, described the infrastructure you want. Ansible runs an ordered list of tasks against the machines in an inventory. Many of its modules describe a state; this repo also runs plenty of shell commands."
+  zh:
+  - "第 6 步，部署准备，带来一个新工具：Ansible。"
+  - "第 20 讲的 Pulumi，描述的是你想要的基础设施。"
+  - "Ansible 按顺序执行一串 task，对象是 inventory 里的那些机器。"
+  - "它的很多模块描述的是一个状态；这个 repo 也跑了不少 shell 命令。"
+- en: "A playbook is a list of plays. Each play names its hosts and holds tasks, and each task calls one module. The hosts line decides where tasks run: localhost means inside your toolbox; appserver means on the server, over S S H."
+  zh:
+  - "一个 playbook 就是一串 play。"
+  - "每个 play 写明它的 hosts，里面装着 task，每个 task 调用一个模块。"
+  - "其中 hosts 这一行决定 task 在哪里运行：localhost 表示在你的工具箱容器里；appserver 表示在服务器上，通过 SSH。"
+  en_display:
+  - null
+  - null
+  - "The hosts line decides where tasks run: localhost means inside your toolbox; appserver means on the server, over SSH."
+- en: "Here is that inventory, as one file. Ansible logs in as the user ubuntu. Line 4 points at the key for GitHub Actions; line 7, commented out, at the key on your laptop. Lines 9 to 11 take your keys from the environment: nothing to type."
+  zh:
+  - "这就是那个 inventory，写成一个文件。"
+  - "Ansible 以 ubuntu 用户的身份登录。"
+  - "第 4 行指向给 GitHub Actions 用的密钥；第 7 行被注释掉了，指向你笔记本上的密钥。"
+  - "第 9 到 11 行从环境变量里取你的密钥：什么都不用填。"
+- en: "Then the machine: the region, U S East 1, and a T 2 large instance. The key pair name, marked change this. An Ubuntu machine image for that region, and the disk names and sizes."
+  zh:
+  - "然后是这台机器：区域 us-east-1，一个 t2.large 实例。"
+  - "密钥对的名字，标着 change this。"
+  - "适用于那个区域的一个 Ubuntu 系统映像，还有磁盘的名字和大小。"
+  en_display:
+  - "Then the machine: the region, us-east-1, and a t2.large instance."
+  - null
+  - null
+- en: "The README's four bullets point at exactly these lines. Change two now: the key pair name, unless yours already matches, and line 24, the Next auth secret, to a random value of your own. The host on line 30 comes later."
+  zh:
+  - "README 的四个要点指的正是这几行。"
+  - "现在改两处：密钥对的名字，除非你的已经对上了；还有第 24 行，NextAuth secret，改成你自己的一个随机值。"
+  - "第 30 行的 host 稍后再填。"
+  en_display:
+  - null
+  - "Change two now: the key pair name, unless yours already matches, and line 24, the NEXTAUTH_SECRET, to a random value of your own."
+  - null
+- en: "Every run ends with a recap; success means failed and unreachable stay at zero. A declarative task run twice reports ok the second time."
+  zh:
+  - "每次运行最后都有一个 recap；成功的意思是 failed 和 unreachable 都保持为 0。"
+  - "一个声明式的 task 跑两次，第二次会报 ok。"
+S05:
+- en: "Step 1: go to the deployment folder. Here are the playbooks, the inventory and docker shell dot S H."
+  zh:
+  - "第 1 步：进到 deployment 目录。"
+  - "这里有那几个 playbook、inventory 和 docker-shell.sh。"
+  en_display:
+  - null
+  - "Here are the playbooks, the inventory and docker-shell.sh."
+- en: "Open the script. It splits the second line of your C S V into two variables. Line 17 hard codes the account ID of the author, a placeholder here."
+  zh:
+  - "打开这个脚本。"
+  - "它把你 CSV 的第二行拆成两个变量。"
+  - "第 17 行把作者的账号 ID 写死了，这里是一个占位符。"
+  en_display:
+  - null
+  - "It splits the second line of your CSV into two variables."
+  - null
+- en: "Run it as cloned, and it stops: credentials file not found. Four dot dots from the deployment folder end at slash home, one level too far."
+  zh:
+  - "照 clone 下来的原样运行，它就停了：credentials file not found。"
+  - "从 deployment 目录往上四个 ..，就到了 /home，多上了一层。"
+  en_display:
+  - null
+  - "Four .. from the deployment folder end at /home, one level too far."
+- en: "Step 2 is that fix: three levels up, with sed or your editor. Now the file is found."
+  zh:
+  - "第 2 步就是这个修复：往上三层，用 sed 或者你的编辑器改。"
+  - "现在文件找到了。"
+- en: "Step 3: S H, docker shell dot S H, exactly as written. Surprise 1, on this Ubuntu laptop: a syntax error on line 13, redirection unexpected."
+  zh:
+  - "第 3 步：sh docker-shell.sh，完全照着写的来。"
+  - "意外 1，在这台 Ubuntu 笔记本上：第 13 行有语法错误，redirection unexpected。"
+  en_display:
+  - "Step 3: sh docker-shell.sh, exactly as written."
+  - null
+- en: "Extra: on Ubuntu, S H is dash, which has no here string. And typing S H skips the first line, which asks for bash. On a Mac the README line works; on Linux, use bash instead."
+  zh:
+  - "额外说明：在 Ubuntu 上，sh 就是 dash，它没有 here string。"
+  - "而且敲 sh 会跳过第一行，那一行要的是 bash。"
+  - "在 Mac 上 README 这一行能用；在 Linux 上，换成 bash。"
+  en_display:
+  - "Extra: on Ubuntu, sh is dash, which has no here-string (<<<)."
+  - "And typing sh skips the first line, which asks for bash."
+  - null
+- en: "Surprise 2, at the time of recording, on our machine: the build stops at step 9 of 15. Curl can't verify the Helm download site, so no signing key arrives."
+  zh:
+  - "意外 2，录制时，在我们的机器上：构建停在了 15 步里的第 9 步。"
+  - "这里 curl 验证不了 Helm 的下载站点，所以签名密钥没能下载下来。"
+- en: "And the script doesn't stop: set dash e is commented out, so it runs an image that was never built. Check the build output, not just the last line."
+  zh:
+  - "而且脚本不会停下：set -e 被注释掉了，所以它会去运行一个根本没构建出来的 image。"
+  - "要看构建输出，不能只看最后一行。"
+  en_display:
+  - "And the script doesn't stop: set -e is commented out, so it runs an image that was never built."
+  - null
+- en: "Our machine didn't trust that certificate's root. Your laptop may. No playbook uses Helm, so delete these two lines and the word helm, and the toolbox builds."
+  zh:
+  - "我们的机器不信任那张证书的根证书。"
+  - "你的笔记本可能信任。"
+  - "没有哪个 playbook 用到 Helm，所以删掉这两行和 helm 这个词，工具箱容器就能构建了。"
+- en: "Surprise 3: inside the toolbox, slash secrets is empty. Line 26 has the same four dot dots, so Docker mounted an empty folder. The prompt ID changes on every start."
+  zh:
+  - "意外 3：在工具箱容器里，/secrets 是空的。"
+  - "第 26 行也是同样的四个 ..，所以 Docker 挂载了一个空目录。"
+  - "提示符里的 ID 每次启动都会变。"
+  en_display:
+  - "Surprise 3: inside the toolbox, /secrets is empty."
+  - "Line 26 has the same four .., so Docker mounted an empty folder."
+  - null
+- en: "So fix line 26 like line 10, and put your own account ID on line 17. AWS S T S get caller identity shows it, once your keys work."
+  zh:
+  - "所以照第 10 行的样子改第 26 行，再在第 17 行填上你自己的账号 ID。"
+  - "运行 aws sts get-caller-identity 就能看到它，前提是你的密钥能用。"
+  en_display:
+  - null
+  - "aws sts get-caller-identity shows it, once your keys work."
+- en: "Run bash docker shell dot S H again: both files are there, yours named AC215 underscore 2024 dot pem, and four AWS variables are set. Pause, and get to this prompt yourself."
+  zh:
+  - "再运行一次 bash docker-shell.sh：两个文件都在，你的叫 ac215_2024.pem，四个 AWS 变量也都设好了。"
+  - "暂停一下，自己走到这个提示符。"
+  en_display:
+  - "Run bash docker-shell.sh again: both files are there, yours named ac215_2024.pem, and four AWS variables are set."
+  - null
+S06:
+- en: "How was the toolbox started? Line 36 mounts the Docker socket. Then the deployment folder at slash app, your secrets, and the three app folders. Lines 43 to 46 hand in your keys as environment variables."
+  zh:
+  - "工具箱容器是怎么启动的？"
+  - "第 36 行挂载了 Docker socket。"
+  - "然后是挂到 /app 的 deployment 目录、你的密钥，还有三个应用目录。"
+  - "第 43 到 46 行把你的密钥作为环境变量传进去。"
+  en_display:
+  - null
+  - null
+  - "Then the deployment folder at /app, your secrets, and the three app folders."
+  - null
+- en: "A question. Inside the toolbox, Ansible runs docker build for the frontend. Whose disk does the image land on: the toolbox's, or your laptop's?"
+  zh:
+  - "想一想。"
+  - "在工具箱容器里，Ansible 为前端运行 docker build。"
+  - "这个 image 落在谁的磁盘上：工具箱容器的，还是你笔记本的？"
+- en: "Your laptop's. No Docker engine runs inside the toolbox; the Docker module of Ansible talks through the socket to your laptop's Docker. So the image lands beside the toolbox, not inside it. That's also why a prune, run from inside, would sweep your laptop."
+  zh:
+  - "你笔记本的。"
+  - "工具箱容器里没有运行 Docker 引擎；Ansible 的 Docker 模块通过 socket 和你笔记本上的 Docker 通信。"
+  - "所以 image 落在工具箱容器旁边，而不是里面。"
+  - "这也是为什么在里面跑一次 prune，清掉的会是你笔记本上的东西。"
+- en: "Extra checks: the AWS command line, Docker, kubectl and Ansible are there, but not the Ansible the Dockerfile asked for."
+  zh:
+  - "额外检查：AWS 命令行、Docker、kubectl 和 Ansible 都在，但不是 Dockerfile 要的那个 Ansible。"
+- en: "Without quotes, the greater than sign in that pip install is a shell redirect. So the root folder holds a file whose name starts with an equals sign: pip wrote its log there, and installed Ansible 6, on an old Python. Quoting fixes it, but leave it for now: the provision playbook relies on this old Ansible."
+  zh:
+  - "不加引号的话，那条 pip install 里的大于号就是 shell 的重定向。"
+  - "所以根目录里有一个以等号开头的文件：pip 把它的日志写到了那里，装上的是 Ansible 6，跑在一个旧版 Python 上。"
+  - "加上引号就能修好，但先别动：provision 那个 playbook 依赖这个旧 Ansible。"
+- en: "That explains the warnings: the old Python, a collection that doesn't support this Ansible, and an old module name. We hide them from now on."
+  zh:
+  - "这就解释了那些警告：旧版 Python、一个不支持这个 Ansible 的 collection，还有一个旧的模块名。"
+  - "从现在起我们把它们隐藏掉。"
+- en: "AWS S T S get caller identity: the security token is invalid. Ours is a placeholder. With your key, this prints your account ID and your user."
+  zh:
+  - "运行 aws sts get-caller-identity，结果是：安全令牌无效。"
+  - "我们的是占位符。"
+  - "用你的密钥，它会打印出你的账号 ID 和你的用户。"
+  en_display:
+  - "aws sts get-caller-identity: the security token is invalid."
+  - null
+  - null
+- en: "The inventory graph shows all, then appserver, then one host. And all five playbooks pass a syntax check. The toolbox is ready."
+  zh:
+  - "这张 inventory 图里先是 all，然后是 appserver，再下面是一台主机。"
+  - "五个 playbook 也全都通过了语法检查。"
+  - "工具箱容器准备好了。"
+S07:
+- en: "Step 4: in E C R, in U S East 1, create three empty private repositories: the vector D B tool, the API service and the frontend. Your policy can push to them, but not create them."
+  zh:
+  - "第 4 步：在 ECR 里，在 us-east-1，创建三个空的私有仓库：向量数据库工具、API 服务和前端。"
+  - "你的策略可以往里面 push，但不能创建它们。"
+  en_display:
+  - "Step 4: in ECR, in us-east-1, create three empty private repositories: the vector DB tool, the API service and the frontend."
+  - null
+- en: "The first playbook runs on localhost, inside the toolbox. Task 1 logs Docker in to E C R. Task 2 stamps a tag from the date, down to the second, and registers it, so later tasks can use it."
+  zh:
+  - "第一个 playbook 在 localhost 上运行，也就是工具箱容器里。"
+  - "第 1 个 task 让 Docker 登录 ECR。"
+  - "第 2 个 task 用日期打一个 tag，精确到秒，再把它 register 下来，让后面的 task 能用。"
+  en_display:
+  - null
+  - "Task 1 logs Docker in to ECR."
+  - null
+- en: "Then it builds the frontend from slash frontend react, the folder the script mounted, names the image with that tag, and pushes it. The API and the vector D B tool follow. Last, it saves the tag in a file: dot docker tag."
+  zh:
+  - "然后它从 /frontend-react，也就是脚本挂载的那个目录，构建前端，用这个 tag 给 image 命名，再 push 上去。"
+  - "API 和向量数据库工具紧随其后。"
+  - "最后，它把 tag 存进一个文件：.docker-tag。"
+  en_display:
+  - "Then it builds the frontend from /frontend-react, the folder the script mounted, names the image with that tag, and pushes it."
+  - "The API and the vector DB tool follow."
+  - "Last, it saves the tag in a file: .docker-tag."
+- en: "Step 5: ansible playbook, deploy docker images, dash i, inventory dot yaml. Pause and run it."
+  zh:
+  - "第 5 步：ansible-playbook deploy-docker-images.yml -i inventory.yml。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - "Step 5: ansible-playbook deploy-docker-images.yml -i inventory.yml."
+  - null
+- en: "Our first real error: at the E C R login, the security token is invalid. The second line follows from the first: docker login received an empty password. The recap says failed, 1."
+  zh:
+  - "我们第一个真实的报错：在 ECR 登录这一步，安全令牌无效。"
+  - "第二行是第一行导致的：docker login 收到的是一个空密码。"
+  - "这次的 recap 显示 failed 为 1。"
+  en_display:
+  - "Our first real error: at the ECR login, the security token is invalid."
+  - null
+  - null
+- en: "Extra: no image was built. The laptop still holds only the toolbox and its base."
+  zh:
+  - "额外检查：一个 image 都没构建出来。"
+  - "笔记本上仍然只有工具箱容器和它的基础 image。"
+- en: "With your keys, all 11 tasks run: three images built on your laptop and pushed, and your tag written to dot docker tag. Look for failed, zero, in the recap."
+  zh:
+  - "用你的密钥，11 个 task 全部会运行：三个 image 在你的笔记本上构建好并 push 上去，你的 tag 写进 .docker-tag。"
+  - "找一下 failed 为 0，就在 recap 里。"
+  en_display:
+  - "With your keys, all 11 tasks run: three images built on your laptop and pushed, and your tag written to .docker-tag."
+  - null
+- en: "The last task is docker system prune, dash a. Without dash f, it asks, gets no answer, and removes nothing. Every push stores three more images in E C R, and nothing deletes old tags."
+  zh:
+  - "最后一个 task 是 docker system prune -a。"
+  - "没有 -f，它会提问，得不到回答，于是什么都不删。"
+  - "每次 push 都会在 ECR 里多存三个 image，而且没有任何东西删除旧的 tag。"
+  en_display:
+  - "The last task is docker system prune -a."
+  - "Without -f, it asks, gets no answer, and removes nothing."
+  - "Every push stores three more images in ECR, and nothing deletes old tags."
+S08:
+- en: "Step 6 creates the server from localhost, through the AWS API. First, a security group with ports 22, 80 and 443 open to anyone, and a 50 gigabyte disk. Then a T 2 large instance with your key pair and two 100 gigabyte disks of its own. Last, it tries to attach the 50 gigabyte disk."
+  zh:
+  - "第 6 步从 localhost 出发，通过 AWS 的 API 创建服务器。"
+  - "首先是一个安全组，port 22、80 和 443 对所有人开放，再加一块 50 GB 的磁盘。"
+  - "然后是一个 t2.large 实例，用你的密钥对，自带两块 100 GB 的磁盘。"
+  - "最后，它尝试把那块 50 GB 的磁盘附加上去。"
+  en_display:
+  - null
+  - null
+  - "Then a t2.large instance with your key pair and two 100 gigabyte disks of its own."
+  - null
+- en: "From here, the meter runs: the instance by the hour until you terminate it, its disks, and its public I P address."
+  zh:
+  - "从这里开始，就开始计费了：实例按小时计费，直到你终止它，还有它的磁盘和公有 IP 地址。"
+  en_display:
+  - "From here, the meter runs: the instance by the hour until you terminate it, its disks, and its public IP address."
+- en: "Pause and run step 6. Gathering facts works, then it fails: AWS was not able to validate the provided access credentials. With real keys, watch the untested attach task. If it fails, the server still works; delete that spare disk when you clean up."
+  zh:
+  - "暂停一下，跑第 6 步。"
+  - "Gathering Facts 能通过，接着就失败了：AWS was not able to validate the provided access credentials。"
+  - "用真实的密钥时，留意那个没测试过的附加 task。"
+  - "如果它失败了，服务器照样能用；清理的时候把那块备用磁盘删掉。"
+- en: "A kind note: the heading says G C P; it came over from the Google Cloud README."
+  zh:
+  - "说明一点：这个标题写的是 GCP；它是从 Google Cloud 版的 README 里带过来的。"
+  en_display:
+  - "A kind note: the heading says GCP; it came over from the Google Cloud README."
+- en: "Step 7: copy the public I P address of your instance from the E C 2 console into the inventory, under appserver hosts. Ours is a placeholder name."
+  zh:
+  - "第 7 步：从 EC2 控制台复制你实例的公有 IP 地址，填进 inventory，放在 appserver 的 hosts 下面。"
+  - "我们填的是一个占位名。"
+  en_display:
+  - "Step 7: copy the public IP address of your instance from the EC2 console into the inventory, under appserver hosts."
+  - null
+- en: "A small slip: the key switch of step 9 is needed now. Pause, comment out line 4 and turn on line 7. It reads slash secrets, AC215 underscore 2024 dot pem: that exact name. The key on line 4 isn't in your toolbox."
+  zh:
+  - "有一个小疏漏：第 9 步的换密钥现在就得做。"
+  - "暂停一下，注释掉第 4 行，打开第 7 行。"
+  - "它读的是 /secrets/ac215_2024.pem：必须正好是这个名字。"
+  - "第 4 行的密钥不在你的工具箱容器里。"
+  en_display:
+  - null
+  - null
+  - "It reads /secrets/ac215_2024.pem: that exact name."
+  - null
+- en: "Step 8: pause and run ansible playbook, deploy provision instance. Unreachable: could not resolve hostname external I P, our placeholder. On yours, Ansible logs in as ubuntu, with your key. Host key checking is off, so a new server is trusted blindly: a trade-off."
+  zh:
+  - "第 8 步：暂停一下，运行 ansible-playbook deploy-provision-instance.yml。"
+  - "UNREACHABLE：Could not resolve hostname external IP，这是我们的占位符。"
+  - "在你的服务器上，Ansible 以 ubuntu 身份登录，用你的密钥。"
+  - "主机密钥检查是关闭的，所以新服务器会被无条件信任：这是一个取舍。"
+  en_display:
+  - "Step 8: pause and run ansible-playbook deploy-provision-instance.yml."
+  - "Unreachable: could not resolve hostname EXTERNAL_IP, our placeholder."
+  - null
+  - null
+- en: "On a real server, 38 tasks install Docker, then format the second disk and mount it at slash M N T slash disk 1. They install the AWS command line and run AWS configure with your keys: your badge now has a copy on the server."
+  zh:
+  - "在真实的服务器上，38 个 task 会安装 Docker，然后格式化第二块磁盘，把它挂载到 /mnt/disk-1。"
+  - "它们会安装 AWS 命令行，再用你的密钥运行 aws configure：你的徽章现在在服务器上有了一份副本。"
+  en_display:
+  - "On a real server, 38 tasks install Docker, then format the second disk and mount it at /mnt/disk-1."
+  - "They install the AWS command line and run aws configure with your keys: your badge now has a copy on the server."
+S09:
+- en: "Step 9: the key switch, done before step 8."
+  zh:
+  - "第 9 步：换密钥，已经在第 8 步之前做过了。"
+- en: "Two extras before you run step 10. The playbook starts Chroma at the tag latest: at the time of recording, version 1, which answers the old API with status 410, gone."
+  zh:
+  - "在你运行第 10 步之前，有两个额外步骤。"
+  - "这个 playbook 用 latest 这个 tag 启动 Chroma：录制时它是版本 1，对旧的 API 返回状态码 410 Gone。"
+- en: "The clients and the repo's compose file pin an older version, which answers 200. So change line 151 to that version first."
+  zh:
+  - "客户端和这个 repo 的 compose 文件都 pin 在一个更早的版本上，它返回 200。"
+  - "所以先把第 151 行改成那个版本。"
+  en_display:
+  - null
+  - "So change deploy-setup-containers.yml:151 to that version first."
+- en: "Second, the loader uses docker run, dash I T, which Docker refuses without a terminal. We couldn't test whether Ansible provides one; if that task fails, drop dash I T."
+  zh:
+  - "第二，加载器用的是 docker run -it，没有终端的话 Docker 会拒绝。"
+  - "我们没法测试 Ansible 会不会提供一个终端；如果那个 task 失败了，就去掉 -it。"
+  en_display:
+  - "Second, the loader uses docker run -it, which Docker refuses without a terminal."
+  - "We couldn't test whether Ansible provides one; if that task fails, drop -it."
+- en: "Step 10: ansible playbook, deploy setup containers. Pause and run it. Ours is unreachable, for the same reason; here is what it does on a real server."
+  zh:
+  - "第 10 步：ansible-playbook deploy-setup-containers.yml。"
+  - "暂停一下，自己跑一遍。"
+  - "我们的是 UNREACHABLE，原因一样；下面是它在真实服务器上做的事。"
+  en_display:
+  - "Step 10: ansible-playbook deploy-setup-containers.yml."
+  - null
+  - null
+- en: "It writes your keys to a file only root can open, a second copy on the server, and hands them to the API container as environment variables. It creates a Docker network, appnetwork, and two folders on the data disk, and logs in to E C R."
+  zh:
+  - "它把你的密钥写进一个只有 root 能打开的文件，这是服务器上的第二份副本，再把它们作为环境变量交给 API 的 container。"
+  - "它创建一个 Docker 网络 appnetwork，在数据磁盘上建两个目录，再登录 ECR。"
+  en_display:
+  - null
+  - "It creates a Docker network, appnetwork, and two folders on the data disk, and logs in to ECR."
+- en: "Then it picks the tag: a docker tag variable in the toolbox's environment wins; otherwise, the dot docker tag file. From your laptop, it's the file."
+  zh:
+  - "然后它挑选 tag：工具箱容器环境里的 Docker tag 变量优先；否则就用 .docker-tag 文件。"
+  - "从你的笔记本上跑，用的是这个文件。"
+  en_display:
+  - "Then it picks the tag: a DOCKER_TAG variable in the toolbox's environment wins; otherwise, the .docker-tag file."
+  - null
+- en: "It pulls the three images and starts the frontend on port 3000 and Chroma on 8000. A throwaway container fills the vector database, then the API starts on 9000. The security group keeps those ports shut."
+  zh:
+  - "它 pull 那三个 image，在 port 3000 上启动前端，在 8000 上启动 Chroma。"
+  - "一个一次性的 container 把向量数据库填好，然后 API 在 9000 上启动。"
+  - "安全组让这些 port 保持关闭。"
+- en: "Step 11: look around on the server. Where the README says G C P console, use S S H as ubuntu with your key, or E C 2 Instance Connect. Then list containers, follow logs, or open a shell."
+  zh:
+  - "第 11 步：在服务器上四处看看。"
+  - "README 写 GCP console 的地方，你就以 ubuntu 身份用你的密钥 SSH 进去，或者用 EC2 Instance Connect。"
+  - "然后列出 container、跟踪日志，或者开一个 shell。"
+  en_display:
+  - null
+  - "Where the README says GCP console, use SSH as ubuntu with your key, or EC2 Instance Connect."
+  - null
+- en: "Here they are on our laptop, as a stand-in. The image column carries the tag: check it there. The nginx lines work only after the next step."
+  zh:
+  - "这是它们在我们笔记本上的样子，作为替身。"
+  - "表格里 image 那一列带着 tag：就在那里检查。"
+  - "其中 nginx 那几行要等下一步做完才管用。"
+S10:
+- en: "The lecture's routing: one address, slash to the frontend, slash API slash to the API. Here the same shape sits on one machine, and the ingress becomes an nginx container."
+  zh:
+  - "课上的路由：一个地址，/ 交给前端，/api/ 交给 API。"
+  - "这里同样的结构放在一台机器上，Ingress 变成了一个 nginx container。"
+  en_display:
+  - "The lecture's routing: one address, / to the frontend, /api/ to the API."
+  - null
+- en: "Step 12 says create nginx dot conf; it's already in the repo. It listens on port 80. Paths that start with slash API slash go to the API service on 9000; everything else goes to the frontend on 3000."
+  zh:
+  - "第 12 步说要创建 nginx.conf；它其实已经在 repo 里了。"
+  - "它监听 port 80。"
+  - "以 /api/ 开头的路径交给 9000 上的 API 服务；其余的都交给 3000 上的前端。"
+  en_display:
+  - "Step 12 says create nginx.conf; it's already in the repo."
+  - null
+  - "Paths that start with /api/ go to the API service on 9000; everything else goes to the frontend on 3000."
+- en: "Predict: the browser asks nginx for slash API slash newsletters. Which path does the API service receive? Look at the very end of line 37."
+  zh:
+  - "预测一下：浏览器向 nginx 请求 /api/newsletters。"
+  - "API 服务收到的是哪个路径？"
+  - "看第 37 行的最末尾。"
+  en_display:
+  - "Predict: the browser asks nginx for /api/newsletters."
+  - null
+  - null
+- en: "Slash newsletters. The trailing slash after port 9000 replaces the matched prefix. Our stand-ins on the laptop confirm it, and slash API without its last slash gets a redirect."
+  zh:
+  - "/newsletters。"
+  - "Port 9000 后面那个结尾斜杠，会替换掉匹配到的前缀。"
+  - "我们笔记本上的替身证实了这一点，而不带最后那个斜杠的 /api 会得到一个重定向。"
+  en_display:
+  - "/newsletters."
+  - null
+  - "Our stand-ins on the laptop confirm it, and /api without its last slash gets a redirect."
+- en: "The frontend calls slash API on the same host, and the API mounts its routes without the prefix: they fit."
+  zh:
+  - "前端在同一个主机上调用 /api，而 API 注册路由时不带这个前缀：两边对得上。"
+  en_display:
+  - "The frontend calls /api on the same host, and the API mounts its routes without the prefix: they fit."
+- en: "Step 13: pause and run ansible playbook, deploy setup webserver. Unreachable again. On a real server, it copies the config, starts nginx on ports 80 and 443, and restarts it."
+  zh:
+  - "第 13 步：暂停一下，运行 ansible-playbook deploy-setup-webserver.yml。"
+  - "又是 UNREACHABLE。"
+  - "在真实的服务器上，它会拷贝配置，在 port 80 和 443 上启动 nginx，再重启它。"
+  en_display:
+  - "Step 13: pause and run ansible-playbook deploy-setup-webserver.yml."
+  - null
+  - null
+- en: "Step 14: open your server's address in a browser. Only port 80 does the work. Port 443 is open and forwarded to nginx, but nginx serves nothing there: no HTTPS yet."
+  zh:
+  - "第 14 步：在浏览器里打开你服务器的地址。"
+  - "真正干活的只有 port 80。"
+  - "Port 443 是开着的，也转发给了 nginx，但 nginx 在那里什么都不提供：还没有 HTTPS。"
+- en: "That's part 1: about a dozen commands and five playbooks, by hand. Next, a commit message does the redeploy."
+  zh:
+  - "这就是第 1 部分：大约十几条命令和五个 playbook，全部手动。"
+  - "接下来，由一条 commit 信息来完成重新部署。"

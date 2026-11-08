@@ -75,6 +75,12 @@ Deviations from SHOW:
   kubectl scale' + the dashed 'HPA: not configured · needs requests' chip; the small checklist has no
   note rows. The scale-back card folds the command over two rows with a shell ' \\' (the small
   checklist holds the top-right corner).
+Critic fixes (2026-11-08): beat 0's terminal has 6 rows (the folded k30 command and its wrapped error
+  stay on screen together); beat 5 lights 'CPU', 'memory', 'custom metrics' as they are named; beat 7's
+  Milestone chip sits bottom right and leaves before node 2 slides in, and the second "many more"
+  Pending block moves beside the first (the shared stack covered its 'Pending'); the ponder card sits
+  right of the disk so the api block, the disk and the thought-experiment chip stay visible; beat 10
+  drops the thought experiment's api block and its 'ContainerCreating' with the chain.
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -186,7 +192,7 @@ class LogsAndScaling(VoiceScene):
         trk = tracker_g(1)
 
         # ========================================================== 0. k30, then all fourteen on the card
-        t = tb(4)
+        t = tb(6)                               # k30:1 folds onto 3 rows + 3 wrapped error rows: no scroll
         sb = on_bar(t, standin_row()).set_z_index(5)
         rows = [lrow(r) for r in DEBUG_ROWS]
         body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.055)
@@ -387,6 +393,11 @@ class LogsAndScaling(VoiceScene):
             vo.wait_until("The lecture promises")
             self.play(Indicate(lec.body[0], color=INK, scale_factor=1.05), run_time=0.8)
             self.add(lec)
+            vo.wait_until("on CPU")                 # the three promised metrics, one by one as they are named
+            words = [lsub(lec.body[0], w) for w in ("CPU", "memory", "custommetrics")]  # Text.text drops spaces
+            self.play(LaggedStart(*[Indicate(w, color=TURN, scale_factor=1.12) for w in words], lag_ratio=0.6),
+                      run_time=1.8)
+            self.add(lec)
             vo.wait_until("but the code sets")
             self.play(FadeIn(rh, shift=DOWN * 0.1), FadeIn(rtag), run_time=0.4)
             self.play(lsub(hd, "Scaling").animate.set_color(TURN), run_time=0.3)
@@ -443,7 +454,7 @@ class LogsAndScaling(VoiceScene):
         scard.move_to([0, 2.22, 0])
         stag = edge_tag(scard, extra_tag("our spelling")).set_z_index(5)
         mile = grey_chip("Milestone 5 · show scaling")
-        mile.next_to(scard, DOWN, buff=0.15).align_to(scard, RIGHT)
+        mile.move_to([6.5 - mile.width / 2, -1.75, 0])     # clear of the Pending column (x 1.3 .. 3.0)
         assert scard.get_bottom()[1] > bp.nodes[0].get_top()[1] + 0.05, (scard.get_bottom(), bp.nodes[0].get_top())
         k55c = card([mrow(K55.line(2), OUTPUT)], S.GREY, size=SIZE, head="S07 · the same command on the game", buff=0.1)
         k55c.move_to([6.5 - k55c.width / 2, -2.75, 0])
@@ -477,6 +488,8 @@ class LogsAndScaling(VoiceScene):
             inset.add(sched)
             self.add(inset)
             vo.wait_until("until the autoscaler adds")
+            self.play(FadeOut(mile), run_time=0.3)   # node 2 slides in from the right, through this corner
+            self.remove(mile)
             bp.node(self, 1)
             bp.land(self, pend, 1)
             self.play(FadeOut(inset), run_time=0.3)
@@ -484,11 +497,14 @@ class LogsAndScaling(VoiceScene):
             vo.wait_until("Ask for many more")
             for _ in range(5):
                 bp.add_block(self, "frontend", run_time=0.3)
+            p1, p2 = bp.pending[-2:]               # the shared stack puts p2 over p1's 'Pending': side by side
+            self.play(p2.animate.move_to(p1.get_center() + RIGHT * (p1.width + 0.3)), run_time=0.4)
+            bp.heal(self)
             vo.wait_until("the pool stops at two")
             flash_tag(self, bp.autoscaler_chip, ERR, 1.08)
             bp.heal(self)
-        self.play(FadeOut(VGroup(scard, stag, mile)), run_time=0.4)
-        self.remove(scard, stag, mile)
+        self.play(FadeOut(VGroup(scard, stag)), run_time=0.4)
+        self.remove(scard, stag)
 
         # ========================================================== 8. the API's disk; ponder
         extra = bp.blocks[1][1:] + list(bp.pending)
@@ -527,8 +543,9 @@ class LogsAndScaling(VoiceScene):
         self.play(FadeOut(q), run_time=0.3)
         self.remove(q)
         pc = ponder(self, "Suppose api had 3 replicas.\nSome Pods land on node 2.\nWhat happens to them,\n"
-                          "and can the autoscaler fix it?", 10, center=(2.3, -0.95), width=8.0)
-        assert pc.get_bottom()[1] > -3.55 and pc.get_right()[0] < 6.55 and pc.get_top()[1] < cr24.get_bottom()[1], pc
+                          "and can the autoscaler fix it?", 10, center=(3.45, -1.4), width=6.0)
+        assert pc.get_bottom()[1] > -3.55 and pc.get_right()[0] < 6.55 and pc.get_top()[1] < thought.get_bottom()[1], pc
+        assert pc.get_left()[0] > bp.disk_g.cyl.get_right()[0] + 0.3, (pc.get_left(), bp.disk_g.cyl.get_right())
 
         # ========================================================== 9. Multi-Attach
         with self.voiceover(SAY[9]) as vo:
@@ -556,7 +573,9 @@ class LogsAndScaling(VoiceScene):
         with self.voiceover(SAY[10]) as vo:
             self.play(FadeOut(VGroup(cr24, thought)), run_time=0.3)
             self.remove(cr24, thought)
-            bp.drop(self, bp.disk_g.rwo, bp.snap[1], bp.snap[2], bp.ghost, run_time=0.4)
+            api2 = bp.blocks[1].pop()               # the thought experiment's api block (never ran)
+            assert api2.key == "api"
+            bp.drop(self, bp.disk_g.rwo, bp.snap[1], bp.snap[2], bp.snap[3], api2, bp.ghost, run_time=0.4)
             self.play(FadeIn(asks, shift=LEFT * 0.15), run_time=0.5)
             bp.levers(self)
             lv = bp.levers_g
@@ -578,7 +597,7 @@ class LogsAndScaling(VoiceScene):
             vo.wait_until("Scale back to 1")
             self.play(FadeIn(bcard.frame), FadeIn(btag), run_time=0.3)
             for r in s1:
-                self.play(typing(r, 0.5))
+                self.play(typing(r, 0.35))
             self.add(bcard)
             self.play(Indicate(substring(s1[0], "--replicas=1"), color=OWN, scale_factor=1.1), run_time=0.5)
             self.add(bcard)
