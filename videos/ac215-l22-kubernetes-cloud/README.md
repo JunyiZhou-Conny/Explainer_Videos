@@ -52,10 +52,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l22-kubernetes-cloud.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l22-kubernetes-cloud.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:26.3 (1826.3 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l22-kubernetes-cloud.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l22-kubernetes-cloud_part1.mp4` | part 1, DURATION_P1: Kubernetes by hand — the cluster, its parts and a test deployment (S01–S08). Release asset, not in Git |
-| `output/ac215-l22-kubernetes-cloud_part2.mp4` | part 2, DURATION_P2: the cheese app on GKE as Pulumi code — plan, traffic, scaling, teardown (S09–S16). Release asset, not in Git |
+| `output/ac215-l22-kubernetes-cloud_part1.mp4` | part 1, 14:19.7 (859.7 s): Kubernetes by hand — the cluster, its parts and a test deployment (S01–S08). Release asset, not in Git |
+| `output/ac215-l22-kubernetes-cloud_part2.mp4` | part 2, 16:06.7 (966.7 s): the cheese app on GKE as Pulumi code — plan, traffic, scaling, teardown (S09–S16). Release asset, not in Git |
 | `output/ac215-l22-kubernetes-cloud.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l22-kubernetes-cloud.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l22-kubernetes-cloud.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -74,7 +74,26 @@ video and the two part cuts) are release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts). Part 1 (14:20) is chapters 00:00–12:39 below; part 2 (16:07) restarts at 00:00 with "The cheese app's cluster, as code", its chapters at 00:00, 01:40, 03:33, 05:23, 07:37, 09:53, 11:40, 14:10.
+
+```
+00:00 Who restarts it at 2 a.m.?
+01:29 From one box to a fleet
+03:05 Inside a cluster: brain and workers
+04:54 The toolbox, still fixed twice
+06:54 A test cluster and a first look
+08:47 Two objects: a Deployment and a Service
+10:49 Desired state: Pods that come back
+12:39 Labels, Services, namespaces, then delete
+14:19 The cheese app's cluster, as code
+15:59 Setup and the images stack
+17:53 deploy_k8s: config and a 23-resource plan
+19:43 pulumi up: what builds, in what order
+21:57 The journey of one click
+24:13 kubectl on the app, and the outputs
+26:00 Logs, then scaling at two levels
+28:29 Destroy, audit, recap
+```
 
 ## What you'll learn
 

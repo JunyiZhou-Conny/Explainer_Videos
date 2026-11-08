@@ -3450,7 +3450,7 @@ class FleetMorph(_Anchored):
         a = label("deployment = a way of deploying ·", 20, S.GREY)
         b = label("≠", 20, S.GREY)
         c = mono("Deployment", 20, OWN)
-        d = label(", the object (S06)", 20, S.GREY)
+        d = label(", the object (later)", 20, S.GREY)
         row = VGroup(a, b, c, d).arrange(RIGHT, buff=0.1)
         ob = outline_box(row.width + 0.4, row.height + 0.3, PAST, solid=False)
         row.move_to(ob)
