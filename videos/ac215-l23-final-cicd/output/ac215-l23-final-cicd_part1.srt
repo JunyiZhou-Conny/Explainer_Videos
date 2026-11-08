@@ -1,0 +1,1310 @@
+1
+00:00:00,000 --> 00:00:05,887
+This repository has 39 commits,
+and 33 of them carry the same message:
+
+2
+00:00:05,887 --> 00:00:07,232
+/run-deploy-app.
+
+3
+00:00:07,552 --> 00:00:09,088
+That sentence is a button.
+
+4
+00:00:09,408 --> 00:00:13,056
+Pushed to main,
+it rebuilds the app and redeploys a server.
+
+5
+00:00:13,300 --> 00:00:15,732
+And once, the slash leans the other way.
+
+6
+00:00:16,052 --> 00:00:18,688
+To the workflow,
+that is a different sentence,
+
+7
+00:00:18,688 --> 00:00:20,063
+and nothing runs at all.
+
+8
+00:00:20,383 --> 00:00:21,492
+One character.
+
+9
+00:00:21,733 --> 00:00:26,000
+How does a sentence deploy a server,
+and why did one character stop it?
+
+10
+00:00:26,320 --> 00:00:29,605
+By the end of part 2,
+you'll push that sentence yourself.
+
+11
+00:00:29,850 --> 00:00:34,991
+This is the course's last lecture:
+final deployment and review, in three parts.
+
+12
+00:00:35,311 --> 00:00:38,506
+Its motivation
+is a playful prediction web page;
+
+13
+00:00:38,506 --> 00:00:39,704
+our reading of it:
+
+14
+00:00:39,704 --> 00:00:45,146
+even a toy prediction app is only useful
+when it runs somewhere, and stays current.
+
+15
+00:00:45,383 --> 00:00:48,754
+This recording machine has no AWS account.
+
+16
+00:00:49,074 --> 00:00:51,378
+Everything on the laptop ran for real.
+
+17
+00:00:51,698 --> 00:00:56,737
+Every command that talks to AWS ran
+exactly as the README writes it,
+
+18
+00:00:56,737 --> 00:00:58,738
+up to its real first error.
+
+19
+00:00:59,058 --> 00:01:00,587
+The consoles, the server
+
+20
+00:01:00,587 --> 00:01:03,453
+and GitHub are drawings,
+marked illustration.
+
+21
+00:01:03,700 --> 00:01:07,539
+You need Docker,
+your own AWS account with billing,
+
+22
+00:01:07,539 --> 00:01:10,249
+and for part 2, a GitHub repository.
+
+23
+00:01:10,569 --> 00:01:13,535
+This lecture runs a server
+until you delete it.
+
+24
+00:01:13,855 --> 00:01:18,015
+The tracker names the README step,
+and your turn means pause and run it.
+
+25
+00:01:19,450 --> 00:01:20,965
+Here is the lecture's map.
+
+26
+00:01:21,285 --> 00:01:23,293
+The dev team commits to GitHub,
+
+27
+00:01:23,293 --> 00:01:26,377
+GitHub Actions builds
+and deploys to the cloud,
+
+28
+00:01:26,377 --> 00:01:28,346
+and users reach the app there.
+
+29
+00:01:28,583 --> 00:01:31,997
+Above it, the app as one chain,
+from data to frontend.
+
+30
+00:01:32,233 --> 00:01:34,768
+The slides speak Google Cloud;
+
+31
+00:01:34,768 --> 00:01:38,740
+we follow the AWS repository,
+as in lecture 15.
+
+32
+00:01:39,060 --> 00:01:41,705
+Now the same map in AWS words.
+
+33
+00:01:42,025 --> 00:01:47,209
+The Kubernetes cluster becomes one
+EC2 server running Docker containers.
+
+34
+00:01:47,529 --> 00:01:51,817
+The image registry becomes ECR,
+with three repositories.
+
+35
+00:01:52,137 --> 00:01:54,313
+Pulumi becomes Ansible playbooks.
+
+36
+00:01:54,550 --> 00:02:01,035
+The service account key becomes two secrets:
+an IAM access key and an EC2 key pair.
+
+37
+00:02:01,355 --> 00:02:03,769
+The keyword becomes /run-deploy-app,
+
+38
+00:02:03,769 --> 00:02:07,926
+and the ingress becomes one nginx
+container at the front door.
+
+39
+00:02:08,167 --> 00:02:10,895
+There's no Kubernetes and no Pulumi here:
+
+40
+00:02:10,895 --> 00:02:14,887
+one server, set up by Ansible,
+and no machine learning lane.
+
+41
+00:02:15,133 --> 00:02:17,437
+The lecture lists five things to automate.
+
+42
+00:02:17,757 --> 00:02:21,272
+For this repo:
+pipeline jobs and model training,
+
+43
+00:02:21,272 --> 00:02:23,176
+no, those were lecture 15.
+
+44
+00:02:23,496 --> 00:02:27,080
+Frontend and backend deployment,
+yes, always together.
+
+45
+00:02:27,400 --> 00:02:31,091
+Building and pushing containers, yes:
+three app images.
+
+46
+00:02:31,333 --> 00:02:32,508
+The lecture's plan:
+
+47
+00:02:32,508 --> 00:02:36,773
+we already have a deployment container,
+so let GitHub Actions run it.
+
+48
+00:02:37,093 --> 00:02:39,184
+Here it's called cheese-app-deployment.
+
+49
+00:02:39,433 --> 00:02:42,974
+The slides say:
+invoke the command line in that container.
+
+50
+00:02:43,294 --> 00:02:45,854
+Here, that means ansible-playbook commands.
+
+51
+00:02:46,174 --> 00:02:50,847
+In part 1 you type them;
+in part 2, they arrive as one long command.
+
+52
+00:02:52,083 --> 00:02:55,880
+These first commands are extra;
+the README has no clone step.
+
+53
+00:02:56,200 --> 00:03:01,790
+One branch, unchanged since we pinned it,
+and inside src, the deployment folder.
+
+54
+00:03:02,033 --> 00:03:05,809
+The list of APIs
+to enable sits inside a comment;
+
+55
+00:03:05,809 --> 00:03:08,582
+on AWS there's nothing to switch on.
+
+56
+00:03:08,902 --> 00:03:13,404
+One check:
+the API calls Bedrock models in us-east-1,
+
+57
+00:03:13,404 --> 00:03:18,246
+chosen in 2024,
+so check your account can still use them.
+
+58
+00:03:18,483 --> 00:03:23,112
+Step 2, in the IAM console:
+create a policy from this JSON.
+
+59
+00:03:23,432 --> 00:03:27,282
+It allows one identity check
+and nine ECR actions,
+
+60
+00:03:27,282 --> 00:03:30,515
+to log in, push and pull, on any resource.
+
+61
+00:03:31,350 --> 00:03:35,480
+Name it CheeseAppECRPolicy,
+and pause to create it;
+
+62
+00:03:35,480 --> 00:03:38,475
+an extra check shows the JSON parses.
+
+63
+00:03:38,795 --> 00:03:42,592
+It can't create a repository,
+so you'll make three by hand later.
+
+64
+00:03:42,833 --> 00:03:47,057
+Step 3: create a user,
+deployment-ac215-user.
+
+65
+00:03:47,377 --> 00:03:53,969
+It gets three policies AWS manages:
+full access to S3, EC2 and Bedrock.
+
+66
+00:03:54,289 --> 00:03:56,422
+And your own ECR policy.
+
+67
+00:03:56,666 --> 00:04:00,635
+Step 4: create an access key
+for a third party service,
+
+68
+00:04:00,635 --> 00:04:02,511
+and download the CSV file.
+
+69
+00:04:02,831 --> 00:04:05,656
+Save it in a secrets folder
+beside your clone,
+
+70
+00:04:05,656 --> 00:04:08,357
+not inside it, so it can never be committed.
+
+71
+00:04:08,600 --> 00:04:13,635
+Step 5: create an EC2 key pair,
+and save its pem file there too.
+
+72
+00:04:13,955 --> 00:04:20,248
+The badge talks to the AWS API;
+the key opens the SSH door of your server.
+
+73
+00:04:20,483 --> 00:04:22,574
+An extra check shows a small gap.
+
+74
+00:04:22,894 --> 00:04:27,246
+The README names the key pair
+cheese-app-ac215-key-pair.
+
+75
+00:04:27,566 --> 00:04:32,920
+The code expects ac215_2024, in three files.
+
+76
+00:04:33,240 --> 00:04:40,174
+Easiest fix: use that name,
+so the file is ac215_2024.pem.
+
+77
+00:04:40,416 --> 00:04:43,317
+Extra: chmod 400 on the pem file.
+
+78
+00:04:43,637 --> 00:04:47,328
+SSH refuses a private key
+that others can open.
+
+79
+00:04:49,467 --> 00:04:53,136
+Step 6, deployment setup, brings a new tool:
+Ansible.
+
+80
+00:04:53,456 --> 00:04:57,360
+Pulumi, in lecture 20,
+described the infrastructure you want.
+
+81
+00:04:57,680 --> 00:05:02,566
+Ansible runs an ordered list of tasks
+against the machines in an inventory.
+
+82
+00:05:02,886 --> 00:05:05,398
+Many of its modules describe a state;
+
+83
+00:05:05,398 --> 00:05:08,454
+this repo also runs
+plenty of shell commands.
+
+84
+00:05:08,700 --> 00:05:10,577
+A playbook is a list of plays.
+
+85
+00:05:10,897 --> 00:05:15,825
+Each play names its hosts and holds tasks,
+and each task calls one module.
+
+86
+00:05:16,145 --> 00:05:21,974
+The hosts line decides where tasks run:
+localhost means inside your toolbox;
+
+87
+00:05:21,974 --> 00:05:25,042
+appserver means on the server, over SSH.
+
+88
+00:05:25,284 --> 00:05:27,780
+Here is that inventory, as one file.
+
+89
+00:05:28,100 --> 00:05:30,959
+Ansible logs in as the user ubuntu.
+
+90
+00:05:31,279 --> 00:05:34,538
+Line 4 points at the key for GitHub Actions;
+
+91
+00:05:34,538 --> 00:05:38,169
+line 7, commented out,
+at the key on your laptop.
+
+92
+00:05:38,489 --> 00:05:42,189
+Lines 9 to 11 take your keys
+from the environment:
+
+93
+00:05:42,189 --> 00:05:43,374
+nothing to type.
+
+94
+00:05:43,617 --> 00:05:48,396
+Then the machine: the region, us-east-1,
+and a t2.large instance.
+
+95
+00:05:48,716 --> 00:05:50,934
+The key pair name, marked change this.
+
+96
+00:05:51,254 --> 00:05:55,713
+An Ubuntu machine image for that region,
+and the disk names and sizes.
+
+97
+00:05:55,950 --> 00:05:59,107
+The README's four bullets point
+at exactly these lines.
+
+98
+00:05:59,427 --> 00:06:03,854
+Change two now: the key pair name,
+unless yours already matches,
+
+99
+00:06:03,854 --> 00:06:08,281
+and line 24, the NEXTAUTH_SECRET,
+to a random value of your own.
+
+100
+00:06:08,601 --> 00:06:10,820
+The host on line 30 comes later.
+
+101
+00:06:13,584 --> 00:06:15,498
+Every run ends with a recap;
+
+102
+00:06:15,498 --> 00:06:18,917
+success means
+failed and unreachable stay at zero.
+
+103
+00:06:19,237 --> 00:06:23,205
+A declarative task run twice
+reports ok the second time.
+
+104
+00:06:25,950 --> 00:06:28,382
+Step 1: go to the deployment folder.
+
+105
+00:06:28,702 --> 00:06:32,798
+Here are the playbooks,
+the inventory and docker-shell.sh.
+
+106
+00:06:33,033 --> 00:06:34,249
+Open the script.
+
+107
+00:06:34,569 --> 00:06:38,430
+It splits the second line of your CSV
+into two variables.
+
+108
+00:06:38,750 --> 00:06:43,807
+Line 17 hard codes the account
+ID of the author, a placeholder here.
+
+109
+00:06:44,050 --> 00:06:47,741
+Run it as cloned, and it stops:
+credentials file not found.
+
+110
+00:06:48,061 --> 00:06:53,309
+Four ../ from the deployment folder end
+at /home, one level too far.
+
+111
+00:06:53,550 --> 00:06:57,817
+Step 2 is that fix:
+three levels up, with sed or your editor.
+
+112
+00:06:58,137 --> 00:06:59,630
+Now the file is found.
+
+113
+00:07:03,383 --> 00:07:07,735
+Step 3:
+sh docker-shell.sh, exactly as written.
+
+114
+00:07:08,055 --> 00:07:10,818
+Surprise 1, on this Ubuntu laptop:
+
+115
+00:07:10,818 --> 00:07:14,882
+a syntax error on line 13,
+redirection unexpected.
+
+116
+00:07:15,117 --> 00:07:19,234
+Extra: on Ubuntu, sh is dash,
+which has no here-string (<<<).
+
+117
+00:07:19,554 --> 00:07:23,266
+And typing sh skips the first line,
+which asks for bash.
+
+118
+00:07:23,586 --> 00:07:27,447
+On a Mac the README line works;
+on Linux, use bash instead.
+
+119
+00:07:27,683 --> 00:07:31,367
+Surprise 2, at the time of recording,
+on our machine:
+
+120
+00:07:31,367 --> 00:07:33,592
+the build stops at step 9 of 15.
+
+121
+00:07:33,912 --> 00:07:38,329
+Curl can't verify the Helm download site,
+so no signing key arrives.
+
+122
+00:07:38,567 --> 00:07:42,067
+And the script doesn't stop:
+set -e is commented out,
+
+123
+00:07:42,067 --> 00:07:44,775
+so it runs an image that was never built.
+
+124
+00:07:45,095 --> 00:07:47,868
+Check the build output,
+not just the last line.
+
+125
+00:07:48,117 --> 00:07:50,570
+Our machine didn't trust
+that certificate's root.
+
+126
+00:07:50,890 --> 00:07:52,149
+Your laptop may.
+
+127
+00:07:52,469 --> 00:07:56,852
+No playbook uses Helm,
+so delete these two lines and the word helm,
+
+128
+00:07:56,852 --> 00:07:58,357
+and the toolbox builds.
+
+129
+00:08:04,150 --> 00:08:08,225
+Surprise 3: inside the toolbox,
+/secrets is empty.
+
+130
+00:08:08,545 --> 00:08:13,878
+Line 26 has the same four ../,
+so Docker mounted an empty folder.
+
+131
+00:08:14,198 --> 00:08:16,609
+The prompt ID changes on every start.
+
+132
+00:08:16,850 --> 00:08:22,674
+So fix line 26 like line 10,
+and put your own account ID on line 17.
+
+133
+00:08:22,994 --> 00:08:27,837
+aws sts get-caller-identity shows it,
+once your keys work.
+
+134
+00:08:28,083 --> 00:08:31,533
+Run bash docker-shell.sh again:
+
+135
+00:08:31,533 --> 00:08:36,985
+both files are there, yours
+named ac215_2024.pem,
+
+136
+00:08:36,985 --> 00:08:40,392
+and four AWS variables are set.
+
+137
+00:08:40,712 --> 00:08:42,889
+Pause, and get to this prompt yourself.
+
+138
+00:08:45,033 --> 00:08:46,761
+How was the toolbox started?
+
+139
+00:08:47,081 --> 00:08:49,705
+Line 36 mounts the Docker socket.
+
+140
+00:08:50,025 --> 00:08:54,868
+Then the deployment folder at /app,
+your secrets, and the three app folders.
+
+141
+00:08:55,188 --> 00:09:00,009
+Lines 43 to 46 hand in your keys
+as environment variables.
+
+142
+00:09:00,250 --> 00:09:01,253
+A question.
+
+143
+00:09:01,573 --> 00:09:05,647
+Inside the toolbox,
+Ansible runs docker build for the frontend.
+
+144
+00:09:05,967 --> 00:09:10,298
+Whose disk does the image land on:
+the toolbox's, or your laptop's?
+
+145
+00:09:19,133 --> 00:09:20,242
+Your laptop's.
+
+146
+00:09:20,562 --> 00:09:23,319
+No Docker engine runs inside the toolbox;
+
+147
+00:09:23,319 --> 00:09:28,562
+the Docker module of Ansible talks
+through the socket to your laptop's Docker.
+
+148
+00:09:28,882 --> 00:09:32,381
+So the image lands beside the toolbox,
+not inside it.
+
+149
+00:09:32,701 --> 00:09:36,797
+That's also why a prune,
+run from inside, would sweep your laptop.
+
+150
+00:09:37,033 --> 00:09:41,056
+Extra checks:
+the AWS command line, Docker, kubectl
+
+151
+00:09:41,056 --> 00:09:42,791
+and Ansible are there,
+
+152
+00:09:42,791 --> 00:09:46,292
+but not the Ansible
+the Dockerfile asked for.
+
+153
+00:09:46,533 --> 00:09:51,205
+Without quotes, the greater than sign
+in that pip install is a shell redirect.
+
+154
+00:09:51,525 --> 00:09:56,191
+So the root folder holds a file
+whose name starts with an equals sign:
+
+155
+00:09:56,191 --> 00:10:00,656
+pip wrote its log there,
+and installed Ansible 6, on an old Python.
+
+156
+00:10:00,976 --> 00:10:03,444
+Quoting fixes it, but leave it for now:
+
+157
+00:10:03,444 --> 00:10:06,608
+the provision playbook
+relies on this old Ansible.
+
+158
+00:10:06,850 --> 00:10:10,371
+That explains the warnings:
+the old Python, a collection
+
+159
+00:10:10,371 --> 00:10:14,018
+that doesn't support this Ansible,
+and an old module name.
+
+160
+00:10:14,338 --> 00:10:15,874
+We hide them from now on.
+
+161
+00:10:16,116 --> 00:10:21,513
+aws sts get-caller-identity:
+the security token is invalid.
+
+162
+00:10:21,833 --> 00:10:23,455
+Ours is a placeholder.
+
+163
+00:10:23,775 --> 00:10:27,124
+With your key,
+this prints your account ID and your user.
+
+164
+00:10:29,466 --> 00:10:33,263
+The inventory graph shows all,
+then appserver, then one host.
+
+165
+00:10:33,583 --> 00:10:36,058
+And all five playbooks pass a syntax check.
+
+166
+00:10:36,378 --> 00:10:37,872
+The toolbox is ready.
+
+167
+00:10:39,017 --> 00:10:40,291
+Step 4: in ECR,
+
+168
+00:10:40,291 --> 00:10:44,881
+in us-east-1,
+create three empty private repositories:
+
+169
+00:10:44,881 --> 00:10:49,321
+the vector DB tool,
+the API service and the frontend.
+
+170
+00:10:49,641 --> 00:10:52,564
+Your policy can push to them,
+but not create them.
+
+171
+00:10:52,800 --> 00:10:56,640
+The first playbook runs on localhost,
+inside the toolbox.
+
+172
+00:10:56,960 --> 00:10:59,413
+Task 1 logs Docker in to ECR.
+
+173
+00:10:59,733 --> 00:11:03,318
+Task 2 stamps a tag from the date,
+down to the second,
+
+174
+00:11:03,318 --> 00:11:06,240
+and registers it, so later tasks can use it.
+
+175
+00:11:06,484 --> 00:11:09,720
+Then it builds the frontend
+from /frontend-react,
+
+176
+00:11:09,720 --> 00:11:11,728
+the folder the script mounted,
+
+177
+00:11:11,728 --> 00:11:14,740
+names the image with that tag,
+and pushes it.
+
+178
+00:11:15,060 --> 00:11:18,111
+The API and the vector DB tool follow.
+
+179
+00:11:18,431 --> 00:11:22,078
+Last, it saves the tag in a file:
+.docker-tag.
+
+180
+00:11:22,317 --> 00:11:28,205
+Step 5: ansible-playbook
+deploy-docker-images.yml -i inventory.yml.
+
+181
+00:11:28,525 --> 00:11:29,677
+Pause and run it.
+
+182
+00:11:29,917 --> 00:11:35,336
+Our first real error: at the ECR login,
+the security token is invalid.
+
+183
+00:11:35,656 --> 00:11:40,669
+The second line follows from the first:
+docker login received an empty password.
+
+184
+00:11:40,989 --> 00:11:42,760
+The recap says failed, 1.
+
+185
+00:11:43,000 --> 00:11:44,963
+Extra: no image was built.
+
+186
+00:11:45,283 --> 00:11:48,462
+The laptop still holds only
+the toolbox and its base.
+
+187
+00:11:48,700 --> 00:11:53,447
+With your keys, all 11 tasks run:
+three images built on your laptop
+
+188
+00:11:53,447 --> 00:11:56,849
+and pushed,
+and your tag written to .docker-tag.
+
+189
+00:11:57,169 --> 00:11:59,474
+Look for failed, zero, in the recap.
+
+190
+00:11:59,717 --> 00:12:02,682
+The last task is docker system prune -a.
+
+191
+00:12:03,002 --> 00:12:06,992
+Without -f, it asks, gets no answer,
+and removes nothing.
+
+192
+00:12:07,312 --> 00:12:12,517
+Every push stores three more images in ECR,
+and nothing deletes old tags.
+
+193
+00:12:14,267 --> 00:12:19,408
+Step 6 creates the server from localhost,
+through the AWS API.
+
+194
+00:12:19,728 --> 00:12:25,542
+First, a security group
+with ports 22, 80 and 443 open to anyone,
+
+195
+00:12:25,542 --> 00:12:27,600
+and a 50 gigabyte disk.
+
+196
+00:12:27,920 --> 00:12:33,723
+Then a t2.large instance with your key pair
+and two 100 gigabyte disks of its own.
+
+197
+00:12:34,043 --> 00:12:37,286
+Last, it tries
+to attach the 50 gigabyte disk.
+
+198
+00:12:37,534 --> 00:12:39,265
+From here, the meter runs:
+
+199
+00:12:39,265 --> 00:12:42,462
+the instance by the hour
+until you terminate it,
+
+200
+00:12:42,462 --> 00:12:44,894
+its disks, and its public IP address.
+
+201
+00:12:45,934 --> 00:12:47,598
+Pause and run step 6.
+
+202
+00:12:47,918 --> 00:12:50,616
+Gathering facts works, then it fails:
+
+203
+00:12:50,616 --> 00:12:55,065
+AWS was not able
+to validate the provided access credentials.
+
+204
+00:12:55,385 --> 00:12:58,734
+With real keys,
+watch the untested attach task.
+
+205
+00:12:59,054 --> 00:13:03,512
+If it fails, the server still works;
+delete that spare disk when you clean up.
+
+206
+00:13:03,750 --> 00:13:09,233
+A kind note: the heading says GCP;
+it came over from the Google Cloud README.
+
+207
+00:13:09,467 --> 00:13:13,313
+Step 7:
+copy the public IP address of your instance
+
+208
+00:13:13,313 --> 00:13:18,064
+from the EC2 console into the inventory,
+under appserver hosts.
+
+209
+00:13:18,384 --> 00:13:20,176
+Ours is a placeholder name.
+
+210
+00:13:20,417 --> 00:13:23,937
+A small slip:
+the key switch of step 9 is needed now.
+
+211
+00:13:24,257 --> 00:13:27,414
+Pause, comment out line 4
+and turn on line 7.
+
+212
+00:13:27,734 --> 00:13:34,561
+It reads /secrets/ac215_2024.pem:
+that exact name.
+
+213
+00:13:34,881 --> 00:13:37,484
+The key on line 4 isn't in your toolbox.
+
+214
+00:13:37,734 --> 00:13:42,385
+Step 8: pause and run ansible-playbook
+deploy-provision-instance.yml.
+
+215
+00:13:42,705 --> 00:13:46,489
+Unreachable:
+could not resolve hostname EXTERNAL_IP,
+
+216
+00:13:46,489 --> 00:13:47,654
+our placeholder.
+
+217
+00:13:47,974 --> 00:13:51,707
+On yours, Ansible logs in as ubuntu,
+with your key.
+
+218
+00:13:52,027 --> 00:13:53,729
+Host key checking is off,
+
+219
+00:13:53,729 --> 00:13:56,998
+so a new server is trusted blindly:
+a trade-off.
+
+220
+00:13:57,234 --> 00:14:00,891
+On a real server, 38 tasks install Docker,
+
+221
+00:14:00,891 --> 00:14:05,767
+then format the second disk
+and mount it at /mnt/disk-1.
+
+222
+00:14:06,087 --> 00:14:11,641
+They install the AWS command
+line and run aws configure with your keys:
+
+223
+00:14:11,641 --> 00:14:14,770
+your badge now has a copy on the server.
+
+224
+00:14:16,517 --> 00:14:19,589
+Step 9: the key switch, done before step 8.
+
+225
+00:14:20,217 --> 00:14:22,436
+Two extras before you run step 10.
+
+226
+00:14:22,756 --> 00:14:26,082
+The playbook starts Chroma
+at the tag latest:
+
+227
+00:14:26,082 --> 00:14:28,744
+at the time of recording, version 1,
+
+228
+00:14:28,744 --> 00:14:32,249
+which answers the old API
+with status 410, gone.
+
+229
+00:14:35,150 --> 00:14:39,400
+The clients and the repo's compose
+file pin an older version,
+
+230
+00:14:39,400 --> 00:14:40,654
+which answers 200.
+
+231
+00:14:40,974 --> 00:14:44,708
+So change deploy-setup-containers.yml:151
+to that version first.
+
+232
+00:14:46,934 --> 00:14:52,886
+Second, the loader uses docker run -it,
+which Docker refuses without a terminal.
+
+233
+00:14:53,206 --> 00:14:56,634
+We couldn't test
+whether Ansible provides one;
+
+234
+00:14:56,634 --> 00:14:58,795
+if that task fails, drop -it.
+
+235
+00:14:59,034 --> 00:15:02,618
+Step 10: ansible-playbook
+deploy-setup-containers.yml.
+
+236
+00:15:02,938 --> 00:15:04,090
+Pause and run it.
+
+237
+00:15:04,410 --> 00:15:09,658
+Ours is unreachable, for the same reason;
+here is what it does on a real server.
+
+238
+00:15:09,900 --> 00:15:15,323
+It writes your keys to a file only root
+can open, a second copy on the server,
+
+239
+00:15:15,323 --> 00:15:19,564
+and hands them to the API container
+as environment variables.
+
+240
+00:15:19,884 --> 00:15:22,783
+It creates a Docker network, appnetwork,
+
+241
+00:15:22,783 --> 00:15:26,626
+and two folders on the data disk,
+and logs in to ECR.
+
+242
+00:15:26,867 --> 00:15:28,537
+Then it picks the tag:
+
+243
+00:15:28,537 --> 00:15:32,788
+a DOCKER_TAG variable
+in the toolbox's environment wins;
+
+244
+00:15:32,788 --> 00:15:35,187
+otherwise, the .docker-tag file.
+
+245
+00:15:35,507 --> 00:15:37,406
+From your laptop, it's the file.
+
+246
+00:15:37,650 --> 00:15:39,592
+It pulls the three images
+
+247
+00:15:39,592 --> 00:15:43,943
+and starts the frontend
+on port 3000 and Chroma on 8000.
+
+248
+00:15:44,263 --> 00:15:47,914
+A throwaway container
+fills the vector database,
+
+249
+00:15:47,914 --> 00:15:50,045
+then the API starts on 9000.
+
+250
+00:15:50,365 --> 00:15:52,776
+The security group keeps those ports shut.
+
+251
+00:15:53,017 --> 00:15:55,556
+Step 11: look around on the server.
+
+252
+00:15:55,876 --> 00:15:58,753
+Where the README says GCP console,
+
+253
+00:15:58,753 --> 00:16:03,577
+use SSH as ubuntu with your key,
+or EC2 Instance Connect.
+
+254
+00:16:03,897 --> 00:16:07,204
+Then list containers,
+follow logs, or open a shell.
+
+255
+00:16:07,450 --> 00:16:10,031
+Here they are on our laptop, as a stand-in.
+
+256
+00:16:10,351 --> 00:16:13,253
+The image column carries the tag:
+check it there.
+
+257
+00:16:13,573 --> 00:16:16,858
+The nginx lines work
+only after the next step.
+
+258
+00:16:18,600 --> 00:16:25,171
+The lecture's routing: one address,
+/ to the frontend, /api/ to the API.
+
+259
+00:16:25,491 --> 00:16:30,717
+Here the same shape sits on one machine,
+and the ingress becomes an nginx container.
+
+260
+00:16:30,967 --> 00:16:35,511
+Step 12 says create nginx.conf;
+it's already in the repo.
+
+261
+00:16:35,831 --> 00:16:37,538
+It listens on port 80.
+
+262
+00:16:37,858 --> 00:16:43,059
+Paths that start with /api/
+go to the API service on 9000;
+
+263
+00:16:43,059 --> 00:16:47,095
+everything else goes
+to the frontend on 3000.
+
+264
+00:16:47,333 --> 00:16:52,112
+Predict:
+the browser asks nginx for /api/newsletters.
+
+265
+00:16:52,432 --> 00:16:54,992
+Which path does the API service receive?
+
+266
+00:16:55,312 --> 00:16:57,659
+Look at the very end of line 37.
+
+267
+00:17:06,500 --> 00:17:07,844
+/newsletters.
+
+268
+00:17:08,164 --> 00:17:12,772
+The trailing slash
+after port 9000 replaces the matched prefix.
+
+269
+00:17:13,092 --> 00:17:15,980
+Our stand-ins on the laptop confirm it,
+
+270
+00:17:15,980 --> 00:17:19,535
+and /api without its last slash
+gets a redirect.
+
+271
+00:17:21,433 --> 00:17:24,486
+The frontend calls /api on the same host,
+
+272
+00:17:24,486 --> 00:17:28,879
+and the API mounts its routes
+without the prefix: they fit.
+
+273
+00:17:29,233 --> 00:17:33,990
+Step 13: pause and run ansible-playbook
+deploy-setup-webserver.yml.
+
+274
+00:17:34,310 --> 00:17:35,654
+Unreachable again.
+
+275
+00:17:35,974 --> 00:17:39,087
+On a real server, it copies the config,
+
+276
+00:17:39,087 --> 00:17:43,079
+starts nginx on ports 80 and 443,
+and restarts it.
+
+277
+00:17:43,317 --> 00:17:46,794
+Step 14:
+open your server's address in a browser.
+
+278
+00:17:47,114 --> 00:17:48,992
+Only port 80 does the work.
+
+279
+00:17:49,312 --> 00:17:53,046
+Port 443 is open and forwarded to nginx,
+
+280
+00:17:53,046 --> 00:17:57,247
+but nginx serves nothing there:
+no HTTPS yet.
+
+281
+00:17:57,483 --> 00:18:01,664
+That's part 1: about a dozen commands
+and five playbooks, by hand.
+
+282
+00:18:01,984 --> 00:18:04,991
+If you stop here, terminate the instance
+
+283
+00:18:04,991 --> 00:18:09,427
+and delete its 50 gigabyte volume
+in the EC2 console today:
+
+284
+00:18:09,427 --> 00:18:13,035
+the README's delete step fails,
+as part 2 shows.
+
+285
+00:18:13,355 --> 00:18:16,086
+Next, a commit message does the redeploy.
+

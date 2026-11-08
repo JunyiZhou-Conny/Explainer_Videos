@@ -1,6 +1,6 @@
 00:00 CI, CD, and who presses release
-01:50 Two sieves on one commit message
+01:51 Two sieves on one commit message
 03:36 Secrets and the runner
-05:35 Follow one tag to the server
+05:36 Follow one tag to the server
 08:02 The delete that deletes nothing
-09:33 The course on one server, and recap
+09:32 The course on one server, and recap

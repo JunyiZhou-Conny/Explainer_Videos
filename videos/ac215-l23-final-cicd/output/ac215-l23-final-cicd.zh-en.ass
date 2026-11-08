@@ -1,0 +1,523 @@
+[Script Info]
+Title: AC215 · Lecture 23 — Final deployment and review: Ansible on one EC2 server, then a commit that redeploys (follow-along: cheese-app-aws)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.61,Bilingual,,0,0,0,,这个 repo 有 39 个 commit\N{\fs33\c&H00C8C0B8&\bord1.4}This repository has 39 commits,
+Dialogue: 0,0:00:02.61,0:00:07.23,Bilingual,,0,0,0,,其中 33 个带着同一条信息：/run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}and 33 of them carry the same message: /run-deploy-app.
+Dialogue: 0,0:00:07.55,0:00:09.15,Bilingual,,0,0,0,,这句话就是一个按钮\N{\fs33\c&H00C8C0B8&\bord1.4}That sentence is a button.
+Dialogue: 0,0:00:09.41,0:00:13.06,Bilingual,,0,0,0,,push 到 main 以后，它会重新构建应用，再重新部署一台服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Pushed to main, it rebuilds the app and redeploys a server.
+Dialogue: 0,0:00:13.30,0:00:15.73,Bilingual,,0,0,0,,有一次，斜杠倒向了另一边\N{\fs33\c&H00C8C0B8&\bord1.4}And once, the slash leans the other way.
+Dialogue: 0,0:00:16.05,0:00:20.06,Bilingual,,0,0,0,,对工作流来说，那是另一句话，什么都不会运行\N{\fs33\c&H00C8C0B8&\bord1.4}To the workflow, that is a different sentence, and nothing runs at all.
+Dialogue: 0,0:00:20.38,0:00:21.68,Bilingual,,0,0,0,,就差一个字符\N{\fs33\c&H00C8C0B8&\bord1.4}One character.
+Dialogue: 0,0:00:21.73,0:00:26.00,Bilingual,,0,0,0,,一句话是怎么部署一台服务器的，一个字符又为什么拦住了它？\N{\fs33\c&H00C8C0B8&\bord1.4}How does a sentence deploy a server, and why did one character stop it?
+Dialogue: 0,0:00:26.32,0:00:29.60,Bilingual,,0,0,0,,到第 2 部分结束时，你会亲手 push 这句话\N{\fs33\c&H00C8C0B8&\bord1.4}By the end of part 2, you'll push that sentence yourself.
+Dialogue: 0,0:00:29.85,0:00:34.99,Bilingual,,0,0,0,,这是这门课的最后一讲：最终部署与回顾，分三节\N{\fs33\c&H00C8C0B8&\bord1.4}This is the course's last lecture: final deployment and review, in three parts.
+Dialogue: 0,0:00:35.31,0:00:38.48,Bilingual,,0,0,0,,它的动机是一个好玩的预测网页\N{\fs33\c&H00C8C0B8&\bord1.4}Its motivation is a playful prediction web page;
+Dialogue: 0,0:00:38.48,0:00:41.38,Bilingual,,0,0,0,,我们的理解是，哪怕是一个玩具级的预测应用\N{\fs33\c&H00C8C0B8&\bord1.4}our reading of it: even a toy prediction app
+Dialogue: 0,0:00:41.38,0:00:45.15,Bilingual,,0,0,0,,也只有在某个地方跑着、并且保持最新时才有用\N{\fs33\c&H00C8C0B8&\bord1.4}is only useful when it runs somewhere, and stays current.
+Dialogue: 0,0:00:45.38,0:00:48.75,Bilingual,,0,0,0,,我们录制用的这台机器没有 AWS 账号\N{\fs33\c&H00C8C0B8&\bord1.4}This recording machine has no AWS account.
+Dialogue: 0,0:00:49.07,0:00:51.38,Bilingual,,0,0,0,,笔记本上的一切都是真实运行的\N{\fs33\c&H00C8C0B8&\bord1.4}Everything on the laptop ran for real.
+Dialogue: 0,0:00:51.70,0:00:56.74,Bilingual,,0,0,0,,每条和 AWS 打交道的命令，都照 README 写的原样跑了\N{\fs33\c&H00C8C0B8&\bord1.4}Every command that talks to AWS ran exactly as the README writes it,
+Dialogue: 0,0:00:56.74,0:00:58.74,Bilingual,,0,0,0,,一直跑到它真实的第一个报错\N{\fs33\c&H00C8C0B8&\bord1.4}up to its real first error.
+Dialogue: 0,0:00:59.06,0:01:03.45,Bilingual,,0,0,0,,控制台、服务器和 GitHub 都是示意图，标着 illustration\N{\fs33\c&H00C8C0B8&\bord1.4}The consoles, the server and GitHub are drawings, marked illustration.
+Dialogue: 0,0:01:03.70,0:01:07.54,Bilingual,,0,0,0,,你需要 Docker、一个你自己的、开通了结算的 AWS 账号\N{\fs33\c&H00C8C0B8&\bord1.4}You need Docker, your own AWS account with billing,
+Dialogue: 0,0:01:07.54,0:01:10.25,Bilingual,,0,0,0,,第 2 部分还需要一个 GitHub repo\N{\fs33\c&H00C8C0B8&\bord1.4}and for part 2, a GitHub repository.
+Dialogue: 0,0:01:10.57,0:01:13.54,Bilingual,,0,0,0,,这一讲会让一台服务器一直运行，直到你删掉它\N{\fs33\c&H00C8C0B8&\bord1.4}This lecture runs a server until you delete it.
+Dialogue: 0,0:01:13.86,0:01:15.85,Bilingual,,0,0,0,,进度条标出 README 的哪一步\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker names the README step,
+Dialogue: 0,0:01:15.85,0:01:18.02,Bilingual,,0,0,0,,your turn 表示暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}and your turn means pause and run it.
+Dialogue: 0,0:01:19.45,0:01:21.05,Bilingual,,0,0,0,,这是课上的总图\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the lecture's map.
+Dialogue: 0,0:01:21.28,0:01:23.29,Bilingual,,0,0,0,,开发团队把代码 commit 到 GitHub\N{\fs33\c&H00C8C0B8&\bord1.4}The dev team commits to GitHub,
+Dialogue: 0,0:01:23.29,0:01:28.35,Bilingual,,0,0,0,,GitHub Actions 负责构建并部署到云上，用户在那里访问应用\N{\fs33\c&H00C8C0B8&\bord1.4}GitHub Actions builds and deploys to the cloud, and users reach the app there.
+Dialogue: 0,0:01:28.58,0:01:32.00,Bilingual,,0,0,0,,在它上面，是画成一条链的应用，从数据一直到前端\N{\fs33\c&H00C8C0B8&\bord1.4}Above it, the app as one chain, from data to frontend.
+Dialogue: 0,0:01:32.23,0:01:34.77,Bilingual,,0,0,0,,课件讲的是 Google Cloud\N{\fs33\c&H00C8C0B8&\bord1.4}The slides speak Google Cloud;
+Dialogue: 0,0:01:34.77,0:01:38.74,Bilingual,,0,0,0,,我们跟的是 AWS 的 repo，和第 15 讲一样\N{\fs33\c&H00C8C0B8&\bord1.4}we follow the AWS repository, as in lecture 15.
+Dialogue: 0,0:01:39.06,0:01:41.71,Bilingual,,0,0,0,,现在把同一张总图换成 AWS 的说法\N{\fs33\c&H00C8C0B8&\bord1.4}Now the same map in AWS words.
+Dialogue: 0,0:01:42.02,0:01:45.31,Bilingual,,0,0,0,,Kubernetes 集群变成了一台 EC2 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}The Kubernetes cluster becomes one EC2 server
+Dialogue: 0,0:01:45.31,0:01:47.21,Bilingual,,0,0,0,,上面跑着 Docker container\N{\fs33\c&H00C8C0B8&\bord1.4}running Docker containers.
+Dialogue: 0,0:01:47.53,0:01:51.82,Bilingual,,0,0,0,,image registry 变成了 ECR，里面有三个仓库\N{\fs33\c&H00C8C0B8&\bord1.4}The image registry becomes ECR, with three repositories.
+Dialogue: 0,0:01:52.14,0:01:54.31,Bilingual,,0,0,0,,Pulumi 变成了 Ansible 的 playbook\N{\fs33\c&H00C8C0B8&\bord1.4}Pulumi becomes Ansible playbooks.
+Dialogue: 0,0:01:54.55,0:01:58.03,Bilingual,,0,0,0,,服务账号密钥变成了两份密钥\N{\fs33\c&H00C8C0B8&\bord1.4}The service account key becomes two secrets:
+Dialogue: 0,0:01:58.03,0:02:01.04,Bilingual,,0,0,0,,一个 IAM 访问密钥和一个 EC2 密钥对\N{\fs33\c&H00C8C0B8&\bord1.4}an IAM access key and an EC2 key pair.
+Dialogue: 0,0:02:01.36,0:02:03.77,Bilingual,,0,0,0,,关键词变成了 /run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}The keyword becomes /run-deploy-app,
+Dialogue: 0,0:02:03.77,0:02:07.93,Bilingual,,0,0,0,,Ingress 变成了前门的一个 nginx container\N{\fs33\c&H00C8C0B8&\bord1.4}and the ingress becomes one nginx container at the front door.
+Dialogue: 0,0:02:08.17,0:02:10.89,Bilingual,,0,0,0,,这里没有 Kubernetes，也没有 Pulumi\N{\fs33\c&H00C8C0B8&\bord1.4}There's no Kubernetes and no Pulumi here:
+Dialogue: 0,0:02:10.89,0:02:14.89,Bilingual,,0,0,0,,一台服务器，由 Ansible 配置好，也没有机器学习那条线\N{\fs33\c&H00C8C0B8&\bord1.4}one server, set up by Ansible, and no machine learning lane.
+Dialogue: 0,0:02:15.13,0:02:17.44,Bilingual,,0,0,0,,课上列了五件要自动化的事\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture lists five things to automate.
+Dialogue: 0,0:02:17.76,0:02:19.07,Bilingual,,0,0,0,,对这个 repo 来说\N{\fs33\c&H00C8C0B8&\bord1.4}For this repo:
+Dialogue: 0,0:02:19.07,0:02:23.18,Bilingual,,0,0,0,,pipeline 的 job 和模型训练，没有，那是第 15 讲的事\N{\fs33\c&H00C8C0B8&\bord1.4}pipeline jobs and model training, no, those were lecture 15.
+Dialogue: 0,0:02:23.50,0:02:27.08,Bilingual,,0,0,0,,前端和后端的部署，有，而且总是一起\N{\fs33\c&H00C8C0B8&\bord1.4}Frontend and backend deployment, yes, always together.
+Dialogue: 0,0:02:27.40,0:02:31.09,Bilingual,,0,0,0,,构建和 push container，有：三个应用 image\N{\fs33\c&H00C8C0B8&\bord1.4}Building and pushing containers, yes: three app images.
+Dialogue: 0,0:02:31.33,0:02:34.98,Bilingual,,0,0,0,,课上的计划是：我们已经有了一个部署 container\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's plan: we already have a deployment container,
+Dialogue: 0,0:02:34.98,0:02:36.77,Bilingual,,0,0,0,,那就让 GitHub Actions 来运行它\N{\fs33\c&H00C8C0B8&\bord1.4}so let GitHub Actions run it.
+Dialogue: 0,0:02:37.09,0:02:39.22,Bilingual,,0,0,0,,在这里，它叫 cheese-app-deployment\N{\fs33\c&H00C8C0B8&\bord1.4}Here it's called cheese-app-deployment.
+Dialogue: 0,0:02:39.43,0:02:42.97,Bilingual,,0,0,0,,课件上说：在那个 container 里调用命令行\N{\fs33\c&H00C8C0B8&\bord1.4}The slides say: invoke the command line in that container.
+Dialogue: 0,0:02:43.29,0:02:45.85,Bilingual,,0,0,0,,在这里，就是 ansible-playbook 命令\N{\fs33\c&H00C8C0B8&\bord1.4}Here, that means ansible-playbook commands.
+Dialogue: 0,0:02:46.17,0:02:50.85,Bilingual,,0,0,0,,第 1 部分由你来敲；第 2 部分，它们会作为一长串命令送过来\N{\fs33\c&H00C8C0B8&\bord1.4}In part 1 you type them; in part 2, they arrive as one long command.
+Dialogue: 0,0:02:52.08,0:02:55.88,Bilingual,,0,0,0,,最开始这几条命令是额外的；README 里没有 clone 这一步\N{\fs33\c&H00C8C0B8&\bord1.4}These first commands are extra; the README has no clone step.
+Dialogue: 0,0:02:56.20,0:02:59.10,Bilingual,,0,0,0,,只有一个分支，从我们固定版本以来没有变过\N{\fs33\c&H00C8C0B8&\bord1.4}One branch, unchanged since we pinned it,
+Dialogue: 0,0:02:59.10,0:03:01.79,Bilingual,,0,0,0,,src 里面就是 deployment 目录\N{\fs33\c&H00C8C0B8&\bord1.4}and inside src, the deployment folder.
+Dialogue: 0,0:03:02.03,0:03:05.81,Bilingual,,0,0,0,,要启用的 API 列表写在一段注释里\N{\fs33\c&H00C8C0B8&\bord1.4}The list of APIs to enable sits inside a comment;
+Dialogue: 0,0:03:05.81,0:03:08.58,Bilingual,,0,0,0,,在 AWS 上没有什么需要打开的\N{\fs33\c&H00C8C0B8&\bord1.4}on AWS there's nothing to switch on.
+Dialogue: 0,0:03:08.90,0:03:13.40,Bilingual,,0,0,0,,检查一下：API 调用的是 us-east-1 里的 Bedrock 模型\N{\fs33\c&H00C8C0B8&\bord1.4}One check: the API calls Bedrock models in us-east-1,
+Dialogue: 0,0:03:13.40,0:03:18.25,Bilingual,,0,0,0,,那是 2024 年选的，所以确认一下你的账号还能用它们\N{\fs33\c&H00C8C0B8&\bord1.4}chosen in 2024, so check your account can still use them.
+Dialogue: 0,0:03:18.48,0:03:23.11,Bilingual,,0,0,0,,第 2 步，在 IAM 控制台里：用这段 JSON 创建一个策略\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2, in the IAM console: create a policy from this JSON.
+Dialogue: 0,0:03:23.43,0:03:27.28,Bilingual,,0,0,0,,它允许一次身份检查和九个 ECR 操作\N{\fs33\c&H00C8C0B8&\bord1.4}It allows one identity check and nine ECR actions,
+Dialogue: 0,0:03:27.28,0:03:30.52,Bilingual,,0,0,0,,用来登录、push 和 pull，对任何资源都适用\N{\fs33\c&H00C8C0B8&\bord1.4}to log in, push and pull, on any resource.
+Dialogue: 0,0:03:31.35,0:03:35.48,Bilingual,,0,0,0,,把它命名为 CheeseAppECRPolicy，暂停一下，把它创建好\N{\fs33\c&H00C8C0B8&\bord1.4}Name it CheeseAppECRPolicy, and pause to create it;
+Dialogue: 0,0:03:35.48,0:03:38.48,Bilingual,,0,0,0,,一个额外检查表明这段 JSON 能正常解析\N{\fs33\c&H00C8C0B8&\bord1.4}an extra check shows the JSON parses.
+Dialogue: 0,0:03:38.80,0:03:42.59,Bilingual,,0,0,0,,它不能创建仓库，所以稍后你要手动建三个\N{\fs33\c&H00C8C0B8&\bord1.4}It can't create a repository, so you'll make three by hand later.
+Dialogue: 0,0:03:42.83,0:03:47.06,Bilingual,,0,0,0,,第 3 步：创建一个用户，deployment-ac215-user\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: create a user, deployment-ac215-user.
+Dialogue: 0,0:03:47.38,0:03:50.67,Bilingual,,0,0,0,,给它挂上三个 AWS 托管策略\N{\fs33\c&H00C8C0B8&\bord1.4}It gets three policies AWS manages:
+Dialogue: 0,0:03:50.67,0:03:53.97,Bilingual,,0,0,0,,S3、EC2 和 Bedrock 的完全访问权限\N{\fs33\c&H00C8C0B8&\bord1.4}full access to S3, EC2 and Bedrock.
+Dialogue: 0,0:03:54.29,0:03:56.42,Bilingual,,0,0,0,,再加上你自己的 ECR 策略\N{\fs33\c&H00C8C0B8&\bord1.4}And your own ECR policy.
+Dialogue: 0,0:03:56.67,0:04:02.51,Bilingual,,0,0,0,,第 4 步：为第三方服务创建一个访问密钥，再下载 CSV 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: create an access key for a third party service, and download the CSV file.
+Dialogue: 0,0:04:02.83,0:04:05.66,Bilingual,,0,0,0,,把它存进你 clone 旁边的一个 secrets 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}Save it in a secrets folder beside your clone,
+Dialogue: 0,0:04:05.66,0:04:08.36,Bilingual,,0,0,0,,不是 clone 里面，这样它就永远不会被 commit\N{\fs33\c&H00C8C0B8&\bord1.4}not inside it, so it can never be committed.
+Dialogue: 0,0:04:08.60,0:04:13.64,Bilingual,,0,0,0,,第 5 步：创建一个 EC2 密钥对，把它的 pem 文件也存到那里\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: create an EC2 key pair, and save its pem file there too.
+Dialogue: 0,0:04:13.96,0:04:20.25,Bilingual,,0,0,0,,徽章负责和 AWS 的 API 打交道；钥匙打开你服务器的 SSH 门\N{\fs33\c&H00C8C0B8&\bord1.4}The badge talks to the AWS API; the key opens the SSH door of your server.
+Dialogue: 0,0:04:20.48,0:04:22.57,Bilingual,,0,0,0,,一个额外检查暴露出一个小出入\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check shows a small gap.
+Dialogue: 0,0:04:22.89,0:04:27.25,Bilingual,,0,0,0,,README 把密钥对叫作 cheese-app-ac215-key-pair\N{\fs33\c&H00C8C0B8&\bord1.4}The README names the key pair cheese-app-ac215-key-pair.
+Dialogue: 0,0:04:27.57,0:04:32.92,Bilingual,,0,0,0,,代码要的却是 ac215_2024，三个文件里都是\N{\fs33\c&H00C8C0B8&\bord1.4}The code expects ac215_2024, in three files.
+Dialogue: 0,0:04:33.24,0:04:40.17,Bilingual,,0,0,0,,最省事的修法：就用这个名字，这样文件就是 ac215_2024.pem\N{\fs33\c&H00C8C0B8&\bord1.4}Easiest fix: use that name, so the file is ac215_2024.pem.
+Dialogue: 0,0:04:40.42,0:04:43.32,Bilingual,,0,0,0,,额外一步：对 pem 文件执行 chmod 400\N{\fs33\c&H00C8C0B8&\bord1.4}Extra: chmod 400 on the pem file.
+Dialogue: 0,0:04:43.64,0:04:47.33,Bilingual,,0,0,0,,SSH 会拒绝一个别人也能打开的私钥\N{\fs33\c&H00C8C0B8&\bord1.4}SSH refuses a private key that others can open.
+Dialogue: 0,0:04:49.47,0:04:53.14,Bilingual,,0,0,0,,第 6 步，部署准备，带来一个新工具：Ansible\N{\fs33\c&H00C8C0B8&\bord1.4}Step 6, deployment setup, brings a new tool: Ansible.
+Dialogue: 0,0:04:53.46,0:04:57.36,Bilingual,,0,0,0,,第 20 讲的 Pulumi，描述的是你想要的基础设施\N{\fs33\c&H00C8C0B8&\bord1.4}Pulumi, in lecture 20, described the infrastructure you want.
+Dialogue: 0,0:04:57.68,0:05:00.12,Bilingual,,0,0,0,,Ansible 按顺序执行一串 task\N{\fs33\c&H00C8C0B8&\bord1.4}Ansible runs an ordered list of tasks
+Dialogue: 0,0:05:00.12,0:05:02.57,Bilingual,,0,0,0,,对象是 inventory 里的那些机器\N{\fs33\c&H00C8C0B8&\bord1.4}against the machines in an inventory.
+Dialogue: 0,0:05:02.89,0:05:05.40,Bilingual,,0,0,0,,它的很多模块描述的是一个状态\N{\fs33\c&H00C8C0B8&\bord1.4}Many of its modules describe a state;
+Dialogue: 0,0:05:05.40,0:05:08.45,Bilingual,,0,0,0,,这个 repo 也跑了不少 shell 命令\N{\fs33\c&H00C8C0B8&\bord1.4}this repo also runs plenty of shell commands.
+Dialogue: 0,0:05:08.70,0:05:10.58,Bilingual,,0,0,0,,一个 playbook 就是一串 play\N{\fs33\c&H00C8C0B8&\bord1.4}A playbook is a list of plays.
+Dialogue: 0,0:05:10.90,0:05:13.71,Bilingual,,0,0,0,,每个 play 写明它的 hosts\N{\fs33\c&H00C8C0B8&\bord1.4}Each play names its hosts and holds tasks,
+Dialogue: 0,0:05:13.71,0:05:15.82,Bilingual,,0,0,0,,里面装着 task，每个 task 调用一个模块\N{\fs33\c&H00C8C0B8&\bord1.4}and each task calls one module.
+Dialogue: 0,0:05:16.14,0:05:19.16,Bilingual,,0,0,0,,其中 hosts 这一行决定 task 在哪里运行\N{\fs33\c&H00C8C0B8&\bord1.4}The hosts line decides where tasks run:
+Dialogue: 0,0:05:19.16,0:05:21.95,Bilingual,,0,0,0,,localhost 表示在你的工具箱容器里\N{\fs33\c&H00C8C0B8&\bord1.4}localhost means inside your toolbox;
+Dialogue: 0,0:05:21.95,0:05:25.04,Bilingual,,0,0,0,,appserver 表示在服务器上，通过 SSH\N{\fs33\c&H00C8C0B8&\bord1.4}appserver means on the server, over SSH.
+Dialogue: 0,0:05:25.28,0:05:27.78,Bilingual,,0,0,0,,这就是那个 inventory，写成一个文件\N{\fs33\c&H00C8C0B8&\bord1.4}Here is that inventory, as one file.
+Dialogue: 0,0:05:28.10,0:05:30.96,Bilingual,,0,0,0,,Ansible 以 ubuntu 用户的身份登录\N{\fs33\c&H00C8C0B8&\bord1.4}Ansible logs in as the user ubuntu.
+Dialogue: 0,0:05:31.28,0:05:34.54,Bilingual,,0,0,0,,第 4 行指向给 GitHub Actions 用的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Line 4 points at the key for GitHub Actions;
+Dialogue: 0,0:05:34.54,0:05:38.17,Bilingual,,0,0,0,,第 7 行被注释掉了，指向你笔记本上的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}line 7, commented out, at the key on your laptop.
+Dialogue: 0,0:05:38.49,0:05:43.37,Bilingual,,0,0,0,,第 9 到 11 行从环境变量里取你的密钥：什么都不用填\N{\fs33\c&H00C8C0B8&\bord1.4}Lines 9 to 11 take your keys from the environment: nothing to type.
+Dialogue: 0,0:05:43.62,0:05:48.40,Bilingual,,0,0,0,,然后是这台机器：区域 us-east-1，一个 t2.large 实例\N{\fs33\c&H00C8C0B8&\bord1.4}Then the machine: the region, us-east-1, and a t2.large instance.
+Dialogue: 0,0:05:48.72,0:05:50.93,Bilingual,,0,0,0,,密钥对的名字，标着 change this\N{\fs33\c&H00C8C0B8&\bord1.4}The key pair name, marked change this.
+Dialogue: 0,0:05:51.25,0:05:55.71,Bilingual,,0,0,0,,适用于那个区域的一个 Ubuntu 系统映像，还有磁盘的名字和大小\N{\fs33\c&H00C8C0B8&\bord1.4}An Ubuntu machine image for that region, and the disk names and sizes.
+Dialogue: 0,0:05:55.95,0:05:59.11,Bilingual,,0,0,0,,README 的四个要点指的正是这几行\N{\fs33\c&H00C8C0B8&\bord1.4}The README's four bullets point at exactly these lines.
+Dialogue: 0,0:05:59.43,0:06:03.85,Bilingual,,0,0,0,,现在改两处：密钥对的名字，除非你的已经对上了\N{\fs33\c&H00C8C0B8&\bord1.4}Change two now: the key pair name, unless yours already matches,
+Dialogue: 0,0:06:03.85,0:06:08.28,Bilingual,,0,0,0,,还有第 24 行，NextAuth secret，改成你自己的一个随机值\N{\fs33\c&H00C8C0B8&\bord1.4}and line 24, the NEXTAUTH_SECRET, to a random value of your own.
+Dialogue: 0,0:06:08.60,0:06:10.82,Bilingual,,0,0,0,,第 30 行的 host 稍后再填\N{\fs33\c&H00C8C0B8&\bord1.4}The host on line 30 comes later.
+Dialogue: 0,0:06:13.58,0:06:15.50,Bilingual,,0,0,0,,每次运行最后都有一个 recap\N{\fs33\c&H00C8C0B8&\bord1.4}Every run ends with a recap;
+Dialogue: 0,0:06:15.50,0:06:18.92,Bilingual,,0,0,0,,成功的意思是 failed 和 unreachable 都保持为 0\N{\fs33\c&H00C8C0B8&\bord1.4}success means failed and unreachable stay at zero.
+Dialogue: 0,0:06:19.24,0:06:23.20,Bilingual,,0,0,0,,一个声明式的 task 跑两次，第二次会报 ok\N{\fs33\c&H00C8C0B8&\bord1.4}A declarative task run twice reports ok the second time.
+Dialogue: 0,0:06:25.95,0:06:28.38,Bilingual,,0,0,0,,第 1 步：进到 deployment 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: go to the deployment folder.
+Dialogue: 0,0:06:28.70,0:06:32.80,Bilingual,,0,0,0,,这里有那几个 playbook、inventory 和 docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Here are the playbooks, the inventory and docker-shell.sh.
+Dialogue: 0,0:06:33.03,0:06:34.52,Bilingual,,0,0,0,,打开这个脚本\N{\fs33\c&H00C8C0B8&\bord1.4}Open the script.
+Dialogue: 0,0:06:34.57,0:06:38.43,Bilingual,,0,0,0,,它把你 CSV 的第二行拆成两个变量\N{\fs33\c&H00C8C0B8&\bord1.4}It splits the second line of your CSV into two variables.
+Dialogue: 0,0:06:38.75,0:06:43.81,Bilingual,,0,0,0,,第 17 行把作者的账号 ID 写死了，这里是一个占位符\N{\fs33\c&H00C8C0B8&\bord1.4}Line 17 hard codes the account ID of the author, a placeholder here.
+Dialogue: 0,0:06:44.05,0:06:46.02,Bilingual,,0,0,0,,照 clone 下来的原样运行，它就停了\N{\fs33\c&H00C8C0B8&\bord1.4}Run it as cloned, and it stops:
+Dialogue: 0,0:06:46.02,0:06:47.74,Bilingual,,0,0,0,,credentials file not found\N{\fs33\c&H00C8C0B8&\bord1.4}credentials file not found.
+Dialogue: 0,0:06:48.06,0:06:53.31,Bilingual,,0,0,0,,从 deployment 目录往上四个 ../，就到了 /home，多上了一层\N{\fs33\c&H00C8C0B8&\bord1.4}Four ../ from the deployment folder end at /home, one level too far.
+Dialogue: 0,0:06:53.55,0:06:57.82,Bilingual,,0,0,0,,第 2 步就是这个修复：往上三层，用 sed 或者你的编辑器改\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 is that fix: three levels up, with sed or your editor.
+Dialogue: 0,0:06:58.14,0:06:59.74,Bilingual,,0,0,0,,现在文件找到了\N{\fs33\c&H00C8C0B8&\bord1.4}Now the file is found.
+Dialogue: 0,0:07:03.38,0:07:07.73,Bilingual,,0,0,0,,第 3 步：sh docker-shell.sh，完全照着写的来\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: sh docker-shell.sh, exactly as written.
+Dialogue: 0,0:07:08.05,0:07:10.82,Bilingual,,0,0,0,,意外 1，在这台 Ubuntu 笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}Surprise 1, on this Ubuntu laptop:
+Dialogue: 0,0:07:10.82,0:07:14.88,Bilingual,,0,0,0,,第 13 行有语法错误，redirection unexpected\N{\fs33\c&H00C8C0B8&\bord1.4}a syntax error on line 13, redirection unexpected.
+Dialogue: 0,0:07:15.12,0:07:19.23,Bilingual,,0,0,0,,额外说明：在 Ubuntu 上，sh 就是 dash，它没有 here string\N{\fs33\c&H00C8C0B8&\bord1.4}Extra: on Ubuntu, sh is dash, which has no here-string (<<<).
+Dialogue: 0,0:07:19.55,0:07:23.27,Bilingual,,0,0,0,,而且敲 sh 会跳过第一行，那一行要的是 bash\N{\fs33\c&H00C8C0B8&\bord1.4}And typing sh skips the first line, which asks for bash.
+Dialogue: 0,0:07:23.59,0:07:27.45,Bilingual,,0,0,0,,在 Mac 上 README 这一行能用；在 Linux 上，换成 bash\N{\fs33\c&H00C8C0B8&\bord1.4}On a Mac the README line works; on Linux, use bash instead.
+Dialogue: 0,0:07:27.68,0:07:33.59,Bilingual,,0,0,0,,意外 2，录制时，在我们的机器上：构建停在了 15 步里的第 9 步\N{\fs33\c&H00C8C0B8&\bord1.4}Surprise 2, at the time of recording, on our machine: the build stops at step 9 of 15.
+Dialogue: 0,0:07:33.91,0:07:36.61,Bilingual,,0,0,0,,这里 curl 验证不了 Helm 的下载站点\N{\fs33\c&H00C8C0B8&\bord1.4}Curl can't verify the Helm download site,
+Dialogue: 0,0:07:36.61,0:07:38.33,Bilingual,,0,0,0,,所以签名密钥没能下载下来\N{\fs33\c&H00C8C0B8&\bord1.4}so no signing key arrives.
+Dialogue: 0,0:07:38.57,0:07:42.07,Bilingual,,0,0,0,,而且脚本不会停下：set -e 被注释掉了\N{\fs33\c&H00C8C0B8&\bord1.4}And the script doesn't stop: set -e is commented out,
+Dialogue: 0,0:07:42.07,0:07:44.77,Bilingual,,0,0,0,,所以它会去运行一个根本没构建出来的 image\N{\fs33\c&H00C8C0B8&\bord1.4}so it runs an image that was never built.
+Dialogue: 0,0:07:45.09,0:07:47.87,Bilingual,,0,0,0,,要看构建输出，不能只看最后一行\N{\fs33\c&H00C8C0B8&\bord1.4}Check the build output, not just the last line.
+Dialogue: 0,0:07:48.12,0:07:50.57,Bilingual,,0,0,0,,我们的机器不信任那张证书的根证书\N{\fs33\c&H00C8C0B8&\bord1.4}Our machine didn't trust that certificate's root.
+Dialogue: 0,0:07:50.89,0:07:52.42,Bilingual,,0,0,0,,你的笔记本可能信任\N{\fs33\c&H00C8C0B8&\bord1.4}Your laptop may.
+Dialogue: 0,0:07:52.47,0:07:54.05,Bilingual,,0,0,0,,没有哪个 playbook 用到 Helm\N{\fs33\c&H00C8C0B8&\bord1.4}No playbook uses Helm,
+Dialogue: 0,0:07:54.05,0:07:58.36,Bilingual,,0,0,0,,所以删掉这两行和 helm 这个词，工具箱容器就能构建了\N{\fs33\c&H00C8C0B8&\bord1.4}so delete these two lines and the word helm, and the toolbox builds.
+Dialogue: 0,0:08:04.15,0:08:08.22,Bilingual,,0,0,0,,意外 3：在工具箱容器里，/secrets 是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Surprise 3: inside the toolbox, /secrets is empty.
+Dialogue: 0,0:08:08.54,0:08:13.88,Bilingual,,0,0,0,,第 26 行也是同样的四个 ../，所以 Docker 挂载了一个空目录\N{\fs33\c&H00C8C0B8&\bord1.4}Line 26 has the same four ../, so Docker mounted an empty folder.
+Dialogue: 0,0:08:14.20,0:08:16.61,Bilingual,,0,0,0,,提示符里的 ID 每次启动都会变\N{\fs33\c&H00C8C0B8&\bord1.4}The prompt ID changes on every start.
+Dialogue: 0,0:08:16.85,0:08:19.28,Bilingual,,0,0,0,,所以照第 10 行的样子改第 26 行\N{\fs33\c&H00C8C0B8&\bord1.4}So fix line 26 like line 10,
+Dialogue: 0,0:08:19.28,0:08:22.67,Bilingual,,0,0,0,,再在第 17 行填上你自己的账号 ID\N{\fs33\c&H00C8C0B8&\bord1.4}and put your own account ID on line 17.
+Dialogue: 0,0:08:22.99,0:08:26.14,Bilingual,,0,0,0,,运行 aws sts get-caller-identity 就能看到它\N{\fs33\c&H00C8C0B8&\bord1.4}aws sts get-caller-identity shows it,
+Dialogue: 0,0:08:26.14,0:08:27.84,Bilingual,,0,0,0,,前提是你的密钥能用\N{\fs33\c&H00C8C0B8&\bord1.4}once your keys work.
+Dialogue: 0,0:08:28.08,0:08:31.52,Bilingual,,0,0,0,,再运行一次 bash docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Run bash docker-shell.sh again:
+Dialogue: 0,0:08:31.52,0:08:36.95,Bilingual,,0,0,0,,两个文件都在，你的叫 ac215_2024.pem\N{\fs33\c&H00C8C0B8&\bord1.4}both files are there, yours named ac215_2024.pem,
+Dialogue: 0,0:08:36.95,0:08:40.39,Bilingual,,0,0,0,,四个 AWS 变量也都设好了\N{\fs33\c&H00C8C0B8&\bord1.4}and four AWS variables are set.
+Dialogue: 0,0:08:40.71,0:08:42.89,Bilingual,,0,0,0,,暂停一下，自己走到这个提示符\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and get to this prompt yourself.
+Dialogue: 0,0:08:45.03,0:08:46.76,Bilingual,,0,0,0,,工具箱容器是怎么启动的？\N{\fs33\c&H00C8C0B8&\bord1.4}How was the toolbox started?
+Dialogue: 0,0:08:47.08,0:08:49.71,Bilingual,,0,0,0,,第 36 行挂载了 Docker socket\N{\fs33\c&H00C8C0B8&\bord1.4}Line 36 mounts the Docker socket.
+Dialogue: 0,0:08:50.03,0:08:53.19,Bilingual,,0,0,0,,然后是 deployment 目录，挂在 /app\N{\fs33\c&H00C8C0B8&\bord1.4}Then the deployment folder at /app, your secrets,
+Dialogue: 0,0:08:53.19,0:08:54.87,Bilingual,,0,0,0,,再是你的密钥和三个应用目录\N{\fs33\c&H00C8C0B8&\bord1.4}and the three app folders.
+Dialogue: 0,0:08:55.19,0:09:00.01,Bilingual,,0,0,0,,第 43 到 46 行把你的密钥作为环境变量传进去\N{\fs33\c&H00C8C0B8&\bord1.4}Lines 43 to 46 hand in your keys as environment variables.
+Dialogue: 0,0:09:00.25,0:09:01.52,Bilingual,,0,0,0,,想一想\N{\fs33\c&H00C8C0B8&\bord1.4}A question.
+Dialogue: 0,0:09:01.57,0:09:05.65,Bilingual,,0,0,0,,在工具箱容器里，Ansible 为前端运行 docker build\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the toolbox, Ansible runs docker build for the frontend.
+Dialogue: 0,0:09:05.97,0:09:10.30,Bilingual,,0,0,0,,这个 image 落在谁的磁盘上：工具箱容器的，还是你笔记本的？\N{\fs33\c&H00C8C0B8&\bord1.4}Whose disk does the image land on: the toolbox's, or your laptop's?
+Dialogue: 0,0:09:19.13,0:09:20.51,Bilingual,,0,0,0,,你笔记本的\N{\fs33\c&H00C8C0B8&\bord1.4}Your laptop's.
+Dialogue: 0,0:09:20.56,0:09:23.34,Bilingual,,0,0,0,,工具箱容器里没有运行 Docker 引擎\N{\fs33\c&H00C8C0B8&\bord1.4}No Docker engine runs inside the toolbox;
+Dialogue: 0,0:09:23.34,0:09:25.65,Bilingual,,0,0,0,,Ansible 的 Docker 模块通过\N{\fs33\c&H00C8C0B8&\bord1.4}the Docker module of Ansible talks
+Dialogue: 0,0:09:25.65,0:09:28.56,Bilingual,,0,0,0,,socket 和你笔记本上的 Docker 通信\N{\fs33\c&H00C8C0B8&\bord1.4}through the socket to your laptop's Docker.
+Dialogue: 0,0:09:28.88,0:09:32.38,Bilingual,,0,0,0,,所以 image 落在工具箱容器旁边，而不是里面\N{\fs33\c&H00C8C0B8&\bord1.4}So the image lands beside the toolbox, not inside it.
+Dialogue: 0,0:09:32.70,0:09:36.80,Bilingual,,0,0,0,,这也是为什么在里面跑一次 prune，清掉的会是你笔记本上的东西\N{\fs33\c&H00C8C0B8&\bord1.4}That's also why a prune, run from inside, would sweep your laptop.
+Dialogue: 0,0:09:37.03,0:09:42.79,Bilingual,,0,0,0,,额外检查：AWS 命令行、Docker、kubectl 和 Ansible 都在\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks: the AWS command line, Docker, kubectl and Ansible are there,
+Dialogue: 0,0:09:42.79,0:09:47.44,Bilingual,,0,0,0,,但不是 Dockerfile 要的那个 Ansible。不加引号的话\N{\fs33\c&H00C8C0B8&\bord1.4}but not the Ansible the Dockerfile asked for. Without quotes,
+Dialogue: 0,0:09:47.44,0:09:51.21,Bilingual,,0,0,0,,那条 pip install 里的大于号就是 shell 的重定向\N{\fs33\c&H00C8C0B8&\bord1.4}the greater than sign in that pip install is a shell redirect.
+Dialogue: 0,0:09:51.53,0:09:56.19,Bilingual,,0,0,0,,所以根目录里有一个名字以等号开头的文件\N{\fs33\c&H00C8C0B8&\bord1.4}So the root folder holds a file whose name starts with an equals sign:
+Dialogue: 0,0:09:56.19,0:10:00.66,Bilingual,,0,0,0,,pip 把日志写在那里，装的是旧版 Python 上的 Ansible 6\N{\fs33\c&H00C8C0B8&\bord1.4}pip wrote its log there, and installed Ansible 6, on an old Python.
+Dialogue: 0,0:10:00.98,0:10:03.44,Bilingual,,0,0,0,,加上引号就能修好，但先别动\N{\fs33\c&H00C8C0B8&\bord1.4}Quoting fixes it, but leave it for now:
+Dialogue: 0,0:10:03.44,0:10:06.61,Bilingual,,0,0,0,,provision 那个 playbook 依赖这个旧 Ansible\N{\fs33\c&H00C8C0B8&\bord1.4}the provision playbook relies on this old Ansible.
+Dialogue: 0,0:10:06.85,0:10:08.56,Bilingual,,0,0,0,,这就解释了那些警告\N{\fs33\c&H00C8C0B8&\bord1.4}That explains the warnings:
+Dialogue: 0,0:10:08.56,0:10:12.56,Bilingual,,0,0,0,,旧版 Python、一个不支持这个 Ansible 的 collection\N{\fs33\c&H00C8C0B8&\bord1.4}the old Python, a collection that doesn't support this Ansible,
+Dialogue: 0,0:10:12.56,0:10:14.16,Bilingual,,0,0,0,,还有一个旧的模块名\N{\fs33\c&H00C8C0B8&\bord1.4}and an old module name.
+Dialogue: 0,0:10:14.34,0:10:15.94,Bilingual,,0,0,0,,从现在起我们把它们隐藏掉\N{\fs33\c&H00C8C0B8&\bord1.4}We hide them from now on.
+Dialogue: 0,0:10:16.12,0:10:21.51,Bilingual,,0,0,0,,运行 aws sts get-caller-identity，结果是：安全令牌无效\N{\fs33\c&H00C8C0B8&\bord1.4}aws sts get-caller-identity: the security token is invalid.
+Dialogue: 0,0:10:21.83,0:10:23.46,Bilingual,,0,0,0,,我们的是占位符\N{\fs33\c&H00C8C0B8&\bord1.4}Ours is a placeholder.
+Dialogue: 0,0:10:23.78,0:10:27.12,Bilingual,,0,0,0,,用你的密钥，它会打印出你的账号 ID 和你的用户\N{\fs33\c&H00C8C0B8&\bord1.4}With your key, this prints your account ID and your user.
+Dialogue: 0,0:10:29.47,0:10:31.32,Bilingual,,0,0,0,,这张 inventory 图里先是 all\N{\fs33\c&H00C8C0B8&\bord1.4}The inventory graph shows all,
+Dialogue: 0,0:10:31.32,0:10:33.26,Bilingual,,0,0,0,,然后是 appserver，再下面是一台主机\N{\fs33\c&H00C8C0B8&\bord1.4}then appserver, then one host.
+Dialogue: 0,0:10:33.58,0:10:36.06,Bilingual,,0,0,0,,五个 playbook 也全都通过了语法检查\N{\fs33\c&H00C8C0B8&\bord1.4}And all five playbooks pass a syntax check.
+Dialogue: 0,0:10:36.38,0:10:37.98,Bilingual,,0,0,0,,工具箱容器准备好了\N{\fs33\c&H00C8C0B8&\bord1.4}The toolbox is ready.
+Dialogue: 0,0:10:39.02,0:10:44.88,Bilingual,,0,0,0,,第 4 步：在 ECR 里，在 us-east-1，创建三个空的私有仓库\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: in ECR, in us-east-1, create three empty private repositories:
+Dialogue: 0,0:10:44.88,0:10:49.32,Bilingual,,0,0,0,,向量数据库工具、API 服务和前端\N{\fs33\c&H00C8C0B8&\bord1.4}the vector DB tool, the API service and the frontend.
+Dialogue: 0,0:10:49.64,0:10:52.56,Bilingual,,0,0,0,,你的策略可以往里面 push，但不能创建它们\N{\fs33\c&H00C8C0B8&\bord1.4}Your policy can push to them, but not create them.
+Dialogue: 0,0:10:52.80,0:10:56.64,Bilingual,,0,0,0,,第一个 playbook 在 localhost 上运行，也就是工具箱容器里\N{\fs33\c&H00C8C0B8&\bord1.4}The first playbook runs on localhost, inside the toolbox.
+Dialogue: 0,0:10:56.96,0:10:59.41,Bilingual,,0,0,0,,第 1 个 task 让 Docker 登录 ECR\N{\fs33\c&H00C8C0B8&\bord1.4}Task 1 logs Docker in to ECR.
+Dialogue: 0,0:10:59.73,0:11:03.32,Bilingual,,0,0,0,,第 2 个 task 用日期打一个 tag，精确到秒\N{\fs33\c&H00C8C0B8&\bord1.4}Task 2 stamps a tag from the date, down to the second,
+Dialogue: 0,0:11:03.32,0:11:06.24,Bilingual,,0,0,0,,再把它 register 下来，让后面的 task 能用\N{\fs33\c&H00C8C0B8&\bord1.4}and registers it, so later tasks can use it.
+Dialogue: 0,0:11:06.48,0:11:08.28,Bilingual,,0,0,0,,然后它构建前端\N{\fs33\c&H00C8C0B8&\bord1.4}Then it builds the frontend
+Dialogue: 0,0:11:08.28,0:11:11.74,Bilingual,,0,0,0,,用的是 /frontend-react，也就是脚本挂载的那个目录\N{\fs33\c&H00C8C0B8&\bord1.4}from /frontend-react, the folder the script mounted,
+Dialogue: 0,0:11:11.74,0:11:14.74,Bilingual,,0,0,0,,用这个 tag 给 image 命名，再 push 上去\N{\fs33\c&H00C8C0B8&\bord1.4}names the image with that tag, and pushes it.
+Dialogue: 0,0:11:15.06,0:11:18.11,Bilingual,,0,0,0,,API 和向量数据库工具紧随其后\N{\fs33\c&H00C8C0B8&\bord1.4}The API and the vector DB tool follow.
+Dialogue: 0,0:11:18.43,0:11:22.08,Bilingual,,0,0,0,,最后，它把 tag 存进一个文件：.docker-tag\N{\fs33\c&H00C8C0B8&\bord1.4}Last, it saves the tag in a file: .docker-tag.
+Dialogue: 0,0:11:22.32,0:11:24.46,Bilingual,,0,0,0,,第 5 步：ansible-playbook\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: ansible-playbook
+Dialogue: 0,0:11:24.46,0:11:28.20,Bilingual,,0,0,0,,deploy-docker-images.yml -i inventory.yml\N{\fs33\c&H00C8C0B8&\bord1.4}deploy-docker-images.yml -i inventory.yml.
+Dialogue: 0,0:11:28.52,0:11:29.87,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:11:29.92,0:11:35.34,Bilingual,,0,0,0,,我们第一个真实的报错：在 ECR 登录这一步，安全令牌无效\N{\fs33\c&H00C8C0B8&\bord1.4}Our first real error: at the ECR login, the security token is invalid.
+Dialogue: 0,0:11:35.66,0:11:40.67,Bilingual,,0,0,0,,第二行是第一行导致的：docker login 收到的是一个空密码\N{\fs33\c&H00C8C0B8&\bord1.4}The second line follows from the first: docker login received an empty password.
+Dialogue: 0,0:11:40.99,0:11:42.81,Bilingual,,0,0,0,,这次的 recap 显示 failed 为 1\N{\fs33\c&H00C8C0B8&\bord1.4}The recap says failed, 1.
+Dialogue: 0,0:11:43.00,0:11:44.98,Bilingual,,0,0,0,,额外检查：一个 image 都没构建出来\N{\fs33\c&H00C8C0B8&\bord1.4}Extra: no image was built.
+Dialogue: 0,0:11:45.28,0:11:48.46,Bilingual,,0,0,0,,笔记本上仍然只有工具箱容器和它的基础 image\N{\fs33\c&H00C8C0B8&\bord1.4}The laptop still holds only the toolbox and its base.
+Dialogue: 0,0:11:48.70,0:11:51.06,Bilingual,,0,0,0,,用你的密钥，11 个 task 全部会运行\N{\fs33\c&H00C8C0B8&\bord1.4}With your keys, all 11 tasks run:
+Dialogue: 0,0:11:51.06,0:11:54.28,Bilingual,,0,0,0,,三个 image 在你的笔记本上构建好并 push 上去\N{\fs33\c&H00C8C0B8&\bord1.4}three images built on your laptop and pushed,
+Dialogue: 0,0:11:54.28,0:11:56.85,Bilingual,,0,0,0,,你的 tag 写进 .docker-tag\N{\fs33\c&H00C8C0B8&\bord1.4}and your tag written to .docker-tag.
+Dialogue: 0,0:11:57.17,0:11:59.47,Bilingual,,0,0,0,,找一下 failed 为 0，就在 recap 里\N{\fs33\c&H00C8C0B8&\bord1.4}Look for failed, zero, in the recap.
+Dialogue: 0,0:11:59.72,0:12:02.68,Bilingual,,0,0,0,,最后一个 task 是 docker system prune -a\N{\fs33\c&H00C8C0B8&\bord1.4}The last task is docker system prune -a.
+Dialogue: 0,0:12:03.00,0:12:06.99,Bilingual,,0,0,0,,没有 -f，它会提问，得不到回答，于是什么都不删\N{\fs33\c&H00C8C0B8&\bord1.4}Without -f, it asks, gets no answer, and removes nothing.
+Dialogue: 0,0:12:07.31,0:12:10.42,Bilingual,,0,0,0,,每次 push 都会在 ECR 里多存三个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Every push stores three more images in ECR,
+Dialogue: 0,0:12:10.42,0:12:12.52,Bilingual,,0,0,0,,而且没有任何东西删除旧的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}and nothing deletes old tags.
+Dialogue: 0,0:12:14.27,0:12:19.41,Bilingual,,0,0,0,,第 6 步从 localhost 出发，通过 AWS 的 API 创建服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Step 6 creates the server from localhost, through the AWS API.
+Dialogue: 0,0:12:19.73,0:12:25.54,Bilingual,,0,0,0,,首先是一个安全组，port 22、80 和 443 对所有人开放\N{\fs33\c&H00C8C0B8&\bord1.4}First, a security group with ports 22, 80 and 443 open to anyone,
+Dialogue: 0,0:12:25.54,0:12:27.60,Bilingual,,0,0,0,,再加一块 50 GB 的磁盘\N{\fs33\c&H00C8C0B8&\bord1.4}and a 50 gigabyte disk.
+Dialogue: 0,0:12:27.92,0:12:29.64,Bilingual,,0,0,0,,然后是一个 t2.large 实例\N{\fs33\c&H00C8C0B8&\bord1.4}Then a t2.large instance
+Dialogue: 0,0:12:29.64,0:12:33.72,Bilingual,,0,0,0,,用的是你的密钥对，还自带两块 100 GB 的磁盘\N{\fs33\c&H00C8C0B8&\bord1.4}with your key pair and two 100 gigabyte disks of its own.
+Dialogue: 0,0:12:34.04,0:12:37.29,Bilingual,,0,0,0,,最后，它尝试把那块 50 GB 的磁盘附加上去\N{\fs33\c&H00C8C0B8&\bord1.4}Last, it tries to attach the 50 gigabyte disk.
+Dialogue: 0,0:12:37.53,0:12:39.24,Bilingual,,0,0,0,,从这里开始，就开始计费了\N{\fs33\c&H00C8C0B8&\bord1.4}From here, the meter runs:
+Dialogue: 0,0:12:39.24,0:12:44.89,Bilingual,,0,0,0,,实例按小时计费，直到你终止它，还有它的磁盘和公有 IP 地址\N{\fs33\c&H00C8C0B8&\bord1.4}the instance by the hour until you terminate it, its disks, and its public IP address.
+Dialogue: 0,0:12:45.93,0:12:47.60,Bilingual,,0,0,0,,暂停一下，跑第 6 步\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run step 6.
+Dialogue: 0,0:12:47.92,0:12:50.58,Bilingual,,0,0,0,,Gathering Facts 能通过，接着就失败了\N{\fs33\c&H00C8C0B8&\bord1.4}Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
+Dialogue: 0,0:12:50.58,0:12:52.64,Bilingual,,0,0,0,,AWS was not able to validate\N{\fs33\c&H00C8C0B8&\bord1.4}Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
+Dialogue: 0,0:12:52.64,0:12:55.06,Bilingual,,0,0,0,,the provided access credentials\N{\fs33\c&H00C8C0B8&\bord1.4}Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
+Dialogue: 0,0:12:55.38,0:12:58.73,Bilingual,,0,0,0,,用真实的密钥时，留意那个没测试过的附加 task\N{\fs33\c&H00C8C0B8&\bord1.4}With real keys, watch the untested attach task.
+Dialogue: 0,0:12:59.05,0:13:03.51,Bilingual,,0,0,0,,如果它失败了，服务器照样能用；清理的时候把那块备用磁盘删掉\N{\fs33\c&H00C8C0B8&\bord1.4}If it fails, the server still works; delete that spare disk when you clean up.
+Dialogue: 0,0:13:03.75,0:13:06.20,Bilingual,,0,0,0,,说明一点：这个标题写的是 GCP\N{\fs33\c&H00C8C0B8&\bord1.4}A kind note: the heading says GCP;
+Dialogue: 0,0:13:06.20,0:13:09.23,Bilingual,,0,0,0,,它是从 Google Cloud 版的 README 里带过来的\N{\fs33\c&H00C8C0B8&\bord1.4}it came over from the Google Cloud README.
+Dialogue: 0,0:13:09.47,0:13:15.46,Bilingual,,0,0,0,,第 7 步：从 EC2 控制台复制你实例的公有 IP 地址\N{\fs33\c&H00C8C0B8&\bord1.4}Step 7: copy the public IP address of your instance from the EC2 console into the inventory,
+Dialogue: 0,0:13:15.46,0:13:18.06,Bilingual,,0,0,0,,填进 inventory，放在 appserver 的 hosts 下面\N{\fs33\c&H00C8C0B8&\bord1.4}under appserver hosts.
+Dialogue: 0,0:13:18.38,0:13:20.18,Bilingual,,0,0,0,,我们填的是一个占位名\N{\fs33\c&H00C8C0B8&\bord1.4}Ours is a placeholder name.
+Dialogue: 0,0:13:20.42,0:13:23.94,Bilingual,,0,0,0,,有一个小疏漏：第 9 步的换密钥现在就得做\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the key switch of step 9 is needed now.
+Dialogue: 0,0:13:24.26,0:13:27.41,Bilingual,,0,0,0,,暂停一下，注释掉第 4 行，打开第 7 行\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, comment out line 4 and turn on line 7.
+Dialogue: 0,0:13:27.73,0:13:34.56,Bilingual,,0,0,0,,它读的是 /secrets/ac215_2024.pem：必须正好是这个名字\N{\fs33\c&H00C8C0B8&\bord1.4}It reads /secrets/ac215_2024.pem: that exact name.
+Dialogue: 0,0:13:34.88,0:13:37.48,Bilingual,,0,0,0,,第 4 行的密钥不在你的工具箱容器里\N{\fs33\c&H00C8C0B8&\bord1.4}The key on line 4 isn't in your toolbox.
+Dialogue: 0,0:13:37.73,0:13:39.17,Bilingual,,0,0,0,,第 8 步：暂停一下\N{\fs33\c&H00C8C0B8&\bord1.4}Step 8: pause and run
+Dialogue: 0,0:13:39.17,0:13:42.38,Bilingual,,0,0,0,,运行 ansible-playbook deploy-provision-instance.yml\N{\fs33\c&H00C8C0B8&\bord1.4}ansible-playbook deploy-provision-instance.yml.
+Dialogue: 0,0:13:42.70,0:13:43.70,Bilingual,,0,0,0,,UNREACHABLE\N{\fs33\c&H00C8C0B8&\bord1.4}Unreachable:
+Dialogue: 0,0:13:43.70,0:13:47.65,Bilingual,,0,0,0,,Could not resolve hostname external IP，这是我们的占位符\N{\fs33\c&H00C8C0B8&\bord1.4}could not resolve hostname EXTERNAL_IP, our placeholder.
+Dialogue: 0,0:13:47.97,0:13:51.71,Bilingual,,0,0,0,,在你的服务器上，Ansible 以 ubuntu 身份登录，用你的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}On yours, Ansible logs in as ubuntu, with your key.
+Dialogue: 0,0:13:52.03,0:13:53.73,Bilingual,,0,0,0,,主机密钥检查是关闭的\N{\fs33\c&H00C8C0B8&\bord1.4}Host key checking is off,
+Dialogue: 0,0:13:53.73,0:13:57.00,Bilingual,,0,0,0,,所以新服务器会被无条件信任：这是一个取舍\N{\fs33\c&H00C8C0B8&\bord1.4}so a new server is trusted blindly: a trade-off.
+Dialogue: 0,0:13:57.23,0:14:00.89,Bilingual,,0,0,0,,在真实的服务器上，38 个 task 会安装 Docker\N{\fs33\c&H00C8C0B8&\bord1.4}On a real server, 38 tasks install Docker,
+Dialogue: 0,0:14:00.89,0:14:05.77,Bilingual,,0,0,0,,然后格式化第二块磁盘，把它挂载到 /mnt/disk-1\N{\fs33\c&H00C8C0B8&\bord1.4}then format the second disk and mount it at /mnt/disk-1.
+Dialogue: 0,0:14:06.09,0:14:11.64,Bilingual,,0,0,0,,它们会安装 AWS 命令行，再用你的密钥运行 aws configure\N{\fs33\c&H00C8C0B8&\bord1.4}They install the AWS command line and run aws configure with your keys:
+Dialogue: 0,0:14:11.64,0:14:14.77,Bilingual,,0,0,0,,你的徽章现在在服务器上有了一份副本\N{\fs33\c&H00C8C0B8&\bord1.4}your badge now has a copy on the server.
+Dialogue: 0,0:14:16.52,0:14:19.59,Bilingual,,0,0,0,,第 9 步：换密钥，已经在第 8 步之前做过了\N{\fs33\c&H00C8C0B8&\bord1.4}Step 9: the key switch, done before step 8.
+Dialogue: 0,0:14:20.22,0:14:22.44,Bilingual,,0,0,0,,在你运行第 10 步之前，有两个额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Two extras before you run step 10.
+Dialogue: 0,0:14:22.76,0:14:26.04,Bilingual,,0,0,0,,这个 playbook 用 latest 这个 tag 启动 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}The playbook starts Chroma at the tag latest:
+Dialogue: 0,0:14:26.04,0:14:32.25,Bilingual,,0,0,0,,录制时它是版本 1，对旧的 API 返回状态码 410 Gone\N{\fs33\c&H00C8C0B8&\bord1.4}at the time of recording, version 1, which answers the old API with status 410, gone.
+Dialogue: 0,0:14:35.15,0:14:37.87,Bilingual,,0,0,0,,客户端和这个 repo 的 compose 文件都\N{\fs33\c&H00C8C0B8&\bord1.4}The clients and the repo's compose file
+Dialogue: 0,0:14:37.87,0:14:40.65,Bilingual,,0,0,0,,pin 在一个更早的版本上，它返回 200\N{\fs33\c&H00C8C0B8&\bord1.4}pin an older version, which answers 200.
+Dialogue: 0,0:14:40.97,0:14:44.71,Bilingual,,0,0,0,,所以先把第 151 行改成那个版本\N{\fs33\c&H00C8C0B8&\bord1.4}So change deploy-setup-containers.yml:151 to that version first.
+Dialogue: 0,0:14:46.93,0:14:49.87,Bilingual,,0,0,0,,第二，加载器用的是 docker run -it\N{\fs33\c&H00C8C0B8&\bord1.4}Second, the loader uses docker run -it,
+Dialogue: 0,0:14:49.87,0:14:52.89,Bilingual,,0,0,0,,没有终端的话 Docker 会拒绝\N{\fs33\c&H00C8C0B8&\bord1.4}which Docker refuses without a terminal.
+Dialogue: 0,0:14:53.21,0:14:56.63,Bilingual,,0,0,0,,我们没法测试 Ansible 会不会提供一个终端\N{\fs33\c&H00C8C0B8&\bord1.4}We couldn't test whether Ansible provides one;
+Dialogue: 0,0:14:56.63,0:14:58.79,Bilingual,,0,0,0,,如果那个 task 失败了，就去掉 -it\N{\fs33\c&H00C8C0B8&\bord1.4}if that task fails, drop -it.
+Dialogue: 0,0:14:59.03,0:15:02.62,Bilingual,,0,0,0,,第 10 步：ansible-playbook deploy-setup-containers.yml\N{\fs33\c&H00C8C0B8&\bord1.4}Step 10: ansible-playbook deploy-setup-containers.yml.
+Dialogue: 0,0:15:02.94,0:15:04.36,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:15:04.41,0:15:07.13,Bilingual,,0,0,0,,我们的是 UNREACHABLE，原因一样\N{\fs33\c&H00C8C0B8&\bord1.4}Ours is unreachable, for the same reason;
+Dialogue: 0,0:15:07.13,0:15:09.66,Bilingual,,0,0,0,,下面是它在真实服务器上做的事\N{\fs33\c&H00C8C0B8&\bord1.4}here is what it does on a real server.
+Dialogue: 0,0:15:09.90,0:15:13.33,Bilingual,,0,0,0,,它把你的密钥写进一个只有 root 能打开的文件\N{\fs33\c&H00C8C0B8&\bord1.4}It writes your keys to a file only root can open,
+Dialogue: 0,0:15:13.33,0:15:15.29,Bilingual,,0,0,0,,这是服务器上的第二份副本\N{\fs33\c&H00C8C0B8&\bord1.4}a second copy on the server,
+Dialogue: 0,0:15:15.29,0:15:19.56,Bilingual,,0,0,0,,再把它们作为环境变量交给 API 的 container\N{\fs33\c&H00C8C0B8&\bord1.4}and hands them to the API container as environment variables.
+Dialogue: 0,0:15:19.88,0:15:22.78,Bilingual,,0,0,0,,它创建一个 Docker 网络 appnetwork\N{\fs33\c&H00C8C0B8&\bord1.4}It creates a Docker network, appnetwork,
+Dialogue: 0,0:15:22.78,0:15:26.63,Bilingual,,0,0,0,,在数据磁盘上建两个目录，再登录 ECR\N{\fs33\c&H00C8C0B8&\bord1.4}and two folders on the data disk, and logs in to ECR.
+Dialogue: 0,0:15:26.87,0:15:32.79,Bilingual,,0,0,0,,然后它挑选 tag：工具箱容器环境里的 Docker tag 变量优先\N{\fs33\c&H00C8C0B8&\bord1.4}Then it picks the tag: a DOCKER_TAG variable in the toolbox's environment wins;
+Dialogue: 0,0:15:32.79,0:15:35.19,Bilingual,,0,0,0,,否则就用 .docker-tag 文件\N{\fs33\c&H00C8C0B8&\bord1.4}otherwise, the .docker-tag file.
+Dialogue: 0,0:15:35.51,0:15:37.41,Bilingual,,0,0,0,,从你的笔记本上跑，用的是这个文件\N{\fs33\c&H00C8C0B8&\bord1.4}From your laptop, it's the file.
+Dialogue: 0,0:15:37.65,0:15:41.86,Bilingual,,0,0,0,,它 pull 那三个 image，在 port 3000 上启动前端\N{\fs33\c&H00C8C0B8&\bord1.4}It pulls the three images and starts the frontend on port 3000 and Chroma on 8000.
+Dialogue: 0,0:15:41.86,0:15:43.94,Bilingual,,0,0,0,,在 8000 上启动 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}It pulls the three images and starts the frontend on port 3000 and Chroma on 8000.
+Dialogue: 0,0:15:44.26,0:15:47.91,Bilingual,,0,0,0,,一个一次性的 container 把向量数据库填好\N{\fs33\c&H00C8C0B8&\bord1.4}A throwaway container fills the vector database,
+Dialogue: 0,0:15:47.91,0:15:50.04,Bilingual,,0,0,0,,然后 API 在 9000 上启动\N{\fs33\c&H00C8C0B8&\bord1.4}then the API starts on 9000.
+Dialogue: 0,0:15:50.36,0:15:52.78,Bilingual,,0,0,0,,安全组让这些 port 保持关闭\N{\fs33\c&H00C8C0B8&\bord1.4}The security group keeps those ports shut.
+Dialogue: 0,0:15:53.02,0:15:55.56,Bilingual,,0,0,0,,第 11 步：在服务器上四处看看\N{\fs33\c&H00C8C0B8&\bord1.4}Step 11: look around on the server.
+Dialogue: 0,0:15:55.88,0:15:58.78,Bilingual,,0,0,0,,README 写 GCP console 的地方\N{\fs33\c&H00C8C0B8&\bord1.4}Where the README says GCP console,
+Dialogue: 0,0:15:58.78,0:16:01.52,Bilingual,,0,0,0,,你就以 ubuntu 身份用你的密钥 SSH 进去\N{\fs33\c&H00C8C0B8&\bord1.4}use SSH as ubuntu with your key,
+Dialogue: 0,0:16:01.52,0:16:03.58,Bilingual,,0,0,0,,或者用 EC2 Instance Connect\N{\fs33\c&H00C8C0B8&\bord1.4}or EC2 Instance Connect.
+Dialogue: 0,0:16:03.90,0:16:07.20,Bilingual,,0,0,0,,然后列出 container、跟踪日志，或者开一个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}Then list containers, follow logs, or open a shell.
+Dialogue: 0,0:16:07.45,0:16:10.03,Bilingual,,0,0,0,,这是它们在我们笔记本上的样子，作为替身\N{\fs33\c&H00C8C0B8&\bord1.4}Here they are on our laptop, as a stand-in.
+Dialogue: 0,0:16:10.35,0:16:13.25,Bilingual,,0,0,0,,表格里 image 那一列带着 tag：就在那里检查\N{\fs33\c&H00C8C0B8&\bord1.4}The image column carries the tag: check it there.
+Dialogue: 0,0:16:13.57,0:16:16.86,Bilingual,,0,0,0,,其中 nginx 那几行要等下一步做完才管用\N{\fs33\c&H00C8C0B8&\bord1.4}The nginx lines work only after the next step.
+Dialogue: 0,0:16:18.60,0:16:25.17,Bilingual,,0,0,0,,课上的路由：一个地址，/ 交给前端，/api/ 交给 API\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's routing: one address, / to the frontend, /api/ to the API.
+Dialogue: 0,0:16:25.49,0:16:28.01,Bilingual,,0,0,0,,这里同样的结构放在一台机器上\N{\fs33\c&H00C8C0B8&\bord1.4}Here the same shape sits on one machine,
+Dialogue: 0,0:16:28.01,0:16:30.72,Bilingual,,0,0,0,,Ingress 变成了一个 nginx container\N{\fs33\c&H00C8C0B8&\bord1.4}and the ingress becomes an nginx container.
+Dialogue: 0,0:16:30.97,0:16:35.51,Bilingual,,0,0,0,,第 12 步说要创建 nginx.conf；它其实已经在 repo 里了\N{\fs33\c&H00C8C0B8&\bord1.4}Step 12 says create nginx.conf; it's already in the repo.
+Dialogue: 0,0:16:35.83,0:16:37.54,Bilingual,,0,0,0,,它监听 port 80\N{\fs33\c&H00C8C0B8&\bord1.4}It listens on port 80.
+Dialogue: 0,0:16:37.86,0:16:43.06,Bilingual,,0,0,0,,以 /api/ 开头的路径交给 9000 上的 API 服务\N{\fs33\c&H00C8C0B8&\bord1.4}Paths that start with /api/ go to the API service on 9000;
+Dialogue: 0,0:16:43.06,0:16:47.09,Bilingual,,0,0,0,,其余的都交给 3000 上的前端\N{\fs33\c&H00C8C0B8&\bord1.4}everything else goes to the frontend on 3000.
+Dialogue: 0,0:16:47.33,0:16:52.11,Bilingual,,0,0,0,,预测一下：浏览器向 nginx 请求 /api/newsletters\N{\fs33\c&H00C8C0B8&\bord1.4}Predict: the browser asks nginx for /api/newsletters.
+Dialogue: 0,0:16:52.43,0:16:54.99,Bilingual,,0,0,0,,API 服务收到的是哪个路径？\N{\fs33\c&H00C8C0B8&\bord1.4}Which path does the API service receive?
+Dialogue: 0,0:16:55.31,0:16:57.66,Bilingual,,0,0,0,,看第 37 行的最末尾\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the very end of line 37.
+Dialogue: 0,0:17:06.50,0:17:08.10,Bilingual,,0,0,0,,/newsletters\N{\fs33\c&H00C8C0B8&\bord1.4}/newsletters.
+Dialogue: 0,0:17:08.16,0:17:12.77,Bilingual,,0,0,0,,Port 9000 后面那个结尾斜杠，会替换掉匹配到的前缀\N{\fs33\c&H00C8C0B8&\bord1.4}The trailing slash after port 9000 replaces the matched prefix.
+Dialogue: 0,0:17:13.09,0:17:15.98,Bilingual,,0,0,0,,我们笔记本上的替身证实了这一点\N{\fs33\c&H00C8C0B8&\bord1.4}Our stand-ins on the laptop confirm it,
+Dialogue: 0,0:17:15.98,0:17:19.53,Bilingual,,0,0,0,,而不带最后那个斜杠的 /api 会得到一个重定向\N{\fs33\c&H00C8C0B8&\bord1.4}and /api without its last slash gets a redirect.
+Dialogue: 0,0:17:21.43,0:17:24.49,Bilingual,,0,0,0,,前端在同一个主机上调用 /api\N{\fs33\c&H00C8C0B8&\bord1.4}The frontend calls /api on the same host,
+Dialogue: 0,0:17:24.49,0:17:28.88,Bilingual,,0,0,0,,而 API 注册路由时不带这个前缀：两边对得上\N{\fs33\c&H00C8C0B8&\bord1.4}and the API mounts its routes without the prefix: they fit.
+Dialogue: 0,0:17:29.23,0:17:30.82,Bilingual,,0,0,0,,第 13 步：暂停一下\N{\fs33\c&H00C8C0B8&\bord1.4}Step 13: pause and run
+Dialogue: 0,0:17:30.82,0:17:33.99,Bilingual,,0,0,0,,运行 ansible-playbook deploy-setup-webserver.yml\N{\fs33\c&H00C8C0B8&\bord1.4}ansible-playbook deploy-setup-webserver.yml.
+Dialogue: 0,0:17:34.31,0:17:35.91,Bilingual,,0,0,0,,又是 UNREACHABLE\N{\fs33\c&H00C8C0B8&\bord1.4}Unreachable again.
+Dialogue: 0,0:17:35.97,0:17:39.09,Bilingual,,0,0,0,,在真实的服务器上，它会拷贝配置\N{\fs33\c&H00C8C0B8&\bord1.4}On a real server, it copies the config,
+Dialogue: 0,0:17:39.09,0:17:43.08,Bilingual,,0,0,0,,在 port 80 和 443 上启动 nginx，再重启它\N{\fs33\c&H00C8C0B8&\bord1.4}starts nginx on ports 80 and 443, and restarts it.
+Dialogue: 0,0:17:43.32,0:17:46.79,Bilingual,,0,0,0,,第 14 步：在浏览器里打开你服务器的地址\N{\fs33\c&H00C8C0B8&\bord1.4}Step 14: open your server's address in a browser.
+Dialogue: 0,0:17:47.11,0:17:48.99,Bilingual,,0,0,0,,真正干活的只有 port 80\N{\fs33\c&H00C8C0B8&\bord1.4}Only port 80 does the work.
+Dialogue: 0,0:17:49.31,0:17:53.05,Bilingual,,0,0,0,,Port 443 是开着的，也转发给了 nginx\N{\fs33\c&H00C8C0B8&\bord1.4}Port 443 is open and forwarded to nginx,
+Dialogue: 0,0:17:53.05,0:17:57.25,Bilingual,,0,0,0,,但 nginx 在那里什么都不提供：还没有 HTTPS\N{\fs33\c&H00C8C0B8&\bord1.4}but nginx serves nothing there: no HTTPS yet.
+Dialogue: 0,0:17:57.48,0:18:01.66,Bilingual,,0,0,0,,这就是第 1 部分：大约十几条命令和五个 playbook，全部手动\N{\fs33\c&H00C8C0B8&\bord1.4}That's part 1: about a dozen commands and five playbooks, by hand.
+Dialogue: 0,0:18:01.98,0:18:04.99,Bilingual,,0,0,0,,如果你就停在这里，今天就在 EC2 控制台里终止实例\N{\fs33\c&H00C8C0B8&\bord1.4}If you stop here, terminate the instance
+Dialogue: 0,0:18:04.99,0:18:06.95,Bilingual,,0,0,0,,并删掉它那个 50 GB 的 volume\N{\fs33\c&H00C8C0B8&\bord1.4}and delete its 50 gigabyte
+Dialogue: 0,0:18:06.95,0:18:13.03,Bilingual,,0,0,0,,README 的删除步骤会失败，第 2 部分会讲到\N{\fs33\c&H00C8C0B8&\bord1.4}volume in the EC2 console today: the README's delete step fails, as part 2 shows.
+Dialogue: 0,0:18:13.35,0:18:16.09,Bilingual,,0,0,0,,接下来，由一条 commit 信息来完成重新部署\N{\fs33\c&H00C8C0B8&\bord1.4}Next, a commit message does the redeploy.
+Dialogue: 0,0:18:17.83,0:18:19.99,Bilingual,,0,0,0,,第 2 部分从课上的循环开始\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 starts with the lecture's loop.
+Dialogue: 0,0:18:20.31,0:18:22.29,Bilingual,,0,0,0,,开发者把代码 commit 到代码库\N{\fs33\c&H00C8C0B8&\bord1.4}Developers commit to the codebase.
+Dialogue: 0,0:18:22.61,0:18:25.56,Bilingual,,0,0,0,,接着构建、测试：这是 CI 那一半\N{\fs33\c&H00C8C0B8&\bord1.4}It is built and tested: that's the CI half.
+Dialogue: 0,0:18:25.88,0:18:29.12,Bilingual,,0,0,0,,然后部署、监控：这是 CD 那一半\N{\fs33\c&H00C8C0B8&\bord1.4}Then it is deployed and monitored: the CD half.
+Dialogue: 0,0:18:29.44,0:18:31.91,Bilingual,,0,0,0,,每个阶段都会把通知发回来\N{\fs33\c&H00C8C0B8&\bord1.4}Every stage sends notifications back.
+Dialogue: 0,0:18:32.15,0:18:36.37,Bilingual,,0,0,0,,回顾部分的版本在测试和部署之间多加了一个方框\N{\fs33\c&H00C8C0B8&\bord1.4}The version in the review adds one box between test and deploy:
+Dialogue: 0,0:18:36.37,0:18:40.85,Bilingual,,0,0,0,,发布，也就是把测试过的版本交出去部署的那一刻\N{\fs33\c&H00C8C0B8&\bord1.4}release, the moment a tested version is handed over for deployment.
+Dialogue: 0,0:18:41.10,0:18:44.45,Bilingual,,0,0,0,,持续集成会在每次 push 时运行脚本\N{\fs33\c&H00C8C0B8&\bord1.4}Continuous integration runs scripts on every push.
+Dialogue: 0,0:18:44.77,0:18:47.41,Bilingual,,0,0,0,,很多开发者共享一个 repo\N{\fs33\c&H00C8C0B8&\bord1.4}Many developers share one repository,
+Dialogue: 0,0:18:47.41,0:18:53.04,Bilingual,,0,0,0,,每个改动都要通过自动化测试、编码规范和静态分析\N{\fs33\c&H00C8C0B8&\bord1.4}and every change passes automated tests, coding standards, and static analysis,
+Dialogue: 0,0:18:53.04,0:18:55.97,Bilingual,,0,0,0,,静态分析不用运行代码就能找出缺陷\N{\fs33\c&H00C8C0B8&\bord1.4}which finds defects without running code.
+Dialogue: 0,0:18:56.29,0:18:59.13,Bilingual,,0,0,0,,你在第 9 讲和第 21 讲里搭过它\N{\fs33\c&H00C8C0B8&\bord1.4}You built this in lectures 9 and 21.
+Dialogue: 0,0:18:59.37,0:19:01.22,Bilingual,,0,0,0,,然后是交付和部署\N{\fs33\c&H00C8C0B8&\bord1.4}Then delivery and deployment.
+Dialogue: 0,0:19:01.54,0:19:07.09,Bilingual,,0,0,0,,持续交付让每个改动都随时可以发布，但按下按钮的是一个人\N{\fs33\c&H00C8C0B8&\bord1.4}Continuous delivery keeps every change ready to release, but a person presses the button.
+Dialogue: 0,0:19:07.41,0:19:11.33,Bilingual,,0,0,0,,持续部署会自己把每个通过的改动上线\N{\fs33\c&H00C8C0B8&\bord1.4}Continuous deployment ships every passing change by itself.
+Dialogue: 0,0:19:12.07,0:19:13.47,Bilingual,,0,0,0,,对机器学习来说\N{\fs33\c&H00C8C0B8&\bord1.4}For machine learning,
+Dialogue: 0,0:19:13.47,0:19:18.32,Bilingual,,0,0,0,,CI 还要检查数据质量和模型性能，所以成本很高\N{\fs33\c&H00C8C0B8&\bord1.4}CI also checks data quality and model performance, which makes it expensive.
+Dialogue: 0,0:19:18.64,0:19:23.05,Bilingual,,0,0,0,,而 CD 只有在指标处于容差范围内时才发布模型\N{\fs33\c&H00C8C0B8&\bord1.4}And CD releases a model only when its metrics are within a tolerance,
+Dialogue: 0,0:19:23.05,0:19:24.97,Bilingual,,0,0,0,,还必须应对数据漂移\N{\fs33\c&H00C8C0B8&\bord1.4}and must cope with data drift.
+Dialogue: 0,0:19:25.29,0:19:29.79,Bilingual,,0,0,0,,这个 repo 部署的是应用，不是模型；模型是第 15 讲\N{\fs33\c&H00C8C0B8&\bord1.4}This repo deploys an app, not a model; lecture 15 was the model.
+Dialogue: 0,0:19:30.03,0:19:31.65,Bilingual,,0,0,0,,现在把这个 repo 放到循环上\N{\fs33\c&H00C8C0B8&\bord1.4}Now this repo on the loop.
+Dialogue: 0,0:19:31.97,0:19:34.53,Bilingual,,0,0,0,,构建、发布和部署亮了起来\N{\fs33\c&H00C8C0B8&\bord1.4}Build, release and deploy light up;
+Dialogue: 0,0:19:34.53,0:19:37.88,Bilingual,,0,0,0,,发布就是带 tag 的 image 落进 ECR 的时候\N{\fs33\c&H00C8C0B8&\bord1.4}release is when the tagged images land in ECR.
+Dialogue: 0,0:19:38.20,0:19:39.70,Bilingual,,0,0,0,,测试这一格还是虚线\N{\fs33\c&H00C8C0B8&\bord1.4}Test stays dashed:
+Dialogue: 0,0:19:39.70,0:19:45.67,Bilingual,,0,0,0,,这个工作流叫持续集成和持续部署，却一个测试都不跑\N{\fs33\c&H00C8C0B8&\bord1.4}the workflow is named continuous integration and continuous deployment, but runs no test.
+Dialogue: 0,0:19:45.99,0:19:47.59,Bilingual,,0,0,0,,它是 CD 那一半\N{\fs33\c&H00C8C0B8&\bord1.4}It's the CD half.
+Dialogue: 0,0:19:47.68,0:19:51.56,Bilingual,,0,0,0,,而监控就是这次 run 的颜色，再加上你自己去网站上看一看\N{\fs33\c&H00C8C0B8&\bord1.4}And monitor is the color of the run, plus your own check of the site.
+Dialogue: 0,0:19:51.80,0:19:54.78,Bilingual,,0,0,0,,课上列了好几个 CI/CD 服务\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture names several CI/CD services;
+Dialogue: 0,0:19:54.78,0:20:00.38,Bilingual,,0,0,0,,这门课用的是 GitHub Actions，构建部署 container 并运行它\N{\fs33\c&H00C8C0B8&\bord1.4}the course uses GitHub Actions, to build the deployment container and run it,
+Dialogue: 0,0:20:00.38,0:20:02.28,Bilingual,,0,0,0,,在每一个提出要求的 commit 上\N{\fs33\c&H00C8C0B8&\bord1.4}on every commit that asks.
+Dialogue: 0,0:20:02.60,0:20:07.52,Bilingual,,0,0,0,,工作流文件保持得很薄；部署逻辑就是你刚刚跑过的那些 playbook\N{\fs33\c&H00C8C0B8&\bord1.4}The workflow file stays thin; the deploy logic is the playbooks you just ran.
+Dialogue: 0,0:20:08.97,0:20:13.56,Bilingual,,0,0,0,,这个工作流文件 ci cd aws.yml 不在 README 里\N{\fs33\c&H00C8C0B8&\bord1.4}The workflow file, ci_cd_aws.yml, isn't in the README,
+Dialogue: 0,0:20:13.56,0:20:16.88,Bilingual,,0,0,0,,所以这个进度条上的每一步都是额外的\N{\fs33\c&H00C8C0B8&\bord1.4}so every step on this tracker is extra.
+Dialogue: 0,0:20:17.20,0:20:19.50,Bilingual,,0,0,0,,每次 push 到 main 它都会启动\N{\fs33\c&H00C8C0B8&\bord1.4}It starts on every push to main,
+Dialogue: 0,0:20:19.50,0:20:23.73,Bilingual,,0,0,0,,但这个 job 只在 commit 信息包含 /run- 时才运行\N{\fs33\c&H00C8C0B8&\bord1.4}but the job runs only if the commit message contains /run-.
+Dialogue: 0,0:20:23.97,0:20:27.11,Bilingual,,0,0,0,,而最后一步，Run Deployment Container\N{\fs33\c&H00C8C0B8&\bord1.4}And the last step, Run Deployment Container,
+Dialogue: 0,0:20:27.11,0:20:32.48,Bilingual,,0,0,0,,对同一条信息有它自己的条件：必须包含 /run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}has its own condition on the same message: it must contain /run-deploy-app.
+Dialogue: 0,0:20:32.72,0:20:34.34,Bilingual,,0,0,0,,两道筛子，一句话\N{\fs33\c&H00C8C0B8&\bord1.4}Two sieves, one sentence.
+Dialogue: 0,0:20:34.66,0:20:37.44,Bilingual,,0,0,0,,这条信息 update readme 里没有 /run-\N{\fs33\c&H00C8C0B8&\bord1.4}The message update readme has no /run-,
+Dialogue: 0,0:20:37.44,0:20:40.23,Bilingual,,0,0,0,,所以这个 job 被跳过，什么都不运行\N{\fs33\c&H00C8C0B8&\bord1.4}so the job is skipped and nothing runs.
+Dialogue: 0,0:20:40.55,0:20:44.99,Bilingual,,0,0,0,,轮到你了。你把 fix typo /run-tests push 到 main\N{\fs33\c&H00C8C0B8&\bord1.4}Your turn. You push fix typo /run-tests to main.
+Dialogue: 0,0:20:45.31,0:20:48.34,Bilingual,,0,0,0,,什么都不发生，只构建和 push，还是完整部署？\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing, build and push only, or a full deploy?
+Dialogue: 0,0:20:57.18,0:20:58.75,Bilingual,,0,0,0,,只构建和 push\N{\fs33\c&H00C8C0B8&\bord1.4}Build and push only.
+Dialogue: 0,0:20:58.80,0:21:03.00,Bilingual,,0,0,0,,它通过了第一道筛子，所以 runner 构建三个新 image\N{\fs33\c&H00C8C0B8&\bord1.4}It passes the first sieve, so the runner builds three new images
+Dialogue: 0,0:21:03.00,0:21:06.14,Bilingual,,0,0,0,,再 push 到 ECR，在那里它们会产生存储费用\N{\fs33\c&H00C8C0B8&\bord1.4}and pushes them to ECR, where they cost storage.
+Dialogue: 0,0:21:06.46,0:21:10.05,Bilingual,,0,0,0,,它停在了第二道筛子，所以服务器还是用旧的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}It stops at the second sieve, so the server keeps the old tag.
+Dialogue: 0,0:21:10.28,0:21:12.91,Bilingual,,0,0,0,,/run-deploy-app 两道筛子都能通过\N{\fs33\c&H00C8C0B8&\bord1.4}/run-deploy-app passes both sieves:
+Dialogue: 0,0:21:12.91,0:21:17.34,Bilingual,,0,0,0,,有新的 image，服务器上的 container 也会被重新创建\N{\fs33\c&H00C8C0B8&\bord1.4}new images, and the containers on the server are recreated.
+Dialogue: 0,0:21:17.75,0:21:19.39,Bilingual,,0,0,0,,那开头那个 commit 呢？\N{\fs33\c&H00C8C0B8&\bord1.4}And the commit from the opening?
+Dialogue: 0,0:21:19.71,0:21:21.31,Bilingual,,0,0,0,,它的斜杠是反斜杠\N{\fs33\c&H00C8C0B8&\bord1.4}Its slash is a backslash.
+Dialogue: 0,0:21:21.63,0:21:25.86,Bilingual,,0,0,0,,里面没有 /run- 这段文字，所以它在第一道筛子就被弹了回去\N{\fs33\c&H00C8C0B8&\bord1.4}The text /run- isn't in it, so it bounces off the first sieve.
+Dialogue: 0,0:21:26.18,0:21:27.78,Bilingual,,0,0,0,,这就是那一个字符\N{\fs33\c&H00C8C0B8&\bord1.4}That's the one character.
+Dialogue: 0,0:21:27.88,0:21:30.25,Bilingual,,0,0,0,,教程那一页课件说的也一样\N{\fs33\c&H00C8C0B8&\bord1.4}The tutorial slide says the same:
+Dialogue: 0,0:21:30.25,0:21:32.90,Bilingual,,0,0,0,,.github/workflows 里的一个工作流文件\N{\fs33\c&H00C8C0B8&\bord1.4}a workflow file in .github/workflows,
+Dialogue: 0,0:21:32.90,0:21:35.48,Bilingual,,0,0,0,,加上 commit 信息里的一个关键词\N{\fs33\c&H00C8C0B8&\bord1.4}and a keyword in the commit message.
+Dialogue: 0,0:21:35.80,0:21:40.13,Bilingual,,0,0,0,,它的关键词 /deploy-app 属于 Google Cloud 那个 repo\N{\fs33\c&H00C8C0B8&\bord1.4}Its keyword, /deploy-app, belongs to the Google Cloud repo.
+Dialogue: 0,0:21:40.45,0:21:42.26,Bilingual,,0,0,0,,这里是 /run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}Here it's /run-deploy-app.
+Dialogue: 0,0:21:44.80,0:21:47.88,Bilingual,,0,0,0,,所谓 head commit，指的是一次 push 里的最后一个 commit\N{\fs33\c&H00C8C0B8&\bord1.4}head_commit means the last commit of a push,
+Dialogue: 0,0:21:47.88,0:21:50.86,Bilingual,,0,0,0,,所以三个 commit 只按最后一条信息来判断\N{\fs33\c&H00C8C0B8&\bord1.4}so three commits are judged by the last message only.
+Dialogue: 0,0:21:51.18,0:21:52.80,Bilingual,,0,0,0,,而且匹配不区分大小写\N{\fs33\c&H00C8C0B8&\bord1.4}And the match ignores case.
+Dialogue: 0,0:21:53.95,0:21:56.94,Bilingual,,0,0,0,,第 2 部分需要你自己的 GitHub repo\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 needs your own GitHub repository.
+Dialogue: 0,0:21:57.26,0:21:59.56,Bilingual,,0,0,0,,暂停一下，建一个空的私有 repo\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, create an empty private one,
+Dialogue: 0,0:21:59.56,0:22:01.80,Bilingual,,0,0,0,,把 origin 指向它，再 push main\N{\fs33\c&H00C8C0B8&\bord1.4}point origin at it, and push main.
+Dialogue: 0,0:22:02.12,0:22:06.13,Bilingual,,0,0,0,,它最后一条信息里没有 /run-，所以暂时什么都不会运行\N{\fs33\c&H00C8C0B8&\bord1.4}Its last message has no /run-, so nothing runs yet.
+Dialogue: 0,0:22:06.37,0:22:10.03,Bilingual,,0,0,0,,先把你的 secret 交给 GitHub：在你的 repo 里\N{\fs33\c&H00C8C0B8&\bord1.4}First, give GitHub your secrets: in your repository,
+Dialogue: 0,0:22:10.03,0:22:12.92,Bilingual,,0,0,0,,打开 Settings，Secrets and variables，Actions\N{\fs33\c&H00C8C0B8&\bord1.4}Settings, Secrets and variables, Actions.
+Dialogue: 0,0:22:13.24,0:22:18.37,Bilingual,,0,0,0,,加四个：访问密钥 ID、私有访问密钥、你的账号 ID\N{\fs33\c&H00C8C0B8&\bord1.4}Add four: the access key ID, the secret key, your account ID,
+Dialogue: 0,0:22:18.37,0:22:21.41,Bilingual,,0,0,0,,还有 AWS SSH key，也就是整个 pem 文件\N{\fs33\c&H00C8C0B8&\bord1.4}and AWS_SSH_KEY, the whole pem file.
+Dialogue: 0,0:22:21.73,0:22:23.45,Bilingual,,0,0,0,,这些名字来自工作流文件\N{\fs33\c&H00C8C0B8&\bord1.4}The names come from the workflow.
+Dialogue: 0,0:22:23.70,0:22:25.77,Bilingual,,0,0,0,,你的徽章现在有了第三份副本\N{\fs33\c&H00C8C0B8&\bord1.4}Your badge has a third copy now,
+Dialogue: 0,0:22:25.77,0:22:28.61,Bilingual,,0,0,0,,在 GitHub 上的保险库里，你的钥匙也有了第二份\N{\fs33\c&H00C8C0B8&\bord1.4}in a vault on GitHub, and your key a second.
+Dialogue: 0,0:22:28.93,0:22:31.44,Bilingual,,0,0,0,,每多一份副本，就多一个要保护的地方\N{\fs33\c&H00C8C0B8&\bord1.4}Every copy is one more place to protect.
+Dialogue: 0,0:22:31.68,0:22:34.01,Bilingual,,0,0,0,,这个 runner 是一台全新的 Ubuntu 机器\N{\fs33\c&H00C8C0B8&\bord1.4}The runner is a fresh Ubuntu machine.
+Dialogue: 0,0:22:34.33,0:22:38.85,Bilingual,,0,0,0,,一个来自 AWS 的 action，用两个 secret 配好它的凭据\N{\fs33\c&H00C8C0B8&\bord1.4}An action from AWS sets up its credentials from two secrets.
+Dialogue: 0,0:22:39.17,0:22:41.90,Bilingual,,0,0,0,,然后它检查自己的身份，列出 S3\N{\fs33\c&H00C8C0B8&\bord1.4}Then it checks who it is, lists S3,
+Dialogue: 0,0:22:41.90,0:22:45.02,Bilingual,,0,0,0,,再让 Docker 登录你的 ECR registry\N{\fs33\c&H00C8C0B8&\bord1.4}and logs Docker in to your ECR registry.
+Dialogue: 0,0:22:45.27,0:22:49.00,Bilingual,,0,0,0,,然后它用 commit 进去的 Dockerfile 构建同一个工具箱容器\N{\fs33\c&H00C8C0B8&\bord1.4}Then it builds the same toolbox, from the committed Dockerfile.
+Dialogue: 0,0:22:49.32,0:22:52.46,Bilingual,,0,0,0,,所以第 1 部分对 Helm 的修复，要放进你的 commit 里\N{\fs33\c&H00C8C0B8&\bord1.4}So the Helm fix from part 1 belongs in your commit.
+Dialogue: 0,0:22:52.78,0:22:56.34,Bilingual,,0,0,0,,我们没测试过：runner 会不会遇到同样的证书错误\N{\fs33\c&H00C8C0B8&\bord1.4}We didn't test whether runners hit the same certificate error.
+Dialogue: 0,0:22:56.58,0:23:00.43,Bilingual,,0,0,0,,接下来，用日期生成一个新的 tag，写进 .docker-tag\N{\fs33\c&H00C8C0B8&\bord1.4}Next, a fresh tag from the date, written to .docker-tag
+Dialogue: 0,0:23:00.43,0:23:03.30,Bilingual,,0,0,0,,也写进一个 GitHub 在步骤之间保留的文件\N{\fs33\c&H00C8C0B8&\bord1.4}and to a file GitHub keeps between steps.
+Dialogue: 0,0:23:03.62,0:23:05.91,Bilingual,,0,0,0,,手动跑一下，它给出的是一个时间戳\N{\fs33\c&H00C8C0B8&\bord1.4}Run by hand, it gives a timestamp.
+Dialogue: 0,0:23:06.52,0:23:10.88,Bilingual,,0,0,0,,然后对前端就是普通的 docker build、docker tag\N{\fs33\c&H00C8C0B8&\bord1.4}Then plain docker build, docker tag and docker push for the frontend,
+Dialogue: 0,0:23:10.88,0:23:13.28,Bilingual,,0,0,0,,和 docker push，另外两个 image 也一样\N{\fs33\c&H00C8C0B8&\bord1.4}and the same for the other two images.
+Dialogue: 0,0:23:13.60,0:23:17.46,Bilingual,,0,0,0,,在 CI 里，构建应用 image 的是 runner，不是 playbook\N{\fs33\c&H00C8C0B8&\bord1.4}In CI, the runner builds the app images, not the playbook.
+Dialogue: 0,0:23:17.70,0:23:19.62,Bilingual,,0,0,0,,所以工具箱容器只负责部署\N{\fs33\c&H00C8C0B8&\bord1.4}So the toolbox only deploys.
+Dialogue: 0,0:23:19.94,0:23:23.42,Bilingual,,0,0,0,,和你的笔记本相比：同一个工具箱容器，同一个 socket\N{\fs33\c&H00C8C0B8&\bord1.4}Compared with your laptop: same toolbox, same socket.
+Dialogue: 0,0:23:23.74,0:23:27.81,Bilingual,,0,0,0,,但 deployment 目录在 /deployment\N{\fs33\c&H00C8C0B8&\bord1.4}But the deployment folder sits at /deployment,
+Dialogue: 0,0:23:27.81,0:23:31.61,Bilingual,,0,0,0,,密钥在 /root/.ssh，也没有应用目录\N{\fs33\c&H00C8C0B8&\bord1.4}the keys at /root/.ssh, and no app folders.
+Dialogue: 0,0:23:33.45,0:23:35.18,Bilingual,,0,0,0,,最后是 SSH 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Last, the SSH key.
+Dialogue: 0,0:23:35.50,0:23:39.07,Bilingual,,0,0,0,,这一步写出一份 SSH 配置\N{\fs33\c&H00C8C0B8&\bord1.4}The step writes an SSH config,
+Dialogue: 0,0:23:39.07,0:23:44.54,Bilingual,,0,0,0,,把你的密钥写成 ac215_2024.pem，权限 600\N{\fs33\c&H00C8C0B8&\bord1.4}and your key as ac215_2024.pem, with mode 600.
+Dialogue: 0,0:23:44.86,0:23:47.46,Bilingual,,0,0,0,,它把两个文件都拷进 deployment 目录\N{\fs33\c&H00C8C0B8&\bord1.4}It copies both into the deployment folder,
+Dialogue: 0,0:23:47.46,0:23:49.68,Bilingual,,0,0,0,,只在 runner 上，从不 commit\N{\fs33\c&H00C8C0B8&\bord1.4}on the runner only, never committed.
+Dialogue: 0,0:23:53.97,0:23:57.11,Bilingual,,0,0,0,,部署这一步在 runner 上运行工具箱容器\N{\fs33\c&H00C8C0B8&\bord1.4}The deploy step runs the toolbox on the runner,
+Dialogue: 0,0:23:57.11,0:24:01.15,Bilingual,,0,0,0,,带上 socket、两个目录和五个环境变量\N{\fs33\c&H00C8C0B8&\bord1.4}with the socket, two folders, and five environment variables,
+Dialogue: 0,0:24:01.15,0:24:02.75,Bilingual,,0,0,0,,其中就有 Docker tag 变量\N{\fs33\c&H00C8C0B8&\bord1.4}DOCKER_TAG among them.
+Dialogue: 0,0:24:02.88,0:24:07.36,Bilingual,,0,0,0,,里面是一长串命令：修好权限，登录 ECR\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, one long command: fix permissions, log in to ECR,
+Dialogue: 0,0:24:07.36,0:24:10.90,Bilingual,,0,0,0,,用新 tag 运行 deploy-setup-containers\N{\fs33\c&H00C8C0B8&\bord1.4}run deploy-setup-containers with the new tag,
+Dialogue: 0,0:24:10.90,0:24:13.10,Bilingual,,0,0,0,,再运行 deploy-setup-webserver\N{\fs33\c&H00C8C0B8&\bord1.4}then deploy-setup-webserver.
+Dialogue: 0,0:24:13.42,0:24:16.49,Bilingual,,0,0,0,,每一环只有在前一环成功时才运行\N{\fs33\c&H00C8C0B8&\bord1.4}Each link runs only if the one before succeeded.
+Dialogue: 0,0:24:16.73,0:24:21.16,Bilingual,,0,0,0,,手动跑一下，作为额外步骤，它打印出 tag，列出密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Run by hand, as an extra, it prints the tag and lists the key,
+Dialogue: 0,0:24:21.16,0:24:24.95,Bilingual,,0,0,0,,然后在 ECR 登录这一步，因为我们的占位密钥停了下来\N{\fs33\c&H00C8C0B8&\bord1.4}then stops at the ECR login with our placeholder key.
+Dialogue: 0,0:24:25.27,0:24:26.87,Bilingual,,0,0,0,,两个 playbook 都没有运行\N{\fs33\c&H00C8C0B8&\bord1.4}Neither playbook runs.
+Dialogue: 0,0:24:28.20,0:24:29.75,Bilingual,,0,0,0,,跟着一个 tag 走\N{\fs33\c&H00C8C0B8&\bord1.4}Follow one tag.
+Dialogue: 0,0:24:29.80,0:24:31.62,Bilingual,,0,0,0,,日期在 runner 上给它盖上时间戳\N{\fs33\c&H00C8C0B8&\bord1.4}The date stamps it on the runner.
+Dialogue: 0,0:24:31.83,0:24:34.35,Bilingual,,0,0,0,,它作为 extra vars 进入 Ansible\N{\fs33\c&H00C8C0B8&\bord1.4}It reaches Ansible as an extra variable,
+Dialogue: 0,0:24:34.35,0:24:36.82,Bilingual,,0,0,0,,优先级高于 playbook 里设的任何值\N{\fs33\c&H00C8C0B8&\bord1.4}which beats anything the playbook sets,
+Dialogue: 0,0:24:36.82,0:24:39.91,Bilingual,,0,0,0,,所以服务器会按这个 tag pull 那三个 image\N{\fs33\c&H00C8C0B8&\bord1.4}so the server pulls the three images at that tag.
+Dialogue: 0,0:24:40.15,0:24:42.25,Bilingual,,0,0,0,,然后每个 container 都被重新创建\N{\fs33\c&H00C8C0B8&\bord1.4}Then each container is recreated:
+Dialogue: 0,0:24:42.25,0:24:46.34,Bilingual,,0,0,0,,旧的停掉，新的启动，中间有一小段空档\N{\fs33\c&H00C8C0B8&\bord1.4}the old one stops, the new one starts, with a short gap between.
+Dialogue: 0,0:24:46.58,0:24:51.64,Bilingual,,0,0,0,,课件部署到一个 Kubernetes 集群上，在那里，和第 22 讲一样\N{\fs33\c&H00C8C0B8&\bord1.4}The slides deploy to a Kubernetes cluster, where, as in lecture 22,
+Dialogue: 0,0:24:51.64,0:24:55.86,Bilingual,,0,0,0,,滚动更新会先启动新的 Pod，再让旧的离开\N{\fs33\c&H00C8C0B8&\bord1.4}a rolling update starts new pods before the old ones go.
+Dialogue: 0,0:24:56.18,0:24:58.89,Bilingual,,0,0,0,,一台机器只能直接替换；它滚动不起来\N{\fs33\c&H00C8C0B8&\bord1.4}One machine can only swap; it doesn't roll.
+Dialogue: 0,0:24:59.13,0:25:00.62,Bilingual,,0,0,0,,要 commit 四样东西\N{\fs33\c&H00C8C0B8&\bord1.4}Commit four things.
+Dialogue: 0,0:25:00.67,0:25:02.77,Bilingual,,0,0,0,,你服务器的地址，填在第 30 行\N{\fs33\c&H00C8C0B8&\bord1.4}Your server address on line 30:
+Dialogue: 0,0:25:02.77,0:25:05.00,Bilingual,,0,0,0,,CI 部署的是 commit 进去的任何东西\N{\fs33\c&H00C8C0B8&\bord1.4}CI deploys whatever is committed.
+Dialogue: 0,0:25:05.32,0:25:08.80,Bilingual,,0,0,0,,撤销第 9 步：打开第 4 行，关掉第 7 行\N{\fs33\c&H00C8C0B8&\bord1.4}Step 9 undone: line 4 on, line 7 off.
+Dialogue: 0,0:25:09.12,0:25:10.54,Bilingual,,0,0,0,,Helm 的修复\N{\fs33\c&H00C8C0B8&\bord1.4}The Helm fix.
+Dialogue: 0,0:25:10.59,0:25:11.93,Bilingual,,0,0,0,,Chroma 的 pin\N{\fs33\c&H00C8C0B8&\bord1.4}The Chroma pin.
+Dialogue: 0,0:25:11.98,0:25:16.27,Bilingual,,0,0,0,,执行 git add . 也会把你的账号 ID 和 NextAuth secret\N{\fs33\c&H00C8C0B8&\bord1.4}git add . also commits your account ID and NEXTAUTH_SECRET,
+Dialogue: 0,0:25:16.27,0:25:18.53,Bilingual,,0,0,0,,一起 commit 进去，所以 repo 要保持私有\N{\fs33\c&H00C8C0B8&\bord1.4}so keep the repository private.
+Dialogue: 0,0:25:18.77,0:25:23.14,Bilingual,,0,0,0,,然后是课件上的三条命令，换上这个 repo 的关键词：git add .\N{\fs33\c&H00C8C0B8&\bord1.4}Then the slide's three commands, with this repo's keyword: git add .,
+Dialogue: 0,0:25:23.14,0:25:27.45,Bilingual,,0,0,0,,git commit -m 的信息里写上 /run-deploy-app，再 git push\N{\fs33\c&H00C8C0B8&\bord1.4}git commit -m "…" with /run-deploy-app in the message, and git push.
+Dialogue: 0,0:25:27.77,0:25:29.37,Bilingual,,0,0,0,,暂停一下，push\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and push.
+Dialogue: 0,0:25:34.35,0:25:37.88,Bilingual,,0,0,0,,一次绿色的 run，意思是每个跑过的步骤都以 0 退出\N{\fs33\c&H00C8C0B8&\bord1.4}A green run means every step that ran exited with zero,
+Dialogue: 0,0:25:37.88,0:25:39.48,Bilingual,,0,0,0,,并不代表应用能用\N{\fs33\c&H00C8C0B8&\bord1.4}not that the app works.
+Dialogue: 0,0:25:39.68,0:25:43.78,Bilingual,,0,0,0,,重新加载你的网站，再到服务器的 image 那一列里找新的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}Reload your site, and find the new tag in the server's image column.
+Dialogue: 0,0:25:44.02,0:25:48.91,Bilingual,,0,0,0,,用课上的话说：敲 /run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}In the lecture's words: is typing /run-deploy-app continuous delivery,
+Dialogue: 0,0:25:48.91,0:25:50.65,Bilingual,,0,0,0,,算持续交付，还是持续部署？\N{\fs33\c&H00C8C0B8&\bord1.4}or continuous deployment?
+Dialogue: 0,0:25:50.97,0:25:52.57,Bilingual,,0,0,0,,怎样才能让它变成另一个？\N{\fs33\c&H00C8C0B8&\bord1.4}What would make it the other?
+Dialogue: 0,0:26:03.28,0:26:04.47,Bilingual,,0,0,0,,持续交付\N{\fs33\c&H00C8C0B8&\bord1.4}Delivery.
+Dialogue: 0,0:26:04.52,0:26:09.58,Bilingual,,0,0,0,,每次发布都由一个人敲关键词来决定，而且之前什么都没测试\N{\fs33\c&H00C8C0B8&\bord1.4}A person decides each release by typing the keyword, and nothing is tested first.
+Dialogue: 0,0:26:09.90,0:26:11.81,Bilingual,,0,0,0,,把每次合并到 main 都部署出去\N{\fs33\c&H00C8C0B8&\bord1.4}Deploy every merge to main,
+Dialogue: 0,0:26:11.81,0:26:16.83,Bilingual,,0,0,0,,前面挡着第 21 讲的测试，它就变成了持续部署\N{\fs33\c&H00C8C0B8&\bord1.4}behind the tests from lecture 21, and it becomes continuous deployment.
+Dialogue: 0,0:26:17.15,0:26:18.75,Bilingual,,0,0,0,,这就是 Milestone 5\N{\fs33\c&H00C8C0B8&\bord1.4}That is Milestone 5.
+Dialogue: 0,0:26:19.83,0:26:22.84,Bilingual,,0,0,0,,回到 README，看它的最后一步：删除\N{\fs33\c&H00C8C0B8&\bord1.4}Back to the README, for its last step: delete.
+Dialogue: 0,0:26:23.16,0:26:24.82,Bilingual,,0,0,0,,它跑的还是同一个 playbook\N{\fs33\c&H00C8C0B8&\bord1.4}It runs the same playbook with cluster_state=absent.
+Dialogue: 0,0:26:24.82,0:26:26.85,Bilingual,,0,0,0,,只是 cluster state 设为 absent\N{\fs33\c&H00C8C0B8&\bord1.4}It runs the same playbook with cluster_state=absent.
+Dialogue: 0,0:26:27.17,0:26:28.77,Bilingual,,0,0,0,,看看那些 when 行\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the when: lines.
+Dialogue: 0,0:26:28.84,0:26:30.54,Bilingual,,0,0,0,,这三个 task 里，哪些会运行？\N{\fs33\c&H00C8C0B8&\bord1.4}Which of these three tasks run?
+Dialogue: 0,0:26:39.38,0:26:41.05,Bilingual,,0,0,0,,完全照着写的来跑\N{\fs33\c&H00C8C0B8&\bord1.4}Run it exactly as written.
+Dialogue: 0,0:26:41.37,0:26:42.99,Bilingual,,0,0,0,,安全组，skipping\N{\fs33\c&H00C8C0B8&\bord1.4}Security group, skipping.
+Dialogue: 0,0:26:43.31,0:26:45.19,Bilingual,,0,0,0,,EBS volume，skipping\N{\fs33\c&H00C8C0B8&\bord1.4}EBS volume, skipping.
+Dialogue: 0,0:26:45.51,0:26:48.34,Bilingual,,0,0,0,,然后实例那个 task 没有 when 行\N{\fs33\c&H00C8C0B8&\bord1.4}Then the instance task has no when: line,
+Dialogue: 0,0:26:48.34,0:26:50.63,Bilingual,,0,0,0,,结果失败了：no attribute group ID\N{\fs33\c&H00C8C0B8&\bord1.4}and fails: no attribute group_id.
+Dialogue: 0,0:26:50.95,0:26:53.31,Bilingual,,0,0,0,,这发生在任何 AWS 调用之前\N{\fs33\c&H00C8C0B8&\bord1.4}That is before any AWS call.
+Dialogue: 0,0:26:53.55,0:26:56.24,Bilingual,,0,0,0,,被跳过的 task 从来没有设好安全组\N{\fs33\c&H00C8C0B8&\bord1.4}The skipped task never set the security group,
+Dialogue: 0,0:26:56.24,0:26:58.29,Bilingual,,0,0,0,,所以实例那个 task 被它绊倒了\N{\fs33\c&H00C8C0B8&\bord1.4}so the instance task trips over it.
+Dialogue: 0,0:26:58.61,0:26:59.84,Bilingual,,0,0,0,,就算过了这一关\N{\fs33\c&H00C8C0B8&\bord1.4}Even past that,
+Dialogue: 0,0:26:59.84,0:27:04.40,Bilingual,,0,0,0,,删除还需要一个只有创建时才会 register 的 volume ID\N{\fs33\c&H00C8C0B8&\bord1.4}the removal needs a volume ID that only a create run registers,
+Dialogue: 0,0:27:04.40,0:27:07.08,Bilingual,,0,0,0,,而且没有任何 task 去终止实例\N{\fs33\c&H00C8C0B8&\bord1.4}and no task terminates the instance.
+Dialogue: 0,0:27:07.40,0:27:09.00,Bilingual,,0,0,0,,所以要手动清理\N{\fs33\c&H00C8C0B8&\bord1.4}So clean up by hand.
+Dialogue: 0,0:27:09.08,0:27:14.76,Bilingual,,0,0,0,,在 EC2 控制台里，终止实例，然后删除那个 50 GB 的 volume\N{\fs33\c&H00C8C0B8&\bord1.4}In the EC2 console, terminate the instance, then delete the 50 gigabyte volume,
+Dialogue: 0,0:27:14.76,0:27:18.79,Bilingual,,0,0,0,,实例没了它还在，再删掉安全组和你的密钥对\N{\fs33\c&H00C8C0B8&\bord1.4}which outlives it, the security group and your key pair.
+Dialogue: 0,0:27:19.11,0:27:22.21,Bilingual,,0,0,0,,成本是课上说的 CD 的挑战之一\N{\fs33\c&H00C8C0B8&\bord1.4}Cost is one of the lecture's challenges for CD,
+Dialogue: 0,0:27:22.21,0:27:24.85,Bilingual,,0,0,0,,而这台服务器会一直计费，直到你做完这些\N{\fs33\c&H00C8C0B8&\bord1.4}and this server bills until you do this.
+Dialogue: 0,0:27:25.08,0:27:28.09,Bilingual,,0,0,0,,在 ECR 里，删掉那三个仓库\N{\fs33\c&H00C8C0B8&\bord1.4}In ECR, delete the three repositories.
+Dialogue: 0,0:27:28.41,0:27:31.60,Bilingual,,0,0,0,,在 IAM 里，先停用再删除访问密钥\N{\fs33\c&H00C8C0B8&\bord1.4}In IAM, deactivate and delete the access key,
+Dialogue: 0,0:27:31.60,0:27:35.77,Bilingual,,0,0,0,,还有用户和策略，如果它们只是为这一讲建的\N{\fs33\c&H00C8C0B8&\bord1.4}and the user and the policy if you made them only for this.
+Dialogue: 0,0:27:36.09,0:27:38.42,Bilingual,,0,0,0,,在 GitHub 上，删掉那四个 secret\N{\fs33\c&H00C8C0B8&\bord1.4}On GitHub, delete the four secrets.
+Dialogue: 0,0:27:38.67,0:27:41.26,Bilingual,,0,0,0,,在你的笔记本上，删掉工具箱容器的 image\N{\fs33\c&H00C8C0B8&\bord1.4}On your laptop, remove the toolbox image,
+Dialogue: 0,0:27:41.26,0:27:45.30,Bilingual,,0,0,0,,2.5 GB，你改过的文件可以留着，也可以恢复原样\N{\fs33\c&H00C8C0B8&\bord1.4}two and a half gigabytes, and keep or restore your edited files.
+Dialogue: 0,0:27:50.82,0:27:55.00,Bilingual,,0,0,0,,这一讲最后是整门课的回顾，就在你部署的这台服务器上\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture ends with a review of the course, on the server you deployed.
+Dialogue: 0,0:27:55.23,0:27:58.63,Bilingual,,0,0,0,,虚拟机和 container，第 1 讲和第 2 讲\N{\fs33\c&H00C8C0B8&\bord1.4}Virtual machines and containers, lectures 1 and 2.
+Dialogue: 0,0:27:58.95,0:28:00.89,Bilingual,,0,0,0,,一个共享的 bucket，第 3 讲\N{\fs33\c&H00C8C0B8&\bord1.4}A shared bucket, lecture 3.
+Dialogue: 0,0:28:01.21,0:28:04.32,Bilingual,,0,0,0,,还有那位资深开发者手动 push 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}And the images the senior developer pushed by hand:
+Dialogue: 0,0:28:04.32,0:28:05.96,Bilingual,,0,0,0,,现在由 runner 来 push\N{\fs33\c&H00C8C0B8&\bord1.4}the runner pushes them now.
+Dialogue: 0,0:28:06.20,0:28:12.79,Bilingual,,0,0,0,,解决方案架构：前端和 API 负责执行；ECR 和磁盘保存状态\N{\fs33\c&H00C8C0B8&\bord1.4}The solution architecture: frontend and API execute; ECR and the disk hold state.
+Dialogue: 0,0:28:13.11,0:28:16.61,Bilingual,,0,0,0,,检索，第 5 讲，就是加载器和 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}Retrieval, lecture 5, is the loader and Chroma;
+Dialogue: 0,0:28:16.61,0:28:18.47,Bilingual,,0,0,0,,agent，第 6 讲和第 7 讲\N{\fs33\c&H00C8C0B8&\bord1.4}agents, lectures 6 and 7.
+Dialogue: 0,0:28:18.79,0:28:24.71,Bilingual,,0,0,0,,标注和微调不在这里：API 通过 Bedrock 调用现成的模型\N{\fs33\c&H00C8C0B8&\bord1.4}Labeling and fine tuning aren't here: the API calls ready-made models through Bedrock,
+Dialogue: 0,0:28:24.71,0:28:28.43,Bilingual,,0,0,0,,再加上之前训练好的奶酪分类器，以文件的形式\N{\fs33\c&H00C8C0B8&\bord1.4}plus the cheese classifier trained earlier, as a file.
+Dialogue: 0,0:28:28.67,0:28:33.59,Bilingual,,0,0,0,,训练和 pipeline，第 13 讲和第 15 讲，在这台服务器旁边\N{\fs33\c&H00C8C0B8&\bord1.4}Training and pipelines, lectures 13 and 15, sit beside this server.
+Dialogue: 0,0:28:33.91,0:28:37.46,Bilingual,,0,0,0,,API 和前端的 container，第 18 讲\N{\fs33\c&H00C8C0B8&\bord1.4}The API and frontend containers, lecture 18.
+Dialogue: 0,0:28:37.78,0:28:40.66,Bilingual,,0,0,0,,CI 循环，第 9 讲和第 21 讲\N{\fs33\c&H00C8C0B8&\bord1.4}The CI loop, lectures 9 and 21.
+Dialogue: 0,0:28:40.98,0:28:45.93,Bilingual,,0,0,0,,路由，第 20 讲和第 22 讲：就是今天的 nginx。下一步做什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Routing, lectures 20 and 22: today's nginx. Where next?
+Dialogue: 0,0:28:46.25,0:28:50.93,Bilingual,,0,0,0,,把第 21 讲的测试放在前面，再把每次合并到 main 都部署出去\N{\fs33\c&H00C8C0B8&\bord1.4}Put the tests from lecture 21 in front, and deploy every merge to main.
+Dialogue: 0,0:28:51.25,0:28:53.07,Bilingual,,0,0,0,,替换掉这些复制来复制去的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Replace the copied keys:
+Dialogue: 0,0:28:53.07,0:28:56.34,Bilingual,,0,0,0,,给服务器一个角色，给 GitHub 用 OIDC\N{\fs33\c&H00C8C0B8&\bord1.4}a role for the server, and OIDC for GitHub.
+Dialogue: 0,0:28:56.66,0:28:58.35,Bilingual,,0,0,0,,再加上 HTTPS\N{\fs33\c&H00C8C0B8&\bord1.4}And add HTTPS.
+Dialogue: 0,0:28:59.20,0:29:00.73,Bilingual,,0,0,0,,再把这条路走一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Once more, the path.
+Dialogue: 0,0:29:00.78,0:29:02.53,Bilingual,,0,0,0,,你笔记本上的两份密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Two secrets on your laptop.
+Dialogue: 0,0:29:02.85,0:29:05.24,Bilingual,,0,0,0,,一个用你笔记本上 Docker 的工具箱容器\N{\fs33\c&H00C8C0B8&\bord1.4}A toolbox using your laptop's Docker.
+Dialogue: 0,0:29:05.56,0:29:09.14,Bilingual,,0,0,0,,在 localhost 上，或者通过 SSH 在服务器上运行的 play\N{\fs33\c&H00C8C0B8&\bord1.4}Plays on localhost, or on the server over SSH.
+Dialogue: 0,0:29:09.46,0:29:13.13,Bilingual,,0,0,0,,一个 tag，从 date 命令一直到重新创建的 container\N{\fs33\c&H00C8C0B8&\bord1.4}One tag, from the date command to a recreated container.
+Dialogue: 0,0:29:13.45,0:29:15.50,Bilingual,,0,0,0,,一句按下发布按钮的话\N{\fs33\c&H00C8C0B8&\bord1.4}One sentence that presses release.
+Dialogue: 0,0:29:15.82,0:29:17.42,Bilingual,,0,0,0,,还有手动清理\N{\fs33\c&H00C8C0B8&\bord1.4}And clean up by hand.
+Dialogue: 0,0:29:18.07,0:29:19.45,Bilingual,,0,0,0,,自测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Test yourself.
+Dialogue: 0,0:29:19.50,0:29:22.35,Bilingual,,0,0,0,,第一：说出那两份密钥，各自打开什么\N{\fs33\c&H00C8C0B8&\bord1.4}One: name the two secrets, what each opens,
+Dialogue: 0,0:29:22.35,0:29:25.00,Bilingual,,0,0,0,,以及访问密钥最后会出现在哪三个地方\N{\fs33\c&H00C8C0B8&\bord1.4}and three places the access key ends up.
+Dialogue: 0,0:29:25.32,0:29:27.71,Bilingual,,0,0,0,,角色和 OIDC 能去掉什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What would a role and OIDC remove?
+Dialogue: 0,0:29:27.95,0:29:31.76,Bilingual,,0,0,0,,第二：为什么 sh docker-shell.sh 在 Ubuntu 上失败\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why does sh docker-shell.sh fail on Ubuntu
+Dialogue: 0,0:29:31.76,0:29:33.36,Bilingual,,0,0,0,,在 Mac 上却能用？\N{\fs33\c&H00C8C0B8&\bord1.4}but work on a Mac?
+Dialogue: 0,0:29:33.54,0:29:36.46,Bilingual,,0,0,0,,那条没加引号的 pip install 到底做了什么？\N{\fs33\c&H00C8C0B8&\bord1.4}And what did that unquoted pip install actually do?
+Dialogue: 0,0:29:36.70,0:29:39.80,Bilingual,,0,0,0,,第三：localhost 的 play 里的 task 在哪里运行\N{\fs33\c&H00C8C0B8&\bord1.4}Three: where do the tasks of a localhost play run,
+Dialogue: 0,0:29:39.80,0:29:41.40,Bilingual,,0,0,0,,appserver 的 play 呢？\N{\fs33\c&H00C8C0B8&\bord1.4}and of an appserver play?
+Dialogue: 0,0:29:41.67,0:29:44.57,Bilingual,,0,0,0,,为什么工具箱容器能把你笔记本的磁盘填满？\N{\fs33\c&H00C8C0B8&\bord1.4}And why can the toolbox fill the disk of your laptop?
+Dialogue: 0,0:29:44.82,0:29:46.50,Bilingual,,0,0,0,,第四：跟着一个时间戳走\N{\fs33\c&H00C8C0B8&\bord1.4}Four: follow one timestamp
+Dialogue: 0,0:29:46.50,0:29:49.42,Bilingual,,0,0,0,,从 date 命令一直走到一个运行中的 container\N{\fs33\c&H00C8C0B8&\bord1.4}from the date command to a running container.
+Dialogue: 0,0:29:49.74,0:29:52.77,Bilingual,,0,0,0,,服务器怎么在变量和文件之间做选择？\N{\fs33\c&H00C8C0B8&\bord1.4}How does the server choose between the variable and the file?
+Dialogue: 0,0:29:53.02,0:29:54.94,Bilingual,,0,0,0,,第五：下面哪几个会触发部署？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: which of these deploy?
+Dialogue: 0,0:29:55.26,0:29:58.46,Bilingual,,0,0,0,,四条信息分别是 update readme、fix typo /run-tests\N{\fs33\c&H00C8C0B8&\bord1.4}Update readme, fix typo /run-tests,
+Dialogue: 0,0:29:58.46,0:30:02.94,Bilingual,,0,0,0,,大写的 /RUN-DEPLOY-APP，还有 \\run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}/RUN-DEPLOY-APP in capitals, and \\run-deploy-app.
+Dialogue: 0,0:30:03.26,0:30:05.80,Bilingual,,0,0,0,,还有，这条 pipeline 是持续交付还是持续部署？\N{\fs33\c&H00C8C0B8&\bord1.4}And is this pipeline delivery or deployment?
+Dialogue: 0,0:30:06.12,0:30:08.16,Bilingual,,0,0,0,,答案在练习里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises.
