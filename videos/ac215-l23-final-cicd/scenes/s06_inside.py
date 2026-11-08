@@ -16,14 +16,14 @@ Beats (script.md "## S06"; one voiceover block each):
    on the shelf beside the toolbox, GREEN chip "sibling". Then a RED "docker system prune -a" runs
    the same way and a broom sweeps the whole shelf (a ghost, then undone).
 3. The picture leaves. A toolbox terminal: GREY heading row "versions · extra", then laptop/32: 36,
-   40, 50–53, 55, 57, 59 as one block (not typed; the cryptography pair is cropped by text; 59 GREY).
+   40, 46, 50–53, 55, 57, 59 as one block (36 cut after Python/3.14.8, 46 after 3.8.10) (not typed; the cryptography pair is cropped by text; 59 GREY).
    "at the time of recording" on the title bar. Four chips lift out of their lines, one per phrase:
    PURPLE aws-cli 2.39.6, Docker CLI 28.1.1, kubectl v1.28.15, ansible 6.7.0 (turns RED).
 4. CODE(Dockerfile: 37) alone (20 pt, trimmed at 74). The `>` flashes; the line splits: a copy of
    "pip install ansible" slides left (PURPLE), `>` becomes a PINK arrow carrying "=9.0.0" into a
    file inside a GREY "/" box. A 5-row toolbox strip types laptop/33's two commands and prints 36–37
    (wrapped, '=9.0.0' RED) and 39–40, 42 (cut after ansible-core-2.13.13, wrapped); the file and the
-   strip's RED name pulse together; the installed ansible-6.7.0 (last row) is underlined. On "Quoting fixes it" the split
+   strip's RED name pulse together; the installed ansible-6.7.0 (last row) is underlined. On "on an old Python" laptop/32:46 (python version = 3.8.10…) fades in GREY under pip and flashes. On "Quoting fixes it" the split
    picture leaves and the two-line erratum card (erratum tag at its left) takes its row; its second
    line comes on "but leave it for now".
 5. A 20 pt toolbox terminal, alone: heading row "every ansible-playbook run starts with:", then
@@ -197,7 +197,9 @@ class InsideToolbox(VoiceScene):
         x32 = toolbox_capture("32")
         t = toolbox_term("32", rows=11)
         rec = on_bar(t, time_row())
-        vers = x32.at(36, 40, (50, 53), 55, 57)
+        # 36 cut after the CLI's own bundled Python (one row), so 46 (the toolbox's Python) fits
+        vers = [cut(x32.line(36), "Python/3.14.8")] + x32.at(40) + [cut(x32.line(46), "3.8.10")] \
+            + x32.at((50, 53), 55, 57)
         chips = VGroup(tool_chip("aws-cli 2.39.6"), tool_chip("Docker CLI 28.1.1"),
                        tool_chip("kubectl v1.28.15"), tool_chip("ansible 6.7.0"))
         chips.arrange(RIGHT, buff=0.35).move_to([0, 2.3, 0])
@@ -221,7 +223,8 @@ class InsideToolbox(VoiceScene):
                       run_time=0.7)
             chips.remove(chips[3])
             chips.add(bad)
-            self.play(Indicate(bad.text, color=ERR, scale_factor=1.12), run_time=0.6)
+            self.play(Indicate(bad.text, color=ERR, scale_factor=1.12),
+                      Indicate(lines_of(t, "python version")[0], color=TURN, scale_factor=1.04), run_time=0.6)
 
         # ========================================================== 4. the '>' redirect
         dfp = code(DF, 37, 37, font_size=20, trim=74)
@@ -238,6 +241,9 @@ class InsideToolbox(VoiceScene):
         arr = Arrow([-1.0, row_y, 0], [3.1, row_y, 0], color=ROUTE, stroke_width=5, buff=0,
                     max_tip_length_to_length_ratio=0.08)
         x33 = toolbox_capture("33")
+        # the toolbox's Python (laptop/32: 46, shown in block 3), under pip on "on an old Python"
+        py = mono(cut(x32.line(46), "3.8.10").strip(), 20, S.GREY)
+        py.move_to([-3.9, row_y - 0.5, 0])
         st4 = toolbox_term("33", rows=5)
         err1 = label_box(['for later: quote it, "ansible>=9.0.0", on a newer base image',
                           "leave it for this lecture: deploy-provision-instance.yml:57 (warn:) "
@@ -279,9 +285,12 @@ class InsideToolbox(VoiceScene):
             a67 = substring(lines_of(st4, "ansible-6.7.0")[-1], "ansible-6.7.0")
             u67 = under(a67, ERR)
             self.play(a67.animate.set_color(ERR), Create(u67), run_time=0.6)
+            vo.wait_until("on an old Python")
+            self.play(FadeIn(py, shift=DOWN * 0.1), run_time=0.4)
+            self.play(Indicate(py, color=TURN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("Quoting fixes it")
-            self.play(FadeOut(VGroup(left, arr, root, root_t, fg, fname), shift=UP * 0.15), run_time=0.4)
-            self.remove(left, arr, root, root_t, fg, fname)
+            self.play(FadeOut(VGroup(left, py, arr, root, root_t, fg, fname), shift=UP * 0.15), run_time=0.4)
+            self.remove(left, py, arr, root, root_t, fg, fname)
             self.play(FadeIn(err1.frame), FadeIn(err1.text[0]), FadeIn(etag), run_time=0.6)
             vo.wait_until("but leave it for now")
             self.play(err1.text[1].animate.set_opacity(1), run_time=0.6)

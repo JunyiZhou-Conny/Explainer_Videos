@@ -34,7 +34,9 @@ Beats (script.md "## S07"; one voiceover block each):
    like · schematic" under it. Right column: the .docker-tag file, the committed 20241121211313
    struck GREY ("the author's last deploy"), GREEN <your tag> under it; a GREEN failed=0 chip.
 7. TRACKER B 5 · extra. The picture leaves; a 9-row laptop terminal types `docker system prune -a`
-   (extra) → laptop/67: 2–8 (line 8 printed without its [exit 0]: docker printed no newline);
+   (extra) → laptop/67: 2–8 (line 8 printed without its [exit 0]: docker printed no newline), with a
+   RED chip above it "demo · don't answer y: it removes every unused image on your laptop" (QA: a
+   follow-along viewer who answers y loses the toolbox and app images);
    "[y/N]" ringed, GREY row tag "no answer · nothing removed". The terminal shrinks to a 3-row strip
    (lines 2 and 8); above it a BLUE ECR box with three shelves holds the first set of images, a
    second set slides in, GOLD cost tag "ECR storage · every tag you push" and a GREY note "nothing
@@ -380,7 +382,12 @@ class BuildAndPush(VoiceScene):
             self.play(FadeIn(t7, shift=UP * 0.2), track(tr, 5, True), run_time=0.5)
             type_cmd(self, t7, C67.cmd, type_time=0.5)
             ex7 = on_bar(t7, extra_row())
-            self.play(FadeIn(ex7), run_time=0.3)
+            # a follow-along viewer must not answer y: it would delete the toolbox and the app images
+            warn7 = under_term(t7, grey_chip("demo · don't answer y: it removes every unused image on your laptop",
+                                             color=ERR), buff=0.2)
+            assert warn7.get_left()[0] > -6.6 and warn7.get_top()[1] < tr.get_bottom()[1] - 0.1, warn7.get_corner(UL)
+            self.play(FadeIn(ex7), FadeIn(warn7, shift=DOWN * 0.1), run_time=0.4)
+            self.play(Indicate(warn7.text, color=ERR, scale_factor=1.05), run_time=0.6)
             pr = out(self, t7, [s.rstrip() for s in C67.at((2, 8))], run_time=0.8)
             q = pr[-1]
             assert q.text.endswith("[y/N]")
@@ -392,8 +399,8 @@ class BuildAndPush(VoiceScene):
             na = beside(row_tag("no answer · nothing removed"), q, buff=0.4)
             pin(self, q, na)
             vo.wait_until("Every push stores")
-            self.play(FadeOut(ex7), run_time=0.2)
-            self.remove(ex7)
+            self.play(FadeOut(ex7), FadeOut(warn7), run_time=0.2)
+            self.remove(ex7, warn7)
             resize(self, t7, 3, keep=[pr[0], q], run_time=0.7)
             self.play(FadeIn(shelf, shift=DOWN * 0.15), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.4) for c in cubes2], lag_ratio=0.3),

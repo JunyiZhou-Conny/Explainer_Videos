@@ -50,7 +50,8 @@ Beats (script.md "## S05"; one voiceover block each):
 
 Folds (laptop/22, 27, 30): fold_rows breaks only at spaces outside quotes, so every row types back as
 shell; a quoted sed expression longer than a row is cut with '…' and the GREY chip "cut to fit · full
-command: study guide" stands above the terminal while the command is on screen.
+command: study guide" goes with it (on an empty last row, beside the command's last row, or on the
+title bar, wherever it covers nothing).
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -174,10 +175,22 @@ class FoldRows(list):
     cut = False
 
 
-def cut_tag(scene, t: Terminal):
-    """PLAYS: the GREY chip for a command cut to fit (above the terminal, right). Returns it."""
-    tg = under_term(t, grey_chip("cut to fit · full command: study guide"))
-    scene.play(FadeIn(tg, shift=DOWN * 0.1), run_time=0.3)
+CUT_TEXT = "cut · full command: study guide"
+
+
+def cut_tag(scene, t: Terminal, line=None):
+    """PLAYS: the GREY tag for a command cut to fit. line given: pinned beside that row (it scrolls
+    with it); else right-aligned on the terminal's last (empty) row, a member of t. Returns it."""
+    tg = row_tag(CUT_TEXT)
+    if line is not None:
+        return pin(scene, line, beside(tg, line, buff=0.4), run_time=0.3)
+    y = t._slot(t.rows - 1)[1] - t.pitch / 2 + 0.03
+    assert len(t.lines) < t.rows
+    tg.move_to([t.box.get_right()[0] - 0.25 - tg.width / 2, y, 0])
+    scene.play(FadeIn(tg, shift=LEFT * 0.1), run_time=0.3)
+    scene.remove(tg)
+    t.add(tg)  # a member of t, drawn over its box (drop it with drop_tags)
+    scene.add(t)
     return tg
 
 
@@ -372,10 +385,9 @@ class StartToolbox(VoiceScene):
             resize(self, t, 9, extra=[FadeIn(rd, shift=DOWN * 0.15)], run_time=0.6)
             tt = bar_tags(self, t, turn_row())
             tt += bar_tags(self, t, row_tag("sed is our editor · use yours"), left=True)
-            l22 = type_folded(self, t, C22.cmd, type_time=0.4)
-            assert l22.cut
-            cut22 = cut_tag(self, t)
+            assert type_folded(self, t, C22.cmd, type_time=0.4).cut
             res = out(self, t, [(s, OUTPUT) for s in soft(C22.at(3, 5), t.max_chars)], run_time=0.5)
+            cut22 = cut_tag(self, t)
             vo.wait_until("Now the file is found")
             line3 = find_row(res, "CSV_FILE=")
             self.play(*recolor(line3.glyphs, OWN), run_time=0.4)
@@ -388,8 +400,7 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 4. step 3: sh, as written
         with self.voiceover(SAY[4]) as vo:
-            drop_tags(self, t, tt, FadeOut(cut22), track(tr, 3), run_time=0.5)
-            self.remove(cut22)
+            drop_tags(self, t, tt + [cut22], track(tr, 3), run_time=0.5)
             clear_term(self, t)
             type_folded(self, t, C23.cmd, type_time=0.6)
             vo.wait_until("Surprise 1")
@@ -509,8 +520,9 @@ class StartToolbox(VoiceScene):
             ck.add_row(self, ROWS[2])
             t = term(P_LAPTOP, rows=9, size=T20)
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)
-            assert type_folded(self, t, C27.cmd, type_time=0.35).cut
-            cut27 = cut_tag(self, t)
+            l27 = type_folded(self, t, C27.cmd, type_time=0.35)
+            assert l27.cut
+            cut_tag(self, t, l27)
             ex = bar_tags(self, t, extra_row())
             out(self, t, diff, run_time=0.5)
             type_folded(self, t, C28.cmd, type_time=0.5)
@@ -526,8 +538,7 @@ class StartToolbox(VoiceScene):
         e_chip = erratum_tag("erratum · README: not mentioned")
         e_chip.next_to(p26, UP, buff=0.12).align_to(p26, LEFT)
         with self.voiceover(SAY[9]) as vo:
-            drop_tags(self, t, ex, FadeOut(cut27), run_time=0.2)
-            self.remove(cut27)
+            drop_tags(self, t, ex, run_time=0.2)
             set_toolbox(self, t, X28.prompt)
             run9 = type_cmd(self, t, X28.cmd, type_time=0.6)
             e9 = out(self, t, X28.at((36, 38)), run_time=0.4)
@@ -577,8 +588,8 @@ class StartToolbox(VoiceScene):
             ck_scroll(self, ck, run_time=0.35)
             ck.add_row(self, ROWS[4], run_time=0.35)
             assert type_folded(self, t, C30.cmd, type_time=0.2).cut
-            cut30 = cut_tag(self, t)
             ex = bar_tags(self, t, extra_row())
+            ex += bar_tags(self, t, row_tag(CUT_TEXT), left=True)
             o30 = out(self, t, C30.at(2, 3, 4), run_time=0.35)
             self.play(*recolor(substring(o30[1], ACCOUNT), SHARED), *recolor(o30[2].glyphs, OWN), run_time=0.35)
             vo.wait_until("AWS S T S get caller identity")
@@ -596,9 +607,8 @@ class StartToolbox(VoiceScene):
         box_c = crate(T_TOOLBOX, box_w=box_c.frame.width + 0.9)
         box_c.text.shift(RIGHT * 0.4)
         with self.voiceover(SAY[11]) as vo:
-            drop_tags(self, t, ex, FadeOut(t), FadeOut(ck), FadeOut(sts), FadeOut(cut30), track(tr, 3),
-                      run_time=0.6)
-            self.remove(t, ck, sts, cut30)
+            drop_tags(self, t, ex, FadeOut(t), FadeOut(ck), FadeOut(sts), track(tr, 3), run_time=0.6)
+            self.remove(t, ck, sts)
             self.play(FadeIn(t11, shift=UP * 0.2), run_time=0.4)
             type_folded(self, t11, C31.cmd, type_time=0.5)
             turn = bar_tags(self, t11, turn_row())[0]
