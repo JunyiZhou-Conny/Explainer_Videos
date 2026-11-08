@@ -849,6 +849,10 @@ _LANG = {".py": "python", ".toml": "toml", ".sh": "bash", ".md": "markdown", ".y
 
 def _src(path: str) -> Path:
     p = SOURCE / path
+    # .gitignore drops '.env.*', so the (redacted) copies are tracked without the leading dot:
+    # 'frontend-react/.env.production' is read from 'frontend-react/env.production'.
+    if not p.exists() and p.name.startswith(".env.") and p.with_name(p.name[1:]).is_file():
+        p = p.with_name(p.name[1:])
     if not p.exists():
         raise FileNotFoundError(f"source {path} is not in assets/source (see ASSETS.md)")
     return p

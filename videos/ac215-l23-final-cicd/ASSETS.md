@@ -261,3 +261,5 @@ The stand-ins are not the app: the 172.x addresses in `64` are Docker's private 
 
 When the capture was done, the laptop container, its Docker volume (all images above) and the relay
 were removed (`capture.sh teardown`).
+
+The two `.env.*` copies are tracked as `env.production` / `env.development` (`.gitignore` drops `.env.*`); `scenes/common.py` `_src` reads them under their real names.
