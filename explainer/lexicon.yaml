@@ -487,3 +487,9 @@ zone us east 1 c: {ipa: "zˈoʊn jˌuːˈɛs ˈiːst wˈʌn sˈiː", say: "zone 
 docker-shell.bat: {ipa: "dˈɑːkɚ ʃˈɛl dˈɑːt bˈæt", say: "docker shell dot bat"}
 sslip dot io: {ipa: "ˈɛs slˈɪp dˈɑːt ˌaɪˈoʊ", say: "S slip dot I O"}
 502 or 503: {ipa: "fˈaɪv ˈoʊ tˈuː ɔːɹ fˈaɪv ˈoʊ θɹˈiː", say: "five oh two or five oh three"}
+# AC215 L23 (spoken review of videos/ac215-l23-final-cicd). The file name ac215_2024 is said "AC215
+# underscore twenty twenty-four", not "two thousand twenty-four"; status codes digit-wise as in the
+# L14 block. Phrase keys only: neither phrase is in another video's SAY (grep videos/*/script.md,
+# 2026-11-08). L23's SAY writes AWS, IAM and AC215 as words (existing keys) instead of spaced letters.
+underscore 2024: {ipa: "ˌʌndɚskˈɔːɹ twˈɛnti twˈɛnti fˈɔːɹ", say: "underscore twenty twenty-four"}
+status 410: {ipa: "stˈæɾəs fˈɔːɹ wˈʌn ˈoʊ", say: "status four one oh"}
