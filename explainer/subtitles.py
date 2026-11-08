@@ -1749,8 +1749,14 @@ def _ass_time(t: float) -> str:
     return f"{h:d}:{m:02d}:{s:02d}.{cs:02d}"
 
 
+# libass draws a lone backslash as itself and treats only \N, \n and \h as codes outside {}:
+# doubling it drew two backslashes on screen (L23's "\run-deploy-app" quiz line). A word joiner
+# (U+2060, zero width) after each backslash keeps "\n" or "\h" in a path from becoming a code.
+_WJ = "\u2060"
+
+
 def _ass_escape(s: str) -> str:
-    return s.replace("\\", "\\\\").replace("{", "(").replace("}", ")").replace("\n", "\\N")
+    return s.replace("\\", "\\" + _WJ).replace("{", "(").replace("}", ")").replace("\n", "\\N")
 
 
 BAND = 0.13        # fraction of the frame height reserved for subtitles when burning
