@@ -282,8 +282,9 @@ facts and unclaimed reviews are kept in separate sections.
   deploying · ≠ Deployment, the object (S06)" from about 01:55 to 02:01 (this record's writer:
   `writer/s02_note_117.png` at 01:57; `writer/s02_note_span.png`: on at 02:01, gone at 01:53.5 and 02:02; verifier:
   `verify/s02_note_span_verify.png`, on at 01:55, 01:55.5, 01:56, 02:01 and 02:01.5; absent at 01:54.5). Not listed in
-  the coordinator's accepted items; for the coordinator (fix: change the label in `common.py:3453` or override it in
-  `s02_orchestrator.py`, re-render S02, re-stitch).
+  the coordinator's accepted items. **Fixed in fix round 2:** the coordinator changed the label in `common.py:3453` to
+  ", the object (later)", re-rendered S02 at 1080p and re-stitched and re-burned (still 30:26). The coordinator checked
+  the new final-cut frame at 01:57: the note reads "… ≠ Deployment, the object (later)"; no scene id is on screen.
 - **S11 18:33.4, setupSSL wording** (narration nit; `.srt` cues 312–313: "two leftovers from the committed file,
   setupSSL and an SSH user, which the program never uses", while S09 had shown line 17's `setupSSL = False` switching
   HTTPS off): a SAY edit for a nit was outside the fixer's rules.
@@ -364,7 +365,7 @@ facts and unclaimed reviews are kept in separate sections.
 ## Open items (not ruled on one by one; left for the coordinator)
 
 None blocks playback; the first is a QA should that the coordinator's summary counts as fixed.
-- **S02's "(S06)" on screen at about 01:55–02:01** (see "Still open after QA").
+- ~~S02's "(S06)" on screen at about 01:55–02:01~~: fixed in fix round 2 (see "Still open after QA").
 - **Bilibili description:** `video.yaml` `publish.description_zh` (line 64) credits the instructor by name. Not in the
   video or subtitle files, but it goes on the Bilibili page and the series rules say no instructor name.
 - **Narration 46 words over the script's 3,900–4,300 band** (4,346 words after the QA additions: S01, S12's card, S15's
@@ -427,8 +428,8 @@ All numbers are from `measured.json` and the five reports, on the files in `outp
 - **QA fixes re-checked on the final cut** (by this record's writer, from the `.srt`, `.zh-en.srt` and frames): S12's
   card narration (cues 366–367, 21:41.7–21:46.8); S01's "This card comes back…" (`.srt` cue 22, `.zh-en.srt` cue 19, 01:19.2); S15's Chroma note
   ("Change line 150 to slash data…", in the `.srt`); `run: web` in one `.zh-en.srt` cue (165, 09:04.9); S09's card
-  labels clear of the Pod dots at 15:05 (`writer/s09_cards_905.png`). S02's "(S06)" still on screen
-  (`writer/s02_note_117.png`).
+  labels clear of the Pod dots at 15:05 (`writer/s09_cards_905.png`). S02's "(S06)" was still on screen
+  (`writer/s02_note_117.png`) and is fixed in fix round 2 (the note now ends "(later)").
 - **Privacy:** no instructor or staff name, staff branch, key, token or real IP on screen, in the subtitles, the
   transcript or the chapters (`report-visual.md`, `report-pairs.md`; this record's writer grepped `output/*.srt`,
   `transcript.md`, `chapters*.txt` for dotted-quad addresses outside 10.x and for the instructor's name: none).
