@@ -1,0 +1,6 @@
+$ sed -i '30s/.*/        EXTERNAL_IP:/' inventory.yml && sed -n '27,30p' inventory.yml
+  children:
+    appserver:
+      hosts:
+        EXTERNAL_IP:
+[exit 0]

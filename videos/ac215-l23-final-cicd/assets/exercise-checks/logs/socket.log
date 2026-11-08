@@ -1,0 +1,33 @@
+$ docker info -f "host engine: {{.Name}} {{.ID}}" | cut -c1-40; docker images -q l23ex-sibling:check | wc -l
+host engine: vm b1f24e35-ecae-4901-a2a7-
+0
+[exit 0]
+
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock $CLI sh -c "
+  ps -o comm | grep -c dockerd; docker info -f \"engine seen from inside: {{.Name}} {{.ID}}\" | cut -c1-50
+  mkdir /ctx && cd /ctx && echo hello > hello.txt && printf \"FROM scratch\nCOPY hello.txt /\n\" > Dockerfile
+  docker build -q -t l23ex-sibling:check . >/dev/null && echo built; docker images --format \"{{.Repository}}:{{.Tag}}\" l23ex-sibling
+  docker ps --filter ancestor=$CLI --format \"running on that engine: {{.Image}} (this very container)\""
+0
+engine seen from inside: vm b1f24e35-ecae-4901-a2a
+built
+l23ex-sibling:check
+running on that engine: mirror.gcr.io/library/docker:29-cli (this very container)
+[exit 0]
+
+$ docker images --format "on the host: {{.Repository}}:{{.Tag}} {{.ID}}" l23ex-sibling:check
+on the host: l23ex-sibling:check 25b43c44d0ec
+[exit 0]
+
+$ docker image rm l23ex-sibling:check >/dev/null && docker images -q l23ex-sibling:check | wc -l
+0
+[exit 0]
+
+$ cd $T && printf "FROM $CLI\nLABEL v=1\n" > Dockerfile && docker build -q -t l23ex-tb:latest . >/dev/null && echo "first build: ok"
+printf "FROM $CLI\nLABEL v=2\nRUN false\n" > Dockerfile && docker build -q -t l23ex-tb:latest . >/dev/null 2>&1; echo "second build exit status: $?"
+docker run --rm l23ex-tb:latest true && docker image inspect -f "l23ex-tb:latest still carries label v={{index .Config.Labels \"v\"}}" l23ex-tb:latest
+first build: ok
+second build exit status: 1
+l23ex-tb:latest still carries label v=1
+[exit 0]
+

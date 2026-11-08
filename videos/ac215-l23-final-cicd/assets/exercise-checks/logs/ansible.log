@@ -1,0 +1,217 @@
+=== B2, Q4: which tag does the server use? (the playbook's own lines 101-118) ===
+$ cd /w && { printf -- '- hosts: localhost\n  connection: local\n  gather_facts: false\n  tasks:\n'; sed -n '101,118p' deploy-setup-containers.yml; } > tagbook.yml && cat .docker-tag && sed -n '1,5p;12,22p' tagbook.yml
+20241121211313
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Set docker tag from environment if available
+        - name: Read docker tag from file
+          shell: "cat .docker-tag"
+          register: tag_file
+        - name: Set docker tag from file
+          set_fact:
+            docker_tag: "{{ tag_file.stdout }}"
+      when: lookup('env', 'DOCKER_TAG') == ""
+
+    - name: Debug final docker tag
+      debug:
+        msg: "Using docker tag: {{ docker_tag }}"
+[exit 0]
+
+$ cd /w && env -u DOCKER_TAG ansible-playbook tagbook.yml 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature" | grep -E 'TASK|skipping|ok:|msg'
+TASK [Set docker tag from environment if available] ****************************
+skipping: [localhost]
+TASK [Read docker tag from file] ***********************************************
+TASK [Set docker tag from file] ************************************************
+ok: [localhost]
+TASK [Debug final docker tag] **************************************************
+ok: [localhost] => {
+    "msg": "Using docker tag: 20241121211313"
+[exit 0]
+
+$ cd /w && DOCKER_TAG=20261108011909 ansible-playbook tagbook.yml 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature" | grep -E 'TASK|skipping|ok:|msg'
+TASK [Set docker tag from environment if available] ****************************
+ok: [localhost]
+TASK [Read docker tag from file] ***********************************************
+skipping: [localhost]
+TASK [Set docker tag from file] ************************************************
+skipping: [localhost]
+TASK [Debug final docker tag] **************************************************
+ok: [localhost] => {
+    "msg": "Using docker tag: 20261108011909"
+[exit 0]
+
+$ cd /w && DOCKER_TAG=20261108011909 ansible-playbook tagbook.yml --extra-vars docker_tag=20261108020000 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature" | grep -E 'TASK|skipping|ok:|msg'
+TASK [Set docker tag from environment if available] ****************************
+ok: [localhost]
+TASK [Read docker tag from file] ***********************************************
+skipping: [localhost]
+TASK [Set docker tag from file] ************************************************
+skipping: [localhost]
+TASK [Debug final docker tag] **************************************************
+ok: [localhost] => {
+    "msg": "Using docker tag: 20261108020000"
+[exit 0]
+
+=== Q2: the provision playbook's 'warn:' (lines 54-57) on this Ansible ===
+$ cd /w && ansible-playbook warnbook.yml 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature" | grep -E 'TASK|changed:|ok:|fatal|WARN|warn'
+[WARNING]: No inventory was parsed, only implicit localhost is available
+[WARNING]: provided hosts list is empty, only localhost is available. Note that
+TASK [Remove Docker repositories from /etc/apt/sources.list.d/] ****************
+changed: [localhost]
+[exit 0]
+
+=== C3, C6: which key does SSH get? (stand-in server on 127.0.0.1, user ubuntu) ===
+$ cd /w && sed -n '4p;7p' inventory.yml && ls /root/.ssh/ && ansible appserver -i inventory.yml -m ping 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature"
+    ansible_ssh_private_key_file: "/root/.ssh/ac215_2024.pem" ## Github Actions
+    # ansible_ssh_private_key_file: "{{ lookup('env', 'AWS_SSH_KEY') | default('/secrets/ac215_2024.pem', true) }}"   
+EXTERNAL_IP | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added 'external_ip' (ED25519) to the list of known hosts.\r\nno such identity: /root/.ssh/ac215_2024.pem: No such file or directory\r\nubuntu@external_ip: Permission denied (publickey,password).",
+    "unreachable": true
+}
+[exit 0]
+
+$ cd /w && sed -n '4p;7p' inventory-local.yml && ls -l /secrets/ac215_2024.pem | cut -c1-10 && ansible appserver -i inventory-local.yml -m ping 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature"
+    # ansible_ssh_private_key_file: "/root/.ssh/ac215_2024.pem" ## Github Actions
+    ansible_ssh_private_key_file: "{{ lookup('env', 'AWS_SSH_KEY') | default('/secrets/ac215_2024.pem', true) }}"   
+-rw-------
+[WARNING]: Distribution debian 12 on host EXTERNAL_IP should use
+/usr/bin/python3, but is using /usr/local/bin/python3.8, since the discovered
+platform python interpreter was not present. See
+https://docs.ansible.com/ansible-
+core/2.13/reference_appendices/interpreter_discovery.html for more information.
+EXTERNAL_IP | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/local/bin/python3.8"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+[exit 0]
+
+$ cd /w && chmod 644 /secrets/ac215_2024.pem && ansible appserver -i inventory-local.yml -m ping 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature"; chmod 600 /secrets/ac215_2024.pem
+EXTERNAL_IP | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added 'external_ip' (ED25519) to the list of known hosts.\r\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\r\n@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @\r\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\r\nPermissions 0644 for '/secrets/ac215_2024.pem' are too open.\r\nIt is required that your private key files are NOT accessible by others.\r\nThis private key will be ignored.\r\nLoad key \"/secrets/ac215_2024.pem\": bad permissions\r\nubuntu@external_ip: Permission denied (publickey,password).",
+    "unreachable": true
+}
+[exit 0]
+
+$ cd /w && env -u AWS_SSH_KEY ansible appserver -i inventory-local.yml -m debug -a var=ansible_ssh_private_key_file -e ansible_connection=local 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature"
+EXTERNAL_IP | SUCCESS => {
+    "ansible_ssh_private_key_file": "/secrets/ac215_2024.pem"
+}
+[exit 0]
+
+$ cd /w && mv /secrets /secrets.off && cp /secrets.off/ac215_2024.pem /root/.ssh/ && chmod 600 /root/.ssh/ac215_2024.pem && ansible appserver -i inventory-local.yml -m ping 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature"
+EXTERNAL_IP | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added 'external_ip' (ED25519) to the list of known hosts.\r\nno such identity: /secrets/ac215_2024.pem: No such file or directory\r\nubuntu@external_ip: Permission denied (publickey,password).",
+    "unreachable": true
+}
+[exit 0]
+
+$ cd /w && ansible appserver -i inventory.yml -m ping 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature"; mv /secrets.off /secrets
+[WARNING]: Distribution debian 12 on host EXTERNAL_IP should use
+/usr/bin/python3, but is using /usr/local/bin/python3.8, since the discovered
+platform python interpreter was not present. See
+https://docs.ansible.com/ansible-
+core/2.13/reference_appendices/interpreter_discovery.html for more information.
+EXTERNAL_IP | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/local/bin/python3.8"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+[exit 0]
+
+=== Ponder 5, B5: the README's delete, then two edits ===
+$ cd /w && ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=absent 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature" | grep -E 'TASK|skipping|ok:|fatal|RECAP|localhost +:' | cut -c1-200
+TASK [Gathering Facts] *********************************************************
+ok: [localhost]
+TASK [Create security group] ***************************************************
+skipping: [localhost]
+TASK [Create EBS volume] *******************************************************
+skipping: [localhost]
+TASK [Create EC2 instance] *****************************************************
+fatal: [localhost]: FAILED! => {"msg": "The task includes an option with an undefined variable. The error was: 'dict object' has no attribute 'group_id'\n\nThe error appears to be in '/w/deploy-create
+PLAY RECAP *********************************************************************
+localhost                  : ok=1    changed=0    unreachable=0    failed=1    skipped=2    rescued=0    ignored=0   
+[exit 0]
+
+$ cd /w && sed -n '59,63p' create-gated.yml && ansible-playbook create-gated.yml -i inventory.yml --extra-vars cluster_state=absent 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature" | grep -E 'TASK|skipping|ok:|fatal|localhost +:' | cut -c1-200
+          Name: "{{ aws_instance_name }}"
+        wait: yes
+      register: instance
+      when: cluster_state == "present"
+
+TASK [Gathering Facts] *********************************************************
+ok: [localhost]
+TASK [Create security group] ***************************************************
+skipping: [localhost]
+TASK [Create EBS volume] *******************************************************
+skipping: [localhost]
+TASK [Create EC2 instance] *****************************************************
+skipping: [localhost]
+TASK [Wait for instance to be running] *****************************************
+skipping: [localhost]
+TASK [Wait for SSH to come up] *************************************************
+skipping: [localhost]
+TASK [Attach EBS volume to instance] *******************************************
+skipping: [localhost]
+TASK [Remove EBS volume] *******************************************************
+fatal: [localhost]: FAILED! => {"msg": "The task includes an option with an undefined variable. The error was: 'dict object' has no attribute 'volume_id'\n\nThe error appears to be in '/w/create-gated
+localhost                  : ok=1    changed=0    unreachable=0    failed=1    skipped=6    rescued=0    ignored=0   
+[exit 0]
+
+$ cd /w && ansible-playbook create-fixed.yml -i inventory.yml --syntax-check 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature"; ansible-playbook create-fixed.yml -i inventory.yml --list-tasks 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature" | grep -vE '^$'
+
+playbook: create-fixed.yml
+playbook: create-fixed.yml
+  play #1 (localhost): Create App Application Machine	TAGS: []
+    tasks:
+      Create security group	TAGS: []
+      Create EBS volume	TAGS: []
+      Create EC2 instance	TAGS: []
+      Wait for instance to be running	TAGS: []
+      Wait for SSH to come up	TAGS: []
+      Attach EBS volume to instance	TAGS: []
+      Terminate EC2 instance	TAGS: []
+      Find the EBS volume by its Name tag	TAGS: []
+      Remove EBS volume	TAGS: []
+      Remove security group	TAGS: []
+      Wait for SSH to come up	TAGS: []
+      Add host to groupname	TAGS: []
+[exit 0]
+
+$ cd /w && ansible-playbook create-fixed.yml -i inventory.yml --extra-vars cluster_state=absent 2>&1 | grep -v -e CryptographyDeprecationWarning -e "from cryptography.exceptions import InvalidSignature" | grep -E 'TASK|skipping|ok:|fatal|localhost +:' | sed -E 's/(fatal: \[localhost\]: FAILED!).*(botocore.exceptions.[A-Za-z]+: [^\"]*).*/\1 ... \2/'
+TASK [Gathering Facts] *********************************************************
+ok: [localhost]
+TASK [Create security group] ***************************************************
+skipping: [localhost]
+TASK [Create EBS volume] *******************************************************
+skipping: [localhost]
+TASK [Create EC2 instance] *****************************************************
+skipping: [localhost]
+TASK [Wait for instance to be running] *****************************************
+skipping: [localhost]
+TASK [Wait for SSH to come up] *************************************************
+skipping: [localhost]
+TASK [Attach EBS volume to instance] *******************************************
+skipping: [localhost]
+TASK [Terminate EC2 instance] **************************************************
+fatal: [localhost]: FAILED! ... botocore.exceptions.EndpointConnectionError: Could not connect to the endpoint URL: 
+localhost                  : ok=1    changed=0    unreachable=0    failed=1    skipped=6    rescued=0    ignored=0   
+[exit 0]
+
+$ f=$(python3 -c 'import ansible_collections.amazon.aws.plugins.modules.ec2_vol as m; print(m.__file__)'); grep -n "Name" $f | grep -iE "tag|name'" | head -5
+25:      - Volume Name tag if you wish to attach an existing volume (requires instance)
+175:    name: my_existing_volume_Name_tag
+315:        find_params['Filters'] = ansible_dict_to_boto3_filter_list({'tag:Name': name})
+513:                tags['Name'] = name
+861:                tags['Name'] = name
+[exit 0]
+

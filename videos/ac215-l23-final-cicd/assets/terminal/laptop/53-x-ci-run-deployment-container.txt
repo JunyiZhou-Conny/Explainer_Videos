@@ -1,0 +1,31 @@
+$ export AWS_ACCESS_KEY_ID=PLACEHOLDER_NOT_A_REAL_ACCESS_KEY AWS_SECRET_ACCESS_KEY=PLACEHOLDER_NOT_A_REAL_SECRET_KEY_000000000000 AWS_ACCOUNT_ID=YOUR_ACCOUNT_ID AWS_DEFAULT_REGION=us-east-1 $(cat ~/runner/github_env) SSH_KEY_PATH=/root/.ssh/ac215_2024.pem
+echo "Deploying with tag: $DOCKER_TAG"
+docker run --rm --name cheese-app-deployment \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /home/student/runner/cheese-app-aws/src/deployment:/deployment \
+  -v /home/student/runner/cheese-app-aws/src/deployment/secrets:/root/.ssh \
+  -e AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY \
+  -e AWS_DEFAULT_REGION \
+  -e AWS_ACCOUNT_ID \
+  -e DOCKER_TAG \
+  cheese-app-deployment \
+  /bin/bash -c "cd /deployment && \
+    chown -R root:root /root/.ssh && \
+    chmod 700 /root/.ssh && \
+    chmod 600 /root/.ssh/ac215_2024.pem && \
+    chmod 600 /root/.ssh/config && \
+    ls -la /root/.ssh && \
+    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin \$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com && \
+    ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook deploy-setup-containers.yml -i inventory.yml --extra-vars \"aws_access_key=\$AWS_ACCESS_KEY_ID aws_secret_key=\$AWS_SECRET_ACCESS_KEY aws_region=\$AWS_DEFAULT_REGION aws_account_id=\$AWS_ACCOUNT_ID docker_network_name=appnetwork docker_tag=\$DOCKER_TAG\" -vv && \
+    ansible-playbook deploy-setup-webserver.yml -i inventory.yml"
+Deploying with tag: 20261108011909
+total 16
+drwx------ 2 root root 4096 Nov  8 01:19 .
+drwx------ 1 root root 4096 Nov  8 01:19 ..
+-rw------- 1 root root 1675 Nov  8 01:19 ac215_2024.pem
+-rw------- 1 root root   65 Nov  8 01:19 config
+
+aws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the GetAuthorizationToken operation: The security token included in the request is invalid.
+Error: Cannot perform an interactive login from a non TTY device
+[exit 1]

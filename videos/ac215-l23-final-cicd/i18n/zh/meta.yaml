@@ -1,0 +1,48 @@
+# Chinese (zh-CN) metadata for ac215-l23-final-cicd (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 提交, 提交信息, 机密（secret）,
+# 置备（provisioning）; A7; runner, playbook, Ansible, EC2, ECR and nginx stay as they are), the English colon structure
+# kept (启动工具箱容器：三个意外; 唯一的前门：nginx), the script's picture words (筛子, 前门, 发布按钮, 工具箱容器; policy 4),
+# questions keep their question mark (用的是谁的 Docker？), and S16 follows the series' 回顾 pattern. 跟练 = follow-along;
+# Final Deployment and Review → 最终部署与课程回顾. The title agrees in substance with video.yaml's publish.title_zh
+# ("AC215 第23讲跟练 · 最终部署与课程回顾：用 Ansible 把 Cheese App 部署到一台 EC2，再让一条 commit 自动重新部署"), in the
+# series pattern of the other meta.yaml titles (AC215 · 第 n 讲：…（跟练：…）); the Bilibili upload uses publish.title_zh.
+# SERIES RULE (A16): no title, chapter or description names the instructor or any staff member.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 23 讲：最终部署与课程回顾——用 Ansible 部署到一台 EC2 服务器，再让一次提交自动重新部署（跟练：cheese-app-aws）"
+
+parts:
+  part1: "AC215 · 第 23 讲（上）：手动部署——IAM 密钥、Ansible 工具箱容器、ECR、一台 EC2 服务器和 nginx"
+  part2: "AC215 · 第 23 讲（下）：让一次提交按下发布按钮——课上的 CI/CD、GitHub Actions 工作流、收尾清理与课程回顾"
+
+chapters:
+  s01_hook: "三十三个 commit，一个反斜杠"
+  s02_map: "课上的总图，换成 AWS 的说法"
+  s03_console: "一个策略、一个用户和两把密钥"
+  s04_inventory: "一张图看懂 Ansible"
+  s05_toolbox: "启动工具箱容器：三个意外"
+  s06_inside: "工具箱容器里面：用的是谁的 Docker？"
+  s07_images: "三个镜像，一个时间戳"
+  s08_server: "先创建服务器，再置备（provisioning）"
+  s09_containers: "一个网络上的五个容器"
+  s10_webserver: "唯一的前门：nginx"
+  s11_cicd: "CI、CD，以及谁来按发布按钮"
+  s12_trigger: "一条提交信息上的两道筛子"
+  s13_runner: "机密（secret）与 runner"
+  s14_deploy: "跟着一个镜像标签走到服务器"
+  s15_teardown: "什么都没删掉的删除命令"
+  s16_review: "一台服务器上的整门课，以及回顾"
+
+# Three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but without the
+# course-credit line's names (A16). Facts: script.md v2 (S01-S16, two parts at the README's own seam: S01-S10 by hand,
+# S11-S16 the workflow, clean-up and review); dlops-io/cheese-app-aws @ 5950118 (main, the only branch, still the head on
+# 2026-11-08), the whole README, then .github/workflows/ci_cd_aws.yml, which the README never mentions; the slides speak
+# Google Cloud and the video maps their terms; the recording machine has no AWS account, so every laptop step ran for real,
+# every README command ran as written up to its real first error, and the consoles, the server and GitHub are drawings
+# marked illustration; GOLD tags without amounts; five pause-and-ponder cards and a closing test-yourself set. Paste the
+# chapter timestamps from output/chapters.txt under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 23 讲“最终部署与课程回顾”的跟练视频，对照课件逐页讲解（课件讲的是 Google Cloud 版本，视频逐一对照到 AWS 的名词），并照着 dlops-io/cheese-app-aws 的 README 一步一步做：上半场手动部署，创建 IAM 策略、用户、访问密钥和 EC2 密钥对，读懂 Ansible 的 inventory、play、task 和模块，解决启动部署工具箱容器时的三个意外（Linux 上 sh 是 dash、Helm 证书、空的 /secrets）和那条没加引号的 pip install，讲清挂载的 Docker socket 为什么让镜像落在你自己的电脑上，再用一个时间戳标签把三个镜像推送到 ECR，创建并置备（provisioning）一台 EC2 服务器，在同一个 Docker 网络上启动五个容器，让 nginx 做唯一的前门。
+  下半场先讲课上的 CI/CD 循环和持续交付与持续部署的区别，再读懂 README 没提到的 ci_cd_aws.yml：提交信息上的两道筛子、四个仓库机密（secret）、runner 做了什么，把一个镜像标签从 runner 一路跟到服务器上重新创建的容器；README 的删除命令其实什么也删不掉，所以给出完整的手动清理清单；最后把整门课的每一讲放回这台服务器上做回顾。
+  英文旁白，配中文和中英双语字幕；录制环境没有 AWS 账号：笔记本上的步骤全部真实运行，每条和 AWS 打交道的命令都照 README 原样执行到真实的第一个报错为止，控制台、服务器和 GitHub 页面是标注的示意图；EC2 实例、磁盘、公有 IP 地址、ECR 存储和 Bedrock 调用都会产生费用（视频用金色标签标出，不写金额），服务器会一直计费，直到你手动删除。

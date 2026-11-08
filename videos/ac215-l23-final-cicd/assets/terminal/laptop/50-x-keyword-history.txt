@@ -1,0 +1,9 @@
+$ git -C /home/student/cheese-app-aws log --format=%s | sort | uniq -c | sort -rn
+     33 /run-deploy-app
+      1 update
+      1 cleanup
+      1 \run-deploy-app
+      1 This is commit1 - nginx working
+      1 Merge branch 'main' of https://github.com/dlops-io/cheese-app-aws
+      1 Create ci_cd_aws.yml
+[exit 0]

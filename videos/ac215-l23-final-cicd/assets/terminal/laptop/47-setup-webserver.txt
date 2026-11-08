@@ -1,0 +1,49 @@
+$ bash docker-shell.sh
+
+[+] Building 0.3s (20/20) FINISHED                                                                                                               docker:default
+ => [internal] load build definition from Dockerfile                                                                                                       0.0s
+ => => transferring dockerfile: 2.30kB                                                                                                                     0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                                                                            0.0s
+ => [internal] load .dockerignore                                                                                                                          0.0s
+ => => transferring context: 2B                                                                                                                            0.0s
+ => [ 1/15] FROM docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                    0.0s
+ => => resolve docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                      0.0s
+ => [internal] load build context                                                                                                                          0.0s
+ => => transferring context: 708B                                                                                                                          0.0s
+ => CACHED [ 2/15] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client unzip            0.0s
+ => CACHED [ 3/15] RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" &&     unzip awscliv2.zip &&     ./aws/inst  0.0s
+ => CACHED [ 4/15] RUN install -m 0755 -d /etc/apt/keyrings                                                                                                0.0s
+ => CACHED [ 5/15] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg                             0.0s
+ => CACHED [ 6/15] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                                                                              0.0s
+ => CACHED [ 7/15] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu     0.0s
+ => CACHED [ 8/15] RUN apt-get update &&     apt-get install -y jq docker-ce                                                                               0.0s
+ => CACHED [ 9/15] RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg  0.0s
+ => CACHED [10/15] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" &&     usermod -aG docker app &&     mkdir -p /a  0.0s
+ => CACHED [11/15] WORKDIR /app                                                                                                                            0.0s
+ => CACHED [12/15] ADD --chown=app:app Pipfile Pipfile.lock /app/                                                                                          0.0s
+ => CACHED [13/15] RUN pipenv sync                                                                                                                         0.0s
+ => CACHED [14/15] ADD --chown=app:app . /app                                                                                                              0.0s
+ => CACHED [15/15] RUN set -ex;     ansible-galaxy collection install community.general community.kubernetes                                               0.0s
+ => exporting to image                                                                                                                                     0.1s
+ => => exporting layers                                                                                                                                    0.0s
+ => => exporting manifest sha256:f9b859a85b475bc6731dc5387d9b445a9eb0fcf5fd7efdebed04b8cb500fa05f                                                          0.0s
+ => => exporting config sha256:8373c24fcbadabdcae15a5772926cd4b49193bdff945b47bf549df663deaf4b0                                                            0.0s
+ => => exporting attestation manifest sha256:7e6046f3111ae2b785a285b5802394e92cccffe3debbbb1c42d9fbdc31566772                                              0.0s
+ => => exporting manifest list sha256:ba5c13276850c99dbc6e328fa462f0c8585cb7432f52c5d854af44faf5a94ae1                                                     0.0s
+ => => naming to docker.io/library/cheese-app-deployment:latest                                                                                            0.0s
+ => => unpacking to docker.io/library/cheese-app-deployment:latest                                                                                         0.0s
+root@30bf00d06e4d:/app# ansible-playbook deploy-setup-webserver.yml -i inventory.yml
+/usr/local/lib/python3.8/dist-packages/ansible/parsing/vault/__init__.py:42: CryptographyDeprecationWarning: Python 3.8 is no longer supported by the Python core team and support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.8.
+  from cryptography.exceptions import InvalidSignature
+
+PLAY [Configure webserver on the server instance] **************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+fatal: [EXTERNAL_IP]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: ssh: Could not resolve hostname external_ip: Name or service not known", "unreachable": true}
+
+PLAY RECAP *****************************************************************************************************************************************************
+EXTERNAL_IP                : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0
+
+root@30bf00d06e4d:/app# exit
+exit
+[exit 4]

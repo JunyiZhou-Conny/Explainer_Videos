@@ -1,0 +1,5 @@
+$ docker images
+IMAGE                          ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-deployment:latest   06da936a1291       2.52GB          595MB        
+ubuntu:20.04                   880f4a93b0bd        110MB         27.7MB        
+[exit 0]

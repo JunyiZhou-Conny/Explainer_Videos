@@ -1,0 +1,27 @@
+$ export HOME=~/runner/home AWS_SSH_KEY="$(cat ~/secrets/cheese-app-ac215-key-pair.pem)" && mkdir -p $HOME && cd /home/student/runner/cheese-app-aws && mkdir -p ~/.ssh
+echo "Host *
+  StrictHostKeyChecking no
+  UserKnownHostsFile=/dev/null" > ~/.ssh/config
+echo "$AWS_SSH_KEY" > ~/.ssh/ac215_2024.pem
+chmod 600 ~/.ssh/config
+chmod 600 ~/.ssh/ac215_2024.pem
+mkdir -p /home/student/runner/cheese-app-aws/src/deployment/secrets
+cp ~/.ssh/config /home/student/runner/cheese-app-aws/src/deployment/secrets/
+cp ~/.ssh/ac215_2024.pem /home/student/runner/cheese-app-aws/src/deployment/secrets/
+echo "Runner SSH directory:"
+ls -la ~/.ssh/
+echo "Deployment secrets directory:"
+ls -la /home/student/runner/cheese-app-aws/src/deployment/secrets/
+Runner SSH directory:
+total 16
+drwxr-xr-x 2 student student 4096 Nov  8 01:19 .
+drwxr-xr-x 3 student student 4096 Nov  8 01:19 ..
+-rw------- 1 student student 1675 Nov  8 01:19 ac215_2024.pem
+-rw------- 1 student student   65 Nov  8 01:19 config
+Deployment secrets directory:
+total 16
+drwxr-xr-x 2 student student 4096 Nov  8 01:19 .
+drwxr-xr-x 4 student student 4096 Nov  8 01:19 ..
+-rw------- 1 student student 1675 Nov  8 01:19 ac215_2024.pem
+-rw------- 1 student student   65 Nov  8 01:19 config
+[exit 0]

@@ -1,0 +1,30 @@
+all:
+  vars:
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: "/root/.ssh/ac215_2024.pem" ## Github Actions
+
+    ## from local mac
+    # ansible_ssh_private_key_file: "{{ lookup('env', 'AWS_SSH_KEY') | default('/secrets/ac215_2024.pem', true) }}"   
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+    aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+    aws_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+    aws_account_id: "{{ lookup('env','AWS_ACCOUNT_ID') }}"
+    aws_application_credentials: "/secrets/deployment-ac215-user_accessKeys.csv"
+
+    aws_region: "us-east-1"
+    aws_instance_type: "t2.large"
+    aws_keypair_name: "ac215_2024"  ## Change this 
+    aws_ami_id: "ami-0e86e20dae9224db8"  
+    docker_network_name: "appnetwork"
+    machine_instance_name: "cheese-app-demo"
+    machine_disk_size: 100
+    persistent_disk_name: "cheese-app-demo-disk"
+    persistent_disk_size: 50
+    aws_instance_name: "cheese-app-demo"
+    nextauth_secret: "<value not copied: see ASSETS.md>"
+    nextauth_url: "http://{{ inventory_hostname }}"
+
+  children:
+    appserver:
+      hosts:
+        <EXTERNAL_IP>:
