@@ -29,7 +29,7 @@ Beats (script.md "## S09"; one voiceover block each):
    `chromadb`, a PINK login arrow to a BLUE `ECR` box.
 6. TRACKER B 10. CODE(…: 101–104) → ReplacementTransform → CODE(…: 106–114); a fork drawing under
    it: `DOCKER_TAG` set → PINK "that tag"; empty → GREEN `.docker-tag`; GREY note "laptop run: the
-   file · CI run: the extra variable wins (S14)".
+   file · CI run: the extra variable wins (part 2)".
 7. TRACKER B 10. V7 back with the ECR box: three TEAL image cubes ride from ECR to the frontend,
    loader and api slots; TEAL `frontend :3000`; `vector-db :8000` with GREEN `0.5.18` + "your pin";
    the loader fills the vector-db's disk folder and vanishes (--rm); `api-service :9000` with GOLD
@@ -220,7 +220,7 @@ class SetupContainers(VoiceScene):
         rp = readme_panel(107, 111, size=20)
         rp.move_to([0, 2.7 - rp.height / 2, 0])
         st0 = term(P_LAPTOP, rows=3, size=T20)
-        inv = grey_chip("inventory.yml · after the switch (S08)").next_to(st0.box, UP, buff=0.15).align_to(st0.box, LEFT)
+        inv = grey_chip("inventory.yml · after the switch").next_to(st0.box, UP, buff=0.15).align_to(st0.box, LEFT)
         assert rp.get_bottom()[1] > inv.get_top()[1] + 0.1, (rp.get_bottom(), inv.get_top())
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(rp, shift=UP * 0.15), run_time=0.6)
@@ -277,7 +277,7 @@ class SetupContainers(VoiceScene):
         act_tg.move_to(act_fr.get_corner(UL) + np.array([0.3 + act_tg.width / 2, 0, 0]))
         action = VGroup(act_fr, act, act_tg)
         left_col(action, top=2.55)
-        edits = Checklist("your edits", ["S05 · your earlier edits"], color=OWN, tag_text=None)
+        edits = Checklist("your edits", ["your earlier edits"], color=OWN, tag_text=None)
         left_col(edits, top=2.55)
         with self.voiceover(SAY[2]) as vo:
             type_capture(self, t, C61, type_time=1.2)
@@ -416,7 +416,7 @@ class SetupContainers(VoiceScene):
         l_emp = label("empty", 20, OWN).next_to(a_file.get_center(), DOWN, buff=0.12)
         fork = VGroup(src, a_set, a_file, envset, fileb, l_set, l_emp)
         whence = VGroup(label("laptop run: the file", 20, S.GREY),
-                        label("CI run: the extra variable wins (S14)", 20, S.GREY)).arrange(DOWN, aligned_edge=LEFT,
+                        label("CI run: the extra variable wins (part 2)", 20, S.GREY)).arrange(DOWN, aligned_edge=LEFT,
                                                                                          buff=0.1)
         wh_fr = outline_box(whence.width + 0.5, whence.height + 0.4, S.GREY, solid=False)
         whence.move_to(wh_fr)

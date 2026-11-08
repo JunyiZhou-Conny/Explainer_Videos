@@ -24,7 +24,8 @@ Beats (script.md "## S15", one voiceover block each):
 5. TRACKER B 15 · extra. The last row "Locally: docker image rm cheese-app-deployment · 2.52 GB"
    ticks; the card leaves; the laptop terminal (4 rows, then 5) types `cd /home/student/cheese-app-aws &&
    git status --short` (extra) → TERM(laptop/49: 2–4); S05's "your edits" checklist slides in above
-   it and collapses into these three rows; GREY chips "keep, or git restore" and "yours also:
+   it and collapses into these three rows; GREY chips "not committed: keep, or git restore", "committed earlier? status is clean: your
+   edits live in your history" and "yours also:
    deploy-setup-containers.yml (the Chroma pin), .docker-tag (after a real step 5)". Fade; empty frame.
 
 Deviations from SHOW: cost tags sit only on the card lines that run a meter
@@ -378,16 +379,21 @@ class Teardown(VoiceScene):
             self.add(lt, ex)
             self.play(LaggedStart(*[Indicate(r, color=OWN, scale_factor=1.04) for r in res], lag_ratio=0.25),
                       run_time=0.9)
-            keep = grey_chip("keep, or git restore", mono_font=False)
+            keep = grey_chip("not committed: keep, or git restore", mono_font=False)
+            done = grey_chip("committed earlier? status is clean: your edits live in your history",
+                             mono_font=False)
             also = label_box(["yours also: deploy-setup-containers.yml (the Chroma pin),",
                               ".docker-tag (after a real step 5)"], S.GREY)
-            notes = VGroup(keep, also).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
+            notes = VGroup(keep, done, also).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
             notes.move_to([0, 0, 0]).shift(np.array([-6.3 - notes.get_left()[0],
                                                      lt.box.get_top()[1] + 0.35 - notes.get_bottom()[1], 0]))
+            assert notes.get_top()[1] < tr.get_bottom()[1] - 0.1 and notes.get_right()[0] < 6.6, \
+                (notes.get_top(), tr.get_bottom(), notes.get_right())
             self.play(FadeIn(keep, shift=UP * 0.1), run_time=0.4)
+            self.play(FadeIn(done, shift=UP * 0.1), run_time=0.4)
             self.play(FadeIn(also, shift=UP * 0.1), run_time=0.5)
-            self.wait(0.9)
-        self.play(FadeOut(VGroup(tr, lt, ex, keep, also)), run_time=0.7)
+            self.wait(0.5)
+        self.play(FadeOut(VGroup(tr, lt, ex, keep, done, also)), run_time=0.7)
         self.remove(*self.mobjects)
         self.wait(0.3)
 

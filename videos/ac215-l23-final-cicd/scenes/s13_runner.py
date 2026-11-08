@@ -20,7 +20,7 @@ Beats (script.md "## S13", one voiceover block each):
    (YELLOW bars); line 33's secret sits past the panel's right edge, so a PINK chip quotes it:
    "line 33 · … ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr…".
 4. TRACKER C 4. CODE(41–44): line 44 TEAL; a TEAL toolbox crate "built on the runner"; GREY chip
-   "the committed Dockerfile → commit the Helm fix (S05)"; GREY dashed chip "same certificate error
+   "the committed Dockerfile → commit the Helm fix (part 1)"; GREY dashed chip "same certificate error
    on GitHub's runner? not tested".
 5. TRACKER C 4. CODE(46–50): line 48 GREEN (+ a GREEN chip "line 48 → …/src/deployment/.docker-tag",
    the line is trimmed), line 50 PINK. Laptop strip: heading row "ci_cd_aws.yml · lines 47–50 · run
@@ -267,7 +267,7 @@ class RunnerSecrets(VoiceScene):
         b44 = line_bar(p5.code, 3, IMAGE, 0.25)
         box4 = crate(T_TOOLBOX, sub="built on the runner")
         box4.move_to([0, -0.3, 0])
-        helm = grey_chip("the committed Dockerfile → commit the Helm fix (S05)", size=22)
+        helm = grey_chip("the committed Dockerfile → commit the Helm fix (part 1)", size=22)
         helm.move_to([0, -1.6, 0])
         cert = dashed_chip("same certificate error on GitHub's runner? not tested", size=22)
         cert.move_to([0, -2.6, 0])

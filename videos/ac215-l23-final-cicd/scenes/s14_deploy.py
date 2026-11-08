@@ -295,7 +295,7 @@ class FollowTheTag(VoiceScene):
         # ========================================================== 3. V6: one tag from date to the server
         tt = TimestampTrail("deploy", TAG_CI)
         anc = tt.stations["ansible"]
-        fork = dashed_chip("S09 · set_fact: env or .docker-tag", PAST, 20)
+        fork = dashed_chip("part 1 · set_fact: env or .docker-tag", PAST, 20)
         fork.move_to([6.4 - fork.width / 2, 0.45, 0])
         wins = grey_chip("same value · the extra variable wins over set_fact", 20)
         wins.move_to([fork.get_left()[0] - 0.3 - wins.width / 2, 0.45, 0])

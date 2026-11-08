@@ -14,7 +14,7 @@ Beats (script.md "## S04"; one voiceover block each):
 2. TRACKER A 6. The machine leaves except the tree, which lies down into a row along the bottom (all →
    appserver → <EXTERNAL_IP>); its `all` card expands (TransformFromCopy) into CODE(inventory.yml:
    1–11) at 20 pt, trim 70. Line 3 YELLOW (+ "ubuntu" flashes); lines 4 and 7 YELLOW with one YELLOW
-   bookmark "remember both · S08" in the free space of rows 5–6; lines 9–11 PINK, three PINK arrows
+   bookmark "remember both" in the free space of rows 5–6; lines 9–11 PINK, three PINK arrows
    to a TEAL label "toolbox environment" under the panel, right.
 3. TRACKER A 6. Transform to CODE(inventory.yml: 14–25) (left): BLUE bars on 14 (region) and 15
    (t2.large), YELLOW bar on 16 + "## Change this" flashes, BLUE bar on 17 with the chips "per region"
@@ -26,7 +26,7 @@ Beats (script.md "## S04"; one voiceover block each):
    laptop strip (prompt student@laptop:~$, `▶ your turn` on its bar) types `openssl rand -base64 32`
    (row tags "extra" and "written out, not run"; never run).
    On "The host on line 30": the card, chips, strip go; the tree row returns; Transform to
-   CODE(inventory.yml: 27–30), line 30 GREY dashed ring + chip "after S08"; the panel then Transforms
+   CODE(inventory.yml: 27–30), line 30 GREY dashed ring + chip "after the server exists"; the panel then Transforms
    into the row's leaf <EXTERNAL_IP>, GREY dashed.
 5. The tree row rises; under it the five counters ok · changed · unreachable · failed · skipped
    (GREY); "failed" and "unreachable" turn GREEN zeros on "zero". A two-tile play card (apt · state:
@@ -209,7 +209,7 @@ class AnsibleInOnePicture(VoiceScene):
         p1.move_to([0, 2.75 - p1.height / 2, 0])
         b3 = bar(p1, 1, 3, TURN)
         b4, b7 = bar(p1, 1, 4, TURN), bar(p1, 1, 7, TURN)
-        bookmark = row_tag("▲ 4: GitHub Actions · ▼ 7: your laptop · remember both · S08", TURN)
+        bookmark = row_tag("▲ 4: GitHub Actions · ▼ 7: your laptop · remember both", TURN)
         y5 = (p1.code.code_lines[3].get_bottom()[1] + p1.code.code_lines[5].get_top()[1]) / 2   # blank line 5
         bookmark.move_to([p1.code.background.get_right()[0] - 0.2 - bookmark.width / 2, y5, 0])
         b911 = bars(p1, 1, 9, 11, ROUTE)
@@ -339,7 +339,7 @@ class AnsibleInOnePicture(VoiceScene):
             self.add(p3)
             p3.code.code_lines[3].set_color(S.GREY)
             r30 = ring(p3.code.code_lines[3], S.GREY, buff=0.03, stroke=2.5, dashed=True)
-            after = grey_chip("after S08")
+            after = grey_chip("after the server exists")
             after.next_to(r30, RIGHT, buff=0.25)
             self.play(Create(r30), FadeIn(after, shift=LEFT * 0.1), run_time=0.5)
         self.wait(0.5)

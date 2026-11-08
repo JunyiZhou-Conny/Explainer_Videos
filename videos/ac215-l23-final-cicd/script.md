@@ -972,7 +972,7 @@ SHOW: LECTURE 23 · 20. Slide 20's text redrawn as a GREY card: "workflow file i
 "keyword in the commit message: `/deploy-app`"; the keyword transforms into `/run-deploy-app` with a
 GREY chip "the Google Cloud repo's keyword"; under it three lines `git add .`, `git commit -m "your
 message /run-deploy-app"`, `git push` (GREY, chip "the slide's three commands, with a dot and this
-repo's keyword · typed in S14"; the slide's bare `git add` adds nothing).
+repo's keyword · you type them later"; the slide's bare `git add` adds nothing).
 SAY: The tutorial slide says the same: a workflow file in dot github, workflows, and a keyword in the commit message. Its keyword, slash deploy app, belongs to the Google Cloud repo. Here it's slash run deploy app.
 
 SHOW: LECTURE off. Two GREY chips under the sieves, one per sentence: "head_commit = the last commit

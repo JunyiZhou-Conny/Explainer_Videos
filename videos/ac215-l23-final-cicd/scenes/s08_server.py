@@ -31,7 +31,7 @@ Beats (script.md "## S08"; one voiceover block each):
    prints 43: 2–5; EXTERNAL_IP: YELLOW + GREY chip "placeholder: we have no server".
 5. TRACKER B 9 (shown early). ▶ your turn. README(107–111) card + erratum tag "README order: do
    step 9 before step 8"; the card folds into a chip (top left) and S04's YELLOW bookmark
-   "remember both · S08" returns beside it and flashes; the strip grows to 8 rows and types laptop/45
+   "remember both" returns beside it and flashes; the strip grows to 8 rows and types laptop/45
    line 1 (extra) → 45: 3, 5–6 (wrapped): line 3 GREY, line 6 GREEN, `/secrets/ac215_2024.pem`
    YELLOW + GREY chip "the file in ~/secrets must be named ac215_2024.pem"; line 3's key path
    flashes on the last sentence.
@@ -118,9 +118,9 @@ assert "/secrets/ac215_2024.pem" in C45.at(6)[0] and not C45.at(6)[0].lstrip().s
 UNTESTED = ("untested: the attach reuses /dev/sdf, and the disk is pinned to us-east-1a", "· watch that task")
 NOT_TESTED = ("on a real account, 'Attach EBS volume' may fail: /dev/sdf is taken, or another zone",
               "· the server still works",
-              "· the 50 GB volume stays detached and billed (S15)")
+              "· the 50 GB volume stays detached and billed (part 2)")
 SECOND = "second laptop terminal · the toolbox stays open · /app is this folder, edits show up inside at once"
-BOOKMARK = "▲ 4: GitHub Actions · ▼ 7: your laptop · remember both · S08"   # S04's bookmark, same words
+BOOKMARK = "▲ 4: GitHub Actions · ▼ 7: your laptop · remember both"   # S04's bookmark, same words
 GROUPS = (("Docker CE", list(range(0, 16)) + list(range(19, 26)) + [37]),
           ("format + mount /mnt/disk-1", [16, 17, 18]),
           ("AWS CLI v2", list(range(26, 36))),

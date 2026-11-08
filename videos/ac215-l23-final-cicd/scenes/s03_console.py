@@ -235,7 +235,7 @@ class ConsoleSetup(VoiceScene):
         c3 = console_drawing("IAM › Policies › Create policy", [("JSON", "(pasted)"), ("Name", POLICY)])
         at_top_right(c3)
         turn3 = edge_tag(c3.frame, your_turn())
-        nocreate = dashed_chip("no ecr:CreateRepository → S07", color=ERR)
+        nocreate = dashed_chip("no ecr:CreateRepository → the image build", color=ERR)
         nocreate.next_to(jchip, DOWN, buff=0.45).align_to(jchip, LEFT)
         s3 = term(P_HOME, rows=5)
         with self.voiceover(SAY[3]) as vo:

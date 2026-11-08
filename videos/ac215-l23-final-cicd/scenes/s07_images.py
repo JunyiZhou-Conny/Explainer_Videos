@@ -12,7 +12,7 @@ Beats (script.md "## S07"; one voiceover block each):
    bar, line 9 (the ECR login) PURPLE, line 12 GREEN, then V6's GREEN tag card YYYYmmddHHMMSS is
    stamped out of line 12's `date` and hangs right of line 13 `register: tag` (GREEN).
 2. TRACKER B 5. The panel becomes CODE(18–24) (20 pt; `{{ ecr_registry }}` elided as `…`, see
-   below): line 21 `path: /frontend-react` PINK + PINK chip "mounted in S06"; the card drops under
+   below): line 21 `path: /frontend-react` PINK + PINK chip "mounted earlier"; the card drops under
    the panel and a PINK thread runs from it to `tag.stdout` on line 23. The panel becomes
    CODE(25–30): line 29 `push: yes` bar. The panel leaves; V6 build layout fades in around the
    card (stamp chip, three TEAL images, BLUE ECR box with three shelves, the registry line); the tag
@@ -227,7 +227,7 @@ class BuildAndPush(VoiceScene):
         p2.move_to([0, 2.75 - p2.height / 2, 0])
         b21 = line_bar(p2.code, 21 - 18, ROUTE, 0.25)
         path21 = code_span(p2.code, 21 - 18, "path: /frontend-react")
-        sock = route_chip("mounted in S06", mono_font=False).next_to(path21, RIGHT, buff=0.6)
+        sock = route_chip("mounted earlier", mono_font=False).next_to(path21, RIGHT, buff=0.6)
         tstd = code_span(p2.code, 23 - 18, "tag.stdout")
         card_y = p2.get_bottom()[1] - 0.6
         p3 = elided(25, 30)
