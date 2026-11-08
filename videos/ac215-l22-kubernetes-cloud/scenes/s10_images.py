@@ -8,7 +8,8 @@ Beats (script.md "## S10", one voiceover block each):
    a sixth row slides in YELLOW, 'Vertex AI API · the API Pods call it' with an 'extra' tag, and
    ticks YELLOW; on "which the API Pods call" its words flash.
 1. README card 'README.md · lines 236–259' at the top (the README's three sentences about the two
-   accounts); under it two key cards (tag illustration): the BLUE key with a RED rim 'deployment'
+   accounts; its two 'service account called …' lines flash BLUE, then GREEN, on "the two service
+   accounts"); under it two key cards (tag illustration): the BLUE key with a RED rim 'deployment'
    ('the toolbox, Pulumi' / "and here: the nodes' identity", the second line YELLOW on "the nodes'
    identity") and the GREEN key 'gcp-service' ('the API Pods' / 'through Workload Identity' / 'no key
    file in the cluster', the last line flashing on "with no key file").
@@ -35,8 +36,8 @@ Beats (script.md "## S10", one voiceover block each):
    output); `pulumi stack init dev` -> TERM(b20: 2 wrap) RED; `pulumi config set gcp:project
    ac215-project --stack dev` (folds) -> TERM(b21: 2 wrap) RED, with the row-sized default tag beside
    the folded command and 'ac215-project' ringed GREY. On "Pulumi access token must be set" both
-   errors' token names flash; on "our bucket login failed" the GREY chip 'no bucket login → Pulumi
-   tries its cloud service' beside the README card.
+   errors' token names flash; the card flashes on "only if you have not built it before"; on "our
+   bucket login failed" the GREY chip 'no bucket login → Pulumi tries its cloud service' beside it.
 6. TRACKER [D] 5 · extra. The card leaves, the terminal grows to 14 rows. `pulumi login --local` (tag
    'extra · not for you' on the bar) -> TERM(c00: 2), the container id GREY; `pulumi stack init dev`
    -> TERM(c01: 2) GREEN (flashes on "Now the stack is created"); `pulumi config set gcp:project
@@ -50,7 +51,8 @@ Beats (script.md "## S10", one voiceover block each):
 8. The terminal shrinks to a 3-row strip holding c03:50–51. StackPipe ('V5 mini'): three TEAL images
    fly into the BLUE 'Artifact Registry' box and the three PINK '-tags' chips appear; on "deploy k8s
    looks them up" they merge into the PINK pipe 'StackReference organization/deploy-images/dev' to the
-   GREEN 'deploy_k8s' box; on "to know which images to run" the strip's tag rows and the box flash.
+   GREEN 'deploy_k8s' box (a scene-local Pipe subclass keeps the crates drawn above the registry
+   box, see the report's common.py request); on "to know which images to run" the strip's tag rows and the box flash.
 9. TRACKER [D] 7. The pipe leaves, the terminal grows to 5 rows. `pulumi up --stack dev -y` ->
    TERM(b23: 2 wrap) RED. Above the terminal, stacked: the GREY chip 'Apple Silicon: a long build is
    normal' (on "builds and pushes three images"), the GREY-dashed chip 'L20 · the real build, up to the
@@ -195,6 +197,30 @@ def key_card(kind: str, name: str, lines, color) -> VGroup:
     return c
 
 
+class Pipe(StackPipe):
+    """StackPipe with the crates kept above the registry box (common.py request 1): the shared
+    to_registry() adds the opaque box after the crates, so the registry looked empty while the tag
+    chips faded in. Same geometry and timing as the shared method."""
+
+    def to_registry(self, scene):
+        reg = boxed("Artifact Registry", CLOUD, box_w=2.7, box_h=2.1, k=0.12).move_to(self.p(-1.6, 0.8))
+        reg.text.align_to(reg.frame, UP).shift(DOWN * 0.12)
+        self.reg = reg
+        self.show(scene, reg, run_time=0.4)
+        small = [crate(n, 2.3, 0.42, size=20) for n in self.NAMES]
+        VGroup(*small).arrange(DOWN, buff=0.08).move_to(reg.frame).shift(DOWN * 0.2)
+        self._ensure(scene)
+        scene.play(LaggedStart(*[Transform(c, s_) for c, s_ in zip(self.crates, small)], lag_ratio=0.3),
+                   run_time=1.0)
+        self.remove(self.crates)         # draw the crates above the opaque registry box
+        self.add(self.crates)
+        self.heal(scene)
+        tg = VGroup(*[route_chip(f"{n}-tags", size=20) for n in ("api", "frontend", "vector-db")])
+        tg.arrange(DOWN, buff=0.12, aligned_edge=LEFT).next_to(reg, RIGHT, buff=0.3)
+        self.tags_ = tg
+        self.show(scene, *tg, run_time=0.5)
+
+
 class ImagesStack(VoiceScene):
     def construct(self):
         # ========================================================== 0. the five APIs, plus Vertex AI
@@ -244,6 +270,9 @@ class ImagesStack(VoiceScene):
         assert ks.get_bottom()[1] > -3.45 and ks.get_right()[0] < 6.5, (ks.get_bottom(), ks.get_right())
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(rc1, shift=DOWN * 0.15), run_time=0.6)
+            self.play(LaggedStart(Indicate(rc1.body[1], color=CLOUD, scale_factor=1.04),
+                                  Indicate(rc1.body[2], color=OWN, scale_factor=1.04), lag_ratio=0.5),
+                      run_time=1.2)
             vo.wait_until("The deployment account")
             self.play(FadeIn(kd, shift=UP * 0.2), FadeIn(tags1[0]), run_time=0.6)
             self.play(Indicate(kd.rows[0], color=CLOUD, scale_factor=1.06), run_time=0.6)
@@ -376,6 +405,8 @@ class ImagesStack(VoiceScene):
             resize(self, t, 8, keep=0, run_time=0.6)
             assert rc5.get_bottom()[1] > t.box.get_top()[1] + 0.1, (rc5.get_bottom(), t.box.get_top())
             self.play(FadeIn(rc5, shift=DOWN * 0.15), run_time=0.5)
+            vo.wait_until("only if you have not built it before")
+            self.play(Indicate(rc5.body, color=TURN, scale_factor=1.05), run_time=0.8)
             vo.wait_until("change into deploy images")
             type_cmd(self, t, CD_IMAGES, type_time=0.4)
             cd_prompt(self, t, toolbox_prompt("/app/deploy_images"), color=TURN, run_time=0.4)
@@ -467,7 +498,7 @@ class ImagesStack(VoiceScene):
             flash_tag(self, plus1, INK, 1.08)
 
         # ========================================================== 8. tags -> registry -> StackReference
-        sp = StackPipe()
+        sp = Pipe()
         with self.voiceover(SAY[8]) as vo:
             if e7 is not None:
                 drop_bar_tag(self, t, e7)
@@ -475,9 +506,6 @@ class ImagesStack(VoiceScene):
             assert t.box.get_top()[1] < -1.25, t.box.get_top()
             sp.images(self)
             sp.to_registry(self)
-            sp.remove(sp.crates)             # the registry's opaque box was drawn over the crates
-            sp.add(sp.crates)
-            sp.heal(self)
             vo.wait_until("deploy k8s looks them up")
             sp.pipe(self)
             vo.wait_until("to know which images to run")

@@ -1,0 +1,10 @@
+$ docker container logs nginx 2>&1 | tail -8
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+172.19.0.1 - - [08/Nov/2026:01:19:52 +0000] "GET /api/newsletters HTTP/1.1" 200 34 "-" "curl/8.5.0" "-"
+172.19.0.1 - - [08/Nov/2026:01:19:52 +0000] "GET /api/chat/llm HTTP/1.1" 200 31 "-" "curl/8.5.0" "-"
+172.19.0.1 - - [08/Nov/2026:01:19:52 +0000] "GET / HTTP/1.1" 200 20 "-" "curl/8.5.0" "-"
+172.19.0.1 - - [08/Nov/2026:01:19:52 +0000] "GET /chat HTTP/1.1" 200 24 "-" "curl/8.5.0" "-"
+172.19.0.1 - - [08/Nov/2026:01:19:52 +0000] "GET /api HTTP/1.1" 301 162 "-" "curl/8.5.0" "-"
+[exit 0]

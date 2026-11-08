@@ -1,0 +1,131 @@
+name: Continuous Integration and Continuous Deployment
+run-name: ${{ github.actor }} submitted a CI CD Action
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  Explore-GitHub-Actions:
+    if: contains(github.event.head_commit.message, '/run-')
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Comment ${{ github.event.head_commit.message }}"
+      - run: echo "Job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "Job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "Branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  
+          
+      - name: Verify AWS Credentials
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+  
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+        
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - name: Build Deployment Container 
+        run: |-
+          cd ${{ github.workspace }}/src/deployment/
+          docker build -t cheese-app-deployment -f Dockerfile .
+
+      - name: Generate Docker tag
+        run: |
+          echo $(date +%Y%m%d%H%M%S) > ${{ github.workspace }}/src/deployment/.docker-tag
+          export DOCKER_TAG=$(cat ${{ github.workspace }}/src/deployment/.docker-tag)
+          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+      
+      - name: Build and Push Docker Images
+        run: |
+          # Frontend React
+          cd ${{ github.workspace }}/src/frontend-react/
+          docker build -t cheese-app-frontend-react -f Dockerfile .
+          docker tag cheese-app-frontend-react:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cheese-app-frontend-react:${{ env.DOCKER_TAG }}
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cheese-app-frontend-react:${{ env.DOCKER_TAG }}
+  
+          # Vector DB CLI
+          cd ${{ github.workspace }}/src/vector-db/
+          docker build -t cheese-app-vector-db-cli  -f Dockerfile .
+          docker tag cheese-app-vector-db-cli:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cheese-app-vector-db-cli:${{ env.DOCKER_TAG }}
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cheese-app-vector-db-cli:${{ env.DOCKER_TAG }}
+  
+          # API Service
+          cd ${{ github.workspace }}/src/api-service/
+          docker build -t cheese-app-api-service -f Dockerfile .
+          docker tag cheese-app-api-service:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cheese-app-api-service:${{ env.DOCKER_TAG }}
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cheese-app-api-service:${{ env.DOCKER_TAG }}
+          
+      - name: Setup SSH Config and Key
+        run: |
+          mkdir -p ~/.ssh
+          # Write SSH config
+          echo "Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile=/dev/null" > ~/.ssh/config
+            
+          # Write SSH private key from secret
+          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/ac215_2024.pem
+            
+          # Set correct permissions
+          chmod 600 ~/.ssh/config
+          chmod 600 ~/.ssh/ac215_2024.pem
+            
+          # Create deployment secrets directory and copy files
+          mkdir -p ${{ github.workspace }}/src/deployment/secrets
+          cp ~/.ssh/config ${{ github.workspace }}/src/deployment/secrets/
+          cp ~/.ssh/ac215_2024.pem ${{ github.workspace }}/src/deployment/secrets/
+          
+      - name: Debug SSH Setup
+        run: |
+          echo "Runner SSH directory:"
+          ls -la ~/.ssh/
+          echo "Deployment secrets directory:"
+          ls -la ${{ github.workspace }}/src/deployment/secrets/
+        
+      - name: Run Deployment Container
+        if: contains(github.event.head_commit.message, '/run-deploy-app')
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_DEFAULT_REGION: "us-east-1"
+          DOCKER_TAG: ${{ env.DOCKER_TAG }} 
+          SSH_KEY_PATH: "/root/.ssh/ac215_2024.pem"  # Path for CI/CD
+          AWS_SSH_KEY: ${{ secrets.AWS_SSH_KEY }}  # Add this line
+        run: |
+          # Print the tag we're deploying
+          echo "Deploying with tag: $DOCKER_TAG"
+          
+          docker run --rm --name cheese-app-deployment \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ${{ github.workspace }}/src/deployment:/deployment \
+            -v ${{ github.workspace }}/src/deployment/secrets:/root/.ssh \
+            -e AWS_ACCESS_KEY_ID \
+            -e AWS_SECRET_ACCESS_KEY \
+            -e AWS_DEFAULT_REGION \
+            -e AWS_ACCOUNT_ID \
+            -e DOCKER_TAG \
+            cheese-app-deployment \
+            /bin/bash -c "cd /deployment && \
+              chown -R root:root /root/.ssh && \
+              chmod 700 /root/.ssh && \
+              chmod 600 /root/.ssh/ac215_2024.pem && \
+              chmod 600 /root/.ssh/config && \
+              ls -la /root/.ssh && \
+              aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin \$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com && \
+              ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook deploy-setup-containers.yml -i inventory.yml --extra-vars \"aws_access_key=\$AWS_ACCESS_KEY_ID aws_secret_key=\$AWS_SECRET_ACCESS_KEY aws_region=\$AWS_DEFAULT_REGION aws_account_id=\$AWS_ACCOUNT_ID docker_network_name=appnetwork docker_tag=\$DOCKER_TAG\" -vv && \
+              ansible-playbook deploy-setup-webserver.yml -i inventory.yml"

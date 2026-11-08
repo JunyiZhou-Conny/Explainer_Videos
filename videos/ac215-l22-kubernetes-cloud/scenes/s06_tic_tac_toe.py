@@ -6,7 +6,7 @@ Beats (script.md "## S06", one voiceover block each):
 0. TRACKER [W] 8. LECTURE 22 · 38–39. V3 LabelLink, picture first: the GREEN card 'Deployment · web ·
    keep 2' emits two TEAL Pods, each gets a PINK sticker 'run: web'; the PINK door 'Service · web · :80'
    throws a lasso around both. On "The Deployment says" the picture slides down into a strip under the
-   panels and the card TransformFromCopy's into CODE(deploy-k8s-tic-tac-toe.yml: 3–14) on the left
+   panels and the card's frame grows into the outline of CODE(deploy-k8s-tic-tac-toe.yml: 3–14) on the left
    (GREEN bracket 'Deployment: what runs in a Pod, how many copies, keep them running'); on "The Service
    says" the door does the same into CODE(…: 24–35) on the right (PINK bracket 'Service: how traffic
    reaches them; lets Pods die').
@@ -119,6 +119,22 @@ def bracket(panel, color, rows):
     return g
 
 
+def grow_panel(scene, card, panel, color):
+    """PLAYS: the picture's card (its frame) grows into the code panel's outline in `color`, the
+    panel fades in inside it, then the outline melts into the panel's own border (no text morph)."""
+    fr = card.frame
+    ghost = RoundedRectangle(width=fr.width, height=fr.height, corner_radius=0.16, stroke_color=color,
+                             stroke_width=3).set_fill(color, 0.15).move_to(fr)
+    bg = panel.code.background
+    tgt = RoundedRectangle(width=bg.width + 0.08, height=bg.height + 0.08, corner_radius=0.16,
+                           stroke_color=color, stroke_width=3).set_fill(color, 0.06).move_to(bg)
+    scene.add(ghost)
+    scene.play(Transform(ghost, tgt), run_time=0.6)
+    scene.play(FadeIn(panel), run_time=0.4)
+    scene.play(FadeOut(ghost), run_time=0.3)
+    scene.remove(ghost)
+
+
 def bars(panel, ks, color):
     """Translucent line bars over code lines ks (0-based) of a panel."""
     return VGroup(*[line_bar(panel.code, k, color, opacity=0.22) for k in ks])
@@ -154,7 +170,7 @@ class TicTacToe(VoiceScene):
             strip_dy = (min(pl.get_bottom()[1], pr.get_bottom()[1]) - 0.08) - ll.get_top()[1]
             self.play(ll.animate.shift(UP * strip_dy), run_time=0.6)
             assert ll.get_bottom()[1] > -3.6, ll.get_bottom()
-            self.play(FadeTransform(ll.card.copy(), pl), run_time=0.9)
+            grow_panel(self, ll.card, pl, OWN)
             vo.wait_until("what runs in a Pod")
             self.play(Create(br_l.line), FadeIn(br_l.text[:2]), run_time=0.5)
             vo.wait_until("how many copies")
@@ -162,7 +178,7 @@ class TicTacToe(VoiceScene):
             vo.wait_until("and to keep them running")
             self.play(FadeIn(br_l.text[3]), run_time=0.3)
             vo.wait_until("The Service says")
-            self.play(FadeTransform(ll.svc.copy(), pr), run_time=0.9)
+            grow_panel(self, ll.svc, pr, ROUTE)
             vo.wait_until("how traffic reaches them")
             self.play(Create(br_r.line), FadeIn(br_r.text[:3]), run_time=0.5)
             vo.wait_until("and lets Pods die")

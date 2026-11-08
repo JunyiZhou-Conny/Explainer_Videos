@@ -62,7 +62,7 @@ S02:
   - "我们的工具箱里已经有它了，还有 Helm 和 GKE 认证插件，这两个课件上没列。"
 - en: "To follow along: cheese app version 3 with your secrets folder beside it, Docker, and a Google Cloud project with billing. A cluster costs money by the hour, so each part ends by deleting it."
   zh:
-  - "跟着做需要：cheese-app-v3，旁边放着你的 secrets 目录，还有 Docker，和一个开通了结算的 Google Cloud 项目。"
+  - "跟着做需要：cheese-app-v3，旁边放着你的 secrets 目录，再加上 Docker，以及一个开通了结算的 Google Cloud 项目。"
   - "集群按小时收费，所以每个部分最后都会把它删掉。"
   en_display:
   - "To follow along: cheese-app-v3 with your secrets folder beside it, Docker, and a Google Cloud project with billing."
@@ -74,7 +74,7 @@ S02:
 - en: "One honest note: our recording machine has no Google account. What runs on a machine you own is real; every Google step stops at its first honest error, and we say what yours prints."
   zh:
   - "如实说一句：我们录制用的机器没有 Google 账号。"
-  - "在你自己的机器上能跑的都是真的；每个 Google 步骤都停在它第一个真实的报错处，我们会说你的会输出什么。"
+  - "在你自己的机器上能跑的都是真的；每个 Google 步骤都停在它第一个真实的报错处，我们会告诉你，你那边会输出什么。"
 - en: "We follow main, the branch the course site links, at this November 2025 commit. Git log tells you which one you have."
   zh:
   - "我们跟的是 main，也就是课程网站链接的分支，用的是 2025 年 11 月的这个 commit。"
@@ -99,7 +99,7 @@ S03:
   zh:
   - "第三步，各个组件。"
   - "API server 是唯一的入口；其他组件都只和它通信。"
-  - "其中 etcd 是集群的记忆：它的状态和配置。"
+  - "其中 etcd 是集群的记忆：存着集群的状态和配置。"
 - en: "The scheduler picks a node for each new Pod. The controllers keep watching and fix any difference between what you asked for and what runs; some of them ask the cloud for nodes and addresses."
   zh:
   - "调度器给每个新 Pod 挑一个节点。"
@@ -180,7 +180,7 @@ S04:
   zh:
   - "接下来，检查工具。"
   - "工具 gcloud 和它的认证插件都在。"
-  - "只敲 kubectl version，会先打印客户端，然后是 connection refused：还没有集群，所以服务端那一半没人可问。"
+  - "只敲 kubectl version，会先打印客户端版本，然后是 connection refused：还没有集群，所以服务端那一半没有人可问。"
 - en: "A small surprise: the Dockerfile pins one kubectl version, but Google's own package wins: a dispatcher that matches each cluster."
   zh:
   - "有个小意外：Dockerfile pin 了一个 kubectl 版本，但 Google 自己的包胜出了：一个按集群匹配版本的 dispatcher。"
@@ -336,7 +336,7 @@ S07:
 - en: "15 seconds later, both run. Nobody logged in: the loop noticed, and acted."
   zh:
   - "15 秒后，两个都在运行。"
-  - "没有人登录：循环发现了，然后行动了。"
+  - "没有人登录：循环发现了差异，就动手了。"
 - en: "That ticks failover, with an honest footnote: it is a restart, not a hot standby. With one replica there is a short gap, which is why the game's file asks for two replicas."
   zh:
   - "这就勾上了故障转移，再加一个如实的补充：这是重启，不是热备。"

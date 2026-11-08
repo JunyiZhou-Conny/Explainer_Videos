@@ -1,0 +1,18 @@
+$ sed -i -e '/baltocdn.com\/helm\/signing.asc/d' -e '/helm-stable-debian.list/d' -e 's/install -y --no-install-recommends kubectl helm /install -y --no-install-recommends kubectl /' Dockerfile && git diff Dockerfile
+diff --git a/src/deployment/Dockerfile b/src/deployment/Dockerfile
+index 8481895..c4bcb1d 100644
+--- a/src/deployment/Dockerfile
++++ b/src/deployment/Dockerfile
+@@ -30,10 +30,8 @@ RUN apt-get update && \
+ # Kubernetes & Ansible
+ RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && \
+     echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list  && \
+-    curl https://baltocdn.com/helm/signing.asc | apt-key add -&& \
+-    echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+     apt-get update && \
+-    apt-get install -y --no-install-recommends kubectl helm python3.9 python3-pip && \
++    apt-get install -y --no-install-recommends kubectl python3.9 python3-pip && \
+     pip install ansible>=9.0.0 openshift docker apache-libcloud boto3 botocore pipenv
+ 
+ RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" && \
+[exit 0]

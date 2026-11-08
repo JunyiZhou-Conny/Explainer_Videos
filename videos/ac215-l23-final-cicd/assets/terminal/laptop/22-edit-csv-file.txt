@@ -1,0 +1,6 @@
+$ sed -i 's|^CSV_FILE=.*|CSV_FILE="../../../secrets/deployment-ac215-user_accessKeys.csv"|' docker-shell.sh && sed -n '9,11p' docker-shell.sh && ls -l ../../../secrets/deployment-ac215-user_accessKeys.csv
+# Read AWS credentials from CSV file
+CSV_FILE="../../../secrets/deployment-ac215-user_accessKeys.csv"
+if [ -f "$CSV_FILE" ]; then
+-rw-r--r-- 1 student student 115 Nov  8 01:14 ../../../secrets/deployment-ac215-user_accessKeys.csv
+[exit 0]

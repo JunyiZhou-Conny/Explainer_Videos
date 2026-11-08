@@ -5,7 +5,8 @@ Beats (script.md "## S01", one voiceover block each):
 0. LECTURE 22 · 4–5. V2 FleetMorph, slide 5 redrawn: a BLUE 'VM' with TEAL nginx on top and
    Frontend / API 1 / API 2 under it (short PINK lines), a PINK 'HTTP 80' door on its top edge. On
    "a web server in front" nginx flashes, on "a frontend and two APIs" the trio flashes; the GREY
-   browser drops above with its PINK arrow to the door; on "who restarts it" a YELLOW '?' settles
+   browser drops above with its PINK arrow to the door; a request pulse runs down the arrow and the
+   lines on "If one of them crashes"; on "who restarts it" a YELLOW '?' settles
    right of the VM. (Emphasis = outline flash + text pulse: Indicate would fill the opaque boxes.)
 1. LECTURE 22 · 7. The '?' goes. GREY clock '2:00 a.m.' top left; API 1 cracks RED and the request
    bounces with a RED ×; the GREY phone 'the app owner' shakes right of the VM; 'the operator' slides
@@ -15,11 +16,12 @@ Beats (script.md "## S01", one voiceover block each):
    flashes RED; the chip fades.
 3. LECTURE 22 · 8–9. The story's extras fade; the VM becomes three BLUE VMs (slide 9's layout: VM 1
    Frontend + 'HTTP 80'; VM 2 nginx over API 1 and a dashed 'API 1 · backup'; VM 3 likewise for API
-   2) and the GREY speech card 'put it on several servers' settles above them. On "a backup copy"
+   2) and the GREY speech card 'put it on several servers' settles above them. On "The operator
+   answers with three machines" the three VM outlines flash; on "a backup copy"
    the two backups flash.
-4. LECTURE (held). The two backups glow and stay outlined YELLOW (back to TEAL in beat 5); on "Name
-   one failure" the two APIs flash. PONDER(8 s) card over the top of the VMs, the YELLOW backup row
-   left visible below it.
+4. LECTURE (held). The speech card goes and the fleet slides 1.2 lower; the two backups glow and stay
+   outlined YELLOW (back to TEAL in beat 5); on "Name one failure" the two APIs flash. PONDER(8 s):
+   a wider 3-line card (the script's words) above the whole fleet; the fleet slides back up in beat 5.
 5. LECTURE 22 · 9, 11. The card goes. On "The machine itself" VM 2's outline turns RED and both
    copies flash RED; on "takes both copies at once" everything inside VM 2 goes dark;
    on "And even when a backup survives" VM 3's backup flashes; on "a person still has to switch" a
@@ -33,15 +35,29 @@ Beats (script.md "## S01", one voiceover block each):
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
 
+from explainer.components import ponder_card
 from explainer.scene import VoiceScene
 
 from common import *  # noqa: F401,F403
 
 SAY = NARRATION["S01"]
 
-PONDER_Q = ("Each backup sits on the same VM\nas its original.\nWhat still takes that API down,\n"
-            "and who switches to the backup?")
-PONDER_AT = (0, 0.98)          # card bottom stays above the backup row (top y -1.07); top under the lecture tag
+PONDER_Q = ("Each backup sits on the same VM as its original.\nWhat still takes that API down,\n"
+             "and who switches to the backup?")   # script's words; 3 lines so the card clears the fleet
+PONDER_AT = (0, 1.35)          # card y -0.29 .. 2.99: above the lowered fleet (door top -0.47), under the tag
+FLEET_DROP = 1.2               # the fleet sits this much lower while the ponder card is up
+
+
+def ponder_wide(scene, question: str, seconds: float, center, width: float = 11.5, k: float = 0.94) -> VGroup:
+    """PLAYS: ponder() with a wider, slightly smaller card (ponder() takes no scale). Returns the card."""
+    c = ponder_card(question, width=width).scale(k)
+    c[0].set_fill(S.BG, 1)
+    c.move_to([center[0], center[1], 0])
+    scene.play(FadeIn(c, scale=0.95), run_time=0.6)
+    bar = c[3]
+    target = bar.copy().scale(0.001, about_point=bar.get_start())
+    scene.play(bar.animate(rate_func=linear).become(target), run_time=seconds)
+    return c
 
 
 def swap_ref(scene, old, slides: str | None, run_time: float = 0.4):
@@ -100,6 +116,10 @@ class Hook(VoiceScene):
                       ShowPassingFlash(fm.links.copy().set_stroke(TURN, 5), time_width=0.6), run_time=0.9)
             fm.heal(self)
             fm.browser(self, run_time=0.8)
+            vo.wait_until("If one of them crashes in the night")
+            self.play(ShowPassingFlash(fm.req.copy().set_stroke(TURN, 6), time_width=0.6),
+                      ShowPassingFlash(fm.links.copy().set_stroke(TURN, 5), time_width=0.6), run_time=1.0)
+            fm.heal(self)
             vo.wait_until("who restarts it")
             fm.question(self)
 
@@ -139,6 +159,10 @@ class Hook(VoiceScene):
             ref = swap_ref(self, ref, "8–9")
             fm.drop(self, fm.clock_g, fm.owner_g, fm.op, fm.tunnel, fm.win, fm.req, run_time=0.5)
             fm.three_vms(self, run_time=1.2)
+            vo.wait_until("The operator answers with three machines")
+            self.play(*[v.frame.edge.animate(rate_func=there_and_back).set_stroke(TURN, 6) for v in fm.vms],
+                      run_time=0.9)
+            fm.heal(self)
             vo.wait_until("and a backup copy beside each API")
             bks = [v.backup for v in fm.vms if v.backup is not None]
             self.play(*flash(bks, TURN), run_time=0.9)
@@ -146,6 +170,10 @@ class Hook(VoiceScene):
 
         # ========================================================== 4. PONDER: what still takes it down?
         with self.voiceover(SAY[4]) as vo:
+            fleet = VGroup(*fm.vms)
+            fm.drop(self, fm.say, run_time=0.4)        # the speech card has done its job; room for the card
+            self.play(fleet.animate.shift(DOWN * FLEET_DROP), run_time=0.6)
+            fm.heal(self)
             fm.glow_backups(self)
             bks = [v.backup for v in fm.vms if v.backup is not None]
             self.play(*[b.frame.edge.animate.set_stroke(TURN, 4) for b in bks], run_time=0.5)   # stay lit
@@ -157,12 +185,14 @@ class Hook(VoiceScene):
             vo.wait_until("and say who switches")
             self.play(*[Indicate(b.text, color=TURN, scale_factor=1.12) for b in bks], run_time=0.8)
             fm.heal(self)
-        card = ponder(self, PONDER_Q, seconds=8, center=PONDER_AT)
+        card = ponder_wide(self, PONDER_Q, seconds=8, center=PONDER_AT)
 
         # ========================================================== 5. the machine itself; a person switches
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(card), *[b.frame.edge.animate.set_stroke(CONTAINER, 3) for b in bks], run_time=0.4)
             self.remove(card)
+            fm.heal(self)
+            self.play(fleet.animate.shift(UP * FLEET_DROP), run_time=0.5)
             fm.heal(self)
             ref = swap_ref(self, ref, "9, 11")
             vo.wait_until("The machine itself")

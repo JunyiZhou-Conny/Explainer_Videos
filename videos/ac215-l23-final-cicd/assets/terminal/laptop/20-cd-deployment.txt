@@ -1,0 +1,22 @@
+$ pwd; ls -a
+/home/student/cheese-app-aws/src/deployment
+.
+..
+.DS_Store
+.docker-tag
+.gitignore
+Dockerfile
+Pipfile
+Pipfile.lock
+ansible.cfg
+deploy-create-instance.yml
+deploy-docker-images.yml
+deploy-provision-instance.yml
+deploy-setup-containers.yml
+deploy-setup-webserver.yml
+docker-entrypoint.sh
+docker-entrypoint_working.sh
+docker-shell.sh
+inventory.yml
+nginx-conf
+[exit 0]

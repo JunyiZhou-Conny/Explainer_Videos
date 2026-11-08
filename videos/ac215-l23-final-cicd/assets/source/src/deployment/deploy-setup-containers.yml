@@ -1,0 +1,208 @@
+- name: Configure containers on app server
+  hosts: appserver
+  connection: ssh
+  become: true
+
+  vars:
+    # Use environment variables for sensitive data
+    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+    aws_region: "us-east-1"
+    aws_account_id: "{{ lookup('env', 'AWS_ACCOUNT_ID') }}"
+    docker_network_name: "appnetwork"
+    ecr_registry: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
+
+  # Setup AWS credentials instead of GCP secrets
+  tasks:
+    - name: Print start of deployment
+      debug:
+        msg: "=== Starting deployment with tag: {{ lookup('env', 'DOCKER_TAG') }} ==="
+
+
+    # Add debug task to verify variables
+    - name: Debug variables
+      debug:
+        msg:
+          - "Region: '{{ aws_region }}'"
+          - "Registry: '{{ ecr_registry }}'"
+          - "Account ID: '{{ aws_account_id }}'"
+
+
+    - name: Create secrets directory
+      file:
+        path: "/srv/secrets"
+        state: "directory"
+        mode: 0755
+    - name: Create AWS credentials file
+      copy:
+        content: |
+          [default]
+          aws_access_key_id={{ aws_access_key }}
+          aws_secret_access_key={{ aws_secret_key }}
+          region={{ aws_region }}
+        dest: "/srv/secrets/aws-credentials"
+        mode: 0600
+
+    # Create common network for all containers
+    - name: Create network
+      docker_network:
+        name: "{{docker_network_name}}"
+        driver: bridge
+        attachable: yes
+        force: yes  # Add this to recreate network if it exists
+        state: present  # Add this to ensure network is created
+
+    # Create required directories first
+    - name: Create persistent directory
+      file:
+        path: "/mnt/disk-1/persistent"
+        state: "directory"
+        mode: 0777
+    - name: Create chromadb directory
+      file:
+        path: "/mnt/disk-1/chromadb"
+        state: "directory"
+        mode: 0777
+
+    - name: Copy docker tag file
+      copy:
+        src: .docker-tag
+        dest: .docker-tag
+        mode: 0644
+    - name: "Get docker tag"
+      shell: "cat .docker-tag"
+      register: tag
+    - name: Print tag
+      debug:
+        var: tag
+
+    - name: Get ECR login password
+      shell: "aws ecr get-login-password --region {{ aws_region }}"
+      register: ecr_password
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_DEFAULT_REGION: "us-east-1"
+
+    - name: Login to Docker ECR
+      shell: "echo '{{ ecr_password.stdout }}' | docker login --username AWS --password-stdin {{ ecr_registry }}"
+      no_log: true  # Don't log password in output
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+
+    - name: Debug ECR registry
+      debug:
+        msg: 
+          - "Region: {{ aws_region }}"
+          - "Registry: {{ ecr_registry }}"
+
+    - name: Set docker tag from environment if available
+      set_fact:
+        docker_tag: "{{ lookup('env', 'DOCKER_TAG') }}"
+      when: lookup('env', 'DOCKER_TAG') != ""
+
+    - name: Set docker tag from file if environment variable is not set
+      block:
+        - name: Read docker tag from file
+          shell: "cat .docker-tag"
+          register: tag_file
+        - name: Set docker tag from file
+          set_fact:
+            docker_tag: "{{ tag_file.stdout }}"
+      when: lookup('env', 'DOCKER_TAG') == ""
+
+    - name: Debug final docker tag
+      debug:
+        msg: "Using docker tag: {{ docker_tag }}"
+
+    - name: Manage Docker Images
+      docker_image:
+        name: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ item }}:{{ docker_tag }}"
+        source: pull
+        force_source: yes
+        state: present
+      loop:
+        - cheese-app-frontend-react
+        - cheese-app-vector-db-cli
+        - cheese-app-api-service
+
+    - name: Create frontend container
+      docker_container:
+        name: "frontend"
+        image: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/cheese-app-frontend-react:{{ docker_tag }}"
+        state: started
+        recreate: yes
+        pull: yes
+        restart: yes
+        published_ports:
+          - 3000:3000
+        networks:
+          - name: "{{docker_network_name}}"
+        env:
+          NEXTAUTH_SECRET: "{{ nextauth_secret }}"  
+          NEXTAUTH_URL: "http://{{ inventory_hostname }}"  
+
+
+    - name: Create vector-db container
+      docker_container:
+        name: "vector-db"
+        image: "chromadb/chroma:latest"
+        state: started
+        recreate: yes
+        published_ports:
+          - 8000:8000
+        env:
+          IS_PERSISTENT: "TRUE"
+          ANONYMIZED_TELEMETRY: "FALSE"
+        networks:
+          - name: "{{docker_network_name}}"
+        volumes:
+          - /mnt/disk-1/chromadb:/chroma/chroma
+
+    - name: Load Vector DB
+      shell: docker run --rm -it 
+        -e AWS_ACCESS_KEY_ID="{{ aws_access_key }}" 
+        -e AWS_SECRET_ACCESS_KEY="{{ aws_secret_key }}" 
+        -e AWS_DEFAULT_REGION="{{ aws_region }}"
+        -e CHROMADB_HOST="vector-db" 
+        -e CHROMADB_PORT="8000" 
+        --network "{{docker_network_name}}" 
+        "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/cheese-app-vector-db-cli:{{ docker_tag }}" 
+        cli.py --download --load --chunk_type recursive-split
+
+    - name: Create api-service container
+      docker_container:
+        name: "api-service"
+        image: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/cheese-app-api-service:{{ docker_tag }}"
+        state: started
+        recreate: yes
+        published_ports:
+          - 9000:9000
+        env:
+          AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+          AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+          AWS_DEFAULT_REGION: "{{ aws_region }}"
+          S3_BUCKET_NAME: "cheese-app-models"
+          CHROMADB_HOST: "vector-db"
+          CHROMADB_PORT: "8000"
+        networks:
+          - name: "{{docker_network_name}}"
+        volumes:
+          - /mnt/disk-1/persistent:/persistent
+          - /srv/secrets:/secrets
+
+    - name: Debug docker tag
+      debug:
+        msg: 
+          - "Docker tag from file: {{ tag.stdout }}"
+          - "Docker tag from env: {{ lookup('env', 'DOCKER_TAG') }}"
+
+    - name: Debug network connectivity
+      shell: "docker network inspect {{docker_network_name}}"
+      register: network_info
+    
+    - name: Show network info
+      debug:
+        var: network_info.stdout_lines

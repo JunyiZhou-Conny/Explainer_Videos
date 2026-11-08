@@ -1,0 +1,44 @@
+$ bash docker-shell.sh
+
+[+] Building 132.8s (20/20) FINISHED                                                                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                                                                       0.0s
+ => => transferring dockerfile: 2.30kB                                                                                                                     0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                                                                            0.0s
+ => [internal] load .dockerignore                                                                                                                          0.0s
+ => => transferring context: 2B                                                                                                                            0.0s
+ => [ 1/15] FROM docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                    0.0s
+ => => resolve docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                      0.0s
+ => [internal] load build context                                                                                                                          0.0s
+ => => transferring context: 2.98kB                                                                                                                        0.0s
+ => CACHED [ 2/15] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client unzip            0.0s
+ => CACHED [ 3/15] RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" &&     unzip awscliv2.zip &&     ./aws/inst  0.0s
+ => CACHED [ 4/15] RUN install -m 0755 -d /etc/apt/keyrings                                                                                                0.0s
+ => CACHED [ 5/15] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg                             0.0s
+ => CACHED [ 6/15] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                                                                              0.0s
+ => CACHED [ 7/15] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu     0.0s
+ => CACHED [ 8/15] RUN apt-get update &&     apt-get install -y jq docker-ce                                                                               0.0s
+ => [ 9/15] RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg &&     65.8s
+ => [10/15] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" &&     usermod -aG docker app &&     mkdir -p /app &&    0.4s
+ => [11/15] WORKDIR /app                                                                                                                                   0.0s
+ => [12/15] ADD --chown=app:app Pipfile Pipfile.lock /app/                                                                                                 0.0s
+ => [13/15] RUN pipenv sync                                                                                                                                2.0s
+ => [14/15] ADD --chown=app:app . /app                                                                                                                     0.0s
+ => [15/15] RUN set -ex;     ansible-galaxy collection install community.general community.kubernetes                                                     15.0s
+ => exporting to image                                                                                                                                    48.3s
+ => => exporting layers                                                                                                                                   24.3s
+ => => exporting manifest sha256:bf72632031b119121d0053f328c2a62afbad09f0aa4366477a0a792cbbce12cb                                                          0.0s
+ => => exporting config sha256:54b2611869b951abbf208e5440b00a6f64628b9d3a935ebf1dd77dc2f4b32366                                                            0.0s
+ => => exporting attestation manifest sha256:5b5089c29cc5a78af56a1d657d66a71d2c86099deeb92a4c2a7fc60ada6aa5b2                                              0.0s
+ => => exporting manifest list sha256:0a067f610ce17808d3717c11aaab22abec0fd3aed5900aa5c1280ece806f16f2                                                     0.0s
+ => => naming to docker.io/library/cheese-app-deployment:latest                                                                                            0.0s
+ => => unpacking to docker.io/library/cheese-app-deployment:latest                                                                                        24.0s
+root@b0ed47a6a572:/app# ls -la /secrets; pwd; ls
+total 8
+drwxr-xr-x 2 root root 4096 Nov  8 01:17 .
+drwxr-xr-x 1 root root 4096 Nov  8 01:17 ..
+/app
+Dockerfile  Pipfile.lock  deploy-create-instance.yml  deploy-provision-instance.yml  deploy-setup-webserver.yml  docker-entrypoint_working.sh  inventory.yml
+Pipfile     ansible.cfg   deploy-docker-images.yml    deploy-setup-containers.yml    docker-entrypoint.sh        docker-shell.sh               nginx-conf
+root@b0ed47a6a572:/app# exit
+exit
+[exit 0]

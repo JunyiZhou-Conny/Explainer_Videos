@@ -1,0 +1,53 @@
+$ bash docker-shell.sh
+
+[+] Building 0.2s (20/20) FINISHED                                                                                                               docker:default
+ => [internal] load build definition from Dockerfile                                                                                                       0.0s
+ => => transferring dockerfile: 2.30kB                                                                                                                     0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                                                                            0.0s
+ => [internal] load .dockerignore                                                                                                                          0.0s
+ => => transferring context: 2B                                                                                                                            0.0s
+ => [ 1/15] FROM docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                    0.0s
+ => => resolve docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                      0.0s
+ => [internal] load build context                                                                                                                          0.0s
+ => => transferring context: 708B                                                                                                                          0.0s
+ => CACHED [ 2/15] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client unzip            0.0s
+ => CACHED [ 3/15] RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" &&     unzip awscliv2.zip &&     ./aws/inst  0.0s
+ => CACHED [ 4/15] RUN install -m 0755 -d /etc/apt/keyrings                                                                                                0.0s
+ => CACHED [ 5/15] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg                             0.0s
+ => CACHED [ 6/15] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                                                                              0.0s
+ => CACHED [ 7/15] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu     0.0s
+ => CACHED [ 8/15] RUN apt-get update &&     apt-get install -y jq docker-ce                                                                               0.0s
+ => CACHED [ 9/15] RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg  0.0s
+ => CACHED [10/15] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" &&     usermod -aG docker app &&     mkdir -p /a  0.0s
+ => CACHED [11/15] WORKDIR /app                                                                                                                            0.0s
+ => CACHED [12/15] ADD --chown=app:app Pipfile Pipfile.lock /app/                                                                                          0.0s
+ => CACHED [13/15] RUN pipenv sync                                                                                                                         0.0s
+ => CACHED [14/15] ADD --chown=app:app . /app                                                                                                              0.0s
+ => CACHED [15/15] RUN set -ex;     ansible-galaxy collection install community.general community.kubernetes                                               0.0s
+ => exporting to image                                                                                                                                     0.1s
+ => => exporting layers                                                                                                                                    0.0s
+ => => exporting manifest sha256:552a7751f3d245052257089a1e6f3bdb028446c26ea8a28e85d553c0a05bdc81                                                          0.0s
+ => => exporting config sha256:d3079c5d0b5542a34ef1dbeb285ff3d70c2f7505fb05d6589096903af0d3f7e6                                                            0.0s
+ => => exporting attestation manifest sha256:9f3daa0211c017e2aeae55962b9c65a6732b8903f7506a545abc27a4c8769cd6                                              0.0s
+ => => exporting manifest list sha256:bf750d15c13faee2c8702a7adf68b0c447a72d6e10ca716af09472ffc9548359                                                     0.0s
+ => => naming to docker.io/library/cheese-app-deployment:latest                                                                                            0.0s
+ => => unpacking to docker.io/library/cheese-app-deployment:latest                                                                                         0.0s
+root@43e882278b32:/app# ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=present
+/usr/local/lib/python3.8/dist-packages/ansible/parsing/vault/__init__.py:42: CryptographyDeprecationWarning: Python 3.8 is no longer supported by the Python core team and support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.8.
+  from cryptography.exceptions import InvalidSignature
+
+PLAY [Create App Application Machine] **************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+ok: [localhost]
+
+TASK [Create security group] ***********************************************************************************************************************************
+An exception occurred during task execution. To see the full traceback, use -vvv. The error was: botocore.exceptions.ClientError: An error occurred (AuthFailure) when calling the DescribeSecurityGroups operation: AWS was not able to validate the provided access credentials
+fatal: [localhost]: FAILED! => {"boto3_version": "1.37.38", "botocore_version": "1.37.38", "changed": false, "error": {"code": "AuthFailure", "message": "AWS was not able to validate the provided access credentials"}, "msg": "Error in describe_security_groups: An error occurred (AuthFailure) when calling the DescribeSecurityGroups operation: AWS was not able to validate the provided access credentials", "response_metadata": {"http_headers": {"cache-control": "no-cache, no-store", "content-type": "text/xml;charset=UTF-8", "date": "Sun, 08 Nov 2026 01:18:25 GMT", "server": "AmazonEC2", "strict-transport-security": "max-age=31536000; includeSubDomains", "transfer-encoding": "chunked", "vary": "accept-encoding", "x-amzn-requestid": "120b7621-3986-4b0f-9e6b-a9899b6cbbe5"}, "http_status_code": 401, "request_id": "120b7621-3986-4b0f-9e6b-a9899b6cbbe5", "retry_attempts": 0}}
+
+PLAY RECAP *****************************************************************************************************************************************************
+localhost                  : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0
+
+root@43e882278b32:/app# exit
+exit
+[exit 2]

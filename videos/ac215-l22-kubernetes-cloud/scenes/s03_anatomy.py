@@ -104,6 +104,102 @@ def lamp_points(md):
             md.parts["kubelet"][0].box.get_corner(UL) + np.array([-0.08, 0.1, 0])]
 
 
+def outline_of(md, key):
+    """The stroked outlines of a V1 part (never its opaque fill): what a flash should touch."""
+    g = md.parts[key]
+    if key == "kubelet":
+        return [c.box for c in g]
+    if key == "proxy":
+        return [g.box]
+    if key == "etcd":
+        return [g.frame[2], g.frame[3], g.frame[4]]          # sides, bottom ellipse, top ellipse
+    if key == "cloud":
+        out = [g.frame.edge]
+        if "cloud_arrow" in md.parts:
+            out += list(md.parts["cloud_arrow"].line)
+        return out
+    fr = g.frame
+    return [fr.edge] if hasattr(fr, "edge") else [fr]
+
+
+def callout(scene, md, key, text=None, run_time: float = 0.6):
+    """PLAYS: md.callout without Indicate (which fills an opaque box solid YELLOW): the slot line
+    writes, then the part's outline flashes."""
+    t = label(text or CALLOUTS[key], 24, INK).move_to([md.ref.get_center()[0], md.slot_y, 0])
+    md._set_slot(scene, t, run_time=run_time * 0.6)
+    scene.play(*stroke_flash(outline_of(md, key)), run_time=run_time)
+    md.heal(scene)
+    return t
+
+
+def pick(scene, md, nodes=(1,), run_time: float = 0.8):
+    """PLAYS: md.pick with outline flashes: the scheduler, then the chosen nodes."""
+    scene.play(*stroke_flash(outline_of(md, "scheduler")), run_time=run_time * 0.5)
+    scene.play(*edge_flash([md.nodes[i].frame for i in nodes]), run_time=run_time * 0.5)
+    md.heal(scene)
+
+
+def wish(scene, md, run_time: float = 1.6):
+    """PLAYS: md.wish, but etcd's outline flashes GREEN instead of an Indicate fill."""
+    c = boxed("desired state", OWN, size=20, k=0.25).move_to(md._point("kubectl"))
+    scene.add(c)
+    scene.play(c.animate.move_to(md._point("api")), run_time=run_time * 0.45)
+    scene.play(c.animate.move_to(md._point("etcd")).set_opacity(0), run_time=run_time * 0.45)
+    scene.remove(c)
+    scene.play(*stroke_flash(outline_of(md, "etcd"), OWN), run_time=0.4)
+    md.heal(scene)
+
+
+def kg_fill(scene, kg, command, type_=None, name=None, flags=None, run_time: float = 0.8):
+    """PLAYS: KubectlGrammar.fill with a cross-fade of the example line (its Transform garbles the
+    glyphs mid-way); slot values that do not change stay put."""
+    parts = [command, type_, name, flags]
+    kg._ensure(scene)
+    old_ex, ex = kg.example, kg._example(parts)
+    anims = [FadeOut(old_ex), FadeIn(ex)]
+    new_vals, gone, fresh = [], [], []
+    for k, p in enumerate(parts):
+        if p == kg.current[k]:
+            new_vals.append(kg.values[k])
+            continue
+        v = kg._val(k, p, TURN if k == 0 else INK)
+        new_vals.append(v)
+        fresh.append(v)
+        gone.append(kg.values[k])
+        anims += [FadeOut(kg.values[k]), FadeIn(v, shift=DOWN * 0.15)]
+    scene.play(*anims, run_time=run_time)
+    kg.remove(old_ex, *gone)
+    scene.remove(old_ex, *gone, ex, *fresh)
+    kg.example, kg.values, kg.current = ex, new_vals, parts
+    kg.add(ex, *fresh)
+    kg.heal(scene)
+
+
+def tune_parts(md):
+    """Scene-local placement fixes made as V1 builds its parts: the 'etcd' word sits between the
+    ellipses (the bottom one's back arc ran through it); the cloud arrow's riser moves 0.12 right,
+    clear of 'run by Google'; the kubelets of workers 2 and 3 move 0.2 right of their titles."""
+    orig = md._mk_part
+
+    def mk(key):
+        g = orig(key)
+        if key == "etcd":
+            g.text.shift(UP * 0.08)
+        elif key == "kubelet":
+            for ch in list(g)[1:]:      # workers 2, 3: clear of their 'worker node (VM)' titles
+                ch.shift(RIGHT * 0.2)
+        elif key == "cloud_arrow":
+            path = g.line[0]
+            pts = path.points
+            a, b, c = pts[0].copy(), pts[3].copy(), pts[-1].copy()
+            dx = RIGHT * 0.12
+            path.set_points_as_corners([a + dx, b + dx, c])
+            g.text.shift(dx)
+        return g
+
+    md._mk_part = mk
+
+
 class ClusterAnatomy(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S03"] == 9, len(SAY)
@@ -111,6 +207,7 @@ class ClusterAnatomy(VoiceScene):
         md = MasterDiagram()
         md.shift(DOWN * 0.6)
         md._layout()                    # the layout is computed from the anchor: recompute after the move
+        tune_parts(md)
         plane_tint = tint(CLOUD, 0.14)
 
         # ========================================================== 0. slide 22: plane and workers
@@ -155,7 +252,7 @@ class ClusterAnatomy(VoiceScene):
             vo.wait_until("The API server is the single entry point")
             md.part(self, "api", run_time=0.6)
             md.pulse(self, ["kubectl", "api"], run_time=0.8)
-            md.callout(self, "api")
+            callout(self, md, "api")
             vo.wait_until("every other part talks only to it")
             md.part(self, "scheduler", run_time=0.5)
             md.part(self, "controllers", run_time=0.5)
@@ -164,25 +261,25 @@ class ClusterAnatomy(VoiceScene):
             md.show(self, v_s, v_c, run_time=0.4)
             vo.wait_until("Etcd is the memory of the cluster")
             md.part(self, "etcd", run_time=0.6)
-            md.callout(self, "etcd")
-            md.wish(self, run_time=1.6)
+            callout(self, md, "etcd")
+            wish(self, md, run_time=1.6)
 
         # ========================================================== 3. scheduler, controllers, cloud
         with self.voiceover(SAY[3]) as vo:
             md.drop(self, v_s, run_time=0.3)
             md.pulse(self, ["api", "scheduler"], run_time=0.6)
-            md.callout(self, "scheduler")
-            md.pick(self, (1,), run_time=1.0)
+            callout(self, md, "scheduler")
+            pick(self, md, (1,), run_time=1.0)
             vo.wait_until("The controllers keep watching")
             md.drop(self, v_c, run_time=0.3)
             md.pulse(self, ["api", "controllers"], run_time=0.6)
-            md.callout(self, "controllers")
+            callout(self, md, "controllers")
             vo.wait_until("and fix any difference")
             md.loop(self, run_time=1.4)
             vo.wait_until("some of them ask the cloud")
             md.part(self, "cloud", run_time=0.5)
             md.part(self, "cloud_arrow", run_time=0.7)
-            md.callout(self, "cloud")
+            callout(self, md, "cloud")
 
         # ========================================================== 4. slide 26: inside a worker
         with self.voiceover(SAY[4]) as vo:
@@ -192,16 +289,16 @@ class ClusterAnatomy(VoiceScene):
             md.heal(self)
             vo.wait_until("the kubelet is the hands of the API server")
             md.part(self, "kubelet", run_time=0.6)
-            md.callout(self, "kubelet")
+            callout(self, md, "kubelet")
             vo.wait_until("it starts and stops the containers")
             self.play(*stroke_flash([c.box for c in md.parts["kubelet"]]), run_time=0.8)
             md.heal(self)
             vo.wait_until("Kube proxy routes traffic for Services")
             md.part(self, "proxy", run_time=0.6)
-            md.callout(self, "proxy")
+            callout(self, md, "proxy")
             vo.wait_until("and a container runtime runs the containers")
             md.part(self, "runtime", run_time=0.6)
-            md.callout(self, "runtime")
+            callout(self, md, "runtime")
             vo.wait_until("grouped in Pods")
             pods = md.pods(self, 0, 2, run_time=0.7)
 
@@ -216,21 +313,22 @@ class ClusterAnatomy(VoiceScene):
             docker.next_to(md.parts["proxy"], RIGHT, buff=0.3)
             x_out = strike(docker.text, S.GREY)
             err = erratum_tag().next_to(panel, RIGHT, buff=0.2)
+            md.clear_slot(self)         # the runtime callout goes: the slot is the panel's place
             md.show(self, docker, run_time=0.5)
             md.show(self, x_out, err, anims=[Create(x_out), FadeIn(err)], run_time=0.5)
             self.play(Indicate(cd_word, color=TURN, scale_factor=1.12), run_time=0.7)
             md.heal(self)
             vo.wait_until("On GKE it is containerd")
-            md.clear_slot(self)
             self.play(FadeIn(panel, shift=UP * 0.3), run_time=0.6)
             hl = code_span(panel.code, 0, '"cos_containerd"')
             self.play(hl.animate.set_color(TURN), run_time=0.5)
             self.add(panel)
             vo.wait_until("You still build images with Docker")
-            self.play(Indicate(md.chips["docker"], color=TURN, scale_factor=1.15), run_time=0.8)
+            self.play(*stroke_flash([md.chips["docker"].box]),
+                      md.chips["docker"].text.animate(rate_func=there_and_back).set_color(TURN), run_time=0.8)
             md.heal(self)
             vo.wait_until("and they run unchanged")
-            self.play(*[Indicate(p, color=TURN, scale_factor=1.15) for p in pods], run_time=0.8)
+            self.play(*stroke_flash([p.circle for p in pods]), run_time=0.8)
             md.heal(self)
 
         # ========================================================== 6. recap: follow the arrows
@@ -241,9 +339,9 @@ class ClusterAnatomy(VoiceScene):
             md.drop(self, docker, x_out, err, run_time=0.4)
             vo.wait_until("Every kubectl command goes to one place")
             md.pulse(self, ["kubectl", "api"], run_time=0.6)
-            md.callout(self, "api", "API server · the only door")
+            callout(self, md, "api", "API server · the only door")
             vo.wait_until("which stores your wish in etcd")
-            md.wish(self, run_time=1.1)
+            wish(self, md, run_time=1.1)
             vo.wait_until("The scheduler and the kubelets")
             # the arrowheads turn round: scheduler and the workers of two nodes → API server ('watch')
             fan = md.parts["fan"]
@@ -287,11 +385,11 @@ class ClusterAnatomy(VoiceScene):
             self.play(*edge_flash([kg.slots[3]]), Indicate(kg.heads[3], color=TURN), run_time=0.5)
             kg.heal(self)
             vo.wait_until("Get nodes")
-            kg.fill(self, "get", "nodes")
+            kg_fill(self, kg, "get", "nodes")
             vo.wait_until("Get pods.")
-            kg.fill(self, "get", "pods")
+            kg_fill(self, kg, "get", "pods")
             vo.wait_until("Get pods, with a flag")
-            kg.fill(self, "get", "pods", None, "--all-namespaces")
+            kg_fill(self, kg, "get", "pods", None, "--all-namespaces")
 
         # ========================================================== 8. four lamps, for later
         with self.voiceover(SAY[8]) as vo:

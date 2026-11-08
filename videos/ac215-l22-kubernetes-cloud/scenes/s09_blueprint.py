@@ -74,6 +74,116 @@ CALLS = (  # (comment line, call line, call name, file chip)
 )
 
 
+JOB_Y, POOL_Y, ARROW_X = -2.0, -2.72, -0.2   # S09's local layout (CheeseBlueprint: -2.05, -2.67, -0.25)
+
+
+class Blueprint9(CheeseBlueprint):
+    """The shared V5 with S09's layout fixes, kept in this file (requests for common.py are in the
+    critic's report): the Pod sits top-right in each Deployment card and the ReplicaSet ring circles
+    it (no ring on the card corner over the Pod); the Job/WI row is a little higher and the pool strip
+    a little lower, so the namespace frame ends above the pool; the Job's arrow runs at x -0.2 and,
+    once the Services exist, ends at the 'vector-db :8000' tag (the loader talks to the Service);
+    the chromadb disk sits a little left so its label clears the arrow; 'private nodes' sits inside
+    the strip."""
+
+    def _cards(self):
+        out_ = super()._cards()
+        for g in out_.values():
+            c = g.card
+            c.text.align_to(c.frame, LEFT).shift(RIGHT * 0.08)
+            g.pod.scale(0.8).move_to(c.frame.get_right() + np.array([-0.32, 0.17, 0]))
+        return out_
+
+    def _row1(self, scene, rt):
+        j = boxed(["Job", "vector-db-loader"], OWN, box_w=2.3, box_h=0.75, k=0.16).move_to(self.p(-1.15, JOB_Y))
+        self.parts["job"] = self.swap(scene, self.parts.pop("loader"), j, run_time=rt * 0.5)
+        x = self.p(ARROW_X, 0)[0]
+        top = self.parts["vdb"].card.frame.get_bottom()[1] - 0.04
+        a = arrow(np.array([x, j.get_top()[1], 0]), np.array([x, top, 0]), OWN)
+        self.parts["job_arrow"] = a
+        self.show(scene, a, anims=[GrowArrow(a)], run_time=0.3)
+
+    def _row2(self, scene, rt):
+        super()._row2(scene, rt)
+        old = self.parts["job_arrow"]
+        x = self.p(ARROW_X, 0)[0]
+        tip = self.parts["svc_vdb"].get_bottom()[1] - 0.04
+        new = arrow(np.array([x, self.parts["job"].get_top()[1], 0]), np.array([x, tip, 0]), OWN)
+        self.parts["job_arrow"] = self.swap(scene, old, new, run_time=0.4, morph=True)
+
+    def _row3(self, scene, rt):
+        new = []
+        for key, name, x in (("pvc1", "persistent-pvc 5Gi", -5.0), ("pvc2", "chromadb-pvc 10Gi", -2.12)):
+            d = disk_cyl(0.42).move_to(self.p(x - 0.95, -1.25))
+            t = label(name, 20, INK).next_to(d, RIGHT, buff=0.1)
+            g = VGroup(d, t)
+            self.parts[key] = g
+            new.append(g)
+        assert new[1].get_right()[0] < self.p(ARROW_X, 0)[0] - 0.15, new[1].get_right()
+        assert new[0].get_right()[0] < new[1].get_left()[0] - 0.12
+        self.show(scene, *new, run_time=rt * 0.5)
+
+    def _row5(self, scene, rt):
+        w = chip("api: Workload Identity", OWN, size=20, pad_x=0.14, pad_y=0.05).move_to(self.p(-4.6, JOB_Y))
+        self.parts["wi"] = w
+        self.show(scene, w, run_time=rt * 0.4)
+
+    def _row6(self, scene, rt):
+        rings = VGroup(*[ring_arrows(0.19, OWN, stroke=2.5).shift(self.parts[k].pod.circle.get_center())
+                         for k in ("front", "api", "vdb")])
+        for r, k in zip(rings, ("front", "api", "vdb")):
+            fr = self.parts[k].card.frame
+            assert r.get_top()[1] < fr.get_top()[1] + 0.02 and r.get_right()[0] < fr.get_right()[0], k
+        self.parts["rings"] = rings
+        self.show(scene, rings, anims=[Create(r) for r in rings], run_time=rt * 0.6)
+
+    def _row7(self, scene, rt):
+        strip = frame_box(6.1, 0.42, CLOUD, k=0.2).move_to(self.p(-3.0, POOL_Y))
+        t = label(f"node pool · 1–2 × {MACHINE}", 20, INK).move_to(strip).align_to(strip, LEFT).shift(RIGHT * 0.15)
+        badges = chip("public IPs", S.GREY, size=20, pad_x=0.1, pad_y=0.02)
+        badges.move_to(strip).align_to(strip, RIGHT).shift(LEFT * 0.1)
+        pool = VGroup(strip, t)
+        assert strip.get_bottom()[1] > self.cluster_box[0].get_bottom()[1] + 0.04
+        self.parts["pool"], self.parts["badges"] = pool, badges
+        self.show(scene, pool, badges, run_time=rt * 0.5)
+
+    def private_nodes(self, scene):
+        strip = self.parts["pool"][0]
+        b = self.parts.pop("badges")
+        cap = label("private nodes", 20, CLOUD).move_to(strip).align_to(strip, RIGHT).shift(LEFT * 0.15)
+        assert cap.get_left()[0] > self.parts["pool"][1].get_right()[0] + 0.05
+        self.drop(scene, b, run_time=0.5, shift=UP * 0.4)
+        self.extras["private"] = cap
+        self.show(scene, cap, run_time=0.3)
+
+    def namespace(self, scene):
+        grp = VGroup(*[self.parts[k] for k in ("front", "api", "vdb", "svc_front", "svc_api", "svc_vdb",
+                                                   "pvc1", "pvc2", "job")])
+        top = self.parts["nginx"].get_bottom()[1] - 0.03
+        bot = grp.get_bottom()[1] - 0.05
+        assert bot > self.parts["pool"].get_top()[1] + 0.04, (bot, self.parts["pool"].get_top())
+        fr = DashedVMobject(RoundedRectangle(width=grp.width + 0.24, height=top - bot, corner_radius=0.12),
+                            num_dashes=60, dashed_ratio=0.6).set_stroke(OWN, 3)
+        fr.move_to([grp.get_center()[0], (top + bot) / 2, 0])
+        t = label(NAMESPACE, 20, OWN).move_to(fr).align_to(fr, UL).shift(np.array([0.12, -0.03, 0]))
+        assert t.get_bottom()[1] > self.parts["front"].get_top()[1] + 0.05, t.get_bottom()
+        g = VGroup(fr, t)
+        self.extras["ns"] = g
+        return self.show(scene, g, anims=[Create(fr), FadeIn(t)], run_time=0.7)
+
+    def side_chip(self, scene, key: str, top: str, bottom: str, y: float, target_x: float):
+        """PLAYS: a GREY two-row scene chip LEFT of the VPC at height y, a thin horizontal GREY line to
+        x = target_x (the part's left edge; y must cross the part)."""
+        c = two_row_chip(top, bottom, S.GREY)
+        vpc_left = self.extras["vpc"][0].get_left()[0]
+        c.move_to([vpc_left - 0.25 - c.width / 2, y, 0])
+        assert c.get_left()[0] > -6.55, c.get_left()
+        ln = Line(c.get_right(), np.array([target_x, y, 0]), color=S.GREY, stroke_width=1.5)
+        g = VGroup(ln, c)
+        self.extras[f"chip_{key}"] = g
+        return self.show(scene, g, anims=[Create(ln), FadeIn(c)], run_time=0.5)
+
+
 class Blueprint(VoiceScene):
     def construct(self):
         # ========================================================== 0. the handover: two README headings
@@ -112,7 +222,7 @@ class Blueprint(VoiceScene):
 
         # ========================================================== 1. L20's VM dissolves into the cluster
         ref = lref("21–22")
-        cb = CheeseBlueprint()
+        cb = Blueprint9()
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(ref), run_time=0.3)
             cb.l20(self)
@@ -169,17 +279,14 @@ class Blueprint(VoiceScene):
             vo.wait_until("behind one load balancer")
             cb.lb(self)
             cb.chip(self, "ingress", "Ingress → S13")
-            cb.chip(self, "pvc2", "PVC → S15")
-            # Workload Identity sits bottom-left: its chip goes left of the VPC (a chip in the right
-            # column would draw its line across the whole cluster)
+            # PVC and Workload Identity sit on the left: their chips go left of the VPC, with short
+            # horizontal lines (a chip in the right column would draw its line across the cluster)
+            pvc = cb.parts["pvc1"][0]
+            cb.side_chip(self, "pvc1", "PVC", "→ S15", pvc.get_y() + 0.12, pvc.get_left()[0])
             wi = cb.parts["wi"]
-            wchip = two_row_chip("Workload Identity", "→ S12", S.GREY)
-            vpc_left = cb.extras["vpc"][0].get_left()[0]
-            wchip.move_to([vpc_left - 0.25 - wchip.width / 2, wi.get_y(), 0])
-            assert wchip.get_left()[0] > -6.55, wchip.get_left()
-            wline = Line(wchip.get_right(), wi.get_left(), color=S.GREY, stroke_width=1.5)
-            cb.extras["chip_wi"] = cb.show(self, VGroup(wline, wchip), anims=[Create(wline), FadeIn(wchip)],
-                                           run_time=0.5)
+            cb.side_chip(self, "wi", "Workload Identity", "→ S12", wi.get_y() - 0.05, wi.get_left()[0])
+            assert cb.extras["chip_pvc1"][1].get_bottom()[1] > cb.extras["chip_wi"][1].get_top()[1] + 0.08
+        self.wait(0.8)                 # the three scene chips land on the last words: let them be read
         self.play(FadeOut(cb), run_time=0.5)
         self.remove(cb)
 
@@ -194,15 +301,23 @@ class Blueprint(VoiceScene):
             first = 19 if p is pa else 32
             ch = grey_chip(fname, mono_font=True)
             anchor_ln = p.code.code_lines[cmt - first]
-            ch.move_to([anchor_ln.get_right()[0] + 0.5 + ch.width / 2, anchor_ln.get_y(), 0])
+            # beside the comment line, its bottom at the call line's YELLOW bar (clear of the call's text) (a chip centred on
+            # the comment line reaches down into the bar and the call's text)
+            bar_top = line_bar(p.code, call - first, TURN).get_top()[1]
+            ch.move_to([anchor_ln.get_right()[0] + 0.5 + ch.width / 2, 0, 0])
+            ch.align_to(np.array([0, bar_top - 0.02, 0]), DOWN)      # the bar's top 0.07 is padding
+            assert ch.get_top()[1] < p.code.background.get_top()[1] - 0.03, fname
             chips.append(ch)
         assert all(ch.get_right()[0] < 6.5 for ch in chips)
         inset = code(MAIN, 17, 17, font_size=20).move_to([-1.55, 2.85, 0])
-        https = grey_chip("HTTPS variant: off").next_to(inset, RIGHT, buff=0.3)
+        https = grey_chip("HTTPS variant: off").next_to(inset.code.background, RIGHT, buff=0.35)
         assert inset.get_top()[1] < 3.55 and inset.get_bottom()[1] > pa.get_top()[1] + 0.05, inset.get_bottom()
         row_top = pb.get_bottom()[1] - 0.25
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeIn(pa, shift=UP * 0.2), run_time=0.6)
+            vo.wait_until("one per file")
+            self.play(LaggedStart(*[Indicate(pa.code.code_lines[c - 19], color=TURN, scale_factor=1.03)
+                                    for c, *_ in CALLS[:3]], lag_ratio=0.3), run_time=1.0)
             bars = []
             for (cmt, call, fn, fname), ch, word in zip(CALLS[:3], chips, ("the network", "the cluster",
                                                                             "the containers")):

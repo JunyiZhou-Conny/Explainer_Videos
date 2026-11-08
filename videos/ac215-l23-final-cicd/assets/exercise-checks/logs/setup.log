@@ -1,0 +1,1 @@
+$ docker build -q --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY --build-arg https_proxy=$HTTPS_PROXY -t l23ex-ansible:check /tmp/tmp.gW8VB7h7hW >/dev/null; echo "build exit status: $?"

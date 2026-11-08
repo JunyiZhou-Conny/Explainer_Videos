@@ -1,0 +1,56 @@
+$ ls -l /bin/sh; bash --version | head -1
+lrwxrwxrwx 1 root root 4 Mar 31  2024 /bin/sh -> dash
+GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)
+[exit 0]
+
+$ cd /home/student/cheese-app-aws/src/deployment && sh docker-shell.sh; echo "exit status: $?"
+docker-shell.sh: 13: Syntax error: redirection unexpected
+exit status: 2
+[exit 0]
+
+$ cd /home/student/cheese-app-aws/src/deployment && bash docker-shell.sh; echo "exit status: $?"
+[stand-in docker] docker build -t cheese-app-deployment --platform=linux/amd64 -f Dockerfile .
+[stand-in docker] docker run --rm --name cheese-app-deployment -ti -v /var/run/docker.sock:/var/run/docker.sock -v /home/student/cheese-app-aws/src/deployment:/app -v /home/student/cheese-app-aws/src/deployment/../../../../secrets/:/secrets -v /home/student/.ssh:/home/app/.ssh -v /home/student/cheese-app-aws/src/deployment/../api-service:/api-service -v /home/student/cheese-app-aws/src/deployment/../frontend-react:/frontend-react -v /home/student/cheese-app-aws/src/deployment/../vector-db:/vector-db -e AWS_ACCESS_KEY_ID=PLACEHOLDER_NOT_A_REAL_ACCESS_KEY -e AWS_SECRET_ACCESS_KEY=PLACEHOLDER_NOT_A_REAL_SECRET_KEY_000000000000 -e AWS_DEFAULT_REGION=us-east-1 -e AWS_ACCOUNT_ID=YOUR_ACCOUNT_ID -e SSH_KEY_PATH=/secrets/ac215_2024.pem cheese-app-deployment
+exit status: 0
+[exit 0]
+
+$ dash -c 'IFS=, read -r a b <<< "key,secret"; echo "a=$a b=$b"'; echo "exit status: $?"
+dash: 1: Syntax error: redirection unexpected
+exit status: 2
+[exit 0]
+
+$ bash --posix -c 'IFS=, read -r a b <<< "key,secret"; echo "a=$a b=$b"'; echo "exit status: $?"
+a=key b=secret
+exit status: 0
+[exit 0]
+
+$ cd /home/student/cheese-app-aws && bash src/deployment/docker-shell.sh; echo "exit status: $?"
+Error: AWS credentials file not found at ../../../secrets/deployment-ac215-user_accessKeys.csv
+exit status: 1
+[exit 0]
+
+$ cd /home/student/cheese-app-aws/src/deployment && STUB_BUILD_RC=1 bash docker-shell.sh; echo "exit status: $?"
+[stand-in docker] docker build -t cheese-app-deployment --platform=linux/amd64 -f Dockerfile .
+[stand-in docker] build failed
+[stand-in docker] docker run --rm --name cheese-app-deployment -ti -v /var/run/docker.sock:/var/run/docker.sock -v /home/student/cheese-app-aws/src/deployment:/app -v /home/student/cheese-app-aws/src/deployment/../../../../secrets/:/secrets -v /home/student/.ssh:/home/app/.ssh -v /home/student/cheese-app-aws/src/deployment/../api-service:/api-service -v /home/student/cheese-app-aws/src/deployment/../frontend-react:/frontend-react -v /home/student/cheese-app-aws/src/deployment/../vector-db:/vector-db -e AWS_ACCESS_KEY_ID=PLACEHOLDER_NOT_A_REAL_ACCESS_KEY -e AWS_SECRET_ACCESS_KEY=PLACEHOLDER_NOT_A_REAL_SECRET_KEY_000000000000 -e AWS_DEFAULT_REGION=us-east-1 -e AWS_ACCOUNT_ID=YOUR_ACCOUNT_ID -e SSH_KEY_PATH=/secrets/ac215_2024.pem cheese-app-deployment
+exit status: 0
+[exit 0]
+
+$ cd /home/student/cheese-app-aws/src/deployment && sed "4s/^#set -e/set -e/" docker-shell.sh > docker-shell-sete.sh && sed -n 4p docker-shell-sete.sh && STUB_BUILD_RC=1 bash docker-shell-sete.sh; echo "exit status: $?"
+set -e
+[stand-in docker] docker build -t cheese-app-deployment --platform=linux/amd64 -f Dockerfile .
+[stand-in docker] build failed
+exit status: 1
+[exit 0]
+
+$ mkdir -p /tmp/redirect && cd /tmp/redirect && echo pip install ansible>=9.0.0 openshift docker; ls -l; echo "file holds: $(cat =9.0.0)"
+total 4
+-rw-r--r-- 1 root root 37 Nov  8 02:30 =9.0.0
+file holds: pip install ansible openshift docker
+[exit 0]
+
+$ mkdir -p /tmp/quoted && cd /tmp/quoted && echo pip install "ansible>=9.0.0" openshift docker; ls -l
+pip install ansible>=9.0.0 openshift docker
+total 0
+[exit 0]
+

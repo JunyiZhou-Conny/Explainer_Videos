@@ -31,15 +31,16 @@ Beats (script.md "## S11", one voiceover block each):
 5. The panels fade. StackPipe S11: the BLUE state bucket with 'deploy_images' (empty GREY outputs box,
    'init + preview only, no up') and 'deploy_k8s'; on "never finished pulumi up" the PINK StackReference
    reaches the empty box and breaks RED; on "Skipping it is safe" a 'pulumi up' stamp fills the box
-   with three tags; on "when it already ran there" the pipe joins GREEN, 'same bucket · up finished'.
+   with three tags, and the pipe joins GREEN, 'same bucket · up finished' (held ~1.5 s).
 6. TRACKER [C] 3 · extra. The bucket fades; a 3-row strip, 'extra' on its bar, the GREY tag
-   'placeholder image tags · nothing built' above it (flashes on "with placeholder tags"). On "Now the
-   real plan appears" `pulumi preview --stack dev --refresh` -> TERM(c20: 8–11, 13–14, 16–33 wrap, as a
-   fast scroll); V6 ResourceTree grows above the strip in step with the printed lines (network and
-   cluster + pool with 8–11, provider with 16–17, identity / ingress / storage with 18–23, app with
-   24–33); 'the network', 'the cluster, the node pool' and 'the Kubernetes objects' each open their
-   group's member card in turn (then it closes); on "and plus 23 to create" the stack chip '+1 · the
-   stack itself', TERM(c20: …, 45) YELLOW and the counter '+ 23 to create' YELLOW.
+   'placeholder image tags · nothing built' above it (flashes on "with placeholder tags"). On "nothing
+   is built" `pulumi preview --stack dev --refresh` is typed; on "Now the real plan appears" TERM(c20:
+   8–11, 13–14, 16–33 wrap) scrolls fast, a box-full at a time, and V6 ResourceTree grows above the
+   strip in step with the printed lines (network and cluster + pool with 8–11, provider with 16–17,
+   identity / ingress / storage with 18–23, app with 24–33). 'the network', 'the cluster' and 'the
+   Kubernetes objects' each open their group's member card (the next one closes the last); on "and
+   plus 23 to create" the card closes, the stack chip '+1 · the stack itself', TERM(c20: …, 45) YELLOW
+   and the counter '+ 23 to create' YELLOW flash together.
 7. In V6 the two PINK dashed reads blink in ('StackReference · deploy-images/dev',
    'nginx-ingress-service'). On "In the outputs" the tree leaves, row 45 fades, the terminal grows to
    12 rows and prints TERM(c20: 35–42, 44, 45): line 38 GREEN, the '[unknown]' lines GREY, 45 YELLOW;
@@ -194,15 +195,30 @@ def span_bar(code_, k0: int, k1: int, color, opacity: float = 0.18):
         .move_to([a.get_x(), (top + bot) / 2, 0])
 
 
-def fast_out(scene, t, items, per: float = 0.3):
+def fast_out(scene, t, items, per: float = 0.22):
     """PLAYS: a fast scroll: items (text or (text, colour), soft-wrapped) printed a box-full at a
-    time, the oldest rows fading as they go. Returns the new rows."""
+    time; each box-full pushes the previous one up and out in ONE short play. Returns the new rows."""
     items = soft(items, t.max_chars)
     rows = VGroup()
     for i in range(0, len(items), t.rows):
         ch = [(x, OUTPUT) if isinstance(x, str) else x for x in items[i:i + t.rows]]
-        room(scene, t, len(ch), run_time=per * 0.5)
-        rows.add(*t.print(scene, ch, run_time=per * 0.5, lag=0.03))
+        over = len(t.lines) + len(ch) - t.rows
+        old = list(t.lines.submobjects[:max(0, over)])
+        stay = list(t.lines.submobjects[max(0, over):])
+        for m in old:
+            t.lines.remove(m)
+        anims = [FadeOut(m, shift=UP * t.pitch) for m in old]
+        anims += [m.animate.shift(UP * t.pitch * len(old)) for m in stay]
+        new = []
+        for s_, col in ch:
+            ln = mono_line(s_, t.size, col)
+            t._place(ln, len(t.lines))
+            t.lines.add(ln)
+            new.append(ln)
+        scene.play(*anims, *[FadeIn(m, shift=UP * t.pitch * 0.5) for m in new], run_time=per)
+        scene.remove(*old)
+        scene.add(t)
+        rows.add(*new)
     return rows
 
 
@@ -282,15 +298,14 @@ class ClusterPlan(VoiceScene):
             # the local block (extra): the same three keys, no output
             xb = extra_row()
             on_bar(t, xb)
-            self.play(track(trk, 2, True), FadeIn(xb), run_time=0.3)
-            for c in C11:
-                ln = type_capture(self, t, c, type_time=0.22)[0]
-                rings.append(ring_project(self, ln, run_time=0.15))
-            bare_prompt(self, t)
             ok = ok_chip("✓ local · same three keys")
             ok.next_to(dft, LEFT, buff=0.3)
             assert ok.get_left()[0] > -6.5 and ok.get_top()[1] < TRACK_BOTTOM - 0.05, ok.get_corner(UL)
-            self.play(FadeIn(ok, shift=DOWN * 0.1), run_time=0.4)
+            self.play(track(trk, 2, True), FadeIn(xb), FadeIn(ok, shift=DOWN * 0.1), run_time=0.35)
+            for c in C11:
+                ln = type_capture(self, t, c, type_time=0.15)[0]
+                rings.append(ring_project(self, ln, run_time=0.12))
+            bare_prompt(self, t)
 
         # ========================================================== 2. what the two security keys feed
         cp = code(CC, 9, 12, font_size=SIZE, elide={9: "pulumi.Config"})
@@ -430,35 +445,36 @@ class ClusterPlan(VoiceScene):
             self.play(FadeIn(x20), FadeIn(ph, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("with placeholder tags")
             flash_tag(self, ph, INK, 1.05)
-            vo.wait_until("Now the real plan appears")
+            vo.wait_until("nothing is built")
             type_capture(self, t, C20, type_time=0.35)
             lines_of = lambda a, b: [C20.line(n) for n in range(a, b + 1)]  # noqa: E731
+            vo.wait_until("Now the real plan appears")
             fast_out(self, t, lines_of(8, 11))
-            rt.group(self, "network", run_time=0.25)
-            rt.group(self, "cluster", run_time=0.25)
+            rt.group(self, "network", run_time=0.2)
+            rt.group(self, "cluster", run_time=0.2)
             assert rt.get_bottom()[1] > ph.get_top()[1] + 0.05, (rt.get_bottom(), ph.get_top())
+            fast_out(self, t, lines_of(13, 14))
+            fast_out(self, t, lines_of(16, 17))
+            rt.group(self, "provider", run_time=0.2)
             vo.wait_until("the network")
             rt.expand(self, "network", run_time=0.3)
-            fast_out(self, t, lines_of(13, 14))
+            fast_out(self, t, lines_of(18, 23), per=0.18)
             vo.wait_until("the cluster")
-            rt.expand(self, "cluster", run_time=0.3)
-            fast_out(self, t, lines_of(16, 17))
             rt.collapse(self, run_time=0.2)
-            rt.group(self, "provider", run_time=0.25)
-            fast_out(self, t, lines_of(18, 23))
             for k in ("identity", "ingress", "storage"):
-                rt.group(self, k, run_time=0.2)
-            fast_out(self, t, lines_of(24, 33))
-            rt.group(self, "app", run_time=0.25)
+                rt.group(self, k, run_time=0.15)
+            rt.expand(self, "cluster", run_time=0.3)
+            fast_out(self, t, lines_of(24, 33), per=0.18)
+            rt.group(self, "app", run_time=0.15)
             vo.wait_until("the Kubernetes objects")
             rt.expand(self, "app", run_time=0.3)
             vo.wait_until("and plus 23 to create")
-            rt.collapse(self, run_time=0.25)
-            rt.grow(self, lag=0.3)
-            g45 = out(self, t, ["…", (C20.line(45), TURN)], run_time=0.3)
+            rt.collapse(self, run_time=0.2)
+            rt.grow(self, lag=0.25)
+            g45 = fast_out(self, t, ["…", (C20.line(45), TURN)])
             rt.counter(self, 23)
             self.play(Indicate(rt.count_mob, color=TURN, scale_factor=1.1),
-                      Indicate(g45[-1], color=TURN, scale_factor=1.1), run_time=0.7)
+                      Indicate(g45[-1], color=TURN, scale_factor=1.1), run_time=0.6)
             self.add(t)
 
         # ========================================================== 7. two reads; the outputs
@@ -486,8 +502,8 @@ class ClusterPlan(VoiceScene):
             self.play(Indicate(o_row[38], color=OWN, scale_factor=1.05), run_time=0.7)
             self.add(t)
             vo.wait_until("the address and the URL")
-            self.play(Indicate(o_row[40], color=INK, scale_factor=1.05),
-                      Indicate(o_row[36], color=INK, scale_factor=1.05), run_time=0.8)
+            self.play(Indicate(o_row[40], color=TURN, scale_factor=1.05),
+                      Indicate(o_row[36], color=TURN, scale_factor=1.05), run_time=0.8)
             self.add(t)
 
         # ========================================================== 8. your turn

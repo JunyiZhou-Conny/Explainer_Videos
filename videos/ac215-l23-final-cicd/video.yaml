@@ -1,0 +1,74 @@
+id: ac215-l23-final-cicd
+title: "AC215 · Lecture 23 — Final deployment and review: Ansible on one EC2 server, then a commit that redeploys (follow-along: cheese-app-aws)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 23
+  lecture_title: "Final Deployment and Review"
+  ed: https://edstem.org/us/courses/97373/lessons/166048/
+  repos:
+    # Series decision (issue #125): L23 follows the AWS variant, as L15 did. main is the only branch;
+    # still the head on 2026-11-08 (assets/terminal/laptop/01-x-ls-remote.txt). The README never
+    # mentions the workflow; the video follows it after the README, every step marked extra.
+    - {repo: dlops-io/cheese-app-aws, branch: main, commit: 5950118b0ed97c12c799920846d3eb70b1a47385,
+       sections: ["API's to enable in AWS before you begin", "Setup AWS Keys for Authentication",
+                  "Create AWS EC2 Key Pair", "Deployment Setup", "Deployment Steps",
+                  "Create Empty ECR Repositories", "Build and Push Docker Containers to AWS ECR (Elastic Container Registry)",
+                  "Create Compute Instance (VM) Server in GCP", "Provision Compute Instance in GCP",
+                  "Setup Docker Containers in the  Compute Instance", "Configure Nginx file for Web Server",
+                  "Setup Webserver on the Compute Instance", "Delete the Compute Instance / Persistent disk",
+                  ".github/workflows/ci_cd_aws.yml (not in the README)"]}
+    # context only: the Google Cloud version the lecture slides describe (slides 17-20); nothing is captured from it
+    - {repo: dlops-io/cheese-app-v4, branch: main, commit: 033f18713b9e1e7985a3080e85edab3ff01cefef,
+       sections: ["context only: Cheese App - Automation (the GCP CI/CD version of the slides)"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L23-final-cicd-deployment.md
+audience: "AC215 student who has done L1-L22 (Docker images and docker-shell.sh scripts with bind mounts, pipenv, the cheese app's frontend, API and Chroma vector DB, L15's IAM users, access keys and ECR on AWS, L20's deployment container, L21's GitHub Actions, L22's Kubernetes as the GCP path), new to Ansible (inventory, playbooks, plays, tasks, modules), EC2 instances, security groups and key pairs, and a workflow that deploys; watching with their clone of cheese-app-aws open, Docker running, their own AWS account with billing — this lecture runs an EC2 server until it is deleted by hand (GOLD tags without amounts + teardown checklist) — and a GitHub repository of their own for part 2"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+# Scene classes must not collide with the set-piece classes in scenes/common.py:
+# KeywordSieves, TermMap, KeyJourney, AnsibleMachine, SiblingContainers, TimestampTrail, VmLayout, ReleaseLoop.
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,                title: "Thirty-three commits, one backslash"}
+  - {file: scenes/s02_map.py,        cls: LectureMap,          title: "The final map, in AWS words"}
+  - {file: scenes/s03_console.py,    cls: ConsoleSetup,        title: "A policy, a user and two keys"}
+  - {file: scenes/s04_inventory.py,  cls: AnsibleInOnePicture, title: "Ansible in one picture"}
+  - {file: scenes/s05_toolbox.py,    cls: StartToolbox,        title: "Starting the toolbox: three surprises"}
+  - {file: scenes/s06_inside.py,     cls: InsideToolbox,       title: "Inside the toolbox: whose Docker?"}
+  - {file: scenes/s07_images.py,     cls: BuildAndPush,        title: "Three images, one timestamp"}
+  - {file: scenes/s08_server.py,     cls: CreateAndProvision,  title: "Create a server, then provision it"}
+  - {file: scenes/s09_containers.py, cls: SetupContainers,     title: "Five containers on one network"}
+  - {file: scenes/s10_webserver.py,  cls: FrontDoor,           title: "One front door: nginx"}
+  - {file: scenes/s11_cicd.py,       cls: WhoPressesRelease,   title: "CI, CD, and who presses release"}
+  - {file: scenes/s12_trigger.py,    cls: TwoSieves,           title: "Two sieves on one commit message"}
+  - {file: scenes/s13_runner.py,     cls: RunnerSecrets,       title: "Secrets and the runner"}
+  - {file: scenes/s14_deploy.py,     cls: FollowTheTag,        title: "Follow one tag to the server"}
+  - {file: scenes/s15_teardown.py,   cls: Teardown,            title: "The delete that deletes nothing"}
+  - {file: scenes/s16_review.py,     cls: CourseReview,        title: "The course on one server, and recap"}
+parts:
+  - id: part1
+    title: "AC215 · L23, part 1: deploy by hand — IAM keys, the Ansible toolbox, ECR, one EC2 server and nginx (cheese-app-aws)"
+    scenes: [s01_hook, s02_map, s03_console, s04_inventory, s05_toolbox, s06_inside, s07_images, s08_server, s09_containers, s10_webserver]
+  - id: part2
+    title: "AC215 · L23, part 2: let a commit press the button — CI/CD in the lecture's words, the GitHub Actions workflow, teardown and the course review"
+    scenes: [s11_cicd, s12_trigger, s13_runner, s14_deploy, s15_teardown, s16_review]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第23讲跟练 · 最终部署与课程回顾：用 Ansible 把 Cheese App 部署到一台 EC2，再让一条 commit 自动重新部署"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 23 讲（Final Deployment and Review）的逐页、逐步跟练。课件讲的是 Google Cloud 版本，本视频跟着课程的 AWS 版教程 dlops-io/cheese-app-aws 做，并逐一对照两边的名词。
+    上半场照着 README 从头到尾手动部署：IAM policy、user、access key 和 EC2 key pair，读懂 Ansible 的 inventory、play、task 和 module，
+    启动部署工具容器时遇到的三个问题（Linux 上 sh 是 dash、Helm 源的证书、README 没提到的 SECRETS_DIR）以及修法，ansible>=9.0.0 其实是一个重定向，
+    通过挂载的 Docker socket 在你自己电脑上构建镜像，用一个时间戳 tag 推到 ECR，创建并配置 EC2，五个容器和 nginx 这一扇前门。
+    下半场：课件里的 CI/CD 循环、continuous delivery 与 continuous deployment 的区别，读懂 ci_cd_aws.yml——commit message 里的两道筛子、四个 repository secret、runner 做了什么，
+    把一个 tag 从 runner 一路跟到服务器上重新创建的容器；README 的删除命令其实什么也删不掉，所以给出完整的手动收尾清单；最后把整门课的每一讲放回这台服务器上做回顾。
+    本次录制没有 AWS 账号：笔记本上的步骤全部真实运行，README 里的每条 ansible-playbook 命令照原样执行到真实的第一个报错为止；控制台、服务器和 GitHub 页面为标注的示意图，从不伪造输出。
+    本讲会让一台 EC2 服务器持续计费直到手动删除，视频用金色标签标出每个计费点（不写具体金额，请以官方价格页为准）。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/cheese-app-aws
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L23-final-cicd-deployment.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, CI/CD, AWS, EC2, Ansible, GitHub Actions, Docker, 部署, 哈佛, 教程跟练]
+  tid: 231

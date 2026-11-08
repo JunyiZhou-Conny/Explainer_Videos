@@ -85,6 +85,13 @@ def edge_flash(frames, color, width: float = 6):
     return [f.edge.animate(rate_func=there_and_back).set_stroke(color, width) for f in frames]
 
 
+def tag_flash(t, color, width: float = 4):
+    """ANIMs: a tag()'s outline flashes `color` and its text pulses (Indicate on the whole tag would fill
+    its opaque pill solid and hide the words)."""
+    return [t.box.animate(rate_func=there_and_back).set_stroke(color, width),
+            Indicate(t.text, color=color, scale_factor=1.03)]
+
+
 def mini_cluster(colour, dashed_title: str) -> VGroup:
     """A small dashed cluster outline (2.6 x 1.5) with a GREY title under its top edge."""
     fr = frame_box(3.4, 1.7, colour, k=0.05, dashed=True)
@@ -144,8 +151,7 @@ class Orchestrator(VoiceScene):
             self.play(*edge_flash([n[0] for n in nodes], TURN), run_time=0.9)
             fm.heal(self)
             vo.wait_until("share the containers")
-            self.play(LaggedStart(*[Indicate(col, color=TURN, scale_factor=1.06) for col in apps], lag_ratio=0.2),
-                      run_time=1.0)
+            self.play(*flash([b for col in apps for b in col], TURN, 5), run_time=1.0)
             fm.heal(self)
             vo.wait_until("and one control plane")
             self.play(*flash([plane], TURN),
@@ -174,10 +180,13 @@ class Orchestrator(VoiceScene):
             shell = VGroup(vm.frame, vm.title)
             app = VGroup(*vm.boxes.values())
             md.laptop_box(self, chips=())
+            # (the cluster's opaque fill fades in above the app boxes: hold them in front while it does)
             self.play(FadeIn(shell), FadeIn(app), run_time=0.6)
             md.add_chips(self, ("gcloud", "docker", "pulumi"), flash=False)
             vo.wait_until("Now the same app goes to a cluster")
+            self.add_foreground_mobjects(app)
             md.cluster(self, source=shell, run_time=1.0)
+            self.remove_foreground_mobjects(app)
             self.remove(app)
             md.add(app)                   # above the cluster's opaque fill; leaves with it in beat 4
             md.heal(self)
@@ -219,7 +228,7 @@ class Orchestrator(VoiceScene):
             keep_inside(cost)
             self.play(FadeIn(cost, scale=1.1), run_time=0.6)
             vo.wait_until("so each part ends by deleting it")
-            self.play(Indicate(cost, color=COST, scale_factor=1.06), run_time=0.8)
+            self.play(*tag_flash(cost, COST), run_time=0.8)
 
         # ========================================================== 5. how to read the screen: samples
         with self.voiceover(SAY[5]) as vo:
@@ -245,7 +254,7 @@ class Orchestrator(VoiceScene):
             self.play(FadeOut(cp), run_time=0.3)
             self.remove(cp)
             ref = swap_ref(self, ref, "4–11")
-            self.play(Indicate(ref, color=INK, scale_factor=1.1), run_time=0.7)
+            self.play(*tag_flash(ref, INK), run_time=0.7)
 
         # ========================================================== 6. the honest note
         with self.voiceover(SAY[6]) as vo:
@@ -336,8 +345,9 @@ class Orchestrator(VoiceScene):
             self.play(Indicate(pod, color=TURN, scale_factor=1.15), run_time=0.6)
             vo.wait_until("Part 2 deploys the cheese app")
             self.play(FadeIn(card2, shift=UP * 0.15), run_time=0.6)
-            self.play(LaggedStart(*[Indicate(c, color=TURN, scale_factor=1.1) for c in cards2], lag_ratio=0.2),
-                      run_time=0.8)
+            self.play(LaggedStart(*[AnimationGroup(c[0].edge.animate(rate_func=there_and_back).set_stroke(TURN, 5),
+                                                   Indicate(c[1], color=TURN, scale_factor=1.15))
+                                    for c in cards2], lag_ratio=0.2), run_time=0.8)
         self.play(FadeOut(card1), FadeOut(card2), run_time=0.6)
         self.wait(0.3)
 

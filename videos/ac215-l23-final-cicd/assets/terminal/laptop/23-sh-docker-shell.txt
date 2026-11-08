@@ -1,0 +1,3 @@
+$ sh docker-shell.sh
+docker-shell.sh: 13: Syntax error: redirection unexpected
+[exit 2]

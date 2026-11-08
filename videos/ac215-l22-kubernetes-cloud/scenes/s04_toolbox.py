@@ -58,6 +58,10 @@ Deviations from SHOW:
   with a GREY ring on 'ac215-project' in the typed command.
 - Beat 6: b03:3 is cropped after 'FINISHED' (the right-aligned 'docker:default' column); b03:70 is
   79 characters and wraps; b03:77 is printed only up to the prompt (its ' exit' was typed later).
+- Beat 0: the 517 card steps out of the column to the right, rises past the other two, and steps back
+  in, so no card ever slides across another.
+- Beat 9: the terminal shrinks to 9 rows first, so the Dockerfile line 33 panel sits clear of the
+  tracker; the dispatcher row flashes YELLOW without scaling (a scaled row poked out of its chip).
 - Beat 8: the "no cluster yet" thumbnail sits top right above the terminal (there is no room under
   line 4 inside a full-width terminal).
 """
@@ -166,9 +170,12 @@ class Toolbox(VoiceScene):
             self.play(FadeIn(cards[2], shift=UP * 0.2), run_time=0.6)
             self.play(edge_flash(cards[2].frame, INK), run_time=0.6)
             vo.wait_until("The lecture does it first")
-            self.play(cards[2].animate.move_to([CX, ys[0], 0]),
+            # out of the column, up past the other two (which step down), back in: no card crosses another
+            self.play(cards[2].animate.shift(RIGHT * (CW + 0.3)), run_time=0.35)
+            self.play(cards[2].animate.move_to([CX + CW + 0.3, ys[0], 0]),
                       cards[0].animate.move_to([CX, ys[1], 0]),
-                      cards[1].animate.move_to([CX, ys[2], 0]), run_time=0.9)
+                      cards[1].animate.move_to([CX, ys[2], 0]), run_time=0.6)
+            self.play(cards[2].animate.move_to([CX, ys[0], 0]), run_time=0.35)
             order.next_to(cards[2], RIGHT, buff=0.25)
             assert order.get_right()[0] < 6.5, order.get_right()
             self.play(FadeIn(order, shift=LEFT * 0.15), run_time=0.5)
@@ -290,7 +297,7 @@ class Toolbox(VoiceScene):
             self.play(FadeIn(df4, shift=RIGHT * 0.2), run_time=0.5)
             bs = code_span(df4.code, 0, "python:3.13-slim-bullseye")
             self.play(bs.animate.set_color(SHARED), run_time=0.4)
-            self.play(Indicate(bs, color=SHARED, scale_factor=1.08), run_time=0.6)
+            self.play(ShowPassingFlash(under(bs, SHARED), time_width=0.6), run_time=0.7)
             self.add(df4)
             vo.wait_until("whose security packages are gone")
             self.play(FadeIn(gone_chip, shift=LEFT * 0.15), run_time=0.5)
@@ -347,6 +354,8 @@ class Toolbox(VoiceScene):
             ac = substring(ac_row, '"ac215-project"')
             ac_ring = ring(ac, S.GREY, buff=0.05, stroke=2.5)
             dft = under_term(t, default_tag())
+            dft.align_to(ac_ring, LEFT)          # above the ringed 'ac215-project', not far right
+            assert dft.get_right()[0] < 6.5 and dft.get_top()[1] < TRACK_BOTTOM - 0.05
             vo.wait_until("on line 13 of docker-shell.sh")
             l20 = row_tag("L20 · README:267 · your project id")
             pin(self, o1[-1], beside(l20, o1[-1]))
@@ -440,16 +449,20 @@ class Toolbox(VoiceScene):
 
         # ========================================================== 9. the dispatcher surprise
         df33 = code(DOCKERFILE, 33)
-        df33.move_to([0, 0, 0]).align_to([-6.45, 0, 0], LEFT).align_to([0, PIC_TOP, 0], UP)
         disp = two_row_chip("Google's own kubectl package wins", "→ a dispatcher that picks a matching client",
                             S.GREY)
-        disp.next_to(df33, RIGHT, buff=0.3).align_to(df33, UP)
         er9 = erratum_tag()
-        er9.next_to(disp, RIGHT, buff=0.2)
-        assert er9.get_right()[0] < 6.5 and disp.get_bottom()[1] > t.box.get_top()[1] + 0.1, \
-            (disp.get_right(), disp.get_bottom(), t.box.get_top())
-        assert df33.get_bottom()[1] > t.box.get_top()[1] + 0.1
         with self.voiceover(SAY[9]) as vo:
+            # one row less: the Dockerfile line then sits clear of the tracker, above the terminal
+            resize(self, t, 9, run_time=0.5)
+            df33.move_to([0, 0, 0]).align_to([-6.45, 0, 0], LEFT)
+            df33.align_to([0, t.box.get_top()[1] + 0.22, 0], DOWN)
+            disp.next_to(df33, RIGHT, buff=0.3).align_to(df33.code, DOWN)
+            er9.next_to(disp, RIGHT, buff=0.2)
+            assert er9.get_right()[0] < 6.5 and disp.get_bottom()[1] > t.box.get_top()[1] + 0.1, \
+                (disp.get_right(), disp.get_bottom(), t.box.get_top())
+            assert df33.get_top()[1] < TRACK_BOTTOM - 0.25 and disp.get_top()[1] < TRACK_BOTTOM - 0.1, \
+                (df33.get_top(), disp.get_top())
             dv = substring(g12, "v1.35.9-dispatcher")
             self.play(dv.animate.set_color(TURN), run_time=0.3)
             self.play(Indicate(dv, color=TURN, scale_factor=1.12), run_time=0.6)
@@ -463,7 +476,7 @@ class Toolbox(VoiceScene):
             vo.wait_until("but Google's own package wins")
             self.play(FadeIn(disp, shift=LEFT * 0.15), FadeIn(er9), run_time=0.6)
             vo.wait_until("a dispatcher that matches each cluster")
-            self.play(Indicate(disp.text[1], color=INK, scale_factor=1.06),
+            self.play(Indicate(disp.text[1], color=TURN, scale_factor=1.0),
                       Indicate(dv, color=TURN, scale_factor=1.12), run_time=0.8)
             self.add(t)
 

@@ -22,8 +22,9 @@ Beats (script.md "## S07", one voiceover block each):
 4. The terminal grows back to 4 rows. Line 1 of k55 typed (folds) -> TERM(k55: 2, 7–10, 13, columns
    cropped); counter 'desired 4 · actual 2' RED, two Pods grow (gmbqz on worker, grq79 on worker2),
    counter GREEN 4·4; lane titles flash; line 13's '+ 1 more...' PINK. Line 1 of k56 typed -> TERM(k56:
-   2, 4–5); the two Pods fade, counter back to 2. GREY tag 'Milestone 5 · manual scaling' beside k56.
-5. Pod …-5h48s glows YELLOW (ring). The strip steps aside; PONDER(8 s) card over the right half.
+   2); the two Pods fade, counter back to 2. On "remember this command" the GREY tag 'Milestone 5 ·
+   manual scaling' beside 'scaled' while the (still whole) command flashes; then TERM(k56: 4–5).
+5. Pod …-5h48s glows YELLOW (ring). The strip gives way to the PONDER(8 s) card in its place.
 6. The card goes, the strip returns. Line 1 of k53 typed (folds) -> TERM(k53: 2–5); in V4 …-5h48s is
    struck and fades, counter RED 'desired 2 · actual 1'; the new Pod …-lmk52 grows 'ContainerCreating'
    (line 5's status YELLOW); its hash flashes with line 5's, then its new suffix.
@@ -49,8 +50,12 @@ Deviations from SHOW:
   scrolls: k55's first Pod row scrolls away as line 13 arrives. 'Milestone 5 · manual scaling' is a
   row tag beside k56's 'deployment.apps/web scaled' (the command's last row is too long to hold
   it, and the caption row is under the 4-row strip's top).
-- Beat 5: the 4-row strip fades for the ponder timer so the opaque card fits beside the glowing Pod,
-  clear of the AsksChecklist; it returns at the start of beat 6.
+- Beat 4: k56's lines 4–5 print after the Milestone remark (not straight after line 2), so the whole
+  `kubectl scale deployment web --replicas=2` command is on screen while the narration asks you to
+  remember it; it scrolls away only after.
+- Beat 5: the 4-row strip fades for the ponder timer and the opaque card (two 24 pt lines, the script's
+  words re-broken) takes its place at the bottom, so V4 with the glowing Pod stays whole above it; the
+  strip returns at the start of beat 6.
 - Beat 8: V4 fades before the checklist grows (the full card needs the centre); SHOW does not say when
   V4 leaves.
 """
@@ -278,16 +283,21 @@ class SelfHealing(VoiceScene):
             self.play(Indicate(more, color=ROUTE, scale_factor=1.15), run_time=0.6)
             self.add(t)
             vo.wait_until("Scale back to 2")
-            type_capture(self, t, K56, type_time=0.9)
-            g56 = out(self, t, K56.at(2, 4, 5), run_time=0.5)
+            typed56 = type_capture(self, t, K56, type_time=0.9)
+            g56 = out(self, t, K56.at(2), run_time=0.3)
             cl.count(self, 2, 4)
             cl.remove_pod(self, SCALE_SUFFIXES[0])
             cl.remove_pod(self, SCALE_SUFFIXES[1])
             cl.count(self, 2, 2)
             vo.wait_until("remember this command")
+            # the whole command is still on screen here (2 rows + 'scaled' + one k55 row = 4 rows);
+            # k56's two Pod rows print after the remark, so the command scrolls away only then
             ms = row_tag("Milestone 5 · manual scaling")
             pin(self, g56[0], beside(ms, g56[0]))
-            flash_tag(self, ms, INK)
+            cmd56 = [substring(r, s_) for r, s_ in zip(rows_of(typed56[0]), ("kubectl scale deployment web", "--replicas=2"))]
+            flash_tag(self, ms, INK, 1.12, 0.8, each(cmd56, TOOL, 1.08))
+            self.add(t)
+            out(self, t, K56.at(4, 5), run_time=0.4)
 
         # ========================================================== 5. ponder: delete one Pod
         pg_a = cl.pod_map[POD_SUFFIXES[0]]
@@ -306,14 +316,18 @@ class SelfHealing(VoiceScene):
             self.play(Indicate(pg_a.name.hash, color=TURN, scale_factor=1.15), run_time=0.7)
             self.add(cl)
             self.bring_to_front(glow)
-        self.play(FadeOut(t), run_time=0.4)
+        # the card takes the strip's place (bottom left, two 24 pt lines), so V4 stays whole beside it
+        card_ = ponder_card("Delete one of the two web Pods. A second later: how many?\n"
+                            "Which part of the new name stays the same?", width=9.5, size=24)
+        card_[0].set_fill(S.BG, 1)
+        card_.move_to([-6.35 + 4.75, BOTTOM + card_.height / 2, 0])
+        assert card_.get_top()[1] < cl.lanes.get_bottom()[1] - 0.15, card_.get_top()
+        assert card_.get_right()[0] < cl.words.get_left()[0] - 0.15, card_.get_right()
+        self.play(FadeOut(t), FadeIn(card_, scale=0.95), run_time=0.6)
         self.remove(t)
-        pw = 7.4
-        px = pg_a.name.get_right()[0] + 0.3 + pw / 2
-        assert px + pw / 2 < 6.5, px
-        card_ = ponder(self, "Delete one of the two web Pods.\nA second later: how many?\n"
-                             "Which part of the new name\nstays the same?", 8, center=(px, -1.0), width=pw)
-        assert card_.get_top()[1] < ac.get_bottom()[1] - 0.1 and card_.get_bottom()[1] > -3.55, card_.get_top()
+        bar = card_[3]
+        self.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
+                  run_time=8)
 
         # ========================================================== 6. it comes back (k53)
         with self.voiceover(SAY[6]) as vo:

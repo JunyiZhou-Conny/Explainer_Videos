@@ -57,6 +57,10 @@ Deviations from SHOW:
 - Beat 4: the two console panels do not fit together with the README card; the Compute Engine panel
   replaces the Kubernetes Engine one at "In Compute Engine", and each README line lights YELLOW with
   its crumb.
+- Beat 3 (critic pass): the stand-in tag sits bottom right inside the outline (top right it touched
+  worker 0 and the PINK arrow label); the longer caption gets an opaque plate in the plane's fill so
+  the controllers→cloud arrow passes behind it instead of striking through the words.
+- Beat 0 (critic pass): '--num-nodes 2' and '--zone us-east1-c' flash YELLOW on their words.
 - Beat 8: the two chips sit just above the terminal (the rows they describe are too long to hold
   them beside), each with its row highlighted at the same moment.
 """
@@ -106,9 +110,13 @@ assert CONSOLE_README.split("\n")[0].startswith("• Go to the Kubernetes Engine
 
 
 def name_crop(cap, n: int) -> str:
-    """A kubectl row cropped after its NAME column (the second field)."""
+    """A kubectl row cropped after its NAME column (the second field). The second field is searched
+    AFTER the first one, so the header 'NAMESPACE   NAME' is not cut inside 'NAMESPACE'."""
     s = cap.line(n)
-    return cap.crop(n, s.split()[1])
+    f = s.split()
+    i = s.index(f[1], s.index(f[0]) + len(f[0])) + len(f[1])
+    assert s[:i].split() == f[:2], (n, s[:i])
+    return s[:i]
 
 
 def edge_flash(m, color=TURN, width: float = 6):
@@ -131,7 +139,9 @@ def v1_standin(scene, md, run_time: float = 1.0):
     old_edge, old_title = cl.frame.edge, cl.title
     new = frame_box(cl.frame.fill.width, cl.frame.fill.height, STANDIN, k=0.03, dashed=True).move_to(cl.frame.fill)
     new_title = standin_tag()
-    new_title.move_to(cl.frame.fill).align_to(cl.frame.fill, UR).shift(np.array([-0.15, -0.07, 0]))
+    # bottom right, inside the outline, under the two remaining workers (top right it touches worker 0
+    # and the PINK 'nodes, load-balancer IP' label)
+    new_title.move_to(cl.frame.fill).align_to(cl.frame.fill, DR).shift(np.array([-0.15, 0.1, 0]))
     cl.frame.remove(old_edge)
     cl.remove(old_title)
     scene.add(old_edge, old_title)
@@ -144,7 +154,12 @@ def v1_standin(scene, md, run_time: float = 1.0):
     cl.title = new_title
     md.standin = True
     md.heal(scene)
-    cap = label("a container you can see", 20, S.GREY).move_to(md.parts["plane_cap"])
+    # the longer caption crosses the controllers→cloud arrow: an opaque plate in the plane's fill lets
+    # the arrow pass behind it instead of striking through the words
+    txt = label("a container you can see", 20, S.GREY).move_to(md.parts["plane_cap"])
+    plate = SurroundingRectangle(txt, buff=0.03, stroke_width=0).set_fill(tint(CLOUD, 0.14), 1)
+    cap = VGroup(plate, txt)
+    cap.text = txt
     md.parts["plane_cap"] = md.swap(scene, md.parts["plane_cap"], cap, run_time=run_time * 0.4)
     gone = [md.nodes[2], md.parts["fan"][2]]
     if "kubelet" in md.parts and len(md.parts["kubelet"]) == 3:
@@ -166,6 +181,12 @@ class TestCluster(VoiceScene):
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(ref), FadeIn(t, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("gcloud container clusters create")
             cmd = type_capture(self, t, B15, type_time=1.4)[0]
+            row2 = cmd.rows[-1]
+            vo.wait_until("two nodes")
+            self.play(Indicate(substring(row2, "--num-nodes 2"), color=TURN, scale_factor=1.1), run_time=0.7)
+            vo.wait_until("zone us east 1 c")
+            self.play(Indicate(substring(row2, "--zone us-east1-c"), color=TURN, scale_factor=1.1), run_time=0.7)
+            self.add(t)
             vo.wait_until("Ours stops at once")
             e = out(self, t, [(B15.line(2), ERR)], wrap=True, run_time=0.5)
             self.play(Indicate(substring(e[-1], "active account"), color=ERR, scale_factor=1.1), run_time=0.7)
@@ -265,7 +286,7 @@ class TestCluster(VoiceScene):
             self.play(FadeIn(md), run_time=0.6)
             v1_standin(self, md)
             vo.wait_until("a container we can see")
-            self.play(Indicate(md.parts["plane_cap"], color=INK, scale_factor=1.15),
+            self.play(Indicate(md.parts["plane_cap"].text, color=INK, scale_factor=1.15),
                       edge_flash(md.parts["plane"].frame.edge, TURN), run_time=0.8)
             md.heal(self)
             vo.wait_until("on GKE, Google hides it")
@@ -301,9 +322,10 @@ class TestCluster(VoiceScene):
                 self.add(cv1, rc)
                 prev = body[ln]
             vo.wait_until("In Compute Engine")
-            self.play(FadeOut(cv1, shift=LEFT * 0.4), FadeIn(cv2, shift=LEFT * 0.4),
-                      prev.animate.set_color(INK), body[4].animate.set_color(TURN), run_time=0.6)
+            self.play(FadeOut(cv1, shift=LEFT * 0.4), prev.animate.set_color(INK),
+                      body[4].animate.set_color(TURN), run_time=0.35)
             self.remove(cv1)
+            self.play(FadeIn(cv2, shift=LEFT * 0.4), run_time=0.4)
             self.play(Indicate(cv2.crumbs[0], color=TURN, scale_factor=1.12), run_time=0.5)
             self.add(cv2, rc)
             vo.wait_until("your nodes are ordinary virtual machines")
@@ -331,6 +353,9 @@ class TestCluster(VoiceScene):
             vo.wait_until("the dispatcher picked a client")
             vs = [substring(v[0], "v1.34.12-gke.300.1+a8b9abb5a77ce6"), substring(v[1], "v1.34.11")]
             self.play(*[s.animate.set_color(TURN) for s in vs], run_time=0.4)
+            self.play(Indicate(vs[0], color=TURN, scale_factor=1.08), run_time=0.6)
+            self.add(tk)
+            vo.wait_until("that matches the server's version")
             self.play(*[Indicate(s, color=TURN, scale_factor=1.08) for s in vs], run_time=0.8)
             self.add(tk)
         self.play(FadeOut(ref), run_time=0.3)

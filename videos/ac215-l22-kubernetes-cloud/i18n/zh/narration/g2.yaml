@@ -18,7 +18,7 @@ S09:
   - "课程链接落在 Deployment with Scaling using Kubernetes 这一节；集群的步骤接在下一个小节 Create & Deploy Cluster 里。"
 - en: "Here is the plan, piece by piece from lecture 20. Each long-running container becomes a Deployment. The one-shot loader becomes a Job: it retries a failed run a few times, and once it succeeds, it stays done."
   zh:
-  - "计划在这里，每一块都来自第 20 讲。"
+  - "这是整个计划，一块一块地从第 20 讲对过来。"
   - "每个长期运行的 container 变成一个 Deployment。"
   - "一次性的加载器变成一个 Job：运行失败会重试几次，一旦成功，就保持完成状态。"
 - en: "Container names on a Docker network become Services with DNS names. The folders on the VM disk become two persistent volume claims, each backed by a cloud disk."
@@ -176,7 +176,7 @@ S12:
   zh:
   - "Pulumi 按依赖关系来。"
   - "先是网络和它的子网。"
-  - "然后并排进行：带 NAT 网关的路由器，以及集群，这是漫长的等待：按我们的估算，一刻钟或更久。"
+  - "然后并排进行：带 NAT 网关的路由器，以及集群，要等很久：按我们的估算，一刻钟或更久。"
 - en: "Then the node pool. A Kubernetes provider, built from the cluster outputs, waits for that pool, so no Pod is created before there are nodes."
   zh:
   - "然后是节点池。"
@@ -354,7 +354,7 @@ S15:
   - "已经完成的 Job，它的 Pod 不会被替换。"
 - en: "A small note: after a database restart, run the loader again; the chip shows why."
   zh:
-  - "说明一点：数据库重启以后，要把加载器再跑一次；旁边那个小标签说明了原因。"
+  - "说明一点：数据库重启以后，要把加载器再跑一次；旁边那个小标签写了原因。"
 - en: "Now scaling. The lecture promises scaling on CPU, memory or custom metrics, but the code sets no replicas and no Pod autoscaler. It switches on the node layer: one to two nodes."
   zh:
   - "现在讲扩展。"
@@ -435,4 +435,4 @@ S16:
   - "答案在练习和学习指南里。"
 - en: "Next, in lecture 23, the two Pulumi programs, in version 4 of the app, run from GitHub Actions on every merge."
   zh:
-  - "下一讲，第 23 讲，这两个 Pulumi 程序会在 app 的版本 4 里，在每次合并时从 GitHub Actions 运行。"
+  - "下一讲，也就是第 23 讲，这两个 Pulumi 程序，在 app 的版本 4 里，会在每次合并时由 GitHub Actions 运行。"

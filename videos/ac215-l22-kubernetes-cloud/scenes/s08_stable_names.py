@@ -207,7 +207,9 @@ class StableNames(VoiceScene):
         inset.move_to([0, 1.2, 0]).align_to(dns, RIGHT)
         ins_ip = substring(ins_l[1], SVC_IP)
         ins_note = note("the Service's CLUSTER-IP · S06").next_to(inset, RIGHT, buff=0.3)
-        tie = Line(dns.ip.get_bottom() + DOWN * 0.05, ins_ip.get_top() + UP * 0.05, color=S.GREY, stroke_width=3)
+        # the tie stops at the inset's top edge, above the CLUSTER-IP column (never through its header)
+        tie = Line(dns.ip.get_bottom() + DOWN * 0.05, [ins_ip.get_x(), ins_f.get_top()[1], 0], color=S.GREY,
+                   stroke_width=3)
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(s1, s2, lk, ill, rec)), run_time=0.5)
             self.remove(s1, s2, lk, ill, rec)
