@@ -22,8 +22,9 @@ Beats (script.md "## S04"; one voiceover block each):
    us-east-1" right of the panel, BLUE bars on 21–22 (the 50 GB disk).
 4. TRACKER A 6. The panel moves right; README(67–72) card left. Bullets 2 and 4 fly as YELLOW ticks
    onto lines 14–23 (a bracket) and 16; bullets 1 and 3 fly onto two GREY chips "line 3 ✓ (seen)" and
-   "lines 9–11 ✓ (seen)" under the card. Line 24 YELLOW, `▶ your turn` beside it; a 1-row laptop
-   strip types `openssl rand -base64 32` (row tags "extra" and "written out, not run"; never run).
+   "lines 9–11 ✓ (seen)" under the card (they leave when the strip comes). Line 24 YELLOW; a 1-row
+   laptop strip (prompt student@laptop:~$, `▶ your turn` on its bar) types `openssl rand -base64 32`
+   (row tags "extra" and "written out, not run"; never run).
    On "The host on line 30": the card, chips, strip go; the tree row returns; Transform to
    CODE(inventory.yml: 27–30), line 30 GREY dashed ring + chip "after S08"; the panel then Transforms
    into the row's leaf <EXTERNAL_IP>, GREY dashed.
@@ -133,22 +134,26 @@ class AnsibleInOnePicture(VoiceScene):
         # ========================================================== 0. a new tool: Ansible
         tr = tracker_a(5)
         pul = label_box(["Pulumi · L20", "describe the infrastructure", "you want"], PAST, dashed=True,
-                        box_w=5.6)
-        ans = label_box(["Ansible", "an ordered list of tasks", "machines from an inventory"], TOOL, box_w=5.6)
+                        size=24, box_w=5.6, pad=0.3)
+        ans = label_box(["Ansible", "an ordered list of tasks", "machines from an inventory"], TOOL, size=24,
+                        box_w=5.6, pad=0.3)
         ans.text[0].set_color(INK)
-        VGroup(pul, ans).arrange(RIGHT, buff=0.8).move_to([0, 1.0, 0])
+        VGroup(pul, ans).arrange(RIGHT, buff=0.8).move_to([0, 0.9, 0])
+        new_tool = tool_chip("Ansible", size=24).move_to(ans.text[0])
         c_state = ok_chip("many modules: state: present")
         c_shell = mixed_chip([("this repo: plenty of", "label"), ("shell", "mono"), ("too", "label")])
         VGroup(c_state, c_shell).arrange(DOWN, buff=0.18).next_to(ans, DOWN, buff=0.35)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), run_time=0.5)
             self.play(track(tr, 6), run_time=0.6)
-            vo.wait_until("brings a new tool")
             self.play(Indicate(tr.caption, color=TURN, scale_factor=1.05), run_time=0.8)
+            vo.wait_until("brings a new tool")
+            self.play(FadeIn(new_tool, scale=0.8), run_time=0.6)
+            self.play(Indicate(new_tool.text, color=TOOL, scale_factor=1.1), run_time=0.7)
             vo.wait_until("Pulumi, in lecture 20")
             self.play(FadeIn(pul, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("Ansible runs an ordered list")
-            self.play(FadeIn(ans, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(ans, shift=UP * 0.15), FadeOut(new_tool), run_time=0.6)
             self.play(Indicate(ans.text[1], color=TOOL, scale_factor=1.06), run_time=0.7)
             vo.wait_until("against the machines")
             self.play(Indicate(ans.text[2], color=TOOL, scale_factor=1.06), run_time=0.7)
@@ -178,6 +183,8 @@ class AnsibleInOnePicture(VoiceScene):
                       FadeIn(a.server, shift=LEFT * 0.15), run_time=0.6)
             self.remove(a.tree, a.cards, a.aws, a.toolbox, a.server)
             self.add(a)
+            self.play(Circumscribe(c0.hosts_chip, color=IMAGE, buff=0.06),
+                      Circumscribe(c1.hosts_chip, color=CLOUD, buff=0.06), run_time=0.9)
             vo.wait_until("localhost means")
             a.fire(self, 0, 0)
             vo.wait_until("appserver means")
@@ -189,13 +196,9 @@ class AnsibleInOnePicture(VoiceScene):
         p1.move_to([0, 2.75 - p1.height / 2, 0])
         b3 = bar(p1, 1, 3, TURN)
         b4, b7 = bar(p1, 1, 4, TURN), bar(p1, 1, 7, TURN)
-        mark = VGroup(label("▲ 4: GitHub Actions", 20, TURN), label("▼ 7: your laptop", 20, TURN),
-                      label("· remember both · S08", 20, TURN)).arrange(RIGHT, buff=0.3)
-        mark_box = box(mark.width + 0.4, 0.5, TURN, fill=S.BG, fill_opacity=0.92, radius=0.25)
-        mark.move_to(mark_box)
-        bookmark = VGroup(mark_box, mark)
-        y56 = (line_y(p1, 1, 5) + line_y(p1, 1, 6)) / 2
-        bookmark.move_to([p1.code.background.get_right()[0] - 0.25 - bookmark.width / 2, y56, 0])
+        bookmark = row_tag("▲ 4: GitHub Actions · ▼ 7: your laptop · remember both · S08", TURN)
+        y5 = (p1.code.code_lines[3].get_bottom()[1] + p1.code.code_lines[5].get_top()[1]) / 2   # blank line 5
+        bookmark.move_to([p1.code.background.get_right()[0] - 0.2 - bookmark.width / 2, y5, 0])
         b911 = bars(p1, 1, 9, 11, ROUTE)
         env = label_box("toolbox environment", IMAGE)
         env.move_to([6.4 - env.width / 2, ROW_Y, 0])
@@ -249,7 +252,7 @@ class AnsibleInOnePicture(VoiceScene):
         ami.next_to(per, DOWN, buff=0.2).align_to(per, LEFT)
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(b3, b4, b7, bookmark, b911, env, env_arrows)), run_time=0.4)
-            self.play(Transform(p1, p2), run_time=0.9)
+            self.play(FadeTransform(p1, p2), run_time=0.9)
             self.remove(p1)
             self.add(p2)
             vo.wait_until("the region")
@@ -284,7 +287,7 @@ class AnsibleInOnePicture(VoiceScene):
         tick4 = check_mark(0.3, TURN).move_to([gap_x - 0.08, y16, 0])
         seen1 = grey_chip("line 3 ✓ (seen)")
         seen3 = grey_chip("lines 9–11 ✓ (seen)")
-        VGroup(seen1, seen3).arrange(DOWN, buff=0.15, aligned_edge=LEFT).next_to(rp, DOWN, buff=0.25) \
+        VGroup(seen1, seen3).arrange(DOWN, buff=0.1, aligned_edge=LEFT).next_to(rp, DOWN, buff=0.12) \
             .align_to(rp, LEFT)
         strip = term(P_HOME, rows=1)
         with self.voiceover(SAY[4]) as vo:
@@ -304,28 +307,29 @@ class AnsibleInOnePicture(VoiceScene):
             self.play(Indicate(code_span(p2.code, 2, '"ac215_2024"'), color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("and line 24")
             b24 = bar(p2, 14, 24, TURN)
-            self.play(FadeIn(b24), run_time=0.4)
-            self.play(Indicate(code_span(p2.code, 10, '"<nextauth-secret>"'), color=TURN, scale_factor=1.1),
-                      run_time=0.6)
-            vo.wait_until("to a random value")
             yt = on_bar(strip, turn_row())
-            self.play(FadeIn(strip, shift=UP * 0.2), FadeIn(yt), run_time=0.4)
+            self.play(FadeIn(b24), run_time=0.3)
+            self.play(FadeOut(VGroup(seen1, seen3)), FadeIn(strip, shift=UP * 0.2), FadeIn(yt), run_time=0.4)
             ln = type_cmd(self, strip, "openssl rand -base64 32", type_time=0.7)
             pin(self, ln, beside(extra_row(), ln))
             sh = beside(row_tag("written out, not run"), ln, buff=0.3 + extra_row().width + 0.45 + 0.15)
             pin(self, ln, sh)
-            vo.wait_until("The host on line 30")
-            self.play(FadeOut(VGroup(rp, seen1, seen3, t2, t4, bracket, b16, b24, yt, strip)), run_time=0.5)
+            self.play(Indicate(code_span(p2.code, 10, '"<nextauth-secret>"'), color=TURN, scale_factor=1.1),
+                      run_time=0.6)
+            vo.wait_until("comes later")
+            self.play(FadeOut(VGroup(rp, t2, t4, bracket, b16, b24, yt, strip)), run_time=0.5)
             self.remove(strip, ln)
             p3 = code(INV, 27, 30, font_size=20)
             p3.move_to([0, 0.9, 0])
-            self.play(FadeIn(row), Transform(p2, p3), run_time=0.8)
+            self.play(FadeIn(row), FadeTransform(p2, p3), run_time=0.8)
             self.remove(p2)
             self.add(p3)
-            r30 = ring(p3.code.code_lines[3], S.GREY, buff=0.08, stroke=2.5, dashed=True)
+            p3.code.code_lines[3].set_color(S.GREY)
+            r30 = ring(p3.code.code_lines[3], S.GREY, buff=0.03, stroke=2.5, dashed=True)
             after = grey_chip("after S08")
             after.next_to(r30, RIGHT, buff=0.25)
             self.play(Create(r30), FadeIn(after, shift=LEFT * 0.1), run_time=0.5)
+        self.wait(0.8)
         new_leaf = leaf_box(EXTERNAL_IP, dashed=True).move_to(row.leaf)
         self.play(ReplacementTransform(VGroup(p3, r30, after), new_leaf), FadeOut(row.leaf), run_time=0.9)
         row.remove(row.leaf)
@@ -364,5 +368,7 @@ class AnsibleInOnePicture(VoiceScene):
             self.play(card.set_state(0, "ok"), run_time=0.5)
             self.play(card.set_state(1, "changed"), run_time=0.5)
             rc.set(self, "changed", 1, run_time=0.4)
+        self.play(Indicate(card.tiles[0].text, color=PASS, scale_factor=1.15), rc.flash("ok"), run_time=0.9)
+        self.wait(0.6)
         self.play(FadeOut(VGroup(tr, row, rc, card, rn)), run_time=0.7)
         self.wait(0.3)

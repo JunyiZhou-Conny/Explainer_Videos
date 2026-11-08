@@ -1,0 +1,16 @@
+00:00 Who restarts it at 2 a.m.?
+01:28 From one box to a fleet
+03:04 Inside a cluster: brain and workers
+04:53 The toolbox, still fixed twice
+06:52 A test cluster and a first look
+08:45 Two objects: a Deployment and a Service
+10:47 Desired state: Pods that come back
+12:37 Labels, Services, namespaces, then delete
+14:16 The cheese app's cluster, as code
+15:55 Setup and the images stack
+17:50 deploy_k8s: config and a 23-resource plan
+19:40 pulumi up: what builds, in what order
+21:46 The journey of one click
+24:02 kubectl on the app, and the outputs
+25:49 Logs, then scaling at two levels
+28:03 Destroy, audit, recap

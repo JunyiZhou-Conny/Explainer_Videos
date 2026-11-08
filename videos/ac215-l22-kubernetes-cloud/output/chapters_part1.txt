@@ -1,0 +1,8 @@
+00:00 Who restarts it at 2 a.m.?
+01:28 From one box to a fleet
+03:04 Inside a cluster: brain and workers
+04:53 The toolbox, still fixed twice
+06:52 A test cluster and a first look
+08:45 Two objects: a Deployment and a Service
+10:47 Desired state: Pods that come back
+12:37 Labels, Services, namespaces, then delete

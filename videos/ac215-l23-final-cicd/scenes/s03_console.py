@@ -414,9 +414,9 @@ class ConsoleSetup(VoiceScene):
             self.play(FadeOut(ex7), run_time=0.2)
             self.remove(ex7)
             resize(self, t7, 7, run_time=0.5)
+            cd_prompt(self, t7, P_REPO)
             on_bar(t7, ex7)
             self.play(FadeIn(ex7), run_time=0.2)
-            cd_prompt(self, t7, P_REPO)
             type_cmd(self, t7, C14.cmd, type_time=0.7)
             r14 = out(self, t7, C14.at(2, 3, 4), wrap=True, run_time=0.6)
             perm = [r for r in r14 if r.text.startswith("-r--------")][0]
