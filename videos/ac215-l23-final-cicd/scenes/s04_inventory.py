@@ -89,18 +89,28 @@ def leaf_box(host: str, dashed: bool = False):
     return label_box(host, S.GREY if dashed else OWN, dashed=dashed, mono_font=True)
 
 
-def bar(p, first: int, n: int, color, opacity: float = 0.2):
-    """A translucent bar over file line n of panel p (which starts at file line `first`)."""
-    return line_bar(p.code, n - first, color, opacity)
+def _rows(p):
+    """(centre of row 0, row pitch) of panel p's code, on an even grid: glyph boxes differ per line
+    (descenders, quotes), so bars sized from them overlap their neighbours as brighter slivers."""
+    cs = [ln.get_center()[1] for ln in p.code.code_lines]
+    pitch = (cs[0] - cs[-1]) / max(1, len(cs) - 1)
+    c0 = sum(c + k * pitch for k, c in enumerate(cs)) / len(cs)
+    return c0, pitch
 
 
 def bars(p, first: int, a: int, b: int, color, opacity: float = 0.2):
-    """One bar over file lines a..b of panel p."""
-    top = p.code.code_lines[a - first].get_top()[1] + 0.07
-    bot = p.code.code_lines[b - first].get_bottom()[1] - 0.07
+    """One bar over file lines a..b of panel p (which starts at file line `first`); adjacent bars
+    meet edge to edge, never overlap."""
+    c0, pitch = _rows(p)
+    ya, yb = c0 - (a - first) * pitch, c0 - (b - first) * pitch
     bg = p.code.background
-    return Rectangle(width=bg.width - 0.12, height=top - bot, stroke_width=0).set_fill(color, opacity) \
-        .move_to([bg.get_center()[0], (top + bot) / 2, 0])
+    return Rectangle(width=bg.width - 0.12, height=(b - a + 1) * pitch, stroke_width=0) \
+        .set_fill(color, opacity).move_to([bg.get_center()[0], (ya + yb) / 2, 0])
+
+
+def bar(p, first: int, n: int, color, opacity: float = 0.2):
+    """A translucent bar over file line n of panel p."""
+    return bars(p, first, n, n, color, opacity)
 
 
 def line_y(p, first: int, n: int) -> float:
@@ -152,6 +162,9 @@ class AnsibleInOnePicture(VoiceScene):
             self.play(Indicate(new_tool.text, color=TOOL, scale_factor=1.1), run_time=0.7)
             vo.wait_until("Pulumi, in lecture 20")
             self.play(FadeIn(pul, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("described the infrastructure")
+            self.play(Indicate(pul.text[1], color=INK, scale_factor=1.06),
+                      Indicate(pul.text[2], color=INK, scale_factor=1.06), run_time=0.8)
             vo.wait_until("Ansible runs an ordered list")
             self.play(FadeIn(ans, shift=UP * 0.15), FadeOut(new_tool), run_time=0.6)
             self.play(Indicate(ans.text[1], color=TOOL, scale_factor=1.06), run_time=0.7)
@@ -329,9 +342,17 @@ class AnsibleInOnePicture(VoiceScene):
             after = grey_chip("after S08")
             after.next_to(r30, RIGHT, buff=0.25)
             self.play(Create(r30), FadeIn(after, shift=LEFT * 0.1), run_time=0.5)
-        self.wait(0.8)
+        self.wait(0.5)
         new_leaf = leaf_box(EXTERNAL_IP, dashed=True).move_to(row.leaf)
-        self.play(ReplacementTransform(VGroup(p3, r30, after), new_leaf), FadeOut(row.leaf), run_time=0.9)
+        l30 = p3.code.code_lines[3]
+        rest = VGroup(*[m for m in p3.get_family() if m is not p3 and not m.submobjects
+                        and m not in l30.get_family()])
+        self.play(FadeOut(VGroup(rest, after)), run_time=0.4)
+        self.remove(p3)
+        self.add(l30, r30)
+        self.play(ReplacementTransform(l30, new_leaf.text), ReplacementTransform(r30, new_leaf.frame),
+                  FadeOut(row.leaf), run_time=0.9)
+        self.remove(new_leaf.text, new_leaf.frame)
         row.remove(row.leaf)
         self.remove(row.leaf)
         row.add(new_leaf)

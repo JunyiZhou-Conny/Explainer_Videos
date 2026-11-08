@@ -210,14 +210,18 @@ class ConsoleSetup(VoiceScene):
             self.play(FadeOut(rp), FadeOut(com), FadeOut(com_chip), FadeOut(chk), FadeOut(old),
                       track(tr, 2), run_time=0.5)
             self.play(FadeIn(p1, shift=UP * 0.1), run_time=0.6)
+            vo.wait_until("create a policy from this JSON")
+            self.play(Circumscribe(p1, color=S.GREY, buff=0.06, stroke_width=3), run_time=1.0)
             vo.wait_until("It allows one identity check")
             self.play(FadeIn(b29), run_time=0.4)
             self.play(Indicate(code_span(p1.code, 29 - 22, "sts:GetCallerIdentity"), color=TURN,
                                scale_factor=1.06), run_time=0.7)
             vo.wait_until("and nine E C R actions")
             self.play(LaggedStart(*[FadeIn(b) for b in b30], lag_ratio=0.3), run_time=0.8)
-            self.play(FadeOut(b29), *[FadeOut(b) for b in b30], run_time=0.3)
-            self.play(FadeOut(p1), FadeIn(p2, shift=UP * 0.4), run_time=0.8)
+            self.wait(0.4)
+            # scroll: lines 22-33 (with their bars) leave upwards as lines 34-44 come up
+            self.play(FadeOut(VGroup(p1, b29, *b30), shift=UP * 0.8), FadeIn(p2, shift=UP * 0.8),
+                      run_time=0.8)
             self.play(LaggedStart(*[FadeIn(b) for b in b34], lag_ratio=0.3), run_time=0.9)
             vo.wait_until("on any resource")
             self.play(FadeIn(b40), run_time=0.4)
@@ -235,9 +239,7 @@ class ConsoleSetup(VoiceScene):
         s3 = term(P_HOME, rows=5)
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(b34[0], *b34[1:], b40)), run_time=0.3)
-            self.play(FadeTransform(p2, jchip), run_time=0.8)
-            self.play(FadeIn(c3, shift=LEFT * 0.2), run_time=0.6)
-            vo.wait_until("Name it")
+            self.play(FadeTransform(p2, jchip), FadeIn(c3, shift=LEFT * 0.2), run_time=0.7)
             self.play(Indicate(c3.rows[1].value, color=TURN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("and pause to create it")
             self.play(FadeIn(turn3, shift=UP * 0.1), run_time=0.4)
@@ -352,8 +354,7 @@ class ConsoleSetup(VoiceScene):
             stand = beside(row_tag("a throwaway key stands in here"), pem2[-1], buff=0.45)
             pin(self, pem2[-1], stand)
             vo.wait_until("The badge talks to the AWS API")
-            self.play(FadeOut(c6), FadeOut(turn6), FadeOut(card), run_time=0.4)
-            self.play(kj.animate.move_to([0, 1.25, 0]), run_time=0.6)
+            self.play(FadeOut(c6), FadeOut(turn6), FadeOut(card), kj.animate.move_to([0, 1.25, 0]), run_time=0.6)
             api = cloud_chip("AWS API").move_to([4.0, 1.75, 0])
             a1 = route(badge.get_right() + RIGHT * 0.05, api.get_left() + LEFT * 0.08, arc=-0.4, stroke=3)
             self.play(GrowArrow(a1), Indicate(badge, color=INK, scale_factor=1.4), run_time=0.6)

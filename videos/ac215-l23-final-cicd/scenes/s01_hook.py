@@ -11,7 +11,8 @@ Beats (script.md "## S01", one voiceover block each):
    away; V1 KeywordSieves teaser: one PURPLE sieve `contains(…, '/run-')`, 33 PINK dots stream
    through it and light the small BLUE server; a RED ribbon `\\run-deploy-app` waits above the sieve
    and, on "nothing runs at all", hits it and bounces off. The sieve flashes RED on "One character".
-2. The sieve dims; a YELLOW question card drops in the middle; on "By the end of part 2" it shrinks
+2. The sieve dims and moves up (so the card never covers it); a YELLOW question card drops in
+   below it; on "By the end of part 2" it shrinks
    to 20 pt and pins top left (the sieve fades).
 3. lecture_ref(23, "1–4") top right. A title card "Lecture 23 · Final Deployment and Review", three
    chips under it (Motivation, Automation, Review) one per phrase; beside "Motivation" our own GREY
@@ -137,7 +138,7 @@ class Hook(VoiceScene):
             vo.wait_until("That sentence is a button")
             self.play(Indicate(msg, color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("Pushed to main")
-            self.play(Circumscribe(top, color=TURN, buff=0.08), run_time=0.9)
+            self.play(Circumscribe(substring(top, "33 /run-deploy-app"), color=TURN, buff=0.05), run_time=0.9)
 
         # ========================================================== 1. the backslash
         back = [r for r in rows if r.text.strip() == "1 \\run-deploy-app"][0]
@@ -149,9 +150,9 @@ class Hook(VoiceScene):
             vo.wait_until("the slash leans")
             self.play(Indicate(substring(back, "\\"), color=ERR, scale_factor=1.8), run_time=0.7)
             vo.wait_until("To the workflow")
-            self.play(FadeOut(t, scale=0.3), run_time=0.5)
+            self.play(FadeOut(t, scale=0.3), FadeIn(k, run_time=0.5, rate_func=lambda a: smooth(max(0.0, 2 * a - 1))),
+                      run_time=0.8)
             self.remove(t, *t.get_family())
-            self.play(FadeIn(k), run_time=0.5)
             k.stream(self, 33, run_time=1.8)
             rib = k.hover(self, ribbon(BACKSLASH, ERR), run_time=0.3)
             vo.wait_until("and nothing runs at all")
@@ -161,11 +162,12 @@ class Hook(VoiceScene):
 
         # ========================================================== 2. the question
         card = question_card(QUESTION)
-        card.move_to([0, 0.2, 0])
+        card.move_to([0, -1.55, 0])
         small = question_card(QUESTION, size=20)
         small.move_to([-6.6 + small.width / 2, 3.6 - small.height / 2, 0])
         with self.voiceover(SAY[2]) as vo:
-            self.play(fade_to(k, 0.3), run_time=0.5)
+            # the sieve steps up and dims so the card never sits on top of it
+            self.play(ApplyFunction(lambda x: dim(x.shift(UP * (3.45 - x.get_top()[1])), 0.3), k), run_time=0.7)
             self.play(FadeIn(card, shift=DOWN * 0.6), run_time=0.6)
             vo.wait_until("By the end of part 2")
             self.play(Transform(card, small), FadeOut(k), run_time=0.9)
@@ -224,6 +226,8 @@ class Hook(VoiceScene):
             self.play(Indicate(ok[1], color=PASS, scale_factor=1.08), run_time=0.6)
             vo.wait_until("Every command that talks to AWS")
             self.play(FadeIn(aws, shift=LEFT * 0.2), run_time=0.6)
+            self.wait(1.2)
+            self.play(Circumscribe(aws, color=CLOUD, buff=0.08), run_time=1.0)
             vo.wait_until("up to its real first error")
             self.play(FadeIn(first, shift=UP * 0.15), run_time=0.4)
             self.play(Indicate(first.text, color=ERR, scale_factor=1.1), run_time=0.5)

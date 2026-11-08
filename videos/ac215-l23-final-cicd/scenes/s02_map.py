@@ -10,16 +10,19 @@ Beats (script.md "## S02", one voiceover block each):
    video: AWS · cheese-app-aws · as in L15'. The GCP words 'Artifact Registry' (in the cloud) and
    'Pulumi (L20)' (under Actions) appear, then three transforms, one per sentence: Kubernetes ->
    'one EC2 server · Docker containers', Artifact Registry -> 'ECR · 3 repositories', Pulumi ->
-   'Ansible playbooks'.
+   'Ansible playbooks'. The BLUE chip pulses on "as in lecture 15", the EC2 label on "running
+   Docker containers".
 3. Three more, one per clause: 'service-account key' -> badge + key glyphs ('IAM access key', 'EC2
    key pair'); PINK '/deploy-app' over the commit arrow -> '/run-deploy-app'; dashed 'ingress' in
    the cloud -> TEAL 'nginx container'.
-4. The EC2 server and Ansible labels are circled; the four ML boxes and Vertex AI turn GREY dashed
+4. The EC2 server and Ansible labels are circled; the four ML boxes turn GREY dashed, the dashed
+   Vertex AI chip dims (outline and text only)
    ('not in this repo · the AWS ML pipeline was L15'); the Model Deploy → Backend API arrow goes
    dashed with the chip 'a fixed model file, not a pipeline'.
 5. The map and its tag fade (TermMap may not be scaled: its words would drop under 20 pt);
    lecture_ref(23, "5–6"); slide 6's five cards in a row under a GREY heading; marks per phrase:
-   pipeline jobs and model training GREY dashed ✗ 'L15'; frontend and backend GREEN ✓ with a bracket
+   pipeline jobs and model training GREY dashed ✗ 'L15' (both chips pulse on "those were
+   lecture 15"); frontend and backend GREEN ✓ with a bracket
    'always together · one keyword'; building and pushing containers GREEN ✓ 'three app images'.
 6. The cards clear; lecture_ref(23, "17–18"). A TEAL crate `cheese-app-deployment` with a GREEN
    chip 'src/deployment/' under it; on the left a GREY laptop and a hand reach it ('part 1 · you');
@@ -77,11 +80,15 @@ class LectureMap(VoiceScene):
             m.source(self)
             vo.wait_until("we follow the AWS repository")
             m.source(self)
+            vo.wait_until("as in lecture 15")
+            self.play(Indicate(m.src_chip, color=CLOUD, scale_factor=1.06), run_time=0.7)
             vo.wait_until("Now the same map")
             m.gcp(self, "registry")
             m.gcp(self, "pulumi")
             vo.wait_until("The Kubernetes cluster")
             m.relabel(self, "kubernetes")
+            vo.wait_until("running Docker containers")
+            self.play(Indicate(m.labels["kubernetes"], color=CLOUD, scale_factor=1.08), run_time=0.7)
             vo.wait_until("The image registry")
             m.relabel(self, "registry")
             vo.wait_until("Pulumi becomes")
@@ -107,7 +114,16 @@ class LectureMap(VoiceScene):
             vo.wait_until("one server, set up by Ansible")
             self.play(Circumscribe(m.labels["pulumi"], color=CLOUD, buff=0.06), run_time=0.8)
             vo.wait_until("and no machine learning lane")
+            # fade_ml dims Vertex AI with set_opacity, which also fills its dashed box (a grey blob):
+            # hand it a stand-in and dim the real chip's stroke and text only, in the same beat
+            vtx = m.cloud_rows["vertex"]
+            stand_in = VectorizedPoint(vtx.get_center())
+            m.cloud_rows["vertex"] = stand_in
             m.fade_ml(self)
+            self.remove(stand_in)
+            m.cloud_rows["vertex"] = vtx
+            self.play(vtx.box.animate.set_stroke(opacity=0.45), vtx.text.animate.set_opacity(0.45),
+                      run_time=0.5)
 
         # ========================================================== 5. slide 6's five cards
         ref56 = lref("5–6")
@@ -122,8 +138,11 @@ class LectureMap(VoiceScene):
                       run_time=1.0)
             self.add(sc)
             vo.wait_until("For this repo")
-            sc.mark(self, 0, False, "L15")
-            sc.mark(self, 1, False, "L15")
+            l15a = sc.mark(self, 0, False, "L15")[1]
+            l15b = sc.mark(self, 1, False, "L15")[1]
+            vo.wait_until("those were lecture 15")
+            self.play(Indicate(l15a, color=INK, scale_factor=1.15),
+                      Indicate(l15b, color=INK, scale_factor=1.15), run_time=0.8)
             vo.wait_until("Frontend and backend deployment")
             sc.mark(self, 2, True)
             sc.mark(self, 3, True)
