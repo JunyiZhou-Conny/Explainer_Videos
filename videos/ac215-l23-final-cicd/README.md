@@ -51,10 +51,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l23-final-cicd.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l23-final-cicd.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:10.3 (1810.3 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l23-final-cicd.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l23-final-cicd_part1.mp4` | part 1, DURATION_P1: deploy by hand — IAM keys, the Ansible toolbox, ECR, one EC2 server and nginx (S01–S10). Release asset, not in Git |
-| `output/ac215-l23-final-cicd_part2.mp4` | part 2, DURATION_P2: let a commit press the button — CI/CD in the lecture's words, the GitHub Actions workflow, teardown and the course review (S11–S16). Release asset, not in Git |
+| `output/ac215-l23-final-cicd_part1.mp4` | part 1, 18:17.9 (1097.9 s): deploy by hand — IAM keys, the Ansible toolbox, ECR, one EC2 server and nginx (S01–S10). Release asset, not in Git |
+| `output/ac215-l23-final-cicd_part2.mp4` | part 2, 11:52.5 (712.5 s): let a commit press the button — CI/CD in the lecture's words, the GitHub Actions workflow, teardown and the course review (S11–S16). Release asset, not in Git |
 | `output/ac215-l23-final-cicd.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l23-final-cicd.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l23-final-cicd.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -73,7 +73,26 @@ video and the two part cuts) are release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts). Part 1 (18:17.9) is chapters 00:00–16:18 below; part 2 (11:52.5) restarts at 00:00 with "CI, CD, and who presses release", its chapters at 00:00, 01:51, 03:36, 05:36, 08:02, 09:32.
+
+```
+00:00 Thirty-three commits, one backslash
+01:19 The final map, in AWS words
+02:52 A policy, a user and two keys
+04:49 Ansible in one picture
+06:25 Starting the toolbox: three surprises
+08:45 Inside the toolbox: whose Docker?
+10:39 Three images, one timestamp
+12:14 Create a server, then provision it
+14:16 Five containers on one network
+16:18 One front door: nginx
+18:17 CI, CD, and who presses release
+20:08 Two sieves on one commit message
+21:53 Secrets and the runner
+23:53 Follow one tag to the server
+26:19 The delete that deletes nothing
+27:50 The course on one server, and recap
+```
 
 ## What you'll learn
 
