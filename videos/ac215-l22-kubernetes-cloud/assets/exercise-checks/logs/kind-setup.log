@@ -1,0 +1,33 @@
+## up
+$ date -u '+%Y-%m-%d %H:%M UTC'; <scratch>/kind version; docker version --format 'Docker engine {{.Server.Version}}'
+2026-11-07 22:51 UTC
+kind v0.31.0 go1.25.5 linux/amd64
+Docker engine 29.8.2
+[exit 0]
+
+$ HTTPS_PROXY=http://172.17.0.1:38723 https_proxy=http://172.17.0.1:38723 HTTP_PROXY= http_proxy= <scratch>/kind create cluster --name l22ex --image kindest/node:v1.34.11 --config /tmp/l22ex-kind.yaml 2>&1 | grep -E 'Creating|✓|Set kubectl'
+Creating cluster "l22ex" ...
+ ✓ Ensuring node image (kindest/node:v1.34.11) 🖼
+ ✓ Preparing nodes 📦 📦 📦 
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+ ✓ Joining worker nodes 🚜
+Set kubectl context to "kind-l22ex"
+[exit 0]
+
+(capture-only) l22ex-worker2: proxy CA + docker.io mirror, containerd restarted
+(capture-only) l22ex-control-plane: proxy CA + docker.io mirror, containerd restarted
+(capture-only) l22ex-worker: proxy CA + docker.io mirror, containerd restarted
+$ kubectl get nodes
+OCI runtime exec failed: exec failed: unable to start container process: chdir to cwd ("/work") set in config.json failed: no such file or directory
+[exit 127]
+
+## down
+$ <scratch>/kind delete cluster --name l22ex; docker ps -a --format '{{.Names}}' | grep -c l22ex
+Deleting cluster "l22ex" ...
+Deleted nodes: ["l22ex-worker2" "l22ex-control-plane" "l22ex-worker"]
+0
+[exit 1]
+

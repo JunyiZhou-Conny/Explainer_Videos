@@ -19,5 +19,7 @@ for spec in "sslip /" "sslip /api-service/status" "sslip /api-service" "sslip /a
   set -- $spec
   kstep "IP=\$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=\$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name==\"http\")].nodePort}'); H=\$IP$([ $1 = sslip ] && echo .sslip.io); echo \"Host: \$H  GET $2\"; curl -s -H \"Host: \$H\" -w '-> HTTP %{http_code}\n' http://\$IP:\$NP$2 | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'"
 done
+echo '## B8: the location blocks the controller generated from the Ingress'
+kstep "P=\$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].metadata.name}'); kubectl exec -n cheese-app-namespace \$P -- sh -c 'ls /etc/nginx/conf.d; grep -hE \"server_name|location \" /etc/nginx/conf.d/cheese-app-namespace-cheese-app-ingress.conf'"
 echo '## cleanup'
 kstep "kubectl delete -f ingress-backends.yaml; kubectl delete ingress -n cheese-app-namespace cheese-app-ingress; helm uninstall nginx-f5 -n cheese-app-namespace"

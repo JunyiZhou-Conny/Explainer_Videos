@@ -1,4 +1,198 @@
-"""DOCSTRING_PLACEHOLDER"""
+"""Shared scene code for AC215 L22 (Scaling: Kubernetes in the cloud; follow-along of dlops-io/cheese-app-v3
+@ 3ecef56 = main on 2026-11-07, README sections "Create Simple Kubernetes Cluster Tutorial" (done first,
+as the lecture does), "Deployment with Scaling using Kubernetes", "Create & Deploy Cluster" and the
+Kubernetes half of "Debugging Containers").
+
+Paths, narration (SAY lines straight from script.md), the semantic colours of BRIEF.md, the running
+example (placeholders only: your-gcp-project, <IP>, sa_000…), the four README trackers, loaders for
+the real captures in assets/terminal/{laptop,kind} (masked on load), the README's Outputs block in
+assets/terminal/expected, source panels from assets/source, terminal helpers, tags, chips, cards and
+the video's set pieces V1-V8 plus AsksChecklist, KubectlGrammar, StackPipe and DoorsStrip. Generic
+helpers come from L20's common.py (tested there); the set pieces are new. build/common_test.py plays
+every helper and piece once (Bench*: explainer.check clean).
+
+    from manim import *          # first
+    from common import *         # second (common's names win), then:
+    SAY = NARRATION["S07"]; assert len(SAY) == SAY_COUNT["S07"]   # one voiceover block per SAY
+
+Notes for scene authors
+=======================
+Rules. Every text here is >= 20 pt and nothing scales text: never .scale() a group that holds text
+below 1.0 (pieces take size / width parameters). Never set width / height / color / depth / name on a
+VGroup subclass (Manim properties) and never give a piece a method or attribute named like a Mobject
+method (add, remove, restore, center, clear, owner …). Methods marked PLAYS take the scene first, play
+their own animation and keep the new mobjects inside the piece, so a later FadeOut(piece) takes them
+all. ANIM methods return an animation you play. To take one part away use piece.drop(self, part):
+never FadeOut a member of a piece directly (it snaps back when the piece is next drawn). Place a piece
+(shift / move_to) BEFORE its first PLAYS call or between calls: PLAYS methods build new parts at the
+piece's current position. Split trap: animating a group that is not itself on the scene splits every
+parent holding those members; re-seat with piece.heal(self) (PLAYS methods do it) or self.add(parent).
+Piece.swap() cross-fades (FadeTransform); swap(..., morph=True) for a point-by-point morph.
+No prices on screen except S09's one GOLD line (cost_tag allows an amount only with '≈' and 'roughly').
+Staff branch: Capture.line()/at()/pick() refuse any line naming a work/ branch, type_capture() refuses
+a command that names one: p02 is typed as capture("p02").typed("%s'") and only p02:2 is printed.
+
+Frame budget. Safe frame x in [-6.6, 6.6], y in [-3.6, 3.6]. Tracker top-left (left -6.5, top 3.5,
+lowest point TRACK_BOTTOM 2.9); lecture tag lref("22–26") top right (bottom LREF_BOTTOM ~3.13);
+pictures stay below PIC_TOP 2.8. The small AsksChecklist sits top right x 3.77 .. 6.55, y 1.55 ..
+3.05: while it is on screen keep that corner free (ControllerLoop and RequestJourney already do).
+Terminals: term() is 12.6 wide, bottom edge at BOTTOM -3.5; a 3-row strip's top is STRIP_TOP
+(about -1.44), so a picture over a strip lives in y in [-1.3, 2.8] (V1, V4, V6, StackPipe are built
+for exactly that band).
+
+Data
+    NARRATION["S01"] .. ["S16"]  SAY_COUNT  TITLES[cls]  SPEC (video.yaml)
+    Prompts P_LAPTOP 'student@laptop:~$' (= P_HOME) · P_REPO · P_SRC …/cheese-app-v3/src$ (the README's
+    `cd deployment` starts here) · P_DEPLOY …/src/deployment$ · P_TOOLBOX read from b03:77
+    ('root@<id>:/app#', the id never read aloud) · toolbox_prompt(path) ('/app/deploy_images',
+    '/app/deploy_k8s'). Titles T_LAPTOP 'laptop', T_TOOLBOX 'laptop · toolbox', T_TB_STANDIN
+    'laptop · toolbox · stand-in' (kubectl on kind), T_LAPTOP_STANDIN 'laptop · stand-in' (k01, k81).
+    Names PROJECT_PH 'your-gcp-project' · PROJECT_README 'ac215-project' (always with default_tag) ·
+    IP_PH '<IP>' · EXT_IP '<EXTERNAL-IP>' · HOST_PH '<IP>.sslip.io' · APP_URL 'http://<IP>.sslip.io' ·
+    SA_MASK 'sa_000000000000000000000' · NAMESPACE 'cheese-app-namespace' · OLD_NAMESPACE
+    'cheese-app-cluster-namespace' · CLUSTER · TEST_CLUSTER · ZONE_TEST 'us-east1-c' · REGION
+    'us-central1' · VPC · SUBNET_RANGE · INGRESS 'cheese-app-ingress' · HELM_RELEASE 'nginx-f5' · KSA
+    'api-ksa' · STACK_REF 'organization/deploy-images/dev' · MACHINE 'n2d-standard-2' · C_TOOLBOX ·
+    PORTS{front 3000, api 9000, vdb 8000, lb 80} · SVC_NAMES{front, api, vdb} · the stand-in's
+    tic-tac-toe: RS_HASH '5cd9789488', POD_SUFFIXES ('5h48s', 'bmkj5'), NEW_SUFFIX 'lmk52',
+    SCALE_SUFFIXES ('gmbqz', 'grq79'), SVC_IP, ENDPOINTS, NEW_POD_IP, DNS_NAME · VERSIONS{…} ·
+    ASKS / ASK_NOTES / ASK_ANSWERS (slide 12, S16) · PARTS / CALLOUTS (V1, slides 25-26) ·
+    BLUEPRINT_ROWS (V5's L20 → L22 table) · TREE_GROUPS / TREE_READS (V6, c20's 22 + the stack = 23)
+    · REQUESTS (V8) · STATUS_COL (Pod status words).
+    unname(s) / mask(s): instructor → '‹instructor›', staff branch → 'work/…', sa_<digits> → SA_MASK.
+
+Colours (BRIEF "Colours"): LAPTOP / BROWSER / YOU / STANDIN GREY · CLOUD / NODE BLUE · CONTAINER /
+    IMAGE / POD TEAL · SHARED / SYSTEM ORANGE · OWN / DECLARED GREEN · TOOL PURPLE · ERR RED · TURN
+    YELLOW · COST GOLD · ROUTE / SVC PINK · PAST / FUTURE GREY dashed · INK WHITE.
+
+Trackers (script.md conventions; placed top-left)
+    tracker_w(step=None, extra=False) README › Create Simple Kubernetes Cluster Tutorial, 11 steps ·
+    tracker_d(...) README › Deployment with Scaling using Kubernetes, 7 · tracker_c(...) README ›
+    Create & Deploy Cluster, 8 · tracker_g(...) README › Debugging Containers, 4 · tracker(key, …) key
+    'W' | 'D' | 'C' | 'G'. extra: True (' · extra') | 'our spelling' | 'not for you' | 'recording
+    only' | 'stand-in' (' · extra · …') | any other str (appended after ' · ').
+    track(tr, k, extra) ANIM (never tr.goto) · lref("7"), lref("22–26"), lref("7, 18, 30, 36, 39") the
+    GREY 'Lecture 22 · slide(s) …' tag, top right.
+
+Captures (assets/terminal/<folder>/<id>-*.txt; capture-only/ is refused; masked on load)
+    Folders: assets/terminal/laptop (a fresh Docker 29.8.2 engine standing in for the laptop: p01-p05
+    clone/secrets, b01-b52 the README's commands in the toolbox, c00-c23 extras on Pulumi's local
+    backend), assets/terminal/kind (the kind stand-in cluster, NOT GKE: k00-k81; every panel from it
+    carries standin_tag / standin_row) and assets/terminal/expected (readme-pulumi-outputs.txt only,
+    via recorded() / quote_card()).
+    c = capture("b03") (laptop: b*, c*, p*) · capture("k50") (kind: 'k' + digits) · capture("b31-2") /
+    capture("c11-3") (the config-set triples) · capture("kind/k51").
+    c.cmd_lines (typed rows) c.cmd c.k · c.at(*spec) output by FILE line numbers (ints, (a, b), '…');
+    refuses the command lines, [exit N] and staff-branch lines · c.crop(n, "404  Not Found") ·
+    c.typed(upto) (script.md's `typed crop "…"`: line 1 up to `upto`) · c.line(n) · c.pick(*ranges)
+    L1-style (body index = file line − k) · c.lines c.exit c.raw c.path c.key.
+    CMD_LINES: kind/k51 holds two commands (kubectl exec …, then 'hostname; ls; exit' at the Pod's $):
+    type_capture(self, t, "k51", prompts=[toolbox_prompt(), "$"]).
+    type_capture(scene, t, c, prompts=None) PLAYS types the command right (continuation rows after a
+    trailing '\\' have no prompt) · type_at(scene, t, cap, n) types a command at the container prompt
+    printed on file line n · recorded("readme-pulumi-outputs", (2, 9), plain=False) ·
+    quote_card("readme-pulumi-outputs", (2, 9), source="README:497–506", mono_font=True) (S14's
+    EXPECTED panel; line 1 is provenance and refused).
+
+Sources (assets/source/<path> = cheese-app-v3 @ 3ecef56; header '<path> · lines a–b')
+    code(path, a, b=None, focus=, font_size=22, cuts={line: 'cut after'}, elide={line: 'middle'},
+        dedent=False, shown='short/header/path') CODE() panel, <= 12 lines, must fit (22 pt ~66
+        characters, 20 pt ~74; a wider panel raises and names the line), e.g.
+        code("src/deployment/deploy-k8s-tic-tac-toe.yml", 24, 35). .code .header; highlight with
+        code_span(p.code, k, "x") / line_bar(p.code, k, colour), k = file line - a. Refuses a range
+        that includes src/vector-db/cli.py:75 or :440 (they name the instructor).
+    excerpt(path, a, b) / source_text(path) / readme(n) / readme_lines(a, b) (card text) ·
+    readme_rows(a, b) (command rows for type_lines) · readme_card((a, b), body).
+
+Terminals (house: 12.6 wide, 22 pt = 65 characters a row; 20 pt = 72)
+    term(prompt, rows, title) · laptop_term(rows=10, prompt=P_LAPTOP, standin=False) ·
+    toolbox_term(rows, path='/app', standin=False) · standin_term(rows, path) (= toolbox_term(…,
+    standin=True); put on_bar(t, standin_row()) on it) · resize(scene, t, rows) PLAYS · retitle(t,
+    title) ANIM · room · bare_prompt · type_cmd(scene, t, cmd, soft=None) · type_capture · type_at ·
+    type_lines(scene, t, readme_rows(a, b)) · out(scene, t, lines, wrap=) · cd_prompt(scene, t, prompt)
+    · beside / pin / unpin / attach / on_bar / under_term for tags at a row · row_tag, turn_row,
+    extra_row(kind), time_row, cost_row, default_row, standin_row (tags sized for a terminal row) ·
+    no_panel_chip().
+
+Tags and chips (GREY unless said; all 20-22 pt)
+    your_turn() YELLOW · extra_tag(kind) · standin_tag() 'stand-in: kind, not GKE' · placeholder_tag()
+    'placeholder image tags · nothing built' (c20, c21) · illustration_tag(s) · expected_tag(source) ·
+    recorded_tag(source) · recording_tag() 'at the time of recording' · erratum_tag(s) · default_tag()
+    "the README's default · change to yours" · cost_tag(text) GOLD (raises on an amount unless the text
+    has '≈' and 'roughly') · dont_forget_card(sub=None) GOLD 'Don't forget to delete' (S08, S16) ·
+    scene_chip(s) · grey_chip · dashed_chip (past/future) · tool_chip PURPLE · err_chip RED · ok_chip
+    GREEN · route_chip PINK · box_chip TEAL · two_row_chip(top, bottom, colour) · differ_chip ·
+    file_card(path) · card(lines, head=) · question_card(text) YELLOW · sticky(text) · ponder(scene, q,
+    seconds) PLAYS (opaque pause_and_ponder card; FadeOut it at the next block) · flash_tag(scene, tg) ·
+    console_form(title, fields) · console_view(path, rows) (schematic console: breadcrumb crumbs
+    .crumbs[i] + BLUE rows, 'illustration' tag) · Checklist(title, items, color, tag_text, dashed)
+    .tick(scene, i) (S04/S10's APIs, S16's audit).
+
+Glyphs (text-free unless named; sizes in scene units)
+    pod_glyph(name=None, status=None, r=0.26, dots=2, side=DOWN) TEAL Pod (.circle .dots .name .status)
+    · pod_name(name) the three-colour 'web-5cd9789488-5h48s' (.hash ringed GREEN) · pod_status(word)
+    · node_box(title, box_w, box_h) BLUE node (.frame .title) · frame_box(w, h, colour, dashed=) opaque
+    box (.fill .edge) · boxed(rows, colour, box_w, box_h, mono_font=, dashed=) labelled box (.frame
+    .text; raises when the text does not fit) · dns_card(name, ip) PINK · port_path() S06's three PINK
+    ports · ttt_grid() the game's 3 x 3 · browser_window(url, rows) Browser + 'illustration' tag above
+    it (PLAYS goto / fill / reload / clear) · l20_vm(box_w, box_h) L20's VM, GREY dashed (.boxes{nginx,
+    api, front, vdb, loader}) · hourglass · clock_face(r, colour, hour) · lever_glyph(h, colour, on) ·
+    phone_glyph · ring_arrows(radius, colour) · tint · cbox · svc_box · door(port) · mini_browser ·
+    disk_cyl(w) · pail · bucket · disk · key_icon · padlock(h, colour, text) · scissors(h) ·
+    crate(name) · lamp(state) · envelope · image_block · file_icon / folder_icon · cloud_shape · you() ·
+    check_glyph / cross_glyph · arrow / route / travel / bounce / pulse_dot · ring / under / strike /
+    hl_bar · outline_box · keep_inside(m). CostDial(radius, caption) GOLD needle meter:
+    .run(scene, turns, seconds) · .freeze().
+
+Set pieces (V numbers = BRIEF; each class doc gives its exact layout and every method)
+    AsksChecklist(small=False, ticked=(), notes=None, center=None) full ~5.6 x 3.3 at ORIGIN; small:
+        top right x 3.77 .. 6.55, y 1.55 .. 3.05. PLAYS light(i) · tick(i, dashed=False, note=None) ·
+        note(i, text, colour) · answer(i) (ASK_ANSWERS, GREEN) · shrink · grow(center). .card .ticks
+    KubectlGrammar(size=22) ~12.4 x 2.1 at ORIGIN (example y 0.65, slots y -0.15, slot labels y -0.85).
+        PLAYS fill(command, TYPE, NAME, flags) · flag(s, colour=ROUTE) · name_note(text).
+    V1 MasterDiagram(standin=False, workers=None, built=()) x -6.45 .. 6.45, y -1.25 .. 2.75 (left
+        column: cloud provider API over 'your laptop' + toolbox chips; cluster box x -3.35 ..: control
+        plane x -3.2 .. 0.3, workers x 0.6 .. 6.3); callout slot under it at slot_y (S03 shifts it
+        down ~0.6). built=('laptop', 'cluster', 'plane', 'parts', 'beat23') draws those at once.
+        PLAYS laptop_box(chips) · add_chips(names) · cluster(source=None) · beat22 · beat23 · part(key)
+        · beat24 · callout(key, text=None) · clear_slot · pulse(keys) · wish(text) · pick(nodes) ·
+        pods(node, n, status) · loop · watch_arrows · docker_crossed · lamp(key, colour|None) ·
+        blink_lamps · cloud_arrow(colour, text=None) · to_standin. ANIM light(key, colour).
+        Keys 'api' 'etcd' 'scheduler' 'controllers' 'kubelet' 'proxy' 'runtime' 'cloud' 'cloud_arrow'
+        'kubectl' 'node0..2' 'plane'. .parts{key} .chips{name} .nodes .slot_y
+    V2 FleetMorph() full frame x -6.4 .. 6.4, y -3.2 .. 2.7 (S01, S02). PLAYS one_vm · browser
+        (.win .req) · question (.q) · clock(text) (.clock_g) · crash(key) · app_owner (.owner_g) ·
+        operator(key) (.op .tunnel) · heal_box(key) · l20_chip (.l20) · three_vms (.vms .say) ·
+        glow_backups · vm_down(i) · lever(i) · docker_host · to_cluster · deployment_note · fade_all.
+    V3 LabelLink() strip x -6.3 .. 6.3, y -1.0 .. 0.9 (endpoints row to y -1.55). PLAYS deployment ·
+        make_pods(n) · stickers · service · lasso · build (all five) · endpoints(items, note) ·
+        swap_endpoint(i, new) · replace_pod(i). ANIM flash_labels(). .card .pods .tags .svc .lasso_g
+        .eps. port_path() and dns_card() go with it.
+    V4 ControllerLoop() x -6.3 .. 6.45, y -1.25 .. 2.75 (cards row, two worker lanes, controllers
+        ring column x 3.6 .., caption row y -1.1). PLAYS deployment(src) · replicaset(src) · pod(suffix,
+        lane, status, src) · pods(srcs) · loop · spin · needle · count(desired, actual) · caption(text)
+        · clear_caption · kill(suffix) · respawn(suffix, lane, status) · status(suffix, word) ·
+        remove_pod(suffix). Job cousin: ControllerLoop(job=True, name='vector-db-loader', api=True)
+        x -4.9 .. 4.6, y -0.75 .. 0.95: PLAYS job_card · run_job · hourglass · release.
+    V5 CheeseBlueprint() full frame, picture x -6.3 .. 0.3 (table x 0.75 .. 6.5), y -3.0 .. 2.45.
+        PLAYS l20 · dissolve · row(i) (i = 0..7, BLUEPRINT_ROWS; each also changes the picture) ·
+        drop_table · slide_center · vpc · private_nodes · nat · namespace · lb · chip(key, text).
+        .parts{nginx, ingress, front, api, vdb, job, svc_*, pvc1, pvc2, wi, pool} .extras
+    StackPipe() x -6.2 .. 6.35, y -1.2 .. 2.6 (S10: images · to_registry · pipe; S11: bucket ·
+        break_pipe · fill_outputs · join).
+    V6 ResourceTree() x -6.3 .. 6.3, y -1.25 .. 2.75 (row A y 2.15, row B y 0.75, bottom line y -0.45).
+        PLAYS group(key) · grow · expand(key) · collapse · counter(n) · reads · fill_member(key, name)
+        · fill(key) · fail(key, name) · clock · empty · ghosts. Keys network cluster provider identity
+        storage app ingress.
+    V7 RequestJourney() x -6.35 .. 6.35, y -3.15 .. 0.95 (routing card above nginx to y ~2.4).
+        PLAYS build · loader_arrow · send(text, hops, keep) · dns · routing_card · reject(packet) →
+        new RED '404' bubble · reply(at, text) · page_spawn · scissors_crossed(at) · drop_packet(p).
+        Hops browser lb nginx front api vdb job. DoorsStrip() three panels x -6.3 .. 6.3,
+        y -1.25 .. 1.25: PLAYS build(lag).
+    V8 BinPacking() x -6.3 .. 6.4, y -2.65 .. 2.6 (shelves x -6.3 .. 1.0; Pending spot x 1.3 .. 3.0;
+        levers / ghost node / legend x 3.4 .. 6.4). PLAYS node(i) · fill · add_block(key, node) ·
+        land(block, node) · disk · multi_attach · ghost_node · levers · legend.
+"""
 
 from __future__ import annotations
 
@@ -2060,7 +2254,7 @@ def pod_name(name: str, size: float = 20, hash_ring: bool = True) -> VGroup:
     g = VGroup()
     if len(parts) >= 3 and len(parts[-2]) >= 8:
         dep = "-".join(parts[:-2])
-        hsh, suf = parts[-2], parts[-1]
+        hsh = parts[-2]
         t = mono(name, size, POD)
         n0, n1 = len(dep) + 1, len(dep) + 1 + len(hsh)
         t[:n0].set_color(OWN)
@@ -2253,7 +2447,6 @@ def phone_glyph(h: float = 0.55, color=S.GREY) -> VGroup:
 
 def ring_arrows(radius: float = 0.9, color=TURN, stroke: float = 4) -> VGroup:
     """Three arcs with tips in a circle (observe → compare → act), centred at ORIGIN."""
-    from manim import ArcBetweenPoints  # noqa: F401
     g = VGroup()
     for k in range(3):
         a = Arc(radius=radius, start_angle=PI / 2 - k * TAU / 3 - 0.18, angle=-(TAU / 3 - 0.5), color=color,
@@ -2484,8 +2677,12 @@ class KubectlGrammar(Piece):
         new_vals = [self._val(k, p, TURN if k == 0 else INK) for k, p in enumerate(parts)]
         anims = [Transform(self.example, ex)]
         for k in range(4):
-            anims.append(Transform(self.values[k], new_vals[k]))
+            anims += [FadeOut(self.values[k]), FadeIn(new_vals[k], shift=DOWN * 0.15)]
         scene.play(*anims, run_time=run_time)
+        self.remove(*self.values)
+        scene.remove(*self.values)
+        self.values = new_vals
+        self.add(*new_vals)
         self.heal(scene)
 
     def _example(self, parts):
@@ -2502,8 +2699,12 @@ class KubectlGrammar(Piece):
         self.current = self.current[:3] + [s]
         ex = self._example(self.current)
         self._ensure(scene)
-        self.values[3].shift(UP * 0.6).set_opacity(0)
-        scene.play(Transform(self.values[3], new), Transform(self.example, ex), run_time=run_time)
+        old = self.values[3]
+        scene.play(FadeOut(old), FadeIn(new, shift=DOWN * 0.6), Transform(self.example, ex), run_time=run_time)
+        self.remove(old)
+        scene.remove(old)
+        self.values[3] = new
+        self.add(new)
         self.heal(scene)
 
     def name_note(self, scene, text: str = "optional · one object"):
@@ -2533,7 +2734,7 @@ class MasterDiagram(_Anchored):
 
     PLAYS (build)  laptop_box(scene, chips=('gcloud','docker','pulumi')) · add_chips(scene, names)
         (kubectl flashes YELLOW) · cluster(scene, source=None) the dashed outline (source: a mobject
-        that ReplacementTransforms into it, e.g. l20_vm()) · beat22(scene) laptop + cluster + plane +
+        that fades out as the outline draws, e.g. l20_vm() at the cluster box) · beat22(scene) laptop + cluster + plane +
         workers + fan arrows (whatever is missing) · beat23(scene) 'run by Google' caption + notes in
         the slot ('slides: master nodes' dashed; the node pool line) · part(scene, key) one inner part
         (api, etcd, scheduler, controllers, cloud, kubelet, proxy, runtime) · beat24(scene) all parts.
@@ -2784,11 +2985,12 @@ class MasterDiagram(_Anchored):
         return new
 
     def cluster(self, scene, source=None, run_time: float = 0.9):
-        """PLAYS: the dashed cluster outline (source ReplacementTransforms into it)."""
+        """PLAYS: the dashed cluster outline (`source`, a mobject on the scene, fades out meanwhile)."""
         g = self._mk_cluster()
         if source is not None:
-            scene.play(ReplacementTransform(source, g), run_time=run_time)
-            scene.remove(g)
+            scene.play(FadeOut(source), Create(g.frame.edge), FadeIn(g.frame.fill), FadeIn(g.title),
+                       run_time=run_time)
+            scene.remove(source, g)
             self.add(g)
             self.heal(scene)
             return g
@@ -3452,14 +3654,15 @@ class ControllerLoop(_Anchored):
             return self.show(scene, new, run_time=run_time * 0.6)
         cp = src.copy()
         scene.add(cp)
-        scene.play(ReplacementTransform(cp, new), run_time=run_time)
+        scene.play(cp.animate.move_to(new).set_opacity(0), FadeIn(new, target_position=src.get_center()),
+                   run_time=run_time)
         scene.remove(cp, new)
         self.add(new)
         self.heal(scene)
         return new
 
     def deployment(self, scene, src=None, replicas: int = 2):
-        c = boxed([f"deployment.apps/web", f"replicas: {replicas}"], OWN, box_w=3.7, box_h=0.9,
+        c = boxed(["deployment.apps/web", f"replicas: {replicas}"], OWN, box_w=3.7, box_h=0.9,
                   mono_font=True, k=0.18).move_to(self.p(-4.45, 2.3))
         self.dep = c
         return self._from(scene, c, src)
@@ -3732,7 +3935,7 @@ class CheeseBlueprint(_Anchored):
 
     def _row3(self, scene, rt):
         new = []
-        for key, name, x in (("pvc1", "persistent-pvc 5Gi", -4.8), ("pvc2", "chromadb-pvc 10Gi", -2.0)):
+        for key, name, x in (("pvc1", "persistent-pvc 5Gi", -4.95), ("pvc2", "chromadb-pvc 10Gi", -1.95)):
             d = disk_cyl(0.42).move_to(self.p(x - 0.95, -1.25))
             t = label(name, 20, INK).next_to(d, RIGHT, buff=0.1)
             g = VGroup(d, t)
@@ -3838,12 +4041,16 @@ class CheeseBlueprint(_Anchored):
         return self.show(scene, g, run_time=0.5)
 
     def chip(self, scene, key: str, text: str):
-        """PLAYS: a GREY scene chip ('Ingress → S13') in a column right of the VPC (x from 4.05, from
-        y 2.0 down; call after slide_center()), joined to part `key` ('wi', 'ingress', 'pvc1', 'job', …)
-        by a thin GREY line."""
+        """PLAYS: a GREY scene chip ('Ingress → S13': split at ' → ' into two rows) in a column right
+        of the VPC (x from 4.05, from y 2.0 down, 0.95 apart; call after slide_center()), joined to part
+        `key` ('wi', 'ingress', 'pvc1', 'job', …) by a thin GREY line."""
         n = len([k for k in self.extras if k.startswith("chip_")])
-        c = scene_chip(text)
-        c.move_to(np.array([4.05 + c.width / 2, 2.0 - n * 0.6, 0]))
+        if " → " in text:
+            a, b = text.split(" → ", 1)
+            c = two_row_chip(a, "→ " + b, S.GREY)
+        else:
+            c = scene_chip(text)
+        c.move_to(np.array([4.05 + c.width / 2, 2.0 - n * 0.95, 0]))
         keep_inside(c)
         tgt = self.parts[key]
         ln = Line(c.get_left(), tgt.get_right(), color=S.GREY, stroke_width=1.5)
@@ -4282,7 +4489,7 @@ class RequestJourney(_Anchored):
                               stroke_color=ROUTE, stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
         inner.move_to(fr)
         c = VGroup(fr, inner)
-        c.next_to(self.hops["nginx"], UP, buff=0.35)
+        c.next_to(self.hops["nginx"], UP, buff=0.75)
         keep_inside(c)
         c.head, c.rules = hd, VGroup(r1, r2)
         self.card = c
@@ -4380,15 +4587,15 @@ class BinPacking(_Anchored):
     node 1 at y 0.65 .. 1.65 with its caption above ('node 1 · allocatable: less than its 8 GB'),
     node 2 at y -2.2 .. -1.2 (caption at y -0.95). Blocks are sized by their requests (labels inside,
     20 pt): frontend 1.6 wide (fat), vector-db 1.3, nginx 0.95, api 1.15 dashed 'api ?' (no request).
-    A block that does not fit hovers RED 'Pending' right of the shelf (x 1.3 .. 3.0).
-    PLAYS node(scene, i=0) a shelf (i=1 slides in from the right with a GREY chip 'cluster autoscaler
-        · max 2') · fill(scene) node 1's first four blocks · add_block(scene, key='frontend', node=None)
+    A block that does not fit hovers RED 'Pending' right of node 1's shelf (x 1.3 .. 3.0).
+    PLAYS node(scene, i=0) a shelf (i=1 slides in from the right, a GREY chip 'cluster autoscaler
+        · max 2' under it) · fill(scene) node 1's first four blocks · add_block(scene, key='frontend', node=None)
         a new block drops: onto `node` (or the first with room); none has room → it hovers 'Pending'
         (returns it) · land(scene, block, node) a hovering block moves into node · disk(scene) a BLUE
         disk 'persistent-pvc' chained to node 1 under the api block, the PINK chip 'ReadWriteOnce · one
         node at a time' under the disk · multi_attach(scene) a second api block on node 2 reaches for the disk; the
         RED chain snaps 'Multi-Attach', the block stays 'ContainerCreating' · ghost_node(scene) a third
-        GREY-dashed node (x 3.95 .. 6.35, y -2.2 .. -1.2) crossed RED 'more nodes don't help' ·
+        GREY-dashed node (x 1.25 .. 3.65, y -2.2 .. -1.2) crossed RED 'more nodes don't help' ·
         levers(scene) two labelled levers on the right (x 3.4 .. 6.4, y -0.6 .. 1.5): 'Pods' (you: kubectl scale; dashed 'HPA: not configured · needs
         requests') and 'nodes' (GKE autoscaler · 1–2: on) · legend(scene) a card of REQUESTS.
     .nodes[i] .blocks[i] (list per node) .pending (list)"""
@@ -4415,16 +4622,18 @@ class BinPacking(_Anchored):
         self.blocks.append([])
         self.cursor.append(fr.get_left()[0] + 0.1)
         if i == 0:
-            return self.show(scene, g, run_time=0.5)
+            self.show(scene, g, run_time=0.5)
+            self.remove(g)
+            self.add_to_back(g)
+            return g
         start = g.copy().shift(RIGHT * 6)
-        ch = grey_chip("cluster autoscaler · max 2").next_to(fr, RIGHT, buff=0.15)
-        ch.set_y(fr.get_center()[1])
+        ch = grey_chip("cluster autoscaler · max 2").next_to(fr, DOWN, buff=0.1).align_to(fr, LEFT)
         keep_inside(ch)
         self.autoscaler_chip = ch
         scene.add(start)
         scene.play(ReplacementTransform(start, g), run_time=0.8)
         scene.remove(start, g)
-        self.add(g)
+        self.add_to_back(g)                      # blocks that land on it stay in front
         self.heal(scene)
         self.show(scene, ch, run_time=0.3)
         return g
@@ -4532,7 +4741,7 @@ class BinPacking(_Anchored):
         self.drop(scene, ch, run_time=0.3)
 
     def ghost_node(self, scene):
-        fr = frame_box(2.4, 1.0, PAST, k=0.03, dashed=True).move_to(self.p(5.15, -1.7))
+        fr = frame_box(2.4, 1.0, PAST, k=0.03, dashed=True).move_to(self.p(2.45, -1.7))
         t = label("node 3", 20, PAST).move_to(fr)
         x = cross_glyph(0.5).move_to(fr)
         c = label("more nodes don't help", 20, ERR).next_to(fr, DOWN, buff=0.1)

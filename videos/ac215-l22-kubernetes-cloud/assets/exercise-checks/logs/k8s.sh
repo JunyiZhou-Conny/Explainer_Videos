@@ -5,7 +5,6 @@
 . "$(dirname "$0")/lib.sh"
 LOGS=$(cd "$(dirname "$0")" && pwd)
 SRC=$(cd "$LOGS/../../source" && pwd)
-NODE_IMG_KIND=${KIND:-kind}
 for SEC in "$@"; do
 case $SEC in
 setup)
@@ -81,7 +80,7 @@ c1)
   ;;
 c4)
   echo '## C4: command vs args (the loader as written on main and on cluster-updates)'
-  step "docker build -q -t l22ex/entrypoint:1 -f $LOGS/manifests/entry.Dockerfile $LOGS/manifests >/dev/null && echo built l22ex/entrypoint:1 && $NODE_IMG_KIND load docker-image l22ex/entrypoint:1 --name l22ex 2>&1 | tail -1"
+  step "docker build -q -t l22ex/entrypoint:1 -f $LOGS/manifests/entry.Dockerfile $LOGS/manifests >/dev/null && echo built l22ex/entrypoint:1 && for n in l22ex-worker l22ex-worker2; do docker save l22ex/entrypoint:1 | docker exec -i \$n ctr -n k8s.io images import - >/dev/null && echo imported into \$n; done"
   kstep "kubectl apply -f loader-args.yaml -f loader-command.yaml; sleep 20; kubectl get jobs,pods -l 'batch.kubernetes.io/job-name in (loader-args,loader-command)'"
   kstep "kubectl logs job/loader-args"
   kstep "P=\$(kubectl get pods -l batch.kubernetes.io/job-name=loader-command -o jsonpath='{.items[0].metadata.name}'); kubectl describe pod \$P | grep -E 'Reason:|Message:|Exit Code:' ; kubectl describe pod \$P | sed -n '/^Events:/,\$p' | grep -E 'Failed|Warning' | head -3"

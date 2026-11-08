@@ -14,7 +14,7 @@ for rp in [\"/api-service\", \"\"]:
     os.environ[\"ROOT_PATH\"] = rp
     import rootpath_app; importlib.reload(rootpath_app)
     c = TestClient(rootpath_app.app)
-    for path in [\"/api-service/status\", \"/api-service/\", \"/api-service\", \"/status\"]:
+    for path in [\"/api-service/status\", \"/api-service/\", \"/api-service\", \"/api-servicex/status\", \"/status\"]:
         r = c.get(path, follow_redirects=False)
         print(f\"ROOT_PATH={rp!r:15} GET {path:20} -> {r.status_code} {r.text}\")
 PY'"
