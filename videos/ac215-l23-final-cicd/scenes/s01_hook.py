@@ -23,9 +23,9 @@ Beats (script.md "## S01", one voiceover block each):
    machine"), a GREEN ✓ "ran right here" under it; a BLUE box "AWS · us-east-1" with a RED chip
    "first real error"; a small schematic console page with its 'illustration' tag (flashed).
 5. Three chips: "Docker running", "your AWS account + billing" (GOLD cost tag "this lecture runs a
-   server until you delete it"), "a GitHub repository (part 2)". The question card moves to the top
-   right (the tracker owns the top left). Samples: the YELLOW tracker (Deployment Steps, step 5 of
-   15) top left, a code panel `src/deployment/inventory.yml · lines 1–11` (header circled), a YELLOW
+   server until you delete it"), "a GitHub repository (part 2)". The question card stays pinned top
+   left (script.md S01 block 3: to the end of the scene). Samples: the YELLOW tracker (Deployment
+   Steps, step 5 of 15) just under the card, a code panel `src/deployment/inventory.yml · lines 1–11` (header circled), a YELLOW
    '▶ your turn' tag under it. Everything fades, the question card last; empty frame.
 """
 
@@ -244,15 +244,15 @@ class Hook(VoiceScene):
         cost = cost_tag("this lecture runs a server until you delete it")
         cost.next_to(needs[1], DOWN, buff=0.12).align_to(needs[1], LEFT).shift(RIGHT * 0.4)
         needs[2].shift(DOWN * 0.45)
-        corner = question_card(QUESTION, size=20)
-        corner.move_to([6.6 - corner.width / 2, 3.6 - corner.height / 2, 0])
         tr = tracker_b(5)
+        # the question card stays pinned top left (script S01 block 3); the sample tracker sits under it
+        tr.next_to(small, DOWN, buff=0.12, aligned_edge=LEFT)
         panel = code("src/deployment/inventory.yml", 1, 11, font_size=20, trim=70)
         panel.move_to([0, 0, 0])
-        panel.shift(UP * (min(2.35, corner.get_bottom()[1] - 0.15) - panel.get_top()[1]))
+        panel.shift(UP * (tr.get_bottom()[1] - 0.15 - panel.get_top()[1]))
         turn = your_turn().next_to(panel, DOWN, buff=0.2).align_to(panel, RIGHT)
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(honest), Transform(card, corner), run_time=0.7)
+            self.play(FadeOut(honest), run_time=0.7)
             self.remove(honest, *honest.get_family())
             for c, (_, cue) in zip(needs, NEEDS):
                 vo.wait_until(cue)

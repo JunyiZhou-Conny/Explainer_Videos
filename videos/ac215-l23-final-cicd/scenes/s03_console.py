@@ -30,12 +30,13 @@ Beats (script.md "## S03"; one voiceover block each):
    `cheese-app-aws` and `secrets` flash; the CSV name YELLOW + row tag "keep AWS's file name ·
    docker-shell.sh:10".
 6. TRACKER A 5. The strip shrinks to its four .csv/.pem rows; CONSOLE "EC2 › Key Pairs › Create key pair"
-   (Name cheese-app-ac215-key-pair, [Download .pem]); ▶ your turn; the WHITE key drops into ~/secrets/
+   (Name cheese-app-ac215-key-pair, [Download .pem]); ▶ your turn + YELLOW chip under it "wait: name
+   it ac215_2024 · see next" (QA: the viewer pauses here, before beat 7's erratum); the WHITE key drops into ~/secrets/
    beside the badge; the strip's .pem rows turn YELLOW + row tag "a throwaway key stands in here". The
    console goes; the place moves to the middle; PINK arrows: badge → BLUE "AWS API", key → BLUE "SSH door
    · your server", each on its clause.
 7. TRACKER A 5 · extra. Full terminal (20 pt, 14 rows): `cd cheese-app-aws && grep -rn …` (extra) →
-   laptop/13: 2 (wrapped; cheese-app-ac215-key-pair ORANGE), then 5–8 (6 cut after the .pem path) and
+   laptop/13: 2 (wrapped; cheese-app-ac215-key-pair ORANGE), then 5–9 (6 and 9 cut after the .pem path) and
    `…`, every ac215_2024 YELLOW. On "Easiest fix" the terminal keeps its last 9 rows and the erratum
    card appears above it.
 8. TRACKER A 5 · extra. The card goes; the prompt is now student@laptop:~/cheese-app-aws$ (the cd of
@@ -331,6 +332,9 @@ class ConsoleSetup(VoiceScene):
                              [("Name", KEYPAIR_README), ("button", "Download .pem")])
         at_top_left(c6)
         turn6 = edge_tag(c6.frame, your_turn())
+        # the README's name is the wrong one (beat 7): say so before the viewer pauses to create it
+        wait6 = grey_chip("wait: name it ac215_2024 · see next", color=TURN)
+        wait6.next_to(turn6, RIGHT, buff=0.3)
         pem_i = [i for i, r in enumerate(r12) if r.text == PEM_README][0]
         pem2 = [r12[pem_i - 1], r12[pem_i]]
         assert pem2[0].text.startswith("-rw------- ")
@@ -340,7 +344,7 @@ class ConsoleSetup(VoiceScene):
             resize(self, s5, 4, keep=kept, extra=[kj.animate.move_to([3.9, 2.25, 0]),
                                                  card.animate.move_to([3.9, 0.55, 0])], run_time=0.8)
             self.play(FadeIn(c6, shift=UP * 0.1), run_time=0.6)
-            self.play(FadeIn(turn6, shift=UP * 0.1), run_time=0.3)
+            self.play(FadeIn(turn6, shift=UP * 0.1), FadeIn(wait6, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("and save its pem file there too")
             btn = c6.rows[1]
             self.play(Indicate(btn.text, color=TURN, scale_factor=1.08), run_time=0.5)
@@ -354,7 +358,7 @@ class ConsoleSetup(VoiceScene):
             stand = beside(row_tag("a throwaway key stands in here"), pem2[-1], buff=0.45)
             pin(self, pem2[-1], stand)
             vo.wait_until("The badge talks to the AWS API")
-            self.play(FadeOut(c6), FadeOut(turn6), FadeOut(card), kj.animate.move_to([0, 1.25, 0]), run_time=0.6)
+            self.play(FadeOut(c6), FadeOut(turn6), FadeOut(wait6), FadeOut(card), kj.animate.move_to([0, 1.25, 0]), run_time=0.6)
             api = cloud_chip("AWS API").move_to([4.0, 1.75, 0])
             a1 = route(badge.get_right() + RIGHT * 0.05, api.get_left() + LEFT * 0.08, arc=-0.4, stroke=3)
             self.play(GrowArrow(a1), Indicate(badge, color=INK, scale_factor=1.4), run_time=0.6)
@@ -367,9 +371,11 @@ class ConsoleSetup(VoiceScene):
 
         # ========================================================== 7. a small gap: three names
         t7 = term(P_HOME, rows=14, size=T20)
-        g13 = [cut(C13.line(2), KEYPAIR_README)] + C13.at(5) + [cut(C13.line(6), "ac215_2024.pem'")] + C13.at(7, 8)
+        g13 = [cut(C13.line(2), KEYPAIR_README)] + C13.at(5) + [cut(C13.line(6), "ac215_2024.pem'")] + C13.at(7, 8) + [cut(C13.line(9), "ac215_2024.pem")]
         err_t = erratum_tag()
-        fix1 = label("three names, one key pair → name yours ac215_2024", 22, INK, t2c={"ac215_2024": TURN})
+        # two Texts, not t2c: t2c swallowed the space before ac215_2024 ("name yoursac215_2024")
+        fix1 = VGroup(label("three names, one key pair → name yours", 22, INK),
+                      label("ac215_2024", 22, TURN)).arrange(RIGHT, buff=0.15, aligned_edge=DOWN)
         fix2 = label("(or change inventory.yml:16 and the key paths)", 22, S.GREY)
         fix_rows = VGroup(fix1, fix2).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         fix_fr = box(fix_rows.width + 0.6, fix_rows.height + 0.45, S.GREY, fill_opacity=0.06)
@@ -406,7 +412,7 @@ class ConsoleSetup(VoiceScene):
             err_t.next_to(fix, UP, buff=0.06).align_to(fix, LEFT).shift(RIGHT * 0.2)
             self.play(FadeIn(fix, shift=DOWN * 0.15), FadeIn(err_t), run_time=0.6)
             vo.wait_until("so the file is")
-            self.play(Indicate(substring_text(fix1, "ac215_2024"), color=TURN, scale_factor=1.15), run_time=0.8)
+            self.play(Indicate(fix1[1], color=TURN, scale_factor=1.15), run_time=0.8)
 
         # ========================================================== 8. chmod 400
         with self.voiceover(SAY[8]) as vo:
@@ -436,11 +442,3 @@ class ConsoleSetup(VoiceScene):
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.6)
         self.remove(*self.mobjects)
         self.wait(0.3)
-
-
-def substring_text(t: Text, sub: str) -> VGroup:
-    """The glyphs of `sub` in a label Text (no spaces in sub)."""
-    s = t.text if hasattr(t, "text") else t.original_text
-    i = s.replace(" ", "").find(sub.replace(" ", ""))
-    assert i >= 0, (sub, s)
-    return VGroup(*t.submobjects[i:i + len(sub.replace(" ", ""))])

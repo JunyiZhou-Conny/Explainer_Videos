@@ -15,7 +15,7 @@ Beats (script.md "## S05"; one voiceover block each):
     Above it the path ladder: deployment → src → cheese-app-aws → student → /home/secrets ✗, one
     GREY "../" step per dot-dot (each lights in the error row), the fourth lands RED.
  3  TRACKER B 2. The ladder's third step turns GREEN ("~/secrets ✓"), then the ladder goes; README(76)
-    card; ▶ your turn (title bar); the terminal grows; the README's sed edit (laptop/22, folded) →
+    card; ▶ your turn (title bar); the terminal grows; the README's sed edit (laptop/22, folded; cut + chip) →
     22: 3, 5; line 3 GREEN; GREY chip "sed is our editor · use yours". The card leaves into the
     tracker; the checklist is born with row 1 "docker-shell.sh:10 · ../../../secrets", ticked.
  4  TRACKER B 3. The terminal clears; `sh docker-shell.sh` → laptop/23: 2 RED, "13" ringed.
@@ -24,7 +24,8 @@ Beats (script.md "## S05"; one voiceover block each):
     "here-string"; `#!/bin/bash` GREEN; checklist row 2 "Linux: bash docker-shell.sh" + erratum tag.
  6  TRACKER B 3 · extra. The inset goes, the terminal grows (8 rows): `bash docker-shell.sh` (extra)
     → laptop/25: 3, …, 20 (cut), 28 (wrapped), 34; 20, 28, 34 RED; "at the time of recording" on the
-    title bar; checklist row 2 ticked.
+    title bar; checklist row 2 ticked. Beside line 28 a GREY tag "this curl: baltocdn.com/helm ·
+    Dockerfile:33" (laptop/25: 41): the ERROR header names pkgs.k8s.io, whose curl passed (23).
  7  TRACKER B 3 · extra. → laptop/25: …, 49 RED; the terminal shrinks to a 3-row strip (20, 34, 49);
     CODE(docker-shell.sh: 3–4) above it, `#set -e` YELLOW + GREY chip "commented out"; the ERROR row
     flashes on "Check the build output".
@@ -46,6 +47,10 @@ Beats (script.md "## S05"; one voiceover block each):
     39–42, 44–45 (43, AWS_CA_BUNDLE, cropped): the .pem and the CSV GREEN, GREY chip "yours:
     ac215_2024.pem", the four AWS_ names flash; V3: the badge glyph slides from the CSV row into a
     small TEAL crate "cheese-app-deployment". Fade; empty frame.
+
+Folds (laptop/22, 27, 30): fold_rows breaks only at spaces outside quotes, so every row types back as
+shell; a quoted sed expression longer than a row is cut with '…' and the GREY chip "cut to fit · full
+command: study guide" stands above the terminal while the command is on screen.
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -75,6 +80,7 @@ assert C24.cmd == "ls -l /bin/sh; head -1 docker-shell.sh" and C24.line(2).endsw
 assert C24.line(3) == "#!/bin/bash"
 assert C25.cmd == "bash docker-shell.sh" and "ERROR [ 9/15]" in C25.line(20)
 assert "curl: (60) SSL certificate problem" in C25.line(28) and C25.line(34).endswith("gpg: no valid OpenPGP data found.")
+assert C25.line(41).lstrip().startswith("33 | >>>     curl https://baltocdn.com/helm/signing.asc")
 assert C25.line(49) == "Unable to find image 'cheese-app-deployment:latest' locally"
 assert C27.cmd.endswith("Dockerfile && git diff Dockerfile")
 assert C27.line(10).startswith("-    curl https://baltocdn.com/helm/signing.asc")
@@ -101,52 +107,88 @@ def recolor(glyphs, color):
     return [g.animate.set_color(color) for g in glyphs]
 
 
-def fold_rows(t: Terminal, cmd: str, prefix: int) -> list[str]:
-    """The command split into terminal rows the house way (break at a space outside quotes, ' \\'
-    at the end of every row but the last, continuation rows indented by 4). Local copy of
-    Terminal.fold that never drops a character on a hard break (see the scene's report). A row
-    with no space outside quotes breaks at a single space inside them (a long sed expression)
-    before it falls back to a hard break mid-word."""
-    limit = t.max_chars
-    outside, inside, q = [], [], None
-    for i, ch in enumerate(cmd):
-        if q and ch == " " and cmd[i - 1] != " " and cmd[i + 1:i + 2] not in (" ", ""):
-            inside.append(i)
+def split_outside(cmd: str) -> list[str]:
+    """The command's words: split at single spaces outside quotes only (a quoted sed expression is
+    one word, its inner spaces kept). An option `-e` is glued to the expression that follows."""
+    words, cur, q = [], "", None
+    for ch in cmd:
         if q:
             q = None if ch == q else q
+            cur += ch
         elif ch in "\"'":
             q = ch
+            cur += ch
         elif ch == " ":
-            outside.append(i)
-    rows, start, avail, back = [], 0, limit - prefix, []
-    while len(cmd) - start > avail:
-        room = avail - 2
-        cand = [b for b in outside if start < b <= start + room]
-        opt = [b for b in cand if cmd[b + 1:b + 2] == "-" and b - start >= room * 0.5]
-        inner = [b for b in inside if start < b <= start + room and b - start >= room * 0.4]
-        b = (opt or cand or inner or [None])[-1]
-        if b is not None:
-            rows.append(cmd[start:b] + " \\")
-            back.append(cmd[start:b] + " ")
-            start = b + 1
+            words.append(cur)
+            cur = ""
         else:
-            rows.append(cmd[start:start + room] + " \\")
-            back.append(cmd[start:start + room])
-            start += room
-        avail = limit - 4
-    rows.append(cmd[start:])
-    assert "".join(back) + cmd[start:] == cmd
-    return [rows[0]] + ["    " + r for r in rows[1:]]
+            cur += ch
+    words.append(cur)
+    assert " ".join(words) == cmd and all(words), cmd
+    glued = []
+    for w in words:
+        if glued and glued[-1] == "-e":
+            glued[-1] += " " + w
+        else:
+            glued.append(w)
+    return glued
+
+
+def fold_rows(t: Terminal, cmd: str, prefix: int) -> list[str]:
+    """The command split into terminal rows the house way: a break only at a space OUTSIDE quotes,
+    ' \\' at the end of every row but the last, continuation rows indented by 4, so every row types
+    back as shell. Never inside a quoted expression (a backslash-newline inside single quotes is
+    kept literally and breaks the edit). A word too long for a whole continuation row (a long sed
+    expression) gets a row of its own, cut with '…'; the caller labels it (cut_tag). .cut on the
+    returned list: True when a row was cut."""
+    limit = t.max_chars
+    words = split_outside(cmd)
+    rows, cur, avail, was_cut = [], "", limit - prefix, False
+    for k, w in enumerate(words):
+        last = k == len(words) - 1
+        need = len(w) + (0 if last else 2)
+        if not cur and len(w) + 2 > limit - 4 and not (last and len(w) <= limit - 4):
+            assert rows, cmd
+            rows.append(w[:limit - 4 - 3] + "… \\")
+            was_cut, avail = True, limit - 4
+            continue
+        if cur and len(cur) + 1 + need > avail:
+            rows.append(cur + " \\")
+            cur, avail = "", limit - 4
+            if len(w) + 2 > avail and not (last and len(w) <= avail):
+                rows.append(w[:avail - 3] + "… \\")
+                was_cut = True
+                continue
+        cur = f"{cur} {w}" if cur else w
+    if cur:
+        rows.append(cur)
+    else:
+        rows[-1] = rows[-1][:-2]
+    res = FoldRows([rows[0]] + ["    " + r for r in rows[1:]])
+    res.cut = was_cut
+    assert len(rows[0]) <= limit - prefix and all(len(r) <= limit for r in res), res
+    return res
+
+
+class FoldRows(list):
+    cut = False
+
+
+def cut_tag(scene, t: Terminal):
+    """PLAYS: the GREY chip for a command cut to fit (above the terminal, right). Returns it."""
+    tg = under_term(t, grey_chip("cut to fit · full command: study guide"))
+    scene.play(FadeIn(tg, shift=DOWN * 0.1), run_time=0.3)
+    return tg
 
 
 def type_folded(scene, t: Terminal, cmd: str, type_time: float = 0.5) -> VGroup:
-    """PLAYS: type `cmd` at t's prompt, folded with fold_rows. Returns a VGroup with .rows."""
+    """PLAYS: type `cmd` at t's prompt, folded with fold_rows. Returns a VGroup with .rows and .cut."""
     rows = fold_rows(t, cmd, len(t.prompt) + 1)
     lines = [type_cmd(scene, t, rows[0], type_time=type_time)]
     for r in rows[1:]:
         lines.append(type_cmd(scene, t, r, type_time=type_time, prompt=False))
     g = VGroup(*lines)
-    g.rows, g.text = lines, " ".join(ln.text for ln in lines)
+    g.rows, g.text, g.cut = lines, " ".join(ln.text for ln in lines), rows.cut
     return g
 
 
@@ -330,7 +372,9 @@ class StartToolbox(VoiceScene):
             resize(self, t, 9, extra=[FadeIn(rd, shift=DOWN * 0.15)], run_time=0.6)
             tt = bar_tags(self, t, turn_row())
             tt += bar_tags(self, t, row_tag("sed is our editor · use yours"), left=True)
-            type_folded(self, t, C22.cmd, type_time=0.4)
+            l22 = type_folded(self, t, C22.cmd, type_time=0.4)
+            assert l22.cut
+            cut22 = cut_tag(self, t)
             res = out(self, t, [(s, OUTPUT) for s in soft(C22.at(3, 5), t.max_chars)], run_time=0.5)
             vo.wait_until("Now the file is found")
             line3 = find_row(res, "CSV_FILE=")
@@ -344,7 +388,8 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 4. step 3: sh, as written
         with self.voiceover(SAY[4]) as vo:
-            drop_tags(self, t, tt, track(tr, 3), run_time=0.5)
+            drop_tags(self, t, tt, FadeOut(cut22), track(tr, 3), run_time=0.5)
+            self.remove(cut22)
             clear_term(self, t)
             type_folded(self, t, C23.cmd, type_time=0.6)
             vo.wait_until("Surprise 1")
@@ -404,7 +449,9 @@ class StartToolbox(VoiceScene):
             self.play(Indicate(substring(e20, "ERROR [ 9/15]"), color=ERR, scale_factor=1.1), run_time=0.6)
             self.add(t)
             vo.wait_until("Curl can't verify")
-            out(self, t, [(s, ERR) for s in soft([C25.line(28)], t.max_chars)], run_time=0.4)
+            o28 = out(self, t, [(s, ERR) for s in soft([C25.line(28)], t.max_chars)], run_time=0.4)
+            pin(self, o28[-1], beside(row_tag([("this curl:", "label"), ("baltocdn.com/helm", "mono"),
+                                               ("· Dockerfile:33", "label")]), o28[-1], buff=0.4))
             vo.wait_until("so no signing key arrives")
             o34 = out(self, t, [(C25.line(34), ERR)], run_time=0.4)[0]
             self.play(Indicate(substring(o34, "gpg: no valid OpenPGP data found."), color=ERR, scale_factor=1.06),
@@ -462,7 +509,8 @@ class StartToolbox(VoiceScene):
             ck.add_row(self, ROWS[2])
             t = term(P_LAPTOP, rows=9, size=T20)
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)
-            type_folded(self, t, C27.cmd, type_time=0.35)
+            assert type_folded(self, t, C27.cmd, type_time=0.35).cut
+            cut27 = cut_tag(self, t)
             ex = bar_tags(self, t, extra_row())
             out(self, t, diff, run_time=0.5)
             type_folded(self, t, C28.cmd, type_time=0.5)
@@ -478,7 +526,8 @@ class StartToolbox(VoiceScene):
         e_chip = erratum_tag("erratum · README: not mentioned")
         e_chip.next_to(p26, UP, buff=0.12).align_to(p26, LEFT)
         with self.voiceover(SAY[9]) as vo:
-            drop_tags(self, t, ex, run_time=0.2)
+            drop_tags(self, t, ex, FadeOut(cut27), run_time=0.2)
+            self.remove(cut27)
             set_toolbox(self, t, X28.prompt)
             run9 = type_cmd(self, t, X28.cmd, type_time=0.6)
             e9 = out(self, t, X28.at((36, 38)), run_time=0.4)
@@ -527,7 +576,8 @@ class StartToolbox(VoiceScene):
             vo.wait_until("and put your own account ID")
             ck_scroll(self, ck, run_time=0.35)
             ck.add_row(self, ROWS[4], run_time=0.35)
-            type_folded(self, t, C30.cmd, type_time=0.2)
+            assert type_folded(self, t, C30.cmd, type_time=0.2).cut
+            cut30 = cut_tag(self, t)
             ex = bar_tags(self, t, extra_row())
             o30 = out(self, t, C30.at(2, 3, 4), run_time=0.35)
             self.play(*recolor(substring(o30[1], ACCOUNT), SHARED), *recolor(o30[2].glyphs, OWN), run_time=0.35)
@@ -546,8 +596,9 @@ class StartToolbox(VoiceScene):
         box_c = crate(T_TOOLBOX, box_w=box_c.frame.width + 0.9)
         box_c.text.shift(RIGHT * 0.4)
         with self.voiceover(SAY[11]) as vo:
-            drop_tags(self, t, ex, FadeOut(t), FadeOut(ck), FadeOut(sts), track(tr, 3), run_time=0.6)
-            self.remove(t, ck, sts)
+            drop_tags(self, t, ex, FadeOut(t), FadeOut(ck), FadeOut(sts), FadeOut(cut30), track(tr, 3),
+                      run_time=0.6)
+            self.remove(t, ck, sts, cut30)
             self.play(FadeIn(t11, shift=UP * 0.2), run_time=0.4)
             type_folded(self, t11, C31.cmd, type_time=0.5)
             turn = bar_tags(self, t11, turn_row())[0]

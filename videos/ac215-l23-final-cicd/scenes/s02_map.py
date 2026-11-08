@@ -62,8 +62,11 @@ class LectureMap(VoiceScene):
 
         # ========================================================== 0. slide 19's bottom flow
         m = TermMap()
-        # 'Commits' is built 0.06 into the GitHub box's left edge: nudge it clear (still hidden here)
-        m.commits_label.shift(LEFT * 0.13 + UP * 0.1)
+        # 'Commits' is wider than its arrow and is built 0.06 into the GitHub box's left edge: end it
+        # 0.2 short of the box and lift it clear of the Dev Team icons (still hidden here)
+        cl = m.commits_label
+        cl.shift(RIGHT * (m.flow["github"][0].get_left()[0] - 0.2 - cl.get_right()[0])
+                 + UP * (m.flow["dev"].get_top()[1] + 0.1 - cl.get_bottom()[1]))
         ref19 = lref("19")
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref19), run_time=0.4)
