@@ -174,6 +174,38 @@ def ring_project(scene, line, run_time: float = 0.3):
     return rg
 
 
+def glyphs_of(row):
+    """The glyphs of a terminal row (never its invisible strut)."""
+    return VGroup(*[m for m in row.submobjects if m is not row.strut])
+
+
+def bars_behind(panel, bars, z: int = 1):
+    """Draw translucent line bars under a code panel's text (z-order), not over it."""
+    panel.code.code_lines.set_z_index(z + 1)
+    for b in bars:
+        b.set_z_index(z)
+
+
+def span_bar(code_, k0: int, k1: int, color, opacity: float = 0.18):
+    """ONE translucent bar over code lines k0..k1 (0-based): no stripes where per-line bars overlap."""
+    a, b = line_bar(code_, k0, color, opacity), line_bar(code_, k1, color, opacity)
+    top, bot = a.get_top()[1], b.get_bottom()[1]
+    return Rectangle(width=a.width, height=top - bot, stroke_width=0).set_fill(color, opacity) \
+        .move_to([a.get_x(), (top + bot) / 2, 0])
+
+
+def fast_out(scene, t, items, per: float = 0.3):
+    """PLAYS: a fast scroll: items (text or (text, colour), soft-wrapped) printed a box-full at a
+    time, the oldest rows fading as they go. Returns the new rows."""
+    items = soft(items, t.max_chars)
+    rows = VGroup()
+    for i in range(0, len(items), t.rows):
+        ch = [(x, OUTPUT) if isinstance(x, str) else x for x in items[i:i + t.rows]]
+        room(scene, t, len(ch), run_time=per * 0.5)
+        rows.add(*t.print(scene, ch, run_time=per * 0.5, lag=0.03))
+    return rows
+
+
 def alive(t, mobs):
     """The mobjects (rows, rings) still on terminal t (not scrolled away)."""
     fam = set(t.lines.get_family())
@@ -240,7 +272,7 @@ class ClusterPlan(VoiceScene):
                 rings.append(ring_project(self, ln))
                 errs += list(out(self, t, [(B31[i].line(2), ERR)], wrap=True, run_time=0.3))
             live = alive(t, errs)
-            self.play(*[r.animate.set_opacity(0.4) for r in live], run_time=0.4)
+            self.play(*[glyphs_of(r).animate.set_opacity(0.4) for r in live], run_time=0.4)
             self.add(t)
             vo.wait_until("Replace ac215 project")
             self.play(FadeIn(dft, shift=DOWN * 0.1), run_time=0.4)
@@ -263,8 +295,9 @@ class ClusterPlan(VoiceScene):
         # ========================================================== 2. what the two security keys feed
         cp = code(CC, 9, 12, font_size=SIZE, elide={9: "pulumi.Config"})
         cp.move_to([0, 0, 0]).align_to([0, 2.7, 0], UP)
-        b9 = line_bar(cp.code, 0, CLOUD, 0.28)
-        b10 = VGroup(*[line_bar(cp.code, k, OWN, 0.22) for k in (1, 2, 3)])
+        b9 = line_bar(cp.code, 0, CLOUD, 0.25)
+        b10 = span_bar(cp.code, 1, 3, OWN, 0.2)
+        bars_behind(cp, [b9, b10])
         k9 = code_span(cp.code, 0, '"gcp_service_account_email"')
         k10 = code_span(cp.code, 2, '"gcp_ksa_service_account_email"')
         ch9 = grey_chip("→ the nodes' service account (line 50)", color=CLOUD)
@@ -358,8 +391,10 @@ class ClusterPlan(VoiceScene):
             resize(self, t, 2, keep=[r31, r34], run_time=0.5)
             assert pb.get_bottom()[1] > t.box.get_top()[1] + 0.05, (pb.get_bottom(), t.box.get_top())
             ba = line_bar(pa.code, 0, ROUTE, 0.25)
+            bars_behind(pa, [ba])
             sref = code_span(pa.code, 0, '"organization/deploy-images/dev"')
             bb = line_bar(pb.code, 2, ERR, 0.28)
+            bars_behind(pb, [bb])
             tg0 = code_span(pb.code, 2, "tags[0]")
             self.play(FadeIn(pa, shift=DOWN * 0.1), run_time=0.4)
             self.play(FadeIn(ba), sref.animate.set_color(ROUTE), run_time=0.4)
@@ -379,7 +414,6 @@ class ClusterPlan(VoiceScene):
             sp.break_pipe(self)
             vo.wait_until("Skipping it is safe")
             sp.fill_outputs(self)
-            vo.wait_until("when it already ran there")
             sp.join(self)
             assert sp.get_bottom()[1] > t.box.get_top()[1] + 0.05, (sp.get_bottom(), t.box.get_top())
 
@@ -397,19 +431,27 @@ class ClusterPlan(VoiceScene):
             vo.wait_until("with placeholder tags")
             flash_tag(self, ph, INK, 1.05)
             vo.wait_until("Now the real plan appears")
-            type_capture(self, t, C20, type_time=0.4)
-            for (a, b), keys in C20_CHUNKS:
-                out(self, t, [C20.line(n) for n in range(a, b + 1)], wrap=True, run_time=0.25, lag=0.04,
-                    chunk=3)
-                for k in keys:
-                    rt.group(self, k, run_time=0.3)
+            type_capture(self, t, C20, type_time=0.35)
+            lines_of = lambda a, b: [C20.line(n) for n in range(a, b + 1)]  # noqa: E731
+            fast_out(self, t, lines_of(8, 11))
+            rt.group(self, "network", run_time=0.25)
+            rt.group(self, "cluster", run_time=0.25)
             assert rt.get_bottom()[1] > ph.get_top()[1] + 0.05, (rt.get_bottom(), ph.get_top())
             vo.wait_until("the network")
-            rt.expand(self, "network", run_time=0.35)
+            rt.expand(self, "network", run_time=0.3)
+            fast_out(self, t, lines_of(13, 14))
             vo.wait_until("the cluster")
-            rt.expand(self, "cluster", run_time=0.35)
+            rt.expand(self, "cluster", run_time=0.3)
+            fast_out(self, t, lines_of(16, 17))
+            rt.collapse(self, run_time=0.2)
+            rt.group(self, "provider", run_time=0.25)
+            fast_out(self, t, lines_of(18, 23))
+            for k in ("identity", "ingress", "storage"):
+                rt.group(self, k, run_time=0.2)
+            fast_out(self, t, lines_of(24, 33))
+            rt.group(self, "app", run_time=0.25)
             vo.wait_until("the Kubernetes objects")
-            rt.expand(self, "app", run_time=0.35)
+            rt.expand(self, "app", run_time=0.3)
             vo.wait_until("and plus 23 to create")
             rt.collapse(self, run_time=0.25)
             rt.grow(self, lag=0.3)
