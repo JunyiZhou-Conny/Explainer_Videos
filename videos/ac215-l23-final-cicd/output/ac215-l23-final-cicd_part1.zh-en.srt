@@ -429,13 +429,13 @@ this repo also runs plenty of shell commands.
 A playbook is a list of plays.
 
 87
-00:05:10,897 --> 00:05:13,708
-每个 play 写明它的 hosts
+00:05:10,897 --> 00:05:13,732
+每个 play 写明它的 hosts，也装着 task
 Each play names its hosts and holds tasks,
 
 88
-00:05:13,708 --> 00:05:15,825
-里面装着 task，每个 task 调用一个模块
+00:05:13,732 --> 00:05:15,825
+而每个 task 调用一个模块
 and each task calls one module.
 
 89
@@ -725,12 +725,12 @@ Line 36 mounts the Docker socket.
 
 146
 00:08:50,025 --> 00:08:53,189
-然后是 deployment 目录，挂在 /app
+然后是挂在 /app 的 deployment 目录、你的密钥
 Then the deployment folder at /app, your secrets,
 
 147
 00:08:53,189 --> 00:08:54,868
-再是你的密钥和三个应用目录
+再是三个应用目录
 and the three app folders.
 
 148
@@ -934,581 +934,571 @@ The API and the vector DB tool follow.
 Last, it saves the tag in a file: .docker-tag.
 
 188
-00:11:22,317 --> 00:11:24,458
-第 5 步：ansible-playbook
-Step 5: ansible-playbook
+00:11:22,317 --> 00:11:28,205
+第 5 步：ansible-playbook deploy-docker-images.yml
+Step 5: ansible-playbook deploy-docker-images.yml -i inventory.yml.
 
 189
-00:11:24,458 --> 00:11:28,205
-deploy-docker-images.yml -i inventory.yml
-deploy-docker-images.yml -i inventory.yml.
-
-190
 00:11:28,525 --> 00:11:29,867
 暂停一下，自己跑一遍
 Pause and run it.
 
-191
+190
 00:11:29,917 --> 00:11:35,336
 我们第一个真实的报错：在 ECR 登录这一步，安全令牌无效
 Our first real error: at the ECR login, the security token is invalid.
 
-192
+191
 00:11:35,656 --> 00:11:40,669
 第二行是第一行导致的：docker login 收到的是一个空密码
 The second line follows from the first: docker login received an empty password.
 
-193
+192
 00:11:40,989 --> 00:11:42,805
 这次的 recap 显示 failed 为 1
 The recap says failed, 1.
 
-194
+193
 00:11:43,000 --> 00:11:44,983
 额外检查：一个 image 都没构建出来
 Extra: no image was built.
 
-195
+194
 00:11:45,283 --> 00:11:48,462
 笔记本上仍然只有工具箱容器和它的基础 image
 The laptop still holds only the toolbox and its base.
 
-196
+195
 00:11:48,700 --> 00:11:51,059
 用你的密钥，11 个 task 全部会运行
 With your keys, all 11 tasks run:
 
-197
+196
 00:11:51,059 --> 00:11:54,275
 三个 image 在你的笔记本上构建好并 push 上去
 three images built on your laptop and pushed,
 
-198
+197
 00:11:54,275 --> 00:11:56,849
 你的 tag 写进 .docker-tag
 and your tag written to .docker-tag.
 
-199
+198
 00:11:57,169 --> 00:11:59,474
 找一下 failed 为 0，就在 recap 里
 Look for failed, zero, in the recap.
 
-200
+199
 00:11:59,717 --> 00:12:02,682
 最后一个 task 是 docker system prune -a
 The last task is docker system prune -a.
 
-201
+200
 00:12:03,002 --> 00:12:06,992
 没有 -f，它会提问，得不到回答，于是什么都不删
 Without -f, it asks, gets no answer, and removes nothing.
 
-202
+201
 00:12:07,312 --> 00:12:10,420
 每次 push 都会在 ECR 里多存三个 image
 Every push stores three more images in ECR,
 
-203
+202
 00:12:10,420 --> 00:12:12,517
 而且没有任何东西删除旧的 tag
 and nothing deletes old tags.
 
-204
+203
 00:12:14,267 --> 00:12:19,408
 第 6 步从 localhost 出发，通过 AWS 的 API 创建服务器
 Step 6 creates the server from localhost, through the AWS API.
 
-205
+204
 00:12:19,728 --> 00:12:25,542
 首先是一个安全组，port 22、80 和 443 对所有人开放
 First, a security group with ports 22, 80 and 443 open to anyone,
 
-206
+205
 00:12:25,542 --> 00:12:27,600
 再加一块 50 GB 的磁盘
 and a 50 gigabyte disk.
 
-207
+206
 00:12:27,920 --> 00:12:29,639
 然后是一个 t2.large 实例
 Then a t2.large instance
 
-208
+207
 00:12:29,639 --> 00:12:33,723
 用的是你的密钥对，还自带两块 100 GB 的磁盘
 with your key pair and two 100 gigabyte disks of its own.
 
-209
+208
 00:12:34,043 --> 00:12:37,286
 最后，它尝试把那块 50 GB 的磁盘附加上去
 Last, it tries to attach the 50 gigabyte disk.
 
-210
+209
 00:12:37,534 --> 00:12:39,242
 从这里开始，就开始计费了
 From here, the meter runs:
 
-211
+210
 00:12:39,242 --> 00:12:44,894
 实例按小时计费，直到你终止它，还有它的磁盘和公有 IP 地址
 the instance by the hour until you terminate it, its disks, and its public IP address.
 
-212
+211
 00:12:45,934 --> 00:12:47,598
 暂停一下，跑第 6 步
 Pause and run step 6.
 
-213
-00:12:47,918 --> 00:12:50,575
+212
+00:12:47,918 --> 00:12:50,616
 Gathering Facts 能通过，接着就失败了
-Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
+Gathering facts works, then it fails:
+
+213
+00:12:50,616 --> 00:12:55,065
+AWS 无法验证所提供的访问凭据
+AWS was not able to validate the provided access credentials.
 
 214
-00:12:50,575 --> 00:12:52,642
-AWS was not able to validate
-Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
-
-215
-00:12:52,642 --> 00:12:55,065
-the provided access credentials
-Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
-
-216
 00:12:55,385 --> 00:12:58,734
 用真实的密钥时，留意那个没测试过的附加 task
 With real keys, watch the untested attach task.
 
-217
+215
 00:12:59,054 --> 00:13:03,512
 如果它失败了，服务器照样能用；清理的时候把那块备用磁盘删掉
 If it fails, the server still works; delete that spare disk when you clean up.
 
-218
+216
 00:13:03,750 --> 00:13:06,203
 说明一点：这个标题写的是 GCP
 A kind note: the heading says GCP;
 
+217
+00:13:06,203 --> 00:13:09,999
+它是从 Google Cloud 版的 README 里带过来的。第 7 步
+it came over from the Google Cloud README. Step 7:
+
+218
+00:13:09,999 --> 00:13:16,390
+把你实例的公有 IP 地址从 EC2 控制台复制进 inventory
+copy the public IP address of your instance from the EC2 console into the inventory,
+
 219
-00:13:06,203 --> 00:13:09,233
-它是从 Google Cloud 版的 README 里带过来的
-it came over from the Google Cloud README.
-
-220
-00:13:09,467 --> 00:13:15,464
-第 7 步：从 EC2 控制台复制你实例的公有 IP 地址
-Step 7: copy the public IP address of your instance from the EC2 console into the inventory,
-
-221
-00:13:15,464 --> 00:13:18,064
-填进 inventory，放在 appserver 的 hosts 下面
+00:13:16,390 --> 00:13:18,064
+放在 appserver 的 hosts 下面
 under appserver hosts.
 
-222
+220
 00:13:18,384 --> 00:13:20,176
 我们填的是一个占位名
 Ours is a placeholder name.
 
-223
+221
 00:13:20,417 --> 00:13:23,937
 有一个小疏漏：第 9 步的换密钥现在就得做
 A small slip: the key switch of step 9 is needed now.
 
-224
+222
 00:13:24,257 --> 00:13:27,414
 暂停一下，注释掉第 4 行，打开第 7 行
 Pause, comment out line 4 and turn on line 7.
 
-225
+223
 00:13:27,734 --> 00:13:34,561
 它读的是 /secrets/ac215_2024.pem：必须正好是这个名字
 It reads /secrets/ac215_2024.pem: that exact name.
 
-226
+224
 00:13:34,881 --> 00:13:37,484
 第 4 行的密钥不在你的工具箱容器里
 The key on line 4 isn't in your toolbox.
 
-227
+225
 00:13:37,734 --> 00:13:39,170
 第 8 步：暂停一下
 Step 8: pause and run
 
-228
+226
 00:13:39,170 --> 00:13:42,385
 运行 ansible-playbook deploy-provision-instance.yml
 ansible-playbook deploy-provision-instance.yml.
 
-229
+227
 00:13:42,705 --> 00:13:43,705
 UNREACHABLE
 Unreachable:
 
-230
+228
 00:13:43,705 --> 00:13:47,654
 Could not resolve hostname external IP，这是我们的占位符
 could not resolve hostname EXTERNAL_IP, our placeholder.
 
-231
+229
 00:13:47,974 --> 00:13:51,707
 在你的服务器上，Ansible 以 ubuntu 身份登录，用你的密钥
 On yours, Ansible logs in as ubuntu, with your key.
 
-232
+230
 00:13:52,027 --> 00:13:53,729
 主机密钥检查是关闭的
 Host key checking is off,
 
-233
+231
 00:13:53,729 --> 00:13:56,998
 所以新服务器会被无条件信任：这是一个取舍
 so a new server is trusted blindly: a trade-off.
 
-234
+232
 00:13:57,234 --> 00:14:00,891
 在真实的服务器上，38 个 task 会安装 Docker
 On a real server, 38 tasks install Docker,
 
-235
+233
 00:14:00,891 --> 00:14:05,767
 然后格式化第二块磁盘，把它挂载到 /mnt/disk-1
 then format the second disk and mount it at /mnt/disk-1.
 
-236
+234
 00:14:06,087 --> 00:14:11,641
 它们会安装 AWS 命令行，再用你的密钥运行 aws configure
 They install the AWS command line and run aws configure with your keys:
 
-237
+235
 00:14:11,641 --> 00:14:14,770
 你的徽章现在在服务器上有了一份副本
 your badge now has a copy on the server.
 
-238
+236
 00:14:16,517 --> 00:14:19,589
 第 9 步：换密钥，已经在第 8 步之前做过了
 Step 9: the key switch, done before step 8.
 
-239
+237
 00:14:20,217 --> 00:14:22,436
 在你运行第 10 步之前，有两个额外步骤
 Two extras before you run step 10.
 
-240
+238
 00:14:22,756 --> 00:14:26,042
 这个 playbook 用 latest 这个 tag 启动 Chroma
 The playbook starts Chroma at the tag latest:
 
-241
+239
 00:14:26,042 --> 00:14:32,249
 录制时它是版本 1，对旧的 API 返回状态码 410 Gone
 at the time of recording, version 1, which answers the old API with status 410, gone.
 
-242
+240
 00:14:35,150 --> 00:14:37,867
 客户端和这个 repo 的 compose 文件都
 The clients and the repo's compose file
 
-243
+241
 00:14:37,867 --> 00:14:40,654
 pin 在一个更早的版本上，它返回 200
 pin an older version, which answers 200.
 
-244
+242
 00:14:40,974 --> 00:14:44,708
 所以先把第 151 行改成那个版本
 So change deploy-setup-containers.yml:151 to that version first.
 
-245
+243
 00:14:46,934 --> 00:14:49,872
 第二，加载器用的是 docker run -it
 Second, the loader uses docker run -it,
 
-246
+244
 00:14:49,872 --> 00:14:52,886
 没有终端的话 Docker 会拒绝
 which Docker refuses without a terminal.
 
-247
+245
 00:14:53,206 --> 00:14:56,634
 我们没法测试 Ansible 会不会提供一个终端
 We couldn't test whether Ansible provides one;
 
-248
+246
 00:14:56,634 --> 00:14:58,795
 如果那个 task 失败了，就去掉 -it
 if that task fails, drop -it.
 
-249
+247
 00:14:59,034 --> 00:15:02,618
 第 10 步：ansible-playbook deploy-setup-containers.yml
 Step 10: ansible-playbook deploy-setup-containers.yml.
 
-250
+248
 00:15:02,938 --> 00:15:04,360
 暂停一下，自己跑一遍
 Pause and run it.
 
-251
+249
 00:15:04,410 --> 00:15:07,133
 我们的是 UNREACHABLE，原因一样
 Ours is unreachable, for the same reason;
 
-252
+250
 00:15:07,133 --> 00:15:09,658
 下面是它在真实服务器上做的事
 here is what it does on a real server.
 
-253
+251
 00:15:09,900 --> 00:15:13,331
 它把你的密钥写进一个只有 root 能打开的文件
 It writes your keys to a file only root can open,
 
-254
+252
 00:15:13,331 --> 00:15:15,292
 这是服务器上的第二份副本
 a second copy on the server,
 
-255
+253
 00:15:15,292 --> 00:15:19,564
 再把它们作为环境变量交给 API 的 container
 and hands them to the API container as environment variables.
 
-256
+254
 00:15:19,884 --> 00:15:22,783
 它创建一个 Docker 网络 appnetwork
 It creates a Docker network, appnetwork,
 
-257
+255
 00:15:22,783 --> 00:15:26,626
 在数据磁盘上建两个目录，再登录 ECR
 and two folders on the data disk, and logs in to ECR.
 
-258
+256
 00:15:26,867 --> 00:15:32,788
 然后它挑选 tag：工具箱容器环境里的 Docker tag 变量优先
 Then it picks the tag: a DOCKER_TAG variable in the toolbox's environment wins;
 
-259
+257
 00:15:32,788 --> 00:15:35,187
 否则就用 .docker-tag 文件
 otherwise, the .docker-tag file.
 
-260
+258
 00:15:35,507 --> 00:15:37,406
 从你的笔记本上跑，用的是这个文件
 From your laptop, it's the file.
 
+259
+00:15:37,650 --> 00:15:39,592
+它 pull 那三个 image
+It pulls the three images
+
+260
+00:15:39,592 --> 00:15:43,943
+前端起在 port 3000，Chroma 起在 8000
+and starts the frontend on port 3000 and Chroma on 8000.
+
 261
-00:15:37,650 --> 00:15:41,865
-它 pull 那三个 image，在 port 3000 上启动前端
-It pulls the three images and starts the frontend on port 3000 and Chroma on 8000.
-
-262
-00:15:41,865 --> 00:15:43,943
-在 8000 上启动 Chroma
-It pulls the three images and starts the frontend on port 3000 and Chroma on 8000.
-
-263
 00:15:44,263 --> 00:15:47,914
 一个一次性的 container 把向量数据库填好
 A throwaway container fills the vector database,
 
-264
+262
 00:15:47,914 --> 00:15:50,045
 然后 API 在 9000 上启动
 then the API starts on 9000.
 
-265
+263
 00:15:50,365 --> 00:15:52,776
 安全组让这些 port 保持关闭
 The security group keeps those ports shut.
 
-266
+264
 00:15:53,017 --> 00:15:55,556
 第 11 步：在服务器上四处看看
 Step 11: look around on the server.
 
-267
+265
 00:15:55,876 --> 00:15:58,785
 README 写 GCP console 的地方
 Where the README says GCP console,
 
-268
+266
 00:15:58,785 --> 00:16:01,523
 你就以 ubuntu 身份用你的密钥 SSH 进去
 use SSH as ubuntu with your key,
 
-269
+267
 00:16:01,523 --> 00:16:03,577
 或者用 EC2 Instance Connect
 or EC2 Instance Connect.
 
-270
+268
 00:16:03,897 --> 00:16:07,204
 然后列出 container、跟踪日志，或者开一个 shell
 Then list containers, follow logs, or open a shell.
 
-271
+269
 00:16:07,450 --> 00:16:10,031
 这是它们在我们笔记本上的样子，作为替身
 Here they are on our laptop, as a stand-in.
 
-272
+270
 00:16:10,351 --> 00:16:13,253
 表格里 image 那一列带着 tag：就在那里检查
 The image column carries the tag: check it there.
 
-273
+271
 00:16:13,573 --> 00:16:16,858
 其中 nginx 那几行要等下一步做完才管用
 The nginx lines work only after the next step.
 
-274
+272
 00:16:18,600 --> 00:16:25,171
 课上的路由：一个地址，/ 交给前端，/api/ 交给 API
 The lecture's routing: one address, / to the frontend, /api/ to the API.
 
-275
+273
 00:16:25,491 --> 00:16:28,010
 这里同样的结构放在一台机器上
 Here the same shape sits on one machine,
 
-276
+274
 00:16:28,010 --> 00:16:30,717
 Ingress 变成了一个 nginx container
 and the ingress becomes an nginx container.
 
-277
+275
 00:16:30,967 --> 00:16:35,511
 第 12 步说要创建 nginx.conf；它其实已经在 repo 里了
 Step 12 says create nginx.conf; it's already in the repo.
 
-278
+276
 00:16:35,831 --> 00:16:37,538
 它监听 port 80
 It listens on port 80.
 
-279
+277
 00:16:37,858 --> 00:16:43,059
 以 /api/ 开头的路径交给 9000 上的 API 服务
 Paths that start with /api/ go to the API service on 9000;
 
-280
+278
 00:16:43,059 --> 00:16:47,095
 其余的都交给 3000 上的前端
 everything else goes to the frontend on 3000.
 
-281
+279
 00:16:47,333 --> 00:16:52,112
 预测一下：浏览器向 nginx 请求 /api/newsletters
 Predict: the browser asks nginx for /api/newsletters.
 
-282
+280
 00:16:52,432 --> 00:16:54,992
 API 服务收到的是哪个路径？
 Which path does the API service receive?
 
-283
+281
 00:16:55,312 --> 00:16:57,659
 看第 37 行的最末尾
 Look at the very end of line 37.
 
-284
+282
 00:17:06,500 --> 00:17:08,100
 /newsletters
 /newsletters.
 
-285
+283
 00:17:08,164 --> 00:17:12,772
 Port 9000 后面那个结尾斜杠，会替换掉匹配到的前缀
 The trailing slash after port 9000 replaces the matched prefix.
 
-286
+284
 00:17:13,092 --> 00:17:15,980
 我们笔记本上的替身证实了这一点
 Our stand-ins on the laptop confirm it,
 
-287
+285
 00:17:15,980 --> 00:17:19,535
 而不带最后那个斜杠的 /api 会得到一个重定向
 and /api without its last slash gets a redirect.
 
-288
+286
 00:17:21,433 --> 00:17:24,486
 前端在同一个主机上调用 /api
 The frontend calls /api on the same host,
 
-289
+287
 00:17:24,486 --> 00:17:28,879
 而 API 注册路由时不带这个前缀：两边对得上
 and the API mounts its routes without the prefix: they fit.
 
-290
+288
 00:17:29,233 --> 00:17:30,819
 第 13 步：暂停一下
 Step 13: pause and run
 
-291
+289
 00:17:30,819 --> 00:17:33,990
 运行 ansible-playbook deploy-setup-webserver.yml
 ansible-playbook deploy-setup-webserver.yml.
 
-292
+290
 00:17:34,310 --> 00:17:35,910
 又是 UNREACHABLE
 Unreachable again.
 
-293
+291
 00:17:35,974 --> 00:17:39,087
 在真实的服务器上，它会拷贝配置
 On a real server, it copies the config,
 
-294
+292
 00:17:39,087 --> 00:17:43,079
 在 port 80 和 443 上启动 nginx，再重启它
 starts nginx on ports 80 and 443, and restarts it.
 
-295
+293
 00:17:43,317 --> 00:17:46,794
 第 14 步：在浏览器里打开你服务器的地址
 Step 14: open your server's address in a browser.
 
-296
+294
 00:17:47,114 --> 00:17:48,992
 真正干活的只有 port 80
 Only port 80 does the work.
 
-297
+295
 00:17:49,312 --> 00:17:53,046
 Port 443 是开着的，也转发给了 nginx
 Port 443 is open and forwarded to nginx,
 
-298
+296
 00:17:53,046 --> 00:17:57,247
 但 nginx 在那里什么都不提供：还没有 HTTPS
 but nginx serves nothing there: no HTTPS yet.
 
-299
+297
 00:17:57,483 --> 00:18:01,664
 这就是第 1 部分：大约十几条命令和五个 playbook，全部手动
 That's part 1: about a dozen commands and five playbooks, by hand.
 
-300
+298
 00:18:01,984 --> 00:18:04,991
-如果你就停在这里，今天就在 EC2 控制台里终止实例
+如果你就停在这里，那就终止实例
 If you stop here, terminate the instance
 
-301
-00:18:04,991 --> 00:18:06,946
-并删掉它那个 50 GB 的 volume
-and delete its 50 gigabyte
+299
+00:18:04,991 --> 00:18:09,427
+删掉它那个 50 GB 的 volume，在 EC2 控制台里今天就做
+and delete its 50 gigabyte volume in the EC2 console today:
 
-302
-00:18:06,946 --> 00:18:13,035
+300
+00:18:09,427 --> 00:18:13,035
 README 的删除步骤会失败，第 2 部分会讲到
-volume in the EC2 console today: the README's delete step fails, as part 2 shows.
+the README's delete step fails, as part 2 shows.
 
-303
+301
 00:18:13,355 --> 00:18:16,086
 接下来，由一条 commit 信息来完成重新部署
 Next, a commit message does the redeploy.

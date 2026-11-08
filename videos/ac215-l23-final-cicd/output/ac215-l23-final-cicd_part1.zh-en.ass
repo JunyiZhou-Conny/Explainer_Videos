@@ -98,8 +98,8 @@ Dialogue: 0,0:05:00.12,0:05:02.57,Bilingual,,0,0,0,,对象是 inventory 里的�
 Dialogue: 0,0:05:02.89,0:05:05.40,Bilingual,,0,0,0,,它的很多模块描述的是一个状态\N{\fs33\c&H00C8C0B8&\bord1.4}Many of its modules describe a state;
 Dialogue: 0,0:05:05.40,0:05:08.45,Bilingual,,0,0,0,,这个 repo 也跑了不少 shell 命令\N{\fs33\c&H00C8C0B8&\bord1.4}this repo also runs plenty of shell commands.
 Dialogue: 0,0:05:08.70,0:05:10.58,Bilingual,,0,0,0,,一个 playbook 就是一串 play\N{\fs33\c&H00C8C0B8&\bord1.4}A playbook is a list of plays.
-Dialogue: 0,0:05:10.90,0:05:13.71,Bilingual,,0,0,0,,每个 play 写明它的 hosts\N{\fs33\c&H00C8C0B8&\bord1.4}Each play names its hosts and holds tasks,
-Dialogue: 0,0:05:13.71,0:05:15.82,Bilingual,,0,0,0,,里面装着 task，每个 task 调用一个模块\N{\fs33\c&H00C8C0B8&\bord1.4}and each task calls one module.
+Dialogue: 0,0:05:10.90,0:05:13.73,Bilingual,,0,0,0,,每个 play 写明它的 hosts，也装着 task\N{\fs33\c&H00C8C0B8&\bord1.4}Each play names its hosts and holds tasks,
+Dialogue: 0,0:05:13.73,0:05:15.82,Bilingual,,0,0,0,,而每个 task 调用一个模块\N{\fs33\c&H00C8C0B8&\bord1.4}and each task calls one module.
 Dialogue: 0,0:05:16.14,0:05:19.16,Bilingual,,0,0,0,,其中 hosts 这一行决定 task 在哪里运行\N{\fs33\c&H00C8C0B8&\bord1.4}The hosts line decides where tasks run:
 Dialogue: 0,0:05:19.16,0:05:21.95,Bilingual,,0,0,0,,localhost 表示在你的工具箱容器里\N{\fs33\c&H00C8C0B8&\bord1.4}localhost means inside your toolbox;
 Dialogue: 0,0:05:21.95,0:05:25.04,Bilingual,,0,0,0,,appserver 表示在服务器上，通过 SSH\N{\fs33\c&H00C8C0B8&\bord1.4}appserver means on the server, over SSH.
@@ -157,8 +157,8 @@ Dialogue: 0,0:08:36.95,0:08:40.39,Bilingual,,0,0,0,,四个 AWS 变量也都设�
 Dialogue: 0,0:08:40.71,0:08:42.89,Bilingual,,0,0,0,,暂停一下，自己走到这个提示符\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and get to this prompt yourself.
 Dialogue: 0,0:08:45.03,0:08:46.76,Bilingual,,0,0,0,,工具箱容器是怎么启动的？\N{\fs33\c&H00C8C0B8&\bord1.4}How was the toolbox started?
 Dialogue: 0,0:08:47.08,0:08:49.71,Bilingual,,0,0,0,,第 36 行挂载了 Docker socket\N{\fs33\c&H00C8C0B8&\bord1.4}Line 36 mounts the Docker socket.
-Dialogue: 0,0:08:50.03,0:08:53.19,Bilingual,,0,0,0,,然后是 deployment 目录，挂在 /app\N{\fs33\c&H00C8C0B8&\bord1.4}Then the deployment folder at /app, your secrets,
-Dialogue: 0,0:08:53.19,0:08:54.87,Bilingual,,0,0,0,,再是你的密钥和三个应用目录\N{\fs33\c&H00C8C0B8&\bord1.4}and the three app folders.
+Dialogue: 0,0:08:50.03,0:08:53.19,Bilingual,,0,0,0,,然后是挂在 /app 的 deployment 目录、你的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Then the deployment folder at /app, your secrets,
+Dialogue: 0,0:08:53.19,0:08:54.87,Bilingual,,0,0,0,,再是三个应用目录\N{\fs33\c&H00C8C0B8&\bord1.4}and the three app folders.
 Dialogue: 0,0:08:55.19,0:09:00.01,Bilingual,,0,0,0,,第 43 到 46 行把你的密钥作为环境变量传进去\N{\fs33\c&H00C8C0B8&\bord1.4}Lines 43 to 46 hand in your keys as environment variables.
 Dialogue: 0,0:09:00.25,0:09:01.52,Bilingual,,0,0,0,,想一想\N{\fs33\c&H00C8C0B8&\bord1.4}A question.
 Dialogue: 0,0:09:01.57,0:09:05.65,Bilingual,,0,0,0,,在工具箱容器里，Ansible 为前端运行 docker build\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the toolbox, Ansible runs docker build for the frontend.
@@ -199,8 +199,7 @@ Dialogue: 0,0:11:08.28,0:11:11.74,Bilingual,,0,0,0,,用的是 /frontend-react，
 Dialogue: 0,0:11:11.74,0:11:14.74,Bilingual,,0,0,0,,用这个 tag 给 image 命名，再 push 上去\N{\fs33\c&H00C8C0B8&\bord1.4}names the image with that tag, and pushes it.
 Dialogue: 0,0:11:15.06,0:11:18.11,Bilingual,,0,0,0,,API 和向量数据库工具紧随其后\N{\fs33\c&H00C8C0B8&\bord1.4}The API and the vector DB tool follow.
 Dialogue: 0,0:11:18.43,0:11:22.08,Bilingual,,0,0,0,,最后，它把 tag 存进一个文件：.docker-tag\N{\fs33\c&H00C8C0B8&\bord1.4}Last, it saves the tag in a file: .docker-tag.
-Dialogue: 0,0:11:22.32,0:11:24.46,Bilingual,,0,0,0,,第 5 步：ansible-playbook\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: ansible-playbook
-Dialogue: 0,0:11:24.46,0:11:28.20,Bilingual,,0,0,0,,deploy-docker-images.yml -i inventory.yml\N{\fs33\c&H00C8C0B8&\bord1.4}deploy-docker-images.yml -i inventory.yml.
+Dialogue: 0,0:11:22.32,0:11:28.20,Bilingual,,0,0,0,,第 5 步：ansible-playbook deploy-docker-images.yml\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: ansible-playbook deploy-docker-images.yml -i inventory.yml.
 Dialogue: 0,0:11:28.52,0:11:29.87,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
 Dialogue: 0,0:11:29.92,0:11:35.34,Bilingual,,0,0,0,,我们第一个真实的报错：在 ECR 登录这一步，安全令牌无效\N{\fs33\c&H00C8C0B8&\bord1.4}Our first real error: at the ECR login, the security token is invalid.
 Dialogue: 0,0:11:35.66,0:11:40.67,Bilingual,,0,0,0,,第二行是第一行导致的：docker login 收到的是一个空密码\N{\fs33\c&H00C8C0B8&\bord1.4}The second line follows from the first: docker login received an empty password.
@@ -224,15 +223,14 @@ Dialogue: 0,0:12:34.04,0:12:37.29,Bilingual,,0,0,0,,最后，它尝试把那块 
 Dialogue: 0,0:12:37.53,0:12:39.24,Bilingual,,0,0,0,,从这里开始，就开始计费了\N{\fs33\c&H00C8C0B8&\bord1.4}From here, the meter runs:
 Dialogue: 0,0:12:39.24,0:12:44.89,Bilingual,,0,0,0,,实例按小时计费，直到你终止它，还有它的磁盘和公有 IP 地址\N{\fs33\c&H00C8C0B8&\bord1.4}the instance by the hour until you terminate it, its disks, and its public IP address.
 Dialogue: 0,0:12:45.93,0:12:47.60,Bilingual,,0,0,0,,暂停一下，跑第 6 步\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run step 6.
-Dialogue: 0,0:12:47.92,0:12:50.58,Bilingual,,0,0,0,,Gathering Facts 能通过，接着就失败了\N{\fs33\c&H00C8C0B8&\bord1.4}Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
-Dialogue: 0,0:12:50.58,0:12:52.64,Bilingual,,0,0,0,,AWS was not able to validate\N{\fs33\c&H00C8C0B8&\bord1.4}Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
-Dialogue: 0,0:12:52.64,0:12:55.06,Bilingual,,0,0,0,,the provided access credentials\N{\fs33\c&H00C8C0B8&\bord1.4}Gathering facts works, then it fails: AWS was not able to validate the provided access credentials.
+Dialogue: 0,0:12:47.92,0:12:50.62,Bilingual,,0,0,0,,Gathering Facts 能通过，接着就失败了\N{\fs33\c&H00C8C0B8&\bord1.4}Gathering facts works, then it fails:
+Dialogue: 0,0:12:50.62,0:12:55.06,Bilingual,,0,0,0,,AWS 无法验证所提供的访问凭据\N{\fs33\c&H00C8C0B8&\bord1.4}AWS was not able to validate the provided access credentials.
 Dialogue: 0,0:12:55.38,0:12:58.73,Bilingual,,0,0,0,,用真实的密钥时，留意那个没测试过的附加 task\N{\fs33\c&H00C8C0B8&\bord1.4}With real keys, watch the untested attach task.
 Dialogue: 0,0:12:59.05,0:13:03.51,Bilingual,,0,0,0,,如果它失败了，服务器照样能用；清理的时候把那块备用磁盘删掉\N{\fs33\c&H00C8C0B8&\bord1.4}If it fails, the server still works; delete that spare disk when you clean up.
 Dialogue: 0,0:13:03.75,0:13:06.20,Bilingual,,0,0,0,,说明一点：这个标题写的是 GCP\N{\fs33\c&H00C8C0B8&\bord1.4}A kind note: the heading says GCP;
-Dialogue: 0,0:13:06.20,0:13:09.23,Bilingual,,0,0,0,,它是从 Google Cloud 版的 README 里带过来的\N{\fs33\c&H00C8C0B8&\bord1.4}it came over from the Google Cloud README.
-Dialogue: 0,0:13:09.47,0:13:15.46,Bilingual,,0,0,0,,第 7 步：从 EC2 控制台复制你实例的公有 IP 地址\N{\fs33\c&H00C8C0B8&\bord1.4}Step 7: copy the public IP address of your instance from the EC2 console into the inventory,
-Dialogue: 0,0:13:15.46,0:13:18.06,Bilingual,,0,0,0,,填进 inventory，放在 appserver 的 hosts 下面\N{\fs33\c&H00C8C0B8&\bord1.4}under appserver hosts.
+Dialogue: 0,0:13:06.20,0:13:10.00,Bilingual,,0,0,0,,它是从 Google Cloud 版的 README 里带过来的。第 7 步\N{\fs33\c&H00C8C0B8&\bord1.4}it came over from the Google Cloud README. Step 7:
+Dialogue: 0,0:13:10.00,0:13:16.39,Bilingual,,0,0,0,,把你实例的公有 IP 地址从 EC2 控制台复制进 inventory\N{\fs33\c&H00C8C0B8&\bord1.4}copy the public IP address of your instance from the EC2 console into the inventory,
+Dialogue: 0,0:13:16.39,0:13:18.06,Bilingual,,0,0,0,,放在 appserver 的 hosts 下面\N{\fs33\c&H00C8C0B8&\bord1.4}under appserver hosts.
 Dialogue: 0,0:13:18.38,0:13:20.18,Bilingual,,0,0,0,,我们填的是一个占位名\N{\fs33\c&H00C8C0B8&\bord1.4}Ours is a placeholder name.
 Dialogue: 0,0:13:20.42,0:13:23.94,Bilingual,,0,0,0,,有一个小疏漏：第 9 步的换密钥现在就得做\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the key switch of step 9 is needed now.
 Dialogue: 0,0:13:24.26,0:13:27.41,Bilingual,,0,0,0,,暂停一下，注释掉第 4 行，打开第 7 行\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, comment out line 4 and turn on line 7.
@@ -272,8 +270,8 @@ Dialogue: 0,0:15:22.78,0:15:26.63,Bilingual,,0,0,0,,在数据磁盘上建两个�
 Dialogue: 0,0:15:26.87,0:15:32.79,Bilingual,,0,0,0,,然后它挑选 tag：工具箱容器环境里的 Docker tag 变量优先\N{\fs33\c&H00C8C0B8&\bord1.4}Then it picks the tag: a DOCKER_TAG variable in the toolbox's environment wins;
 Dialogue: 0,0:15:32.79,0:15:35.19,Bilingual,,0,0,0,,否则就用 .docker-tag 文件\N{\fs33\c&H00C8C0B8&\bord1.4}otherwise, the .docker-tag file.
 Dialogue: 0,0:15:35.51,0:15:37.41,Bilingual,,0,0,0,,从你的笔记本上跑，用的是这个文件\N{\fs33\c&H00C8C0B8&\bord1.4}From your laptop, it's the file.
-Dialogue: 0,0:15:37.65,0:15:41.86,Bilingual,,0,0,0,,它 pull 那三个 image，在 port 3000 上启动前端\N{\fs33\c&H00C8C0B8&\bord1.4}It pulls the three images and starts the frontend on port 3000 and Chroma on 8000.
-Dialogue: 0,0:15:41.86,0:15:43.94,Bilingual,,0,0,0,,在 8000 上启动 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}It pulls the three images and starts the frontend on port 3000 and Chroma on 8000.
+Dialogue: 0,0:15:37.65,0:15:39.59,Bilingual,,0,0,0,,它 pull 那三个 image\N{\fs33\c&H00C8C0B8&\bord1.4}It pulls the three images
+Dialogue: 0,0:15:39.59,0:15:43.94,Bilingual,,0,0,0,,前端起在 port 3000，Chroma 起在 8000\N{\fs33\c&H00C8C0B8&\bord1.4}and starts the frontend on port 3000 and Chroma on 8000.
 Dialogue: 0,0:15:44.26,0:15:47.91,Bilingual,,0,0,0,,一个一次性的 container 把向量数据库填好\N{\fs33\c&H00C8C0B8&\bord1.4}A throwaway container fills the vector database,
 Dialogue: 0,0:15:47.91,0:15:50.04,Bilingual,,0,0,0,,然后 API 在 9000 上启动\N{\fs33\c&H00C8C0B8&\bord1.4}then the API starts on 9000.
 Dialogue: 0,0:15:50.36,0:15:52.78,Bilingual,,0,0,0,,安全组让这些 port 保持关闭\N{\fs33\c&H00C8C0B8&\bord1.4}The security group keeps those ports shut.
@@ -311,7 +309,7 @@ Dialogue: 0,0:17:47.11,0:17:48.99,Bilingual,,0,0,0,,真正干活的只有 port 8
 Dialogue: 0,0:17:49.31,0:17:53.05,Bilingual,,0,0,0,,Port 443 是开着的，也转发给了 nginx\N{\fs33\c&H00C8C0B8&\bord1.4}Port 443 is open and forwarded to nginx,
 Dialogue: 0,0:17:53.05,0:17:57.25,Bilingual,,0,0,0,,但 nginx 在那里什么都不提供：还没有 HTTPS\N{\fs33\c&H00C8C0B8&\bord1.4}but nginx serves nothing there: no HTTPS yet.
 Dialogue: 0,0:17:57.48,0:18:01.66,Bilingual,,0,0,0,,这就是第 1 部分：大约十几条命令和五个 playbook，全部手动\N{\fs33\c&H00C8C0B8&\bord1.4}That's part 1: about a dozen commands and five playbooks, by hand.
-Dialogue: 0,0:18:01.98,0:18:04.99,Bilingual,,0,0,0,,如果你就停在这里，今天就在 EC2 控制台里终止实例\N{\fs33\c&H00C8C0B8&\bord1.4}If you stop here, terminate the instance
-Dialogue: 0,0:18:04.99,0:18:06.95,Bilingual,,0,0,0,,并删掉它那个 50 GB 的 volume\N{\fs33\c&H00C8C0B8&\bord1.4}and delete its 50 gigabyte
-Dialogue: 0,0:18:06.95,0:18:13.03,Bilingual,,0,0,0,,README 的删除步骤会失败，第 2 部分会讲到\N{\fs33\c&H00C8C0B8&\bord1.4}volume in the EC2 console today: the README's delete step fails, as part 2 shows.
+Dialogue: 0,0:18:01.98,0:18:04.99,Bilingual,,0,0,0,,如果你就停在这里，那就终止实例\N{\fs33\c&H00C8C0B8&\bord1.4}If you stop here, terminate the instance
+Dialogue: 0,0:18:04.99,0:18:09.43,Bilingual,,0,0,0,,删掉它那个 50 GB 的 volume，在 EC2 控制台里今天就做\N{\fs33\c&H00C8C0B8&\bord1.4}and delete its 50 gigabyte volume in the EC2 console today:
+Dialogue: 0,0:18:09.43,0:18:13.03,Bilingual,,0,0,0,,README 的删除步骤会失败，第 2 部分会讲到\N{\fs33\c&H00C8C0B8&\bord1.4}the README's delete step fails, as part 2 shows.
 Dialogue: 0,0:18:13.35,0:18:16.09,Bilingual,,0,0,0,,接下来，由一条 commit 信息来完成重新部署\N{\fs33\c&H00C8C0B8&\bord1.4}Next, a commit message does the redeploy.

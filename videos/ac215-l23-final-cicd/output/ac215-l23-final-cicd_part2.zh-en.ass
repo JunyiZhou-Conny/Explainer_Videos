@@ -94,8 +94,8 @@ Dialogue: 0,0:04:34.94,0:04:38.51,Bilingual,,0,0,0,,我们没测试过：runner 
 Dialogue: 0,0:04:38.75,0:04:42.60,Bilingual,,0,0,0,,接下来，用日期生成一个新的 tag，写进 .docker-tag\N{\fs33\c&H00C8C0B8&\bord1.4}Next, a fresh tag from the date, written to .docker-tag
 Dialogue: 0,0:04:42.60,0:04:45.47,Bilingual,,0,0,0,,也写进一个 GitHub 在步骤之间保留的文件\N{\fs33\c&H00C8C0B8&\bord1.4}and to a file GitHub keeps between steps.
 Dialogue: 0,0:04:45.79,0:04:48.07,Bilingual,,0,0,0,,手动跑一下，它给出的是一个时间戳\N{\fs33\c&H00C8C0B8&\bord1.4}Run by hand, it gives a timestamp.
-Dialogue: 0,0:04:48.68,0:04:53.04,Bilingual,,0,0,0,,然后对前端就是普通的 docker build、docker tag\N{\fs33\c&H00C8C0B8&\bord1.4}Then plain docker build, docker tag and docker push for the frontend,
-Dialogue: 0,0:04:53.04,0:04:55.45,Bilingual,,0,0,0,,和 docker push，另外两个 image 也一样\N{\fs33\c&H00C8C0B8&\bord1.4}and the same for the other two images.
+Dialogue: 0,0:04:48.68,0:04:53.04,Bilingual,,0,0,0,,然后前端用普通的 docker build、docker tag 和 docker push\N{\fs33\c&H00C8C0B8&\bord1.4}Then plain docker build, docker tag and docker push for the frontend,
+Dialogue: 0,0:04:53.04,0:04:55.45,Bilingual,,0,0,0,,另外两个 image 也一样\N{\fs33\c&H00C8C0B8&\bord1.4}and the same for the other two images.
 Dialogue: 0,0:04:55.77,0:04:59.63,Bilingual,,0,0,0,,在 CI 里，构建应用 image 的是 runner，不是 playbook\N{\fs33\c&H00C8C0B8&\bord1.4}In CI, the runner builds the app images, not the playbook.
 Dialogue: 0,0:04:59.87,0:05:01.79,Bilingual,,0,0,0,,所以工具箱容器只负责部署\N{\fs33\c&H00C8C0B8&\bord1.4}So the toolbox only deploys.
 Dialogue: 0,0:05:02.11,0:05:05.58,Bilingual,,0,0,0,,和你的笔记本相比：同一个工具箱容器，同一个 socket\N{\fs33\c&H00C8C0B8&\bord1.4}Compared with your laptop: same toolbox, same socket.
@@ -132,16 +132,16 @@ Dialogue: 0,0:06:44.93,0:06:47.17,Bilingual,,0,0,0,,CI 部署的是 commit 进�
 Dialogue: 0,0:06:47.49,0:06:50.96,Bilingual,,0,0,0,,撤销第 9 步：打开第 4 行，关掉第 7 行\N{\fs33\c&H00C8C0B8&\bord1.4}Step 9 undone: line 4 on, line 7 off.
 Dialogue: 0,0:06:51.28,0:06:52.71,Bilingual,,0,0,0,,Helm 的修复\N{\fs33\c&H00C8C0B8&\bord1.4}The Helm fix.
 Dialogue: 0,0:06:52.76,0:06:54.09,Bilingual,,0,0,0,,Chroma 的 pin\N{\fs33\c&H00C8C0B8&\bord1.4}The Chroma pin.
-Dialogue: 0,0:06:54.14,0:06:58.44,Bilingual,,0,0,0,,执行 git add . 也会把你的账号 ID 和 NextAuth secret\N{\fs33\c&H00C8C0B8&\bord1.4}git add . also commits your account ID and NEXTAUTH_SECRET,
-Dialogue: 0,0:06:58.44,0:07:00.69,Bilingual,,0,0,0,,一起 commit 进去，所以 repo 要保持私有\N{\fs33\c&H00C8C0B8&\bord1.4}so keep the repository private.
+Dialogue: 0,0:06:54.14,0:06:58.44,Bilingual,,0,0,0,,git add . 也会 commit 你的账号 ID 和 NextAuth secret\N{\fs33\c&H00C8C0B8&\bord1.4}git add . also commits your account ID and NEXTAUTH_SECRET,
+Dialogue: 0,0:06:58.44,0:07:00.69,Bilingual,,0,0,0,,所以 repo 要保持私有\N{\fs33\c&H00C8C0B8&\bord1.4}so keep the repository private.
 Dialogue: 0,0:07:00.93,0:07:05.31,Bilingual,,0,0,0,,然后是课件上的三条命令，换上这个 repo 的关键词：git add .\N{\fs33\c&H00C8C0B8&\bord1.4}Then the slide's three commands, with this repo's keyword: git add .,
 Dialogue: 0,0:07:05.31,0:07:09.62,Bilingual,,0,0,0,,git commit -m 的信息里写上 /run-deploy-app，再 git push\N{\fs33\c&H00C8C0B8&\bord1.4}git commit -m "…" with /run-deploy-app in the message, and git push.
 Dialogue: 0,0:07:09.94,0:07:11.54,Bilingual,,0,0,0,,暂停一下，push\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and push.
 Dialogue: 0,0:07:16.52,0:07:20.05,Bilingual,,0,0,0,,一次绿色的 run，意思是每个跑过的步骤都以 0 退出\N{\fs33\c&H00C8C0B8&\bord1.4}A green run means every step that ran exited with zero,
 Dialogue: 0,0:07:20.05,0:07:21.65,Bilingual,,0,0,0,,并不代表应用能用\N{\fs33\c&H00C8C0B8&\bord1.4}not that the app works.
 Dialogue: 0,0:07:21.85,0:07:25.95,Bilingual,,0,0,0,,重新加载你的网站，再到服务器的 image 那一列里找新的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}Reload your site, and find the new tag in the server's image column.
-Dialogue: 0,0:07:26.18,0:07:31.07,Bilingual,,0,0,0,,用课上的话说：敲 /run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}In the lecture's words: is typing /run-deploy-app continuous delivery,
-Dialogue: 0,0:07:31.07,0:07:32.82,Bilingual,,0,0,0,,算持续交付，还是持续部署？\N{\fs33\c&H00C8C0B8&\bord1.4}or continuous deployment?
+Dialogue: 0,0:07:26.18,0:07:27.79,Bilingual,,0,0,0,,用课上的话说\N{\fs33\c&H00C8C0B8&\bord1.4}In the lecture's words:
+Dialogue: 0,0:07:27.79,0:07:32.82,Bilingual,,0,0,0,,敲 /run-deploy-app 算持续交付，还是持续部署？\N{\fs33\c&H00C8C0B8&\bord1.4}is typing /run-deploy-app continuous delivery, or continuous deployment?
 Dialogue: 0,0:07:33.14,0:07:34.74,Bilingual,,0,0,0,,怎样才能让它变成另一个？\N{\fs33\c&H00C8C0B8&\bord1.4}What would make it the other?
 Dialogue: 0,0:07:45.45,0:07:46.64,Bilingual,,0,0,0,,持续交付\N{\fs33\c&H00C8C0B8&\bord1.4}Delivery.
 Dialogue: 0,0:07:46.69,0:07:51.74,Bilingual,,0,0,0,,每次发布都由一个人敲关键词来决定，而且之前什么都没测试\N{\fs33\c&H00C8C0B8&\bord1.4}A person decides each release by typing the keyword, and nothing is tested first.
@@ -149,8 +149,7 @@ Dialogue: 0,0:07:52.06,0:07:53.97,Bilingual,,0,0,0,,把每次合并到 main 都�
 Dialogue: 0,0:07:53.97,0:07:59.00,Bilingual,,0,0,0,,前面挡着第 21 讲的测试，它就变成了持续部署\N{\fs33\c&H00C8C0B8&\bord1.4}behind the tests from lecture 21, and it becomes continuous deployment.
 Dialogue: 0,0:07:59.32,0:08:00.92,Bilingual,,0,0,0,,这就是 Milestone 5\N{\fs33\c&H00C8C0B8&\bord1.4}That is Milestone 5.
 Dialogue: 0,0:08:02.00,0:08:05.01,Bilingual,,0,0,0,,回到 README，看它的最后一步：删除\N{\fs33\c&H00C8C0B8&\bord1.4}Back to the README, for its last step: delete.
-Dialogue: 0,0:08:05.33,0:08:06.99,Bilingual,,0,0,0,,它跑的还是同一个 playbook\N{\fs33\c&H00C8C0B8&\bord1.4}It runs the same playbook with cluster_state=absent.
-Dialogue: 0,0:08:06.99,0:08:09.02,Bilingual,,0,0,0,,只是 cluster state 设为 absent\N{\fs33\c&H00C8C0B8&\bord1.4}It runs the same playbook with cluster_state=absent.
+Dialogue: 0,0:08:05.33,0:08:09.02,Bilingual,,0,0,0,,它跑的还是同一个 playbook，cluster state 设为 absent\N{\fs33\c&H00C8C0B8&\bord1.4}It runs the same playbook with cluster_state=absent.
 Dialogue: 0,0:08:09.34,0:08:10.94,Bilingual,,0,0,0,,看看那些 when 行\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the when: lines.
 Dialogue: 0,0:08:11.00,0:08:12.71,Bilingual,,0,0,0,,这三个 task 里，哪些会运行？\N{\fs33\c&H00C8C0B8&\bord1.4}Which of these three tasks run?
 Dialogue: 0,0:08:21.55,0:08:23.21,Bilingual,,0,0,0,,完全照着写的来跑\N{\fs33\c&H00C8C0B8&\bord1.4}Run it exactly as written.
@@ -215,6 +214,6 @@ Dialogue: 0,0:11:28.67,0:11:31.59,Bilingual,,0,0,0,,从 date 命令一直走到�
 Dialogue: 0,0:11:31.91,0:11:34.94,Bilingual,,0,0,0,,服务器怎么在变量和文件之间做选择？\N{\fs33\c&H00C8C0B8&\bord1.4}How does the server choose between the variable and the file?
 Dialogue: 0,0:11:35.18,0:11:37.10,Bilingual,,0,0,0,,第五：下面哪几个会触发部署？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: which of these deploy?
 Dialogue: 0,0:11:37.42,0:11:40.62,Bilingual,,0,0,0,,四条信息分别是 update readme、fix typo /run-tests\N{\fs33\c&H00C8C0B8&\bord1.4}Update readme, fix typo /run-tests,
-Dialogue: 0,0:11:40.62,0:11:45.10,Bilingual,,0,0,0,,大写的 /RUN-DEPLOY-APP，还有 \\run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}/RUN-DEPLOY-APP in capitals, and \\run-deploy-app.
+Dialogue: 0,0:11:40.62,0:11:45.10,Bilingual,,0,0,0,,大写的 /RUN-DEPLOY-APP，还有 \⁠run-deploy-app\N{\fs33\c&H00C8C0B8&\bord1.4}/RUN-DEPLOY-APP in capitals, and \⁠run-deploy-app.
 Dialogue: 0,0:11:45.42,0:11:47.96,Bilingual,,0,0,0,,还有，这条 pipeline 是持续交付还是持续部署？\N{\fs33\c&H00C8C0B8&\bord1.4}And is this pipeline delivery or deployment?
 Dialogue: 0,0:11:48.28,0:11:50.33,Bilingual,,0,0,0,,答案在练习里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises.
