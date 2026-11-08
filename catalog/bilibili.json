@@ -176,6 +176,11 @@
       "bvid": "BV1n6WH6ZEf3",
       "title": "AC215 第23讲跟练 · 最终部署与课程回顾：用 Ansible 把 Cheese App 部署到一台 EC2，再让一条 commit 自动重新部署",
       "pubdate": 1794149774
+    },
+    "ac215-l22-kubernetes-cloud": {
+      "bvid": "BV1DxWH6MEFL",
+      "title": "AC215 第22讲跟练 · 扩展：云上的 Kubernetes——先手动体验一个测试集群，再用 Pulumi 把奶酪 App 部署到 GKE",
+      "pubdate": 1794153465
     }
   },
   "unmatched": [
