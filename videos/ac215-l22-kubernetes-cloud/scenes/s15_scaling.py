@@ -1,6 +1,6 @@
 """S15 · Logs, then scaling at two levels (AC215 L22, the full follow-along). TRACKER [G] 1 → 4
-(beats 0-3), 4 · extra (beats 4-5), then the caption 'extra' alone (beats 6-10: the scaling half
-has no README step). Lecture: 22 · 18 (beat 5), 43 (beat 6).
+(beats 0-3), 4 · extra (beat 4), then (beats 5-10: the scaling half has no README step) the tracker
+gives way to a GREY breadcrumb 'extra · scaling (no README step)' in its corner. Lecture: 22 · 18 (beat 5), 43 (beat 6).
 
 Beats (script.md "## S15", one voiceover block each):
 0. TRACKER [G] 1. A 4-row 20 pt toolbox terminal on the stand-in (title 'laptop · toolbox ·
@@ -17,16 +17,17 @@ Beats (script.md "## S15", one voiceover block each):
    five lines one by one; 'cheese-app-namespace' flashes GREEN; a GREY chip "your pod's name" under
    the card points at 'xxxxx'; the GREY chip "drop -c wait-for-chromadb: the Job has one container";
    a YELLOW '▶ your turn'.
-3. TRACKER [G] 4 · extra. An 8-row stand-in terminal (row tags 'extra' and 'stand-in: kind, not GKE'
-   on the bar): `k60:1` (folds) → TERM(k60: 2–5, 8); `kubectl logs job/hello-job` → TERM(k61: 2–3);
+3. TRACKER [G] 4 · extra. A 10-row stand-in terminal (row tags 'extra' and 'stand-in: kind, not GKE'
+   on the bar): `k60:1` (folds) → TERM(k60: 2, 4–5, 8; the 'condition met' line is left out so
+   the command head stays on screen with its output); `kubectl logs job/hello-job` → TERM(k61: 2–3);
    `kubectl describe job hello-job` → TERM(k62: 18, 41–42 wrapped). Above it V4's Job cousin
    (ControllerLoop(job=True, name='hello-job', api=False)): the GREEN Job card emits one TEAL Pod that
    runs and turns 'Completed' GREY; on "done, one succeeded" 'done' and '1 Succeeded' flash; on
    "Nothing replaces" the finished Pod flashes and a GREY 'not replaced' appears under it.
-4. A GREY note (tag 'erratum'): CODE(setup_containers.py: 150) beside the GREY chip "today's chroma
-   image writes to /data", and under them a GREY line 'so the disk stays empty · after a vector-db
+4. A GREY note (tag 'erratum'): CODE(setup_containers.py: 150) and, with it, the GREY chip "today's
+   chroma image writes to /data" (flashes on "but today's Chroma image"; both hold 2 s), and under them a GREY line 'so the disk stays empty · after a vector-db
    restart, run the loader Job again'. Fade.
-5. Tracker caption 'extra'. LECTURE 22 · 18. A GREY card 'the lecture: scale by CPU, memory, custom
+5. The tracker leaves for the breadcrumb 'extra · scaling (no README step)'. LECTURE 22 · 18. A GREY card 'the lecture: scale by CPU, memory, custom
    metrics'; under it the GREY README heading card (README.md · line 392) 'Deployment with Scaling
    using Kubernetes', 'Scaling' YELLOW, tag 'erratum', and two RED crosses 'no replicas' · 'no Pod
    autoscaler'; then CODE(create_cluster.py: 63–66) with lines 64–65 GREEN and '1' / '2' flashing.
@@ -38,8 +39,8 @@ Beats (script.md "## S15", one voiceover block each):
    `kubectl scale deployment frontend --replicas=3 -n cheese-app-namespace`; a small GREY recall of
    k55 ('S07 · the same command on the game', k55:2, tag 'stand-in'). Two fat blocks drop: one fits,
    the next hovers RED 'Pending' and the inset 'V1 · scheduler' lamp lights RED; node 2 slides in
-   (GREY chip 'cluster autoscaler · max 2') and the block lands. On "Ask for many more" five more
-   blocks: three land on node 2, two hover 'Pending'; the autoscaler chip flashes RED.
+   (GREY chip 'cluster autoscaler · max 2') and the block lands. On "Ask for many more" four more
+   blocks: two land on node 2 (it holds three), two hover 'Pending'; the autoscaler chip flashes RED.
 8. The "many more" blocks leave (back to three frontends). The BLUE disk 'persistent-pvc' is chained
    to node 1 under the api block, the PINK chip 'ReadWriteOnce · one node at a time', CODE inset
    setup_containers.py: 24 (cut after the access mode) top right with the access mode PINK; the RED
@@ -75,6 +76,9 @@ Deviations from SHOW:
   kubectl scale' + the dashed 'HPA: not configured · needs requests' chip; the small checklist has no
   note rows. The scale-back card folds the command over two rows with a shell ' \\' (the small
   checklist holds the top-right corner).
+- Beats 6-10: the blocks use S15's own widths (frontend 1.8, vector-db 1.26, nginx 0.85, api 0.95), so
+  a node holds at most three 2Gi frontends (four would exceed its allocatable memory) and node 1 still
+  takes its fifth block.
 Critic fixes (2026-11-08): beat 0's terminal has 6 rows (the folded k30 command and its wrapped error
   stay on screen together); beat 5 lights 'CPU', 'memory', 'custom metrics' as they are named; beat 7's
   Milestone chip sits bottom right and leaves before node 2 slides in, and the second "many more"
@@ -314,19 +318,19 @@ class LogsAndScaling(VoiceScene):
         self.remove(fixc, ftag, pod_chip, pod_ar, drop, yt)
 
         # ========================================================== 3. a Job that exists, on the stand-in
-        t = tb(9)
+        t = tb(10)                              # k60:1 folds onto 5 rows + 4 output rows + the prompt
         sb = on_bar(t, standin_row()).set_z_index(5)
         xb = extra_row().set_z_index(5)
         xb.move_to([t.box.get_left()[0] + 1.3 + xb.width / 2, sb.get_y(), 0])
         assert xb.get_right()[0] < t.title.get_left()[0] - 0.1, (xb.get_right(), t.title.get_left())
         job = ControllerLoop(job=True, name="hello-job", api=False)
-        job.shift(UP * 1.75)
-        assert t.box.get_top()[1] < 0.95 - 0.1, t.box.get_top()
+        job.shift(UP * 1.9)                      # built in y -0.75 .. 0.95: now 1.15 .. 2.85, under the tracker
+        assert t.box.get_top()[1] < 1.15 - 0.1, t.box.get_top()
         with self.voiceover(SAY[3]) as vo:
             self.play(track(trk, 4, True), FadeIn(t, shift=UP * 0.2), FadeIn(sb), FadeIn(xb), run_time=0.5)
             job.job_card(self)
             type_capture(self, t, K60, type_time=0.35)
-            out(self, t, K60.at((2, 5), 8), run_time=0.4)
+            out(self, t, K60.at(2, (4, 5), 8), run_time=0.4)   # 5 + 4 rows + the prompt: the command head stays
             job.run_job(self)
             vo.wait_until("the same commands work")
             type_capture(self, t, K61, type_time=0.3)
@@ -356,22 +360,26 @@ class LogsAndScaling(VoiceScene):
         etag = erratum_tag().next_to(top, UP, buff=0.3).align_to(top, LEFT)
         mp = code_span(cp.code, 0, '"/chroma/chroma"')
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeIn(etag, shift=DOWN * 0.1), FadeIn(cp, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(etag, shift=DOWN * 0.1), FadeIn(cp, shift=UP * 0.1), FadeIn(dchip, shift=LEFT * 0.15),
+                      run_time=0.5)                 # the cause is up before the conclusion line
             self.play(mp.animate.set_color(ERR), run_time=0.3)
             self.add(cp)
-            vo.wait_until("after a database restart")
-            self.play(FadeIn(why, shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("the chip shows why")
-            self.play(FadeIn(dchip, shift=LEFT * 0.15), run_time=0.4)
+            vo.wait_until("but today's Chroma image")
             self.play(Indicate(dchip.text, color=INK, scale_factor=1.06), run_time=0.6)
+            self.add(dchip)
+            vo.wait_until("So the vectors live")
+            self.play(FadeIn(why, shift=UP * 0.1), run_time=0.5)
+        self.wait(2.0)                              # the chip and the why line hold together
         self.play(FadeOut(VGroup(cp, dchip, why, etag)), run_time=0.4)
         self.remove(cp, dchip, why, etag)
 
         # ========================================================== 5. the promise, the README title, the code
         ref = lref("18")
+        crumb = label("extra · scaling (no README step)", trk.size, S.GREY)
+        crumb.move_to([TRACK_LEFT + crumb.width / 2, TRACK_TOP - crumb.height / 2, 0])
         lec = card(["scale by CPU, memory, custom metrics"], S.GREY, size=24, head="the lecture")
         lec.move_to([0, 2.15, 0])
-        assert lec.get_top()[1] < TRACK_BOTTOM - 0.05 or lec.get_left()[0] > trk.get_right()[0]
+        assert lec.get_top()[1] < crumb.get_bottom()[1] - 0.05 or lec.get_left()[0] > crumb.get_right()[0]
         hd = lrow("Deployment with Scaling using Kubernetes")
         hd.scale(1.0)
         rh = readme_card(392, hd, size=SIZE)
@@ -389,7 +397,8 @@ class LogsAndScaling(VoiceScene):
         cc.code.code_lines.set_z_index(2)
         bars.set_z_index(1)
         with self.voiceover(SAY[5]) as vo:
-            self.play(track(trk, 0, True), FadeIn(ref), FadeIn(lec, shift=DOWN * 0.1), run_time=0.6)
+            self.play(FadeOut(trk), FadeIn(crumb), FadeIn(ref), FadeIn(lec, shift=DOWN * 0.1), run_time=0.6)
+            self.remove(trk)
             vo.wait_until("The lecture promises")
             self.play(Indicate(lec.body[0], color=INK, scale_factor=1.05), run_time=0.8)
             self.add(lec)
@@ -416,6 +425,9 @@ class LogsAndScaling(VoiceScene):
         # ========================================================== 6. V8: packing by requests
         ref = lref("43")
         bp = BinPacking()
+        # a node takes at most three 2Gi frontends (4 x 2Gi > its allocatable memory): the frontend is
+        # fat enough that node 2 holds three and a fourth pends, while node 1 still fits its own five
+        bp.SIZES = {"frontend": 1.8, "vector-db": 1.26, "nginx": 0.85, "api": 0.95}
         bp.shift(DOWN * 0.45)
         itag = illustration_tag().move_to([1.0 - 0.0, 1.38, 0])
         itag.shift(LEFT * itag.width / 2)
@@ -495,8 +507,9 @@ class LogsAndScaling(VoiceScene):
             self.play(FadeOut(inset), run_time=0.3)
             self.remove(inset)
             vo.wait_until("Ask for many more")
-            for _ in range(5):
+            for _ in range(4):                     # two land (node 2 holds three), two pend
                 bp.add_block(self, "frontend", run_time=0.3)
+            assert len(bp.blocks[1]) == 3 and len(bp.pending) == 2
             p1, p2 = bp.pending[-2:]               # the shared stack puts p2 over p1's 'Pending': side by side
             self.play(p2.animate.move_to(p1.get_center() + RIGHT * (p1.width + 0.3)), run_time=0.4)
             bp.heal(self)
@@ -508,7 +521,7 @@ class LogsAndScaling(VoiceScene):
 
         # ========================================================== 8. the API's disk; ponder
         extra = bp.blocks[1][1:] + list(bp.pending)
-        assert len(extra) == 5
+        assert len(extra) == 4
         fr1 = bp.nodes[1].frame
         cr24 = code(SC, 24, 24, font_size=SIZE, dedent=True, cuts={24: '["ReadWriteOnce"],'},
                     shown="deploy_k8s/setup_containers.py")
@@ -523,7 +536,7 @@ class LogsAndScaling(VoiceScene):
             bp.drop(self, *extra, run_time=0.4)
             bp.blocks[1] = bp.blocks[1][:1]
             bp.pending.clear()
-            bp.cursor[1] = fr1.get_left()[0] + 0.1 + BinPacking.SIZES["frontend"] + 0.08
+            bp.cursor[1] = fr1.get_left()[0] + 0.1 + bp.SIZES["frontend"] + 0.08
             vo.wait_until("The API's disk")
             bp.disk(self)
             rw = bp.disk_g.rwo
@@ -569,7 +582,7 @@ class LogsAndScaling(VoiceScene):
         bcard.move_to([-6.3 + bcard.width / 2, 2.2, 0])
         btag = edge_tag(bcard, extra_tag("our spelling")).set_z_index(5)
         assert bcard.get_right()[0] < asks.get_left()[0] - 0.1, (bcard.get_right(), asks.get_left())
-        assert btag.get_left()[0] > trk.get_right()[0] + 0.05 or btag.get_top()[1] < TRACK_BOTTOM
+        assert btag.get_left()[0] > crumb.get_right()[0] + 0.05 or btag.get_top()[1] < crumb.get_bottom()[1]
         with self.voiceover(SAY[10]) as vo:
             self.play(FadeOut(VGroup(cr24, thought)), run_time=0.3)
             self.remove(cr24, thought)
@@ -601,6 +614,6 @@ class LogsAndScaling(VoiceScene):
             self.add(bcard)
             self.play(Indicate(substring(s1[0], "--replicas=1"), color=OWN, scale_factor=1.1), run_time=0.5)
             self.add(bcard)
-        self.play(FadeOut(VGroup(bp, itag, asks, bcard, btag, trk)), run_time=0.7)
-        self.remove(bp, itag, asks, bcard, btag, trk)
+        self.play(FadeOut(VGroup(bp, itag, asks, bcard, btag, crumb)), run_time=0.7)
+        self.remove(bp, itag, asks, bcard, btag, crumb)
         self.wait(0.3)

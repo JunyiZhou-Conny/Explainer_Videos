@@ -31,12 +31,13 @@ Beats (script.md "## S09"; one voiceover block each):
    it: `DOCKER_TAG` set → PINK "that tag"; empty → GREEN `.docker-tag`; GREY note "laptop run: the
    file · CI run: the extra variable wins (S14)".
 7. TRACKER B 10. V7 back with the ECR box: three TEAL image cubes ride from ECR to the frontend,
-   loader and api slots; TEAL `frontend :3000`; `vector-db :8000` with GREEN "0.5.18 · your pin";
+   loader and api slots; TEAL `frontend :3000`; `vector-db :8000` with GREEN `0.5.18` + "your pin";
    the loader fills the vector-db's disk folder and vanishes (--rm); `api-service :9000` with GOLD
    cost_tag("Bedrock · per token"); ':3000 :8000 :9000' painted inside the wall, no hole.
 8. TRACKER B 11. README(120–132) card, all six commands verbatim; "from the GCP console"
    underlined RED; erratum tag "on AWS: ssh -i <your key>.pem ubuntu@<EXTERNAL_IP> or EC2 Instance
-   Connect"; ▶ your turn beside `sudo docker container ls`; the commands light in turn.
+   Connect"; ▶ your turn on the card's top edge while `sudo docker container ls` turns YELLOW; the
+   other commands light in turn.
 9. TRACKER B 11 · extra. Laptop terminal (20 pt, bar tag "extra · stand-in on the laptop") types
    laptop/63 line 1 → 63: 2, 3 (cut after the 80 mapping), 4, 5; the IMAGE column YELLOW; then
    laptop/64 line 1 → 64: 4, 5, 6 (address and timestamp cropped to '…'). GREY chip "nginx: after
@@ -51,6 +52,8 @@ fresh 4-row strip after it (no room for both). Block 5's panel cannot stand next
 it is shown alone, then shrinks into the file on the server. Block 6 fades V7 out (the 106–114
 panel is 11.7 wide) and brings it back in block 7. Block 7 parks the three ECR images on their
 containers' slots (frontend, loader, api-service); Chroma's image comes from Docker Hub, not ECR.
+Block 8's ▶ your turn sits on the README card's top edge (the card's rows are ~0.34 apart, so a tag
+beside `sudo docker container ls` would touch lines 120 and 123); that row turns YELLOW instead.
 Block 9 uses a 20 pt terminal (11 rows) and cuts 63's nginx line after the first port mapping.
 """
 
@@ -427,7 +430,9 @@ class SetupContainers(VoiceScene):
             self.play(Indicate(v.containers["frontend"].sub, color=INK, scale_factor=1.15), run_time=0.5)
             vo.wait_until("and Chroma on 8000")
             v.container(self, "vectordb")
-            v.version(self, "vectordb", "0.5.18 · your pin", OWN)
+            pin_c = v.version(self, "vectordb", "0.5.18", OWN)
+            yp = label("your pin", 20, OWN).next_to(pin_c, LEFT, buff=0.15)
+            self.play(FadeIn(yp, shift=RIGHT * 0.1), run_time=0.3)
             vo.wait_until("A throwaway container")
             self.play(FadeOut(cubes[1], scale=1.4), run_time=0.3)
             self.remove(cubes[1])
@@ -462,10 +467,10 @@ class SetupContainers(VoiceScene):
         et8.next_to(rp8, DOWN, buff=0.45)
         assert et8.width < 13.1 and et8.get_bottom()[1] > -3.5, (et8.width, et8.get_bottom())
         r122 = rp8.rows[122]
-        turn8 = turn_row()
-        turn8.move_to([rp8.frame.get_right()[0] - 0.3 - turn8.width / 2, r122.get_y(), 0])
+        turn8 = your_turn()      # on the card's top edge: the rows are too close for a tag beside row 122
+        turn8.move_to([rp8.frame.get_right()[0] - 0.3 - turn8.width / 2, rp8.frame.get_top()[1], 0])
         with self.voiceover(SAY[8]) as vo:
-            drop_all(self, v, ecr, cap, bed, run_time=0.4)
+            drop_all(self, v, ecr, cap, bed, yp, run_time=0.4)
             self.play(ReplacementTransform(tr, tr11), FadeIn(rp8, shift=UP * 0.15), run_time=0.6)
             tr = tr11
             vo.wait_until("Where the README says")
@@ -474,7 +479,8 @@ class SetupContainers(VoiceScene):
             self.play(FadeIn(et8, shift=UP * 0.1), run_time=0.4)
             flash_tag(self, e8_tg)
             vo.wait_until("Then list containers")
-            self.play(FadeIn(turn8, shift=LEFT * 0.1), Indicate(r122, color=TURN, scale_factor=1.05), run_time=0.6)
+            self.play(FadeIn(turn8, shift=DOWN * 0.1), r122.animate.set_color(TURN), run_time=0.5)
+            self.play(Indicate(r122, color=TURN, scale_factor=1.05), run_time=0.5)
             vo.wait_until("follow logs")
             self.play(each([rp8.rows[n] for n in (123, 124, 125)], TURN, scale=1.04), run_time=0.9)
             vo.wait_until("or open a shell")

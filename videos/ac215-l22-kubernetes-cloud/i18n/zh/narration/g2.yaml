@@ -15,7 +15,10 @@ S09:
 - en: "Part 2: the cheese app on GKE, as Pulumi code. The course link lands on Deployment with Scaling using Kubernetes; the cluster steps continue under the next heading, Create and Deploy Cluster."
   zh:
   - "第 2 部分：把奶酪应用作为 Pulumi 代码部署到 GKE 上。"
-  - "课程链接落在 Deployment with Scaling using Kubernetes 这一节；集群的步骤接在下一个小节 Create & Deploy Cluster 里。"
+  - "课程链接落在这一节：Deployment with Scaling using Kubernetes；集群的步骤，接在下一个小节 Create & Deploy Cluster 里。"
+  en_display:
+  - null
+  - "The course link lands on Deployment with Scaling using Kubernetes; the cluster steps continue under the next heading, Create & Deploy Cluster."
 - en: "Here is the plan, piece by piece from lecture 20. Each long-running container becomes a Deployment. The one-shot loader becomes a Job: it retries a failed run a few times, and once it succeeds, it stays done."
   zh:
   - "这是整个计划，一块一块地从第 20 讲对过来。"
@@ -44,7 +47,7 @@ S09:
   - null
 - en: "While it is up, it costs money: the fee of a regional cluster, one or two nodes, a load balancer, one NAT gateway and two disks. By our estimate, roughly five to eight dollars a day: check the pricing calculator, and destroy it the same day."
   zh:
-  - "它运行期间一直在花钱：区域集群的管理费、一到两个节点、一个负载均衡器、一个 NAT 网关和两块磁盘。"
+  - "它运行期间一直在花钱：区域集群的管理费，一到两个节点、一个负载均衡器、一个 NAT 网关和两块磁盘。"
   - "按我们的估算，大约每天 5 到 8 美元：去查一下价格计算器，当天就 destroy 掉。"
 S10:
 - en: "This section enables the five APIs again; turn on the Vertex AI API too, which the API Pods call."
@@ -62,7 +65,7 @@ S10:
 - en: "Two one-time steps the README leaves out. The deployment account very likely needs Service Account Admin on gcp service; we could not test this. And create the registry repository, cheese app repository, which no code creates."
   zh:
   - "README 漏掉了两个一次性的步骤。"
-  - "deployment 账号很可能需要 gcp-service 上的 Service Account Admin 角色；这一点我们没法测试。"
+  - "deployment 账号很可能需要一个角色：gcp-service 上的 Service Account Admin；这一点我们没法测试。"
   - "还要创建 registry 仓库 cheese-app-repository，没有任何代码会创建它。"
   en_display:
   - null
@@ -110,7 +113,7 @@ S11:
   - "现在是 Create & Deploy Cluster。"
   - "在 deployment 目录里，进到 deploy k8s，运行 pulumi stack init dev：同样的令牌报错，在本地 backend 上则是 Created stack dev。"
   en_display:
-  - null
+  - "Now Create & Deploy Cluster."
   - "From the deployment folder, change into deploy_k8s and run pulumi stack init dev: the same token error, and on the local backend, Created stack 'dev'."
 - en: "Then three config keys: your project, and two service account emails, deployment and gcp service. Replace ac215 project with yours in all three."
   zh:
@@ -183,7 +186,7 @@ S12:
   - "一个用集群输出构建的 Kubernetes provider 会等这个节点池，所以有节点之前不会创建任何 Pod。"
 - en: "Through it come the namespace, the service account of the API and its binding, the two disk claims, the frontend and the vector database."
   zh:
-  - "通过它创建的有：namespace、API 的 Kubernetes 服务账号和它的绑定、两个磁盘 PVC、前端和向量数据库。"
+  - "通过它创建的有：namespace、API 的 Kubernetes 服务账号和它的绑定，两个磁盘 PVC、前端和向量数据库。"
 - en: "Next, the loader Job fills the vector database. Pulumi creates the API only after the Job completes: lines 319 to 321 set that dependency."
   zh:
   - "接下来，加载器 Job 填充向量数据库。"
@@ -251,7 +254,7 @@ S13:
   - "The page comes from the frontend; then your browser calls the API directly, at /api-service."
 - en: "Inside the cluster, the API reaches Chroma by its Service name, vector db, on port 8000."
   zh:
-  - "在集群内部，API 通过 Service 名字 vector-db，在 port 8000 上找到 Chroma。"
+  - "在集群内部，API 按 Service 名字找到 Chroma：vector-db，port 8000。"
   en_display:
   - "Inside the cluster, the API reaches Chroma by its Service name, vector-db, on port 8000."
 - en: "Now open the bare IP: the same load balancer, without sslip dot io. What answers?"
@@ -318,7 +321,7 @@ S14:
 - en: "Pause and open your app URL. A footer that says API version three point zero proves the whole path works: it asks slash api service slash status. Then pick the RAG model in the chat; a reply proves Vertex AI and Chroma too."
   zh:
   - "暂停一下，打开你的 app URL。"
-  - "页脚显示 API version 3.0，就证明整条路径都通了：它请求的是 /api-service/status。"
+  - "页脚显示 API version: 3.0，就证明整条路径都通了：它请求的是 /api-service/status。"
   - "然后在聊天里选 RAG 模型；有回复，就证明 Vertex AI 和 Chroma 也通了。"
   en_display:
   - "Pause and open your app_url."
@@ -352,9 +355,19 @@ S15:
   zh:
   - "在一个确实存在的 Job 上，在替身上做个额外检查，同样的命令都能用：done，1 个 Succeeded。"
   - "已经完成的 Job，它的 Pod 不会被替换。"
-- en: "A small note: after a database restart, run the loader again; the chip shows why."
+- en: "A small note: the disk is mounted at slash chroma slash chroma, but today's Chroma image writes to slash data. So the vectors live inside the container and vanish when the Pod restarts. Change line 150 to slash data, or run the loader Job again after a restart."
   zh:
-  - "说明一点：数据库重启以后，要把加载器再跑一次；旁边那个小标签写了原因。"
+  - "说明一点：磁盘挂载在 /chroma/chroma，但如今的 Chroma 镜像写到 /data。"
+  - "所以向量存在 container 里面，Pod 一重启就没了。"
+  - "把第 150 行改成 /data，或者重启以后再跑一次加载器 Job。"
+  say:
+  - "说明一点：磁盘挂载在 /chroma/chroma，但如今的 Chroma 镜像写到另一个目录。"
+  - null
+  - "把第 150 行改成那个目录，或者重启以后再跑一次加载器 Job。"
+  en_display:
+  - "A small note: the disk is mounted at /chroma/chroma, but today's Chroma image writes to /data."
+  - null
+  - "Change line 150 to /data, or run the loader Job again after a restart."
 - en: "Now scaling. The lecture promises scaling on CPU, memory or custom metrics, but the code sets no replicas and no Pod autoscaler. It switches on the node layer: one to two nodes."
   zh:
   - "现在讲扩展。"

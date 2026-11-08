@@ -53,6 +53,9 @@ Deviations from SHOW:
   'nginx and the Services').
 - Beat 1: the audit card's tag is re-added above the card after typing (the card's opaque frame,
   re-seated, would hide it).
+- Beat 3: the returning checklist starts with the notes S07 (Failover) and S13 (Load balancing) left
+  on the grown card, so only the GREEN answers animate (Scaling keeps the stock note: S15 ticks it on
+  the small card, solid plus the dashed half tick, which it keeps here).
 - Beat 4: thumbnails are text-free glyphs (text never shrinks below 20 pt), and the 'TransformFromCopy'
   is a copy of the thumbnail riding on an arc into the chip's place while the chip fades in (a point morph from
   shapes into text would draw the chip's words tiny mid-way).
@@ -77,6 +80,8 @@ assert C23.line(21) == "Resources:" and C23.line(22).strip() == "- 1 deleted", (
 P_K8S = toolbox_prompt("/app/deploy_k8s")
 AUDIT = ("gcloud container clusters list", "gcloud compute forwarding-rules list",
          "gcloud compute disks list", "gcloud compute firewall-rules list")
+S07_NOTE = "a restart, not a hot standby · keep replicas: 2"    # Failover's note, ticked in S07
+S13_NOTE = "cloud LB at the door · nginx · Services across Pods"  # Load balancing's note, ticked in S13
 EMPTY_ORDER = ("ingress", "app", "storage", "identity", "provider", "cluster", "network")
 
 # Slide 43's five payoffs, each tied to where it was shown: (key word, rest, chip, thumbnail kind)
@@ -344,7 +349,12 @@ class Recap(VoiceScene):
 
         # ========================================================== 3. back to the three asks
         r15 = lref("15")
-        ac = RecapAsks(small=True, ticked=(0, 1, 2))
+        # the notes S07 and S13 left on the grown card (Scaling's stays stock: S15 ticks it on the small card)
+        ac = RecapAsks(small=True, ticked=(0, 1, 2), notes={0: S07_NOTE, 1: S13_NOTE})
+        ac.ticks[2] = "both"                    # S15 left Scaling with the solid tick and the dashed half tick
+        ac.remove(ac.card)
+        ac.card = ac._build(True)
+        ac.add(ac.card)
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(rt, ill, reg, dfc, vm, yt, trk, r44)), run_time=0.6)
             self.remove(rt, ill, reg, dfc, vm, yt, trk, r44)

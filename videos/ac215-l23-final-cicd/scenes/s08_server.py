@@ -16,7 +16,8 @@ Beats (script.md "## S08"; one voiceover block each):
 1. TRACKER B 6. Three GOLD cost tags by the box (instance on top; disks and public IPv4 under it)
    and a GOLD CostDial right of the box that starts ticking.
 2. TRACKER B 6. ▶ your turn. Toolbox terminal (prompt laptop/42: 35) types README 94 (folded) →
-   TBX(42: 39, 41, 42, 44, 45 wrap): ok GREEN, line 45 RED; V4 PlayRecap from line 49 (ok=1,
+   TBX(42: 39, 41, 42, 44, 45 wrap, its generic "An exception occurred … The error was:" head
+   cropped to "…"): ok GREEN, line 45 RED; V4 PlayRecap from line 49 (ok=1,
    failed=1 RED). On "With real keys" the terminal shrinks to a 3-row strip (line 45's last rows)
    and a GREY dashed "not tested" note sits above it over a dashed tile "Attach EBS volume to
    instance".
@@ -56,7 +57,9 @@ side). Block 4 uses a 5-row strip, not 3: the sed command folds onto 3 rows and 
 lines must stay readable. Block 5 grows the strip to 8 rows after the README card folds away (the
 command folds onto 3 rows; lines 3 and 6 wrap). Block 6 draws the SSH arrow on its own small
 picture (toolbox → dashed server with a RED "?") rather than V7, which is not on screen there.
-Block 7's 38 tasks are text-free tiles (38 names at 20 pt cannot fit), and the badge counter is a
+Block 2 crops line 45's generic head ("An exception occurred during task execution. To see the full
+traceback, use -vvv. The error was: ") to "…" so the PlayRecap fits inside a 12-row terminal; the
+ClientError and the AuthFailure text are kept whole. Block 7's 38 tasks are text-free tiles (38 names at 20 pt cannot fit), and the badge counter is a
 GREY note (V3's KeyJourney is not on screen in this scene).
 """
 
@@ -418,7 +421,7 @@ class CreateAndProvision(VoiceScene):
         rp5 = readme_panel(107, 111, size=20)
         rp5.move_to([0, 2.55 - rp5.height / 2, 0])
         e5 = erratum_tag("erratum · README order: do step 9 before step 8")
-        e5.move_to([rp5.frame.get_right()[0] - 0.25 - e5.width / 2, rp5.frame.get_top()[1], 0])
+        e5.next_to(rp5, DOWN, buff=0.2).align_to(rp5, RIGHT)
         rchip = at_top_left(grey_chip("README.md · lines 107–111"), top=2.72)
         e5s = erratum_tag("erratum · README order: do step 9 before step 8").next_to(rchip, RIGHT, buff=0.25)
         bm = row_tag(BOOKMARK, TURN)
@@ -513,7 +516,7 @@ class CreateAndProvision(VoiceScene):
 
         # ========================================================== 7. what provisioning does
         v7 = VmLayout()
-        v7.shift(RIGHT * 1.8)
+        v7.shift(RIGHT * 2.0)
         pc_head = VGroup(mono(PLAYBOOKS[2], 20, S.GREY), label(X44.at(39)[0][6:-1], 20, INK),
                          chip("hosts: appserver", CLOUD, size=20, font=MONO)).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         minis = VGroup(*[Rectangle(width=0.42, height=0.24, stroke_color=S.GREY, stroke_width=2)

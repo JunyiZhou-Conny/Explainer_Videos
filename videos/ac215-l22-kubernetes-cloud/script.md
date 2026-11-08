@@ -321,7 +321,7 @@ SAY: The lecture wants three jobs done with nobody awake. Failover: a working co
 
 SHOW: The card shrinks into the top-right corner (below the lecture-tag slot). The word "Kubernetes"
 writes in the centre in WHITE, then everything fades; empty frame.
-SAY: This card stays in the corner, and we tick each item once we see what does the job. The tool for all three is Kubernetes.
+SAY: This card comes back each time we see what does one of these jobs, and we tick it then. The tool for all three is Kubernetes.
 
 ---
 
@@ -1088,7 +1088,7 @@ SAY: On a Job that exists, an extra on the stand-in, the same commands work: don
 
 SHOW: A GREY note (tag `erratum`): CODE(src/deployment/deploy_k8s/setup_containers.py: 150) `mount_path="/chroma/chroma"`
 beside a GREY chip "today's chroma image writes to /data". Fade.
-SAY: A small note: after a database restart, run the loader again; the chip shows why.
+SAY: A small note: the disk is mounted at slash chroma slash chroma, but today's Chroma image writes to slash data. So the vectors live inside the container and vanish when the Pod restarts. Change line 150 to slash data, or run the loader Job again after a restart.
 
 SHOW: Tracker caption `extra`. LECTURE 22 · 18. A GREY card "scale by CPU, memory, custom metrics"; under it
 a GREY README heading card "Deployment with **Scaling** using Kubernetes" (tag `erratum`) and two RED

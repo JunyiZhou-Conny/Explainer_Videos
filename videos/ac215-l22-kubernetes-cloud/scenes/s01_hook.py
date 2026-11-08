@@ -29,7 +29,7 @@ Beats (script.md "## S01", one voiceover block each):
 6. LECTURE 22 · 12. The VMs fade; the AsksChecklist grows centre (three empty boxes, a GREY
    one-liner under each); each item flashes YELLOW on its phrase.
 7. No lecture tag. The card shrinks into the top-right corner (below the lecture-tag slot), its
-   boxes flash on "we tick each item"; 'Kubernetes' writes in the centre in WHITE; everything fades
+   boxes flash on "we tick it then"; 'Kubernetes' writes in the centre in WHITE; everything fades
    to an empty frame.
 """
 
@@ -269,7 +269,7 @@ class Hook(VoiceScene):
         with self.voiceover(SAY[7]) as vo:
             ref = swap_ref(self, ref, None)
             ac.shrink(self, run_time=0.8)
-            vo.wait_until("and we tick each item")
+            vo.wait_until("and we tick it then")
             boxes = [r.box for r in ac.card.rows]
             self.play(AnimationGroup(*[Indicate(b, color=TURN, scale_factor=1.3) for b in boxes], lag_ratio=0.2), run_time=1.0)
             ac.heal(self)

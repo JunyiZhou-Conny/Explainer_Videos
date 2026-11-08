@@ -11,7 +11,7 @@ Beats (script.md "## S12", one voiceover block each):
 1. The terminal shrinks to a 3-row strip (c21:58's first row and c21:166); the placeholder tag sits
    above it. A GREY two-row chip "the first resource that needs Google · from here: a picture, not a
    recording" with an arrow to line 58. On "Pause and start yours" a YELLOW '▶ your turn' and the
-   GOLD cost tag 'the meter starts'; on "the meter runs" the cost tag flashes.
+   GOLD cost tag 'the meter starts' together; on "the meter runs" the cost tag flashes; 1.5 s hold.
 2. LECTURE 22 · 24–25 + the GREY 'illustration' tag (top centre). V6 ResourceTree: the seven empty
    groups appear in dependency order; the network card opens, cheese-app-vpc and cheese-app-subnet
    fill; "side by side": router and NAT fill while the cluster group pulses; the network group fills;
@@ -46,8 +46,8 @@ Beats (script.md "## S12", one voiceover block each):
 9. CODE(create_cluster.py: 192–198), lines 195–197 YELLOW; GREY chip 'runs once, at create, inside
    this toolbox · docker-shell.sh runs it with --rm'; the TEAL toolbox with its kubeconfig fades
    (dashed) and 'next session: no kubeconfig (S14)' appears. After the narration: the GREY 'if yours
-   stops' card, its four lines flashing in turn, and the GREEN chip 'success: Outputs with app_url
-   (S14)'. Fade; empty frame.
+   stops' card with a YELLOW '▶ your turn' above it, its four lines flashing in turn, and the GREEN
+   chip 'success: Outputs with app_url (S14)'. Fade; empty frame.
 
 Deviations from SHOW:
 - The terminal is 20 pt (72 characters a row), as in S11; c21:165 wraps to 4 rows, :166 to 2. The
@@ -71,8 +71,9 @@ Deviations from SHOW:
   the filled app group is not hidden for 14 s.
 - Boxes are flashed by their words plus an outline pulse (pulse/box_flash): Indicate on a whole
   opaque box floods its fill and hides its words.
-- Beat 9: the 'if yours stops' card and the success chip come after the narration ends (about 7 s,
-  each line flashing in turn), since the SAY line is short.
+- Beat 9: the 'if yours stops' card and the success chip come after the narration ends (about 12 s,
+  each line flashing in turn, '▶ your turn' above the card), since the SAY line is short. A spoken
+  line for the card is requested in script.md/i18n (not owned by this scene).
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -281,11 +282,11 @@ class PulumiUp(VoiceScene):
             VGroup(yt, cost).arrange(RIGHT, buff=0.5).next_to(why, UP, buff=0.4)
             assert VGroup(yt, cost).get_top()[1] < TRACK_BOTTOM - 0.05
             vo.wait_until("Pause and start yours")
-            self.play(FadeIn(yt, shift=RIGHT * 0.15), run_time=0.4)
+            self.play(FadeIn(yt, shift=RIGHT * 0.15), FadeIn(cost, shift=RIGHT * 0.15), run_time=0.4)
             flash_tag(self, yt, TURN)
             vo.wait_until("from now on, the meter runs")
-            self.play(FadeIn(cost, shift=RIGHT * 0.15), run_time=0.4)
             flash_tag(self, cost, COST)
+        self.wait(1.5)
         self.play(FadeOut(VGroup(t, xr, ph, why, ar, yt, cost)), track(trk, 4), run_time=0.5)
         self.remove(t, xr, ph, why, ar, yt, cost)
 
@@ -539,7 +540,7 @@ class PulumiUp(VoiceScene):
         kfile = file_card("kubeconfig")
         tbx = VGroup(box_, kfile).arrange(DOWN, buff=0.2).move_to([4.9, 1.3, 0])
         box_dash = crate("toolbox", 2.4, 0.7, dashed=True).move_to(box_)
-        nxt = two_row_chip("next session:", "no kubeconfig · fixed later", S.GREY).next_to(tbx, DOWN, buff=0.35)
+        nxt = two_row_chip("next session:", "no kubeconfig yet", S.GREY).next_to(tbx, DOWN, buff=0.35)
         assert tbx.get_left()[0] > gp.get_right()[0] + 0.2, (tbx.get_left(), gp.get_right())
         assert once.get_bottom()[1] > -3.5
         with self.voiceover(SAY[9]) as vo:
@@ -560,16 +561,20 @@ class PulumiUp(VoiceScene):
 
         stops = self._stops_card()
         ok = ok_chip("success: Outputs with app_url").next_to(stops, DOWN, buff=0.3)
-        assert ok.get_bottom()[1] > -3.5 and stops.get_top()[1] < TRACK_BOTTOM - 0.05
-        self.play(FadeIn(stops, shift=UP * 0.15), run_time=0.6)
+        yt9 = your_turn().next_to(stops, UP, buff=0.15).align_to(stops, RIGHT)
+        assert ok.get_bottom()[1] > -3.5 and yt9.get_top()[1] < TRACK_BOTTOM - 0.05
+        self.play(FadeIn(stops, shift=UP * 0.15), FadeIn(yt9, shift=RIGHT * 0.15), run_time=0.6)
+        flash_tag(self, yt9, TURN)
         for item in stops.items:
             self.play(Indicate(item, color=TURN, scale_factor=1.04), run_time=0.9)
-            self.wait(0.4)
+            self.wait(0.6)
         self.play(FadeIn(ok, shift=UP * 0.1), run_time=0.4)
         flash_tag(self, ok, OWN, 1.04)
         self.wait(1.0)
-        self.play(FadeOut(VGroup(stops, ok, trk)), run_time=0.6)
-        self.remove(stops, ok, trk)
+        self.play(Indicate(yt9.text, color=TURN, scale_factor=1.1), run_time=0.6)
+        self.wait(0.6)
+        self.play(FadeOut(VGroup(stops, ok, yt9, trk)), run_time=0.6)
+        self.remove(stops, ok, yt9, trk)
         self.wait(0.3)
 
     # ------------------------------------------------------------------ pictures

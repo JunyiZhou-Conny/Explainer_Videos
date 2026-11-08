@@ -52,9 +52,14 @@ Deviations from SHOW:
 - Beat 3: README:492 (92 characters) wraps inside the README card after '--tty' (an indented second
   row that starts with the Pod name); the YELLOW chip sits between the card and the terminal with an
   arrow up to that struck name.
-- Beat 4: the terminal shrinks to an empty 3-row strip (keeping b45's last rows left a dangling fold
-  row without its prompt) to make room for the recall card and the GREEN card; after `exit` the bare
-  prompt returns in it; '▶ your turn' sits under the ROOT_PATH chip.
+- Beat 4: the terminal is replaced by an empty 1-row strip, 7 wide, at the left (keeping b45's last
+  rows left a dangling fold row without its prompt) to make room for the recall card and the GREEN
+  card; after `exit` the bare prompt returns in it. The ROOT_PATH chip sits right of that strip (what
+  the shell prints), '▶ your turn' beside the GREEN card's env rows. The GREEN card opens with
+  README:492 in our spelling (`kubectl exec --stdin --tty <your api pod> --namespace=cheese-app-namespace
+  -- /bin/bash`, two rows, the placeholder GREY) so the command is on screen at "Pause and try it".
+- Beat 5: the inset head reads "our preview's Outputs · today's key" (the capture id c20 meant nothing
+  to the viewer; QA 25:15).
 - Beat 1: on "gcloud container clusters" the typed command's rows flash (the narration reads it out);
   the 'erratum' chip comes with the '--zone' underline, in the place the GREEN card then arrives above.
 - Beat 5: CODE shows lines 46–49 instead of 43–49: seven code lines plus the 8-row Outputs panel do
@@ -298,24 +303,41 @@ class ExploreApp(VoiceScene):
         rec.move_to([-6.45 + rec.width / 2, 1.6, 0])
         rec_tag = edge_tag(rec, standin_tag())
         assert rec_tag.get_top()[1] < TRACK_BOTTOM - 0.02, rec_tag.get_top()
+        exec_rows = [mrow("kubectl exec --stdin --tty <your api pod> \\"),
+                     mrow("  --namespace=cheese-app-namespace -- /bin/bash")]
+        assert (exec_rows[0].text.rstrip(" \\") + " " + exec_rows[1].text.strip()
+                == R492.replace(POD_README, "<your api pod>").replace("  --", " --"))
+        pod_ph = substring(exec_rows[0], "<your api pod>").set_color(S.GREY)
         env_rows = [mrow("env | grep ROOT_PATH"), mrow("exit")]
-        _w = label("inside the API Pod", CAPTION).width + extra_tag("our spelling").width + 1.0
-        inside = card(env_rows, OWN, size=SIZE, head="inside the API Pod", buff=0.12, card_w=_w)
-        inside.move_to([-6.45 + inside.width / 2, -0.5, 0])
+        in_rows = exec_rows + env_rows
+        _w = max(label("inside the API Pod", CAPTION).width + extra_tag("our spelling").width + 1.0,
+                 max(r.width for r in in_rows) + 0.6)
+        inside = card(in_rows, OWN, size=SIZE, head="inside the API Pod", buff=0.1, card_w=_w)
         in_tag = edge_tag(inside, extra_tag("our spelling"))
+        inside.add(in_tag)
+        inside.next_to(rec, DOWN, buff=0.25).align_to(rec, LEFT)
+        inside.remove(in_tag)
         assert in_tag.get_top()[1] < rec.get_bottom()[1] - 0.05, (in_tag.get_top(), rec.get_bottom())
-        t2_top = BOTTOM + 3 * t.pitch + 0.85                # the terminal shrinks to 3 rows here
-        assert inside.get_bottom()[1] > t2_top + 0.05, (inside.get_bottom(), t2_top)
+        t4 = term(P_K8S, 1, T_TOOLBOX, width=7.0, size=SIZE)   # a fresh 1-row strip, left: no dangling fold row
+        t4.shift(RIGHT * (t.box.get_left()[0] - t4.box.get_left()[0]))
+        assert inside.get_bottom()[1] > t4.box.get_top()[1] + 0.05, (inside.get_bottom(), t4.box.get_top())
         root = two_row_chip("yours: ROOT_PATH=/api-service", "setup_containers.py:310–311", S.GREY)
-        root.next_to(inside, RIGHT, buff=0.4).align_to(inside, UP).shift(DOWN * 0.1)
-        yt = your_turn().next_to(root, DOWN, buff=0.25).align_to(root, LEFT)
+        root.next_to(t4.box, RIGHT, buff=0.35).match_y(t4.box)
+        assert root.get_right()[0] < 6.55, root.get_right()
+        yt = your_turn().next_to(inside, RIGHT, buff=0.35).match_y(VGroup(*env_rows))
+        assert yt.get_right()[0] < 6.55, yt.get_right()
         with self.voiceover(SAY[4]) as vo:
-            resize(self, t, 3, keep=[], run_time=0.5)   # a fresh 3-row strip: no dangling fold row
+            self.play(FadeOut(t), FadeIn(t4), run_time=0.5)
+            self.remove(t)
+            t = t4
             self.play(FadeIn(rec, shift=RIGHT * 0.15), FadeIn(rec_tag), run_time=0.5)
-            vo.wait_until("just as we did in the game")
-            self.play(Indicate(rec_rows[2], color=POD, scale_factor=1.1), run_time=0.6)
-            vo.wait_until("Print its environment")
             self.play(FadeIn(inside.frame), FadeIn(inside.head), FadeIn(in_tag), run_time=0.3)
+            for row in exec_rows:
+                self.play(typing(row, 0.45))
+            vo.wait_until("just as we did in the game")
+            self.play(Indicate(rec_rows[2], color=POD, scale_factor=1.1),
+                      Indicate(pod_ph, color=TURN, scale_factor=1.1), run_time=0.6)
+            vo.wait_until("Print its environment")
             self.play(typing(env_rows[0], 0.6))
             vo.wait_until("look for ROOT PATH")
             self.play(FadeIn(root, shift=LEFT * 0.15), run_time=0.4)
@@ -351,7 +373,7 @@ class ExploreApp(VoiceScene):
         er.next_to(ing, UP, buff=0.25).align_to(ing, LEFT)
         c20row = mrow(C20_40, OUTPUT)
         substring(c20row, "ip_address").set_color(OWN)
-        c20head = label("c20 · line 40 · today's key", SIZE, S.GREY)
+        c20head = label("our preview's Outputs · today's key", SIZE, S.GREY)
         c20in = VGroup(c20head, c20row).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         c20fr = frame_box(c20in.width + 0.24, c20in.height + 0.26, S.GREY, k=0.08)
         c20in.move_to(c20fr)

@@ -16,11 +16,11 @@ Beats (script.md "## S11", one voiceover block each):
    and the rings flash. TRACKER [C] 2 · extra: the same three again as one quick block (c11-1..3, no
    output, 'extra' on the bar, rings too) and the GREEN chip '✓ local · same three keys'.
 2. TRACKER [C] 2. The terminal shrinks to a 3-row strip. CODE(create_cluster.py: 9–12) at the top
-   (20 pt; line 9's 'pulumi.Config' elided with a GREY '…'): line 9 BLUE bar + its key BLUE, chip
+   (20 pt; line 9 soft-wrapped after '.get(', a GREY '↪' on its second row): line 9 BLUE bar + its key BLUE, chip
    "→ the nodes' service account (line 50)" (BLUE outline); lines 10–12 GREEN bar + key GREEN, chip
    "→ the API's Kubernetes service account (line 158)" (GREEN outline).
 3. TRACKER [C] 2 · extra. The panel leaves, the terminal grows to 13 rows. `pulumi config; pulumi stack
-   ls` (extra) -> TERM(c12: 2–8 wrap), line 8 masked to sa_000…; lines 4, 6, 7 GREEN (flash on "lists
+   ls` (extra) -> TERM(c12: 2–10 wrap; 9–10, the stack ls lines, GREY), line 8 masked to sa_000…; lines 4, 6, 7 GREEN (flash on "lists
    your three keys"); lines 3 and 8 GREY with the row tag 'leftovers · unused' beside line 3 (and
    'unused' beside line 8); on "A typo in a key name" the three key names flash YELLOW.
 4. TRACKER [C] 3. `pulumi preview --stack dev --refresh` -> TERM(b32: 2 wrap) RED; TRACKER [C] 3 · extra,
@@ -56,8 +56,10 @@ Deviations from SHOW:
   'ac215-project' is ringed GREY and ONE default tag above the terminal names them all (it appears
   on "Replace ac215 project"; the rings flash with it). The c11 block's 'extra' is on the title bar.
 - Beat 2: the two chips sit under the panel with outlines in their line's colour (BLUE / GREEN) so the
-  link from line to chip is visible; the panel is 20 pt and elides 'pulumi.Config' on line 9 (the
-  line is 82 characters).
+  link from line to chip is visible; the panel is 20 pt and soft-wraps line 9 after '.get(' (the
+  line is 82 characters), as line 10 is laid out in the file.
+- Beat 3: SHOW names c12: 2–8; the typed command also runs `pulumi stack ls`, so its two lines
+  (9–10) print GREY after the config table: the viewer who copies the command sees what we saw.
 - Beat 4: the panels need the height, so the terminal shrinks to a 2-row strip that keeps c13:31
   ('line 70') and c13:34 (the TypeError); the code panels are stacked above it rather than beside
   (terminals stay full width). Both panels are dedented (20 pt).
@@ -98,6 +100,8 @@ assert C12.line(3).startswith("setupSSL") and C12.line(4).startswith("gcp:projec
 assert C12.line(6).startswith("security:gcp_ksa_service_account_email")
 assert C12.line(7).startswith("security:gcp_service_account_email")
 assert C12.line(8).startswith("security:ssh_user") and C12.line(8).endswith(SA_MASK)
+assert C12.line(9).split() == ["NAME", "LAST", "UPDATE", "RESOURCE", "COUNT"]
+assert C12.line(10).split()[0] == "dev*" and len(C12.lines) <= 11, C12.lines
 assert B32.cmd == readme(449) == "pulumi preview --stack dev --refresh" and B32.line(2) == TOKEN_ERR
 assert C13.cmd == B32.cmd
 assert "read pulumi:pulumi:StackReference organization/deploy-images/dev" in C13.line(7)
@@ -193,6 +197,38 @@ def bars_behind(panel, bars, z: int = 1):
     panel.code.code_lines.set_z_index(z + 1)
     for b in bars:
         b.set_z_index(z)
+
+
+def wrapped_code(path: str, a: int, b: int, folds: dict, size: float = 20) -> VGroup:
+    """CODE(path: a–b) with long lines soft-wrapped, as an editor shows them (L21's helper): folds =
+    {file line: [break after these substrings]}. Continuation rows are indented two columns deeper
+    and marked with a GREY '↪'; every character is the file's. .code .header .rows .src_rows"""
+    src_rows, rows = [], {}
+    for n in range(a, b + 1):
+        s = excerpt(path, n, n)
+        ind = len(s) - len(s.lstrip())
+        parts, rest = [], s
+        for cut_after in folds.get(n, []):
+            i = rest.index(cut_after) + len(cut_after)
+            parts.append(rest[:i].rstrip())
+            rest = rest[i:].lstrip()
+        parts.append(rest)
+        rows[n] = []
+        for k, p_ in enumerate(parts):
+            rows[n].append(len(src_rows))
+            src_rows.append(p_ if k == 0 else " " * (ind + 2) + p_)
+    assert "".join("".join(src_rows).split()) == "".join(excerpt(path, a, b).split())
+    c = code_block("\n".join(src_rows), "python", size)
+    head = VGroup(mono(path, CAPTION, S.GREY), label(f"· lines {a}–{b}", CAPTION, S.GREY)) \
+        .arrange(RIGHT, buff=0.14)
+    head.next_to(c, UP, buff=0.1).align_to(c, LEFT).shift(RIGHT * 0.12)
+    marks = VGroup()
+    for n, ks in rows.items():
+        for k in ks[1:]:
+            marks.add(label("↪", 20, S.GREY).next_to(c.code_lines[k], LEFT, buff=0.18))
+    g = VGroup(c, head, marks)
+    g.code, g.header, g.rows, g.src_rows = c, head, rows, src_rows
+    return g
 
 
 def span_bar(code_, k0: int, k1: int, color, opacity: float = 0.18):
@@ -316,13 +352,15 @@ class ClusterPlan(VoiceScene):
             bare_prompt(self, t)
 
         # ========================================================== 2. what the two security keys feed
-        cp = code(CC, 9, 12, font_size=SIZE, elide={9: "pulumi.Config"})
+        cp = wrapped_code(CC, 9, 12, {9: [".get("]}, size=SIZE)
+        assert cp.rows == {9: [0, 1], 10: [2], 11: [3], 12: [4]}, cp.rows
+        assert cp.width < 2 * SAFE_X - 0.1, cp.width
         cp.move_to([0, 0, 0]).align_to([0, 2.7, 0], UP)
-        b9 = line_bar(cp.code, 0, CLOUD, 0.25)
-        b10 = span_bar(cp.code, 1, 3, OWN, 0.2)
+        b9 = span_bar(cp.code, 0, 1, CLOUD, 0.25)
+        b10 = span_bar(cp.code, 2, 4, OWN, 0.2)
         bars_behind(cp, [b9, b10])
-        k9 = code_span(cp.code, 0, '"gcp_service_account_email"')
-        k10 = code_span(cp.code, 2, '"gcp_ksa_service_account_email"')
+        k9 = code_span(cp.code, 1, '"gcp_service_account_email"')
+        k10 = code_span(cp.code, 3, '"gcp_ksa_service_account_email"')
         ch9 = grey_chip("→ the nodes' service account (line 50)", color=CLOUD)
         ch10 = grey_chip("→ the API's Kubernetes service account (line 158)", color=OWN)
         ch9.next_to(cp, DOWN, buff=0.3).align_to(cp, LEFT).shift(RIGHT * 0.2)
@@ -354,7 +392,8 @@ class ClusterPlan(VoiceScene):
             r12 = type_capture(self, t, C12, type_time=0.5)[0]
             e12 = mark_extra(self, t, r12, extra_row())
             spec = [C12.line(2), (C12.line(3), S.GREY), (C12.line(4), OWN), C12.line(5),
-                    (C12.line(6), OWN), (C12.line(7), OWN), (C12.line(8), S.GREY)]
+                    (C12.line(6), OWN), (C12.line(7), OWN), (C12.line(8), S.GREY),
+                    (C12.line(9), S.GREY), (C12.line(10), S.GREY)]
             g12 = out(self, t, spec, wrap=True, run_time=0.6)
             row = {n: next(r for r in g12 if r.text.startswith(C12.line(n)[:20])) for n in (3, 4, 5, 6, 7, 8)}
             keys = [substring(row[n], C12.line(n).split()[0]) for n in (4, 6, 7)]

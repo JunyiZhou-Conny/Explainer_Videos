@@ -39,9 +39,9 @@ S01:
   - "故障转移：一个正常的副本接手。"
   - "负载均衡：请求分散到各个副本上。"
   - "扩展：流量变大时就多开副本。"
-- en: "This card stays in the corner, and we tick each item once we see what does the job. The tool for all three is Kubernetes."
+- en: "This card comes back each time we see what does one of these jobs, and we tick it then. The tool for all three is Kubernetes."
   zh:
-  - "这张卡片会留在角落里，等我们看到是谁在做这件事，就勾上一项。"
+  - "每当我们看到是谁在做其中一件事，这张卡片就会回来，那时我们就勾上它。"
   - "三件事用的工具都是 Kubernetes。"
 S02:
 - en: "Kubernetes is an orchestrator: it runs containers across a cluster of machines and keeps them the way you declared. The name is Greek for helmsman, and Helm, a tool in part 2, borrows it."
@@ -194,20 +194,24 @@ S04:
 S05:
 - en: "Now Create Cluster: gcloud container clusters create test cluster, two nodes, zone us east 1 c. Ours stops at once: no active account. Pause and run yours; it costs money every hour it exists."
   zh:
-  - "现在做 Create Cluster 这一步：gcloud container clusters create test-cluster，两个节点，可用区 us-east1-c。"
+  - "现在做 Create Cluster 这一步：gcloud container clusters create test-cluster --num-nodes 2 --zone us-east1-c。"
   - "我们的马上就停了：no active account。"
   - "暂停一下，跑你的；它存在的每个小时都在花钱。"
+  say:
+  - "现在做 Create Cluster 这一步：gcloud container clusters create test-cluster，两个节点，可用区 us-east1-c。"
+  - null
+  - null
   en_display:
   - "Now Create Cluster: gcloud container clusters create test-cluster --num-nodes 2 --zone us-east1-c."
   - null
   - null
 - en: "Yours takes a short wait, prints a table, and adds an entry to your kubeconfig so kubectl knows where to go. The slide makes one node; the README two, so two copies can land on different machines."
   zh:
-  - "你的要等一会儿，打印一张表，并在你的 kubeconfig 里加一条记录，让 kubectl 知道该连哪里。"
+  - "你的要等一会儿；打印一张表，并在你的 kubeconfig 里加一条记录，让 kubectl 知道该连哪里。"
   - "课件上只建一个节点；README 建两个，这样两个副本可以落在不同的机器上。"
 - en: "To keep going, we start a small real cluster on the laptop with a tool called kind: one control plane, two workers. Same API server, same kubectl, same YAML, but no Google. It is not in the README; don't run it."
   zh:
-  - "为了继续往下做，我们用一个叫 kind 的工具，在笔记本上起一个小小的真集群：一个控制平面，两个工作节点。"
+  - "为了继续往下做，我们起一个小小的真集群，在笔记本上用一个叫 kind 的工具：一个控制平面，两个工作节点。"
   - "一样的 API server，一样的 kubectl，一样的 YAML，只是没有 Google。"
   - "它不在 README 里；你别跑。"
 - en: "Here even the control plane is a container we can see; on GKE, Google hides it."
@@ -253,7 +257,7 @@ S06:
   - "模板给每个 Pod 打上一个 label，run: web，两个对象都按这个 label 找到自己的 Pod，而不是按名字。"
   en_display:
   - null
-  - "The template gives every Pod a label, run: web, and both objects find their Pods by that label, not by name."
+  - "The template gives every Pod a label, run: web; both objects find their Pods by that label, not by name."
 - en: "Each Pod runs the image dlops tic-tac-toe, listening on port 8080. The Service listens on port 80 and forwards to 8080."
   zh:
   - "每个 Pod 运行 dlops/tic-tac-toe 这个 image，监听 port 8080。"
@@ -291,7 +295,7 @@ S06:
 - en: "On the stand-in, an extra: port forward to the Service, then curl: 200 OK. The lecture suggests it for your browser, but from the toolbox the port opens inside the container: test it there."
   zh:
   - "在替身上，一个额外步骤：对这个 Service 做 port-forward，再 curl：200 OK。"
-  - "课上建议在你的浏览器里打开，但在工具箱里，这个 port 是在 container 里面打开的：就在那里测。"
+  - "课上建议在你的浏览器里打开；但在工具箱里，这个 port 是在 container 里面打开的：就在那里测。"
   en_display:
   - "On the stand-in, an extra: port-forward to the Service, then curl: 200 OK."
   - null
@@ -389,7 +393,7 @@ S08:
   - "在 GKE 上，这样能在集群还在的时候把负载均衡器释放掉。"
 - en: "Then delete the cluster: gcloud container clusters delete test cluster, zone us east 1 c. Yours asks whether to continue; answer yes."
   zh:
-  - "然后删除集群：gcloud container clusters delete test-cluster，可用区 us-east1-c。"
+  - "然后删除集群：gcloud container clusters delete test-cluster --zone us-east1-c。"
   - "你的会问要不要继续；回答 yes。"
   en_display:
   - "Then delete the cluster: gcloud container clusters delete test-cluster --zone us-east1-c."
