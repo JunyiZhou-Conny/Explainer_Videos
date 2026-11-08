@@ -8,9 +8,9 @@ So the app owner asks for several servers. The operator answers with three machi
 Each backup sits on the same machine as its original. Name one failure that still takes that API down, and say who switches to the backup.
 The machine itself: one failed disk or network takes both copies at once. And even when a backup survives, a person still has to switch over by hand.
 The lecture wants three jobs done with nobody awake. Failover: a working copy takes over. Load balancing: requests spread across copies. Scaling: more copies when traffic grows.
-This card stays in the corner, and we tick each item once we see what does the job. The tool for all three is Kubernetes.
+This card comes back each time we see what does one of these jobs, and we tick it then. The tool for all three is Kubernetes.
 
-## 01:28 — From one box to a fleet
+## 01:29 — From one box to a fleet
 Kubernetes is an orchestrator: it runs containers across a cluster of machines and keeps them the way you declared. The name is Greek for helmsman, and Helm, a tool in part 2, borrows it.
 On the left, one machine runs every container on one Docker engine. On the right, many machines, called nodes, share the containers, and one control plane coordinates them.
 A word of warning: here, deployment means a way of deploying, not the Deployment object we meet later.
@@ -21,7 +21,7 @@ One honest note: our recording machine has no Google account. What runs on a mac
 We follow main, the branch the course site links, at this November 2025 commit. Git log tells you which one you have.
 Part 1 does the lecture's warm-up by hand. Part 2 deploys the cheese app as code.
 
-## 03:04 — Inside a cluster: brain and workers
+## 03:05 — Inside a cluster: brain and workers
 Let's open the cluster. The lecture draws it in three steps. First: one control plane, with arrows to several worker nodes, each an ordinary virtual machine.
 Second, the two planes get names. The control plane is the brain. On GKE, Google runs it, and you never see its machines. The workers carry your containers: for the cheese app, a pool of one or two nodes.
 Third, the parts. The API server is the single entry point; every other part talks only to it. Etcd is the memory of the cluster: its state and configuration.
@@ -32,7 +32,7 @@ Now follow the arrows. Every kubectl command goes to one place, the API server, 
 The lecture gives kubectl one grammar: a command, a type, an optional name, and flags. Get nodes. Get pods. Get pods, with a flag for every namespace.
 When something is stuck, ask which of these parts is waiting. Four lamps on this picture will light up later, each with a symptom you will meet.
 
-## 04:53 — The toolbox, still fixed twice
+## 04:54 — The toolbox, still fixed twice
 The README keeps this warm-up after the cheese app's deployment. The lecture does it first, and so do we: it is the gentlest first contact with kubectl.
 First, enable five APIs in the console. A small slip: Google Container Registry has been shut down. Enable Artifact Registry instead.
 Then start the toolbox: from the S R C folder, change into deployment and run docker-shell.sh. As committed, it fails: 404 Not Found from Debian, then pull access denied.
@@ -45,7 +45,7 @@ Next, check the tools. The gcloud tool and its auth plugin are there. Plain kube
 A small surprise: the Dockerfile pins one kubectl version, but Google's own package wins: a dispatcher that matches each cluster.
 Last, check that you are authenticated: gcloud auth list. Ours says no credentialed accounts; yours lists the deployment service account as active.
 
-## 06:52 — A test cluster and a first look
+## 06:54 — A test cluster and a first look
 Now Create Cluster: gcloud container clusters create test cluster, two nodes, zone us east 1 c. Ours stops at once: no active account. Pause and run yours; it costs money every hour it exists.
 Yours takes a short wait, prints a table, and adds an entry to your kubeconfig so kubectl knows where to go. The slide makes one node; the README two, so two copies can land on different machines.
 To keep going, we start a small real cluster on the laptop with a tool called kind: one control plane, two workers. Same API server, same kubectl, same YAML, but no Google. It is not in the README; don't run it.
@@ -56,7 +56,7 @@ The first README command, get all, shows only a service named kubernetes, the do
 With all namespaces, kube system appears, and here you can spot the control plane by name: etcd, the API server, the controller manager, the scheduler. On GKE those stay hidden.
 Component statuses prints a deprecation warning, which is expected, then three healthy lines. Get nodes is the better check: three nodes ready here; yours shows two workers and no control plane. Pause and try all five.
 
-## 08:45 — Two objects: a Deployment and a Service
+## 08:47 — Two objects: a Deployment and a Service
 The warm-up deploys a small game, tic-tac-toe, from one file with two objects. The Deployment says what runs in a Pod, how many copies, and to keep them running. The Service says how traffic reaches them, and lets Pods die.
 The slide trims the lines that glue them together. The template gives every Pod a label, run web, and both objects find their Pods by that label, not by name.
 Each Pod runs the image dlops tic-tac-toe, listening on port 8080. The Service listens on port 80 and forwards to 8080.
@@ -68,7 +68,7 @@ The controllers, waiting on the cloud provider. On GKE they ask Google for a loa
 Pause: on GKE, wait for the external IP, copy it into your browser, and the game appears.
 On the stand-in, an extra: port forward to the Service, then curl: 200 OK. The lecture suggests it for your browser, but from the toolbox the port opens inside the container: test it there.
 
-## 10:47 — Desired state: Pods that come back
+## 10:49 — Desired state: Pods that come back
 Back to the night-time problem: who restarts the container? In Kubernetes, a controller does. Let's watch one work.
 An extra listing shows the chain. The Deployment named web owns a ReplicaSet, whose name adds a hash of the Pod template. The ReplicaSet owns two Pods, each with that hash and a short random suffix.
 The labels confirm it: every Pod carries the template hash and the run web label.
@@ -80,7 +80,7 @@ Two. The delete returns, and a new Pod is already being created. Its name keeps 
 That ticks failover, with an honest footnote: it is a restart, not a hot standby. With one replica there is a short gap, which is why the game's file asks for two replicas.
 In lecture 20, Docker restarted a container on the same machine. A ReplicaSet places a new Pod wherever there is room. Declare the result, don't script the steps.
 
-## 12:37 — Labels, Services, namespaces, then delete
+## 12:39 — Labels, Services, namespaces, then delete
 Pods are mortal: the new Pod got a new address. So how does traffic find it? The Service keeps a list of every Pod wearing its label, and that list follows the Pods.
 An extra from a throwaway Pod: the name web dot default dot svc dot cluster dot local points to the Service, and fetching just web returns the game page. The name stays while the Pods change.
 This is how the cheese app's API will find its database: by the Service name, vector db.
@@ -92,7 +92,7 @@ Then delete the cluster: gcloud container clusters delete test cluster, zone us 
 We delete the stand-in too.
 The lecture's last word fits here: don't forget to delete. Pause, check that your test cluster is gone, and part 1 is done.
 
-## 14:16 — The cheese app's cluster, as code
+## 14:19 — The cheese app's cluster, as code
 Part 2: the cheese app on GKE, as Pulumi code. The course link lands on Deployment with Scaling using Kubernetes; the cluster steps continue under the next heading, Create and Deploy Cluster.
 Here is the plan, piece by piece from lecture 20. Each long-running container becomes a Deployment. The one-shot loader becomes a Job: it retries a failed run a few times, and once it succeeds, it stays done.
 Container names on a Docker network become Services with DNS names. The folders on the VM disk become two persistent volume claims, each backed by a cloud disk.
@@ -101,7 +101,7 @@ Around it, a private network. The nodes get no public addresses; a Cloud NAT gat
 The program in deploy k8s says the same in four calls, one per file: the network, the cluster, the containers, the load balancer. Line 17 keeps the HTTPS variant switched off.
 While it is up, it costs money: the fee of a regional cluster, one or two nodes, a load balancer, one NAT gateway and two disks. By our estimate, roughly five to eight dollars a day: check the pricing calculator, and destroy it the same day.
 
-## 15:55 — Setup and the images stack
+## 15:59 — Setup and the images stack
 This section enables the five APIs again; turn on the Vertex AI API too, which the API Pods call.
 You also need the two service accounts from lecture 20. The deployment account does what the toolbox does, and here it is also the nodes' identity. The gcp service account is for the API Pods, with no key file.
 Two one-time steps the README leaves out. The deployment account very likely needs Service Account Admin on gcp service; we could not test this. And create the registry repository, cheese app repository, which no code creates.
@@ -113,7 +113,7 @@ Then pulumi preview, stack dev: three image builds, skipped in a preview, and th
 Those tag outputs matter: deploy k8s looks them up through a stack reference, to know which images to run.
 Last, pulumi up, stack dev, dash y: it builds and pushes three images. Skip it if you did it in lecture 20, with one condition we meet next; otherwise, pause and run it.
 
-## 17:50 — deploy_k8s: config and a 23-resource plan
+## 17:53 — deploy_k8s: config and a 23-resource plan
 Now Create and Deploy Cluster. From the deployment folder, change into deploy k8s and run pulumi stack init dev: the same token error, and on the local backend, created stack dev.
 Then three config keys: your project, and two service account emails, deployment and gcp service. Replace ac215 project with yours in all three.
 Line 9 takes the deployment email: the nodes run as that account. Line 10 takes the gcp service email, which the API Pods will act as.
@@ -124,7 +124,7 @@ So we gave the program a stand-in images stack with placeholder tags; nothing is
 Two more lines are lookups, not counted in the 23: the stack reference and the nginx Service. In the outputs, only the cluster name is known; the address and the URL wait until the cluster exists.
 Pause and run your preview: you should see the same 23, with real image tags.
 
-## 19:40 — pulumi up: what builds, in what order
+## 19:43 — pulumi up: what builds, in what order
 Then the big one: pulumi up, stack dev, refresh, dash y. On the local backend the update starts, and the very first resource, the network, fails: invalid grant, account not found.
 The network is the first thing that needs Google, so from here on this is a picture. Pause and start yours; from now on, the meter runs.
 Pulumi follows the dependencies. First the network and its subnet. Then, side by side, the router with its NAT gateway, and the cluster, the long wait: a quarter of an hour or more, by our estimate.
@@ -134,9 +134,9 @@ Next, the loader Job fills the vector database. Pulumi creates the API only afte
 In parallel, Helm installs the nginx Ingress controller. Its Service asks for a load balancer, so the controllers ask the cloud for an address: the part 1 lamp, green this time. That address becomes a host name, and the Ingress comes last.
 Identity, in two parts. Pulumi and kubectl reach the API server through the GKE auth plugin, fix two from the toolbox, so there is no cluster password.
 And the API Pod wears its Kubernetes service account, which Workload Identity swaps for gcp service at the door to Vertex AI. No JSON key sits in the cluster.
-Keep in mind: Pulumi connects kubectl once, inside this toolbox, which is removed when you exit. The next session starts unconnected.
+Keep in mind: Pulumi connects kubectl once, inside this toolbox, which is removed when you exit. The next session starts unconnected. If yours stops, the card shows the four usual causes: pause and match your error.
 
-## 21:46 — The journey of one click
+## 21:57 — The journey of one click
 Lecture 20 put one nginx container in front. The game opened its own load balancer, one door per app. The cheese app opens one door, with a receptionist behind it.
 The README draws the path: browser, load balancer, the nginx Ingress controller, then the frontend on 3000 or the API on 9000, and the vector database on 8000.
 A small slip: the README draws the dotted arrow from the vector database to the loader. The data flows the other way, from the Job into the database.
@@ -149,7 +149,7 @@ Now open the bare IP: the same load balancer, without sslip dot io. What answers
 The nginx controller answers 404 Not Found. The rule matches only that host name, so the same door with the wrong name finds no route. Use the app URL from the outputs.
 That ticks load balancing: the cloud load balancer at the door, nginx behind it, and each Service spreading requests across its Pods.
 
-## 24:02 — kubectl on the app, and the outputs
+## 24:13 — kubectl on the app, and the outputs
 Next, try some kubectl commands. With no cluster here, all five say connection refused. You will see exactly this in any new toolbox session: the kubeconfig Pulumi wrote went away with the old container.
 The fix is the command Pulumi ran, an extra here: gcloud container clusters get credentials, cheese app cluster. The code passes the region to the zone flag; write region, which says what it means.
 Once connected, get all still shows only the kubernetes Service, because the app sits in its own namespace. With dash n, cheese app namespace, yours lists the frontend, database, API and nginx controller Pods, and a loader Pod marked completed. Get nodes shows one node, or two.
@@ -159,12 +159,12 @@ To view the app, the README shows an outputs block a little older than the code.
 Pause and open your app URL. A footer that says API version three point zero proves the whole path works: it asks slash api service slash status. Then pick the RAG model in the chat; a reply proves Vertex AI and Chroma too.
 Right after deploying you may see 502 or 503: the API is still loading TensorFlow. Wait, and try again.
 
-## 25:49 — Logs, then scaling at two levels
+## 26:00 — Logs, then scaling at two levels
 The README's debugging block has 14 kubectl commands. As typed, they all fail; most say the namespace, cheese app cluster namespace, is not found.
 Lines with pod name in angle brackets are shell redirections: replace the whole placeholder, brackets included.
 Two fixes: the namespace is cheese app namespace, and the Job has one container, so drop the wait for chromadb flag. Pause and try them.
 On a Job that exists, an extra on the stand-in, the same commands work: done, one succeeded. Nothing replaces a finished Job's Pod.
-A small note: after a database restart, run the loader again; the chip shows why.
+A small note: the disk is mounted at slash chroma slash chroma, but today's Chroma image writes to slash data. So the vectors live inside the container and vanish when the Pod restarts. Change line 150 to slash data, or run the loader Job again after a restart.
 Now scaling. The lecture promises scaling on CPU, memory or custom metrics, but the code sets no replicas and no Pod autoscaler. It switches on the node layer: one to two nodes.
 The scheduler packs Pods onto nodes by their requests. The frontend asks for a quarter CPU and 2 gigabytes. Chroma and nginx ask for little, and the API for nothing, so nobody can plan for it.
 Scale the frontend to 3; Milestone 5 asks you to show scaling. A copy that does not fit waits, pending, until the autoscaler adds a second node. Ask for many more, and some stay pending: the pool stops at two.
@@ -172,7 +172,7 @@ The API's disk attaches to one node at a time. Suppose you scaled the API to 3, 
 They stay stuck creating, with a multi attach error: the disk already sits on node 1. More nodes do not help; the limit is the disk.
 That ticks scaling, in two levels: nodes automatically, Pods in your hands; a Pod autoscaler on CPU needs requests, and the API has none. Scale back to 1 when you are done.
 
-## 28:03 — Destroy, audit, recap
+## 28:29 — Destroy, audit, recap
 Last, delete the cluster: pulumi destroy, stack dev, refresh, dash y. Ours has nothing real to delete; yours deletes what this stack created, in reverse order, from the Ingress down to the network.
 Then check what may survive, our suggestion: list clusters, forwarding rules, disks and firewall rules. Those are deleted in the background and can be left behind; look for disks named pvc.
 Registry images stay on purpose: delete them in the console. Delete the lecture 20 machine too, if it still runs. Pause and check.

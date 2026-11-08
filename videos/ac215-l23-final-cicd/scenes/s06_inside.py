@@ -23,7 +23,7 @@ Beats (script.md "## S06"; one voiceover block each):
    "pip install ansible" slides left (PURPLE), `>` becomes a PINK arrow carrying "=9.0.0" into a
    file inside a GREY "/" box. A 5-row toolbox strip types laptop/33's two commands and prints 36–37
    (wrapped, '=9.0.0' RED) and 39–40, 42 (cut after ansible-core-2.13.13, wrapped); the file and the
-   strip's RED name pulse together; ansible-6.7.0 is underlined. On "Quoting fixes it" the split
+   strip's RED name pulse together; the installed ansible-6.7.0 (last row) is underlined. On "Quoting fixes it" the split
    picture leaves and the two-line erratum card (erratum tag at its left) takes its row; its second
    line comes on "but leave it for now".
 5. A 20 pt toolbox terminal, alone: heading row "every ansible-playbook run starts with:", then
@@ -35,7 +35,7 @@ Beats (script.md "## S06"; one voiceover block each):
    "with your key: your account ID and your user".
 7. Same strip (cleared), in a silent typing beat before the block: `ansible-inventory -i
    inventory.yml --graph` prints laptop/35: 38–41; then the first three rows flash GREEN and V4's
-   InventoryTree builds above (top right) from them, one node per phrase. Then the tree
+   InventoryTree builds above (top right, clear of the strip's title bar) from them, one node per phrase. Then the tree
    leaves, the strip grows to 7 rows, the loop of laptop/36: 35 is typed (folded) and 39, 47, 51,
    55, 59 print GREEN. Fade; empty frame.
 
@@ -275,7 +275,8 @@ class InsideToolbox(VoiceScene):
             out(self, st4, x33.at(39, 40) + [cut(x33.line(42), "ansible-core-2.13.13")], wrap=True,
                 run_time=0.6)
             vo.wait_until("and installed Ansible 6")
-            a67 = substring(lines_of(st4, "ansible-6.7.0")[0], "ansible-6.7.0")
+            # the installed one (the wrapped tail of "Successfully installed"), not the download row
+            a67 = substring(lines_of(st4, "ansible-6.7.0")[-1], "ansible-6.7.0")
             u67 = under(a67, ERR)
             self.play(a67.animate.set_color(ERR), Create(u67), run_time=0.6)
             vo.wait_until("Quoting fixes it")
@@ -335,7 +336,7 @@ class InsideToolbox(VoiceScene):
 
         # ========================================================== 7. inventory graph, syntax check
         x35, x36 = toolbox_capture("35"), toolbox_capture("36")
-        tree = InventoryTree().move_to([3.6, 1.3, 0])
+        tree = InventoryTree().move_to([3.6, 1.7, 0])   # clear of the strip's title bar
         # the graph is typed before the block (a silent typing beat): its output is what the first
         # sentence talks about
         fade_all(self, badge, ph, yours, run_time=0.4)

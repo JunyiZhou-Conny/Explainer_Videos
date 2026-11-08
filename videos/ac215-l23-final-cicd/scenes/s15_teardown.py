@@ -35,6 +35,7 @@ row stays visible above its three output rows (the "your edits" card needs the r
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
 
+from explainer.components import ponder_card
 from explainer.scene import VoiceScene
 
 from common import *  # noqa: F401,F403
@@ -200,7 +201,9 @@ class Teardown(VoiceScene):
             self.play(Create(thread), FadeIn(gid, shift=LEFT * 0.1), run_time=0.7)
             vo.wait_until("Which of these three tasks run")
             self.play(Circumscribe(card.tiles, color=TURN, buff=0.08), run_time=0.9)
-        q = ponder(self, PONDER_Q, seconds=8)
+        q = ponder_right(self, PONDER_Q, seconds=8)
+        assert q.get_left()[0] > card.frame.get_right()[0] + 0.15 and q.get_bottom()[1] > reg.get_top()[1] + 0.15, \
+            (q.get_corner(DL), card.frame.get_right(), reg.get_top())
 
         # ========================================================== 1. run it as written
         t = toolbox_term("48", rows=13)
@@ -256,8 +259,7 @@ class Teardown(VoiceScene):
         p.move_to([0, 0, 0]).shift(UP * (2.7 - p.get_top()[1]))
         k98 = 98 - 94
         span = code_span(p.code, k98, 'id: "{{ ebs_volume.volume_id }}"')
-        rring = DashedLine(span.get_corner(DL) + DOWN * 0.06, span.get_corner(DR) + DOWN * 0.06,
-                           color=ERR, stroke_width=4, dash_length=0.12)
+        rring = line_bar(p.code, k98, ERR, opacity=0.22)   # the lines are 0.04 apart: no room for an underline
         only = err_chip("set only by a create run")
         only.next_to(span, RIGHT, buff=0.4)
         noterm = grey_chip("no task terminates the instance")
@@ -297,10 +299,12 @@ class Teardown(VoiceScene):
         lr = lref("15")
         lec = tag("lecture: cost is a CD challenge", S.GREY)      # opaque: it sits on the card's edge
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(p, rring, only, noterm)), byhand.animate.move_to(ck.head).set_opacity(0),
-                      run_time=0.6)
-            self.remove(p, rring, only, noterm, byhand, *p.get_family(), *byhand.get_family())
-            self.play(FadeIn(ck, shift=UP * 0.15), FadeIn(lr), run_time=0.6)
+            self.play(FadeOut(VGroup(p, rring, only, noterm)), run_time=0.4)
+            self.remove(p, rring, only, noterm, *p.get_family())
+            rest = [m for m in (ck.frame, ck.rows, ck.tag) if m is not None]
+            self.play(FadeTransform(byhand, ck.head), *[FadeIn(m) for m in rest], FadeIn(lr), run_time=0.8)
+            self.remove(byhand, ck.head, *rest)
+            self.add(ck)
             vo.wait_until("terminate the instance")
             tick(self, ck, 0)
             vo.wait_until("then delete the 50 gigabyte volume")
@@ -343,15 +347,15 @@ class Teardown(VoiceScene):
             vo.wait_until("two and a half gigabytes")
             self.play(Indicate(ck.rows[6].text.sub, color=COST, scale_factor=1.1), run_time=0.6)
             vo.wait_until("and keep or restore")
-            self.play(FadeOut(ck), track(tr, 15, True), run_time=0.5)
+            self.play(AnimationGroup(AnimationGroup(FadeOut(ck), track(tr, 15, True)),
+                                     AnimationGroup(FadeIn(lt, shift=UP * 0.2), FadeIn(ex)), lag_ratio=0.75),
+                      run_time=0.8)              # the card is gone before the terminal (they share rows)
             self.remove(ck, *ck.get_family())
-            self.play(FadeIn(lt, shift=UP * 0.2), FadeIn(ex), run_time=0.4)
             type_cmd(self, lt, C49.cmd, type_time=1.2)
             ed.move_to([0, 0, 0]).shift(np.array([6.4 - ed.frame.get_right()[0], 2.7 - ed.frame.get_top()[1], 0]))
             assert ed.frame.get_bottom()[1] > lt.box.get_top()[1] + 0.1, (ed.frame.get_bottom(), lt.box.get_top())
             self.play(FadeIn(ed, shift=LEFT * 0.4), run_time=0.6)
-            self.play(Indicate(ed.head, color=OWN, scale_factor=1.08), run_time=0.7)
-            self.wait(0.5)
+            self.play(Indicate(ed.head, color=OWN, scale_factor=1.08), run_time=0.6)
             room(self, lt, 3)                  # the prompt row scrolls off; the command's tail stays
             res = VGroup()                     # the three output rows, placed but not yet shown
             for s_ in C49.at(2, 3, 4):
@@ -374,10 +378,23 @@ class Teardown(VoiceScene):
                                                      lt.box.get_top()[1] + 0.35 - notes.get_bottom()[1], 0]))
             self.play(FadeIn(keep, shift=UP * 0.1), run_time=0.4)
             self.play(FadeIn(also, shift=UP * 0.1), run_time=0.5)
-            self.wait(1.2)
+            self.wait(0.9)
         self.play(FadeOut(VGroup(tr, lt, ex, keep, also)), run_time=0.7)
         self.remove(*self.mobjects)
         self.wait(0.3)
+
+
+def ponder_right(scene, question: str, seconds: float = 8.0) -> VGroup:
+    """PLAYS: the ponder timer as a narrower card in the free right-hand space (over the README card,
+    whose cluster_state=absent the question repeats), so the three tiles and the register thread stay
+    visible while the viewer answers. Same look and timing as pause_and_ponder."""
+    c = ponder_card(question, width=5.4)
+    c.move_to([3.78, 1.25, 0])
+    scene.play(FadeIn(c, scale=0.95), run_time=0.6)
+    bar = c[3]
+    scene.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
+               run_time=seconds)
+    return c
 
 
 def substring_label(rd, sub):

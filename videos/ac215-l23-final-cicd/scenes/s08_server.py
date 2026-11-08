@@ -11,7 +11,8 @@ Beats (script.md "## S08"; one voiceover block each):
    box becomes V7's EC2 box (t2.large), the WHITE key glyph on door 22, two GREEN disks inside
    ("100 GB root", "100 GB · /dev/sdf", chip "deleted with the instance"); a PINK SSH arrow waits
    (GREY chip "times out after 120 s? your network may block port 22"); the 50 GB disk moves
-   toward the box and stops at a GREY dashed outline, GREY dashed note "untested: …"; the strip's
+   toward the box and stops at a GREY dashed outline just outside the wall (not attached), GREY dashed
+   note "untested: …" (kept into block 1 until "its disks"); the strip's
    tile 7 "Remove EBS volume" is GREY dashed ("when: absent").
 1. TRACKER B 6. Three GOLD cost tags by the box (instance on top; disks and public IPv4 under it)
    and a GOLD CostDial right of the box that starts ticking.
@@ -24,8 +25,9 @@ Beats (script.md "## S08"; one voiceover block each):
 3. TRACKER B 6. README(92) card, "in GCP" underlined, erratum tag "it's an EC2 instance · carried
    over from the GCP README".
 4. TRACKER B 7. ▶ your turn. CONSOLE("EC2 › Instances"; running instance chip, Public IPv4 address
-   <EXTERNAL_IP>); the address copy flies down into a 5-row laptop strip (P_LAPTOP; GREY chip
-   "second laptop terminal · …"), which types laptop/43 line 1 (row tag "sed is our editor") and
+   <EXTERNAL_IP>); the address copy flies down into a 4-row laptop strip (P_LAPTOP; GREY chip
+   "second laptop terminal · …"); on "into the inventory" the console leaves and the strip grows to
+   7 rows (command + output together), which types laptop/43 line 1 (row tag "sed is our editor") and
    prints 43: 2–5; EXTERNAL_IP: YELLOW + GREY chip "placeholder: we have no server".
 5. TRACKER B 9 (shown early). ▶ your turn. README(107–111) card + erratum tag "README order: do
    step 9 before step 8"; the card folds into a chip (top left) and S04's YELLOW bookmark
@@ -53,8 +55,9 @@ task strip that steps through the tasks as the API calls fire (tasks 4, 5, 8 and
 the strip without narration). The 50 GB disk's "pinned to us-east-1a" sits under it as its zone
 label; the untested-attach and SSH-timeout notes are GREY chips in the band under the box, one at
 a time. Block 1's three cost tags stand above and under the box, not "beside" it (no room at the
-side). Block 4 uses a 5-row strip, not 3: the sed command folds onto 3 rows and the four output
-lines must stay readable. Block 5 grows the strip to 8 rows after the README card folds away (the
+side). Block 4 grows the strip to 7 rows, not 3, once the console has left: the sed command folds onto
+3 rows and must stay on screen with the four output lines. Block 5 first shrinks it back to 4 rows
+(the output) so the README card fits above it. Block 5 grows the strip to 8 rows after the README card folds away (the
 command folds onto 3 rows; lines 3 and 6 wrap). Block 6 draws the SSH arrow on its own small
 picture (toolbox → dashed server with a RED "?") rather than V7, which is not on screen there.
 Block 2 crops line 45's generic head ("An exception occurred during task execution. To see the full
@@ -213,7 +216,7 @@ class CreateAndProvision(VoiceScene):
         own = VGroup(disk_row("100 GB root"), disk_row("100 GB · /dev/sdf")).arrange(RIGHT, buff=0.5)
         own.move_to([0.6, -1.35, 0])
         deleted = grey_chip("deleted with the instance").next_to(own, DOWN, buff=0.15)
-        slot = outline_box(0.85, 0.75, S.GREY, solid=False).move_to([-3.0, -1.75, 0])
+        slot = outline_box(0.85, 0.75, S.GREY, solid=False).move_to([-3.75, -1.75, 0])   # outside the wall: not attached
         ssh_chip = grey_chip("times out after 120 s? your network may block port 22")
         ssh_chip.move_to([0.5, -2.85, 0])
         untested = note_box(UNTESTED)
@@ -264,7 +267,7 @@ class CreateAndProvision(VoiceScene):
             vo.wait_until("Then a T 2 large instance")
             t3 = task_tile(2).move_to(tile).align_to(tile, LEFT)
             tile = swap(tile, t3)
-            api_call(awsb.frame)
+            api_call(np.array([4.6, -0.3, 0]))      # passes the wall between doors 80 and 443
             self.play(ReplacementTransform(awsb.frame, frame_show), ReplacementTransform(awsb.text, aws_top),
                       FadeIn(title_show), FadeOut(awsb.body), run_time=0.9)
             self.remove(awsb, frame_show, title_show)
@@ -288,7 +291,7 @@ class CreateAndProvision(VoiceScene):
             tile = swap(tile, t6, FadeOut(ssh_chip), FadeOut(deleted))
             self.remove(ssh_chip, deleted)
             self.play(FadeIn(slot), run_time=0.3)
-            self.play(disk50[0].animate.move_to(slot), run_time=0.9)
+            self.play(disk50[0].animate.move_to(slot), disk50[1].animate.next_to(slot, LEFT, buff=0.15), run_time=0.9)
             self.play(Indicate(slot, color=S.GREY, scale_factor=1.1), FadeIn(untested, shift=UP * 0.1), run_time=0.6)
             t7 = task_tile(6, "skipped").move_to(tile).align_to(tile, LEFT)
             tile = swap(tile, t7)
@@ -302,8 +305,8 @@ class CreateAndProvision(VoiceScene):
         dial = CostDial(0.42, "cost")
         dial.move_to([5.3, 1.5, 0])
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(tile), FadeOut(untested), run_time=0.4)
-            self.remove(tile, untested)
+            self.play(FadeOut(tile), run_time=0.4)
+            self.remove(tile)
             self.play(FadeIn(dial), run_time=0.4)
             vo.wait_until("the meter runs")
             self.play(dial.tracker.animate(rate_func=linear).increment_value(0.3), run_time=1.2)
@@ -311,10 +314,12 @@ class CreateAndProvision(VoiceScene):
             self.play(FadeIn(c_ec2, shift=DOWN * 0.1), Indicate(v.title, color=COST, scale_factor=1.05),
                       dial.tracker.animate(rate_func=linear).increment_value(0.2), run_time=1.0)
             vo.wait_until("its disks")
+            self.play(FadeOut(untested), run_time=0.3)
+            self.remove(untested)
             self.play(FadeIn(c_ebs, shift=UP * 0.1), Indicate(VGroup(own, disk50), color=COST, scale_factor=1.05),
                       dial.tracker.animate(rate_func=linear).increment_value(0.2), run_time=1.0)
             vo.wait_until("and its public I P address")
-            self.play(FadeIn(c_ip, shift=UP * 0.1), Indicate(v.sg.cidr, color=COST, scale_factor=1.05),
+            self.play(FadeIn(c_ip, shift=UP * 0.1), Indicate(v.title, color=COST, scale_factor=1.05),
                       dial.tracker.animate(rate_func=linear).increment_value(0.2), run_time=1.0)
             self.play(dial.tracker.animate(rate_func=linear).increment_value(0.3), run_time=1.2)
         dial.freeze()
@@ -405,6 +410,15 @@ class CreateAndProvision(VoiceScene):
             self.play(FadeOut(fly, scale=0.6), run_time=0.3)
             self.remove(fly)
             vo.wait_until("into the inventory")
+            # the console has done its job: the strip grows to 7 rows so the typed sed command
+            # (3 folded rows) and the four output lines are all on screen together
+            top7 = strip_top(7)
+            side_to = side.copy().move_to([side.get_center()[0], top7 + 0.15 + side.height / 2, 0])
+            turn_to = turn4.copy().next_to(side_to, UP, buff=0.12).align_to(side_to, RIGHT)
+            resize(self, lt, 7, keep=0, run_time=0.6,
+                   extra=(FadeOut(con), Transform(side, side_to), Transform(turn4, turn_to)))
+            self.remove(con)
+            assert abs(lt.box.get_top()[1] - top7) < 0.05, (lt.box.get_top(), top7)
             type_capture(self, lt, C43, type_time=1.6)
             ed = on_bar(lt, row_tag("sed is our editor"))
             self.play(FadeIn(ed), run_time=0.3)
@@ -429,8 +443,8 @@ class CreateAndProvision(VoiceScene):
         named = grey_chip(f"the file in ~/secrets must be named {PEM_CODE}")
         with self.voiceover(SAY[5]) as vo:
             unpin(self, rows4[-1], ph)
-            drop_all(self, con, turn4, side, ed, run_time=0.4)
-            self.play(ReplacementTransform(tr, tr9), run_time=0.5)
+            drop_all(self, turn4, side, ed, run_time=0.4)
+            resize(self, lt, 4, keep=4, extra=(ReplacementTransform(tr, tr9),), run_time=0.5)
             tr = tr9
             assert rp5.get_bottom()[1] > lt.box.get_top()[1] + 0.05, (rp5.get_bottom(), lt.box.get_top())
             self.play(FadeIn(rp5, shift=DOWN * 0.15), run_time=0.6)
@@ -545,7 +559,7 @@ class CreateAndProvision(VoiceScene):
         xvdf = disk_row("/dev/xvdf")
         xvdf.move_to(np.array([2.6, -1.65, 0]) + o7)
         p288 = code(PV, 288, 292, font_size=20)
-        p288.move_to([0, 0.4, 0])
+        p288.move_to([0, -0.3, 0])
         badge = badge_glyph(0.42)
         def light(i, *extra):
             """A group label lights GREEN (a cross-fade to its lit twin)."""
@@ -591,7 +605,7 @@ class CreateAndProvision(VoiceScene):
             self.wait(0.7)
             badge.move_to(code_span(p288.code, 2, "aws_access_key_id").get_center())
             self.play(FadeIn(badge, scale=0.6), FadeOut(p288), Restore(v7), Restore(folder), Restore(xvdf),
-                      run_time=0.6)
+                      FadeIn(labels), FadeIn(cap7), run_time=0.6)
             self.remove(p288)
             vo.wait_until("your badge now has a copy")
             dst = v7.engine_label.get_bottom() + DOWN * 0.45

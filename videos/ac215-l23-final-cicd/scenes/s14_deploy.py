@@ -130,6 +130,18 @@ def shortened_panel(path: str, a: int, b: int, dedent: int, edits: dict, font_si
     return code_panel(src, path, a, "yaml", font_size=font_size)
 
 
+def mixed_chip(parts, color=S.GREY, size: float = 20) -> VGroup:
+    """A grey_chip whose text mixes prose and mono command parts: (text, 'mono'|'label') pairs. .box .text"""
+    t = VGroup(*[mono(x, size, INK) if k == "mono" else label(x, size, INK) for x, k in parts])
+    t.arrange(RIGHT, buff=0.14)
+    h = mono("|", size).height + 0.24
+    b = box(t.width + 0.48, h, color, fill_opacity=0.16, radius=h / 2.6)
+    t.move_to(b)
+    g = VGroup(b, t)
+    g.box, g.text = b, t
+    return g
+
+
 def at_top(m, top: float = 2.75):
     return m.move_to([0, 0, 0]).shift(UP * (top - m.get_top()[1]))
 
@@ -263,6 +275,7 @@ class FollowTheTag(VoiceScene):
             resize(self, t, 3, keep=[r22, r29[-1], r30],
                    extra=[xtag.animate.set_y(new_bar_y), bh.animate.set_y(STRIP_TOP + 0.12 + bh.height / 2)],
                    run_time=0.7)
+            self.add(xtag)            # resize re-adds the terminal on top: keep `extra` on its bar
             bc.move_to([0, 0.75, 0])
             self.play(FadeIn(bc), run_time=0.4)
             vo.wait_until("Neither playbook runs")
@@ -423,6 +436,7 @@ class FollowTheTag(VoiceScene):
             self.play(FadeOut(VGroup(c_slide, c_pub)), run_time=0.3)
             self.remove(c_slide, c_pub)
             resize(self, t2, 3, extra=[sh.animate.set_y(STRIP_TOP - t2.bar_h / 2)], run_time=0.6)
+            self.add(sh)              # keep 'written out, not run' above the re-added terminal
             self.play(FadeIn(page, shift=UP * 0.15), run_time=0.5)
         for r in page.rows:          # ~4 s: the steps tick GREEN top to bottom
             ok = state_mark("ok", 0.3).move_to(r.mark)
@@ -434,7 +448,8 @@ class FollowTheTag(VoiceScene):
         lp.shift(UP * (2.7 - lp.get_top()[1]))
         mon = lp.boxes["monitor"]
         g1 = ok_chip("green run = every step that ran exited 0", 22)
-        g2 = grey_chip("reload the site · sudo docker container ls → the IMAGE column shows the new tag", 20)
+        g2 = mixed_chip([("reload the site ·", "label"), ("sudo docker container ls", "mono"),
+                         ("→ the IMAGE column shows the new tag", "label")])
         g1.move_to([6.4 - g1.width / 2, lp.get_bottom()[1] - 0.45, 0])
         g2.move_to([6.4 - g2.width / 2, g1.get_y() - 0.65, 0])
         link = DashedLine(mon.get_bottom(), [mon.get_x(), g1.get_top()[1], 0], color=TURN, stroke_width=3,
@@ -466,7 +481,7 @@ class FollowTheTag(VoiceScene):
             self.play(tg.animate.shift(np.array([-0.6, -0.4, 0])), run_time=0.5)
             vo.wait_until("is typing slash run deploy app")
             rb = tg.hover_ribbon(self, KEYWORD, run_time=0.5)
-            self.play(rb.animate.shift(UP * 0.6), run_time=0.4)
+            self.play(rb.animate.shift(UP * 0.85), run_time=0.4)   # clear of the ponder card (top 1.98)
             vo.wait_until("continuous delivery")
             self.play(Circumscribe(tg.button, color=INK, buff=0.08), run_time=0.7)
             vo.wait_until("or continuous deployment")

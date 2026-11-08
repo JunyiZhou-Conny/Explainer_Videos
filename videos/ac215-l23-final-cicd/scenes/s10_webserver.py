@@ -121,6 +121,13 @@ def substring_label(t: Text, sub: str) -> VGroup:
     return VGroup(*t[a:a + len("".join(sub.split()))])
 
 
+def span_bar(c, k0: int, k1: int, color: str) -> Rectangle:
+    """One translucent bar over lines k0..k1 of a code_block (two line_bars overlap into a seam)."""
+    a, b = line_bar(c, k0, color), line_bar(c, k1, color)
+    return Rectangle(width=a.width, height=a.get_top()[1] - b.get_bottom()[1], stroke_width=0) \
+        .set_fill(color, 0.16).move_to([a.get_x(), (a.get_top()[1] + b.get_bottom()[1]) / 2, 0])
+
+
 def tag_for(path: str) -> VGroup:
     """A GREY row tag naming the request a printed line answers."""
     return row_tag([("for", "label"), (path, "mono")])
@@ -174,12 +181,12 @@ class FrontDoor(VoiceScene):
             self.play(Create(a_api), FadeIn(l_api), FadeIn(api, shift=RIGHT * 0.1), run_time=0.7)
             self.play(GrowArrow(a_vdb), FadeIn(l_vdb), FadeIn(vdb, shift=RIGHT * 0.1), run_time=0.6)
             vo.wait_until("Here the same shape")
-            self.play(FadeOut(one), FadeOut(a_in), FadeOut(a_vdb), FadeOut(l_vdb), FadeIn(v), run_time=0.5)
-            v.wall(self, run_time=0.6)
-            self.play(ReplacementTransform(fe, boxes["frontend"]), ReplacementTransform(api, boxes["api"]),
+            self.play(FadeOut(one), FadeOut(a_in), FadeOut(a_vdb), FadeOut(l_vdb), FadeIn(v),
+                      ReplacementTransform(fe, boxes["frontend"]), ReplacementTransform(api, boxes["api"]),
                       ReplacementTransform(vdb, boxes["vectordb"]),
                       ReplacementTransform(a_fe, r_fe), ReplacementTransform(a_api, r_api),
                       ReplacementTransform(l_fe, rl_fe), ReplacementTransform(l_api, rl_api), run_time=1.2)
+            v.wall(self, run_time=0.6)
             for k in ("frontend", "api", "vectordb"):
                 v.containers[k] = boxes[k]
                 v.keep(self, boxes[k])
@@ -216,17 +223,19 @@ class FrontDoor(VoiceScene):
                       run_time=0.4)
             self.play(Indicate(code_span(p25.code, 1, "listen 80"), color=TURN, scale_factor=1.15), run_time=0.6)
             vo.wait_until("Paths that start with")
-            self.play(FadeOut(bar), ReplacementTransform(p25, p34), run_time=0.7)
+            self.play(FadeOut(bar), FadeTransform(p25, p34), run_time=0.7)
             self.remove(bar)
             bars = VGroup(line_bar(p34.code, 1, ROUTE), line_bar(p34.code, 3, ROUTE))
             self.play(FadeIn(bars[0]), *[g.animate.set_color(ROUTE) for g in code_span(p34.code, 1, "location ^~ /api/")],
                       run_time=0.4)
             self.play(FadeIn(bars[1]), *[g.animate.set_color(ROUTE) for g in code_span(p34.code, 3, "api-service:9000")],
                       run_time=0.4)
+            self.play(Indicate(code_span(p34.code, 1, "/api/"), color=ROUTE, scale_factor=1.2), run_time=0.8)
+            self.play(Indicate(code_span(p34.code, 3, "api-service:9000"), color=ROUTE, scale_factor=1.12), run_time=0.8)
             vo.wait_until("everything else goes")
-            self.play(FadeOut(bars), ReplacementTransform(p34, p46), run_time=0.7)
+            self.play(FadeOut(bars), FadeTransform(p34, p46), run_time=0.7)
             self.remove(bars, *bars)
-            bars = VGroup(line_bar(p46.code, 1, ROUTE), line_bar(p46.code, 2, ROUTE))
+            bars = VGroup(span_bar(p46.code, 1, 2, ROUTE))
             self.play(FadeIn(bars), *[g.animate.set_color(ROUTE) for g in code_span(p46.code, 1, "location /")],
                       *[g.animate.set_color(ROUTE) for g in code_span(p46.code, 2, "frontend:3000")], run_time=0.5)
 
@@ -239,7 +248,7 @@ class FrontDoor(VoiceScene):
         end37 = code_span(p37.code, 0, "9000/;")
         frm = SurroundingRectangle(end37, color=S.GREY, buff=0.07, stroke_width=2)
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(bars), ReplacementTransform(p46, p37), run_time=0.7)
+            self.play(FadeOut(bars), FadeTransform(p46, p37), run_time=0.7)
             self.remove(bars, *bars)
             self.play(FadeIn(v), FadeIn(brw), FadeIn(routes), run_time=0.6)
             vo.wait_until("the browser asks nginx")
@@ -267,14 +276,15 @@ class FrontDoor(VoiceScene):
             self.play(Indicate(slash, color=TURN, scale_factor=1.6), run_time=0.6)
             # the request reaches the front door (nginx); nginx cuts the prefix, the rest goes on
             ngb = boxes["nginx"]
-            self.play(req.animate.shift(RIGHT * (v.frame.get_left()[0] - 0.1 - req.get_right()[0])),
+            self.play(req.animate.shift(RIGHT * (v.frame.get_left()[0] - 0.1 - req.get_right()[0]) + DOWN * 0.15),
                       Indicate(ngb.text, color=IMAGE, scale_factor=1.15), run_time=0.7)
-            gone = err_chip("/api", mono_font=True).move_to(req).align_to(req, LEFT)
-            keep_ = route_chip("/newsletters").move_to(req).align_to(req, RIGHT)
-            self.play(ReplacementTransform(req, VGroup(gone, keep_)), run_time=0.4)
-            self.remove(gone, keep_)
-            self.add(gone, keep_)
-            self.play(gone.animate.shift(DOWN * 0.7).set_opacity(0), run_time=0.5)
+            keep_ = route_chip("/newsletters").move_to(req).align_to(req, RIGHT).shift(RIGHT * 0.12)
+            gone = err_chip("/api", mono_font=True).move_to(req)
+            gone.shift(RIGHT * (keep_.get_left()[0] - 0.05 - gone.get_right()[0]))
+            assert gone.get_left()[0] > -6.6, gone.get_left()
+            self.play(FadeOut(req), FadeIn(gone), FadeIn(keep_), run_time=0.35)
+            self.remove(req)
+            self.play(gone.animate.shift(DOWN * 0.45).set_opacity(0), run_time=0.5)
             self.remove(gone)
             self.play(keep_.animate.move_to(ngb), run_time=0.5)
             self.play(keep_.animate.move_to(boxes["api"].get_top() + UP * 0.4), run_time=0.6)
@@ -309,7 +319,7 @@ class FrontDoor(VoiceScene):
         fit.next_to(s4, DOWN, buff=0.2)
         with self.voiceover(SAY[4]) as vo:
             drop_all(self, t3, sb, ul, run_time=0.4)
-            self.play(track(tr, 12), ReplacementTransform(p37, penv), run_time=0.7)
+            self.play(track(tr, 12), FadeTransform(p37, penv), run_time=0.7)
             self.play(*[g.animate.set_color(PASS) for g in code_span(penv.code, 0, "NEXT_PUBLIC_BASE_API_URL=/api")],
                       FadeIn(b4), run_time=0.5)
             self.play(GrowArrow(a41), FadeIn(c41, shift=RIGHT * 0.1), FadeIn(n4), run_time=0.7)
@@ -355,6 +365,7 @@ class FrontDoor(VoiceScene):
             v.remove(ng_old)
             drop_all(self, t5, rc, run_time=0.4)
             self.play(FadeIn(v), FadeIn(cap), LaggedStart(*[FadeIn(x) for x in tiles], lag_ratio=0.15), run_time=0.7)
+            self.play(lit(tiles[0]), run_time=0.3)
             vo.wait_until("it copies the config")
             self.play(lit(tiles[1]), run_time=0.3)
             conf.next_to(tiles[1], DOWN, buff=0.1)
@@ -388,7 +399,7 @@ class FrontDoor(VoiceScene):
         assert hint.get_bottom()[1] > v.frame.get_top()[1] + 0.08, (hint.get_bottom(), v.frame.get_top())
         assert bw.frame.get_bottom()[1] > v.frame.get_top()[1] + 0.03, (bw.frame.get_bottom(), v.frame.get_top())
         none = dashed_chip("nginx serves nothing here · no HTTPS")
-        none.move_to([P["nginx"][0] - 0.95 + none.width / 2, ng5.get_bottom()[1] - 0.45, 0])
+        none.move_to([P["nginx"][0] - 0.8 + none.width / 2, ng5.get_bottom()[1] - 0.45, 0])
         assert none.get_right()[0] < v.frame.get_right()[0] - 0.1
         with self.voiceover(SAY[6]) as vo:
             drop_all(self, tiles, cap, run_time=0.4)
@@ -413,6 +424,7 @@ class FrontDoor(VoiceScene):
         # ========================================================== 7. part 1 ends; a commit message next
         small = VGroup(*[m.copy() for m in (bw.frame, bw[1], bw[2])])
         small_target = small.copy().scale(0.45).move_to([0, 1.4, 0])
+        small_target[0].set_stroke(S.GREY, width=2, opacity=1)
         part = note("Part 1 · about a dozen commands · five playbooks · by hand")
         part.move_to([0, 0.2, 0])
         rib = ribbon(KEYWORD)

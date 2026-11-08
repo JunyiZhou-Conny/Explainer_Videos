@@ -1,0 +1,1289 @@
+1
+00:00:00,000 --> 00:00:03,435
+第 2 部分：把奶酪应用作为 Pulumi 代码部署到 GKE 上
+Part 2: the cheese app on GKE, as Pulumi code.
+
+2
+00:00:03,755 --> 00:00:05,255
+课程链接落在这一节
+The course link lands
+
+3
+00:00:05,255 --> 00:00:08,083
+Deployment with Scaling using Kubernetes
+on Deployment with Scaling using Kubernetes;
+
+4
+00:00:08,083 --> 00:00:13,077
+集群的步骤，接在下一个小节 Create & Deploy Cluster 里
+the cluster steps continue under the next heading, Create & Deploy Cluster.
+
+5
+00:00:13,817 --> 00:00:17,124
+这是整个计划，一块一块地从第 20 讲对过来
+Here is the plan, piece by piece from lecture 20.
+
+6
+00:00:17,444 --> 00:00:20,302
+每个长期运行的 container 变成一个 Deployment
+Each long-running container becomes a Deployment.
+
+7
+00:00:20,622 --> 00:00:22,913
+一次性的加载器变成一个 Job
+The one-shot loader becomes a Job:
+
+8
+00:00:22,913 --> 00:00:27,833
+运行失败会重试几次，一旦成功，就保持完成状态
+it retries a failed run a few times, and once it succeeds, it stays done.
+
+9
+00:00:28,367 --> 00:00:33,039
+Docker 网络上的 container 名字变成带 DNS 名字的 Service
+Container names on a Docker network become Services with DNS names.
+
+10
+00:00:33,359 --> 00:00:39,503
+VM 磁盘上的目录变成两个 PVC，每个背后是一块云磁盘
+The folders on the VM disk become two persistent volume claims, each backed by a cloud disk.
+
+11
+00:00:39,750 --> 00:00:42,976
+那个 nginx container 变成一个 Ingress controller
+The nginx container becomes an Ingress controller
+
+12
+00:00:42,976 --> 00:00:44,576
+加上一条 Ingress 规则
+with an Ingress rule.
+
+13
+00:00:44,678 --> 00:00:49,158
+JSON 密钥变成 Workload Identity，完全没有密钥文件
+The JSON key becomes Workload Identity, with no key file at all.
+
+14
+00:00:49,478 --> 00:00:52,379
+一台机器变成一个有一到两个节点的节点池
+One machine becomes a pool of one or two nodes.
+
+15
+00:00:52,617 --> 00:00:54,537
+外面围着一个私有网络
+Around it, a private network.
+
+16
+00:00:54,857 --> 00:00:57,145
+节点没有公网地址
+The nodes get no public addresses;
+
+17
+00:00:57,145 --> 00:00:59,836
+一个 Cloud NAT 网关让它们能往外连
+a Cloud NAT gateway lets them reach out,
+
+18
+00:00:59,836 --> 00:01:02,729
+比如从 Docker Hub 拉取 Chroma
+for example to pull Chroma from Docker Hub.
+
+19
+00:01:03,049 --> 00:01:06,846
+应用放在一个 namespace 里，前面是一个负载均衡器
+The app sits in one namespace, behind one load balancer.
+
+20
+00:01:08,450 --> 00:01:12,122
+在 deploy k8s 里，程序用四次调用说了同样的事
+The program in deploy_k8s says the same in four calls,
+
+21
+00:01:12,122 --> 00:01:17,154
+一个文件一次：网络、集群、container、负载均衡器
+one per file: the network, the cluster, the containers, the load balancer.
+
+22
+00:01:17,474 --> 00:01:21,463
+第 17 行让 HTTPS 版本保持关闭
+Line 17 keeps the HTTPS variant switched off.
+
+23
+00:01:22,200 --> 00:01:26,272
+它运行期间一直在花钱：区域集群的管理费
+While it is up, it costs money: the fee of a regional cluster,
+
+24
+00:01:26,272 --> 00:01:30,541
+一到两个节点、一个负载均衡器、一个 NAT 网关和两块磁盘
+one or two nodes, a load balancer, one NAT gateway and two disks.
+
+25
+00:01:30,861 --> 00:01:34,172
+按我们的估算，大约每天 5 到 8 美元
+By our estimate, roughly five to eight dollars a day:
+
+26
+00:01:34,172 --> 00:01:37,795
+去查一下价格计算器，当天就 destroy 掉
+check the pricing calculator, and destroy it the same day.
+
+27
+00:01:40,133 --> 00:01:43,586
+这一节再次启用那五个 API
+This section enables the five APIs again;
+
+28
+00:01:43,586 --> 00:01:48,218
+把 Vertex AI API 也打开，API 的 Pod 要调用它
+turn on the Vertex AI API too, which the API Pods call.
+
+29
+00:01:48,966 --> 00:01:52,315
+你还需要第 20 讲的两个服务账号
+You also need the two service accounts from lecture 20.
+
+30
+00:01:52,635 --> 00:01:55,622
+其中 deployment 账号做工具箱要做的事
+The deployment account does what the toolbox does,
+
+31
+00:01:55,622 --> 00:01:58,011
+在这里它还是节点的身份
+and here it is also the nodes' identity.
+
+32
+00:01:58,331 --> 00:02:03,196
+而 gcp-service 账号是给 API 的 Pod 用的，不需要密钥文件
+The gcp-service account is for the API Pods, with no key file.
+
+33
+00:02:03,933 --> 00:02:06,408
+README 漏掉了两个一次性的步骤
+Two one-time steps the README leaves out.
+
+34
+00:02:06,728 --> 00:02:09,071
+deployment 账号很可能需要一个角色
+The deployment account very likely
+
+35
+00:02:09,071 --> 00:02:12,034
+gcp-service 上的 Service Account Admin
+needs Service Account Admin on gcp-service;
+
+36
+00:02:12,034 --> 00:02:13,634
+这一点我们没法测试
+we could not test this.
+
+37
+00:02:13,938 --> 00:02:17,991
+还要创建 registry 仓库 cheese-app-repository
+And create the registry repository, cheese-app-repository,
+
+38
+00:02:17,991 --> 00:02:19,591
+没有任何代码会创建它
+which no code creates.
+
+39
+00:02:20,266 --> 00:02:23,518
+把 deployment 的密钥放进 secrets 目录
+The deployment key goes in the secrets folder,
+
+40
+00:02:23,518 --> 00:02:26,346
+和 repo 并排，和第 20 讲一样
+beside the repository, as in lecture 20.
+
+41
+00:02:27,083 --> 00:02:30,559
+然后是第 1 部分的工具箱步骤，命令一样
+Then the toolbox steps from part 1, the same commands;
+
+42
+00:02:30,559 --> 00:02:34,806
+如果工具箱还在运行，脚本会直接接入它
+if the toolbox is still running, the script simply attaches to it.
+
+43
+00:02:35,050 --> 00:02:39,722
+接下来是 images stack，只在你之前没构建过时才做
+Next, the images stack, only if you have not built it before:
+
+44
+00:02:39,722 --> 00:02:41,713
+进到 deploy images
+change into deploy_images,
+
+45
+00:02:41,713 --> 00:02:45,695
+运行 pulumi stack init dev，再把 gcp:project 设成你的
+pulumi stack init dev, and set gcp:project to yours.
+
+46
+00:02:46,015 --> 00:02:48,975
+我们的显示 Pulumi access token must be set
+Ours says PULUMI_ACCESS_TOKEN must be set:
+
+47
+00:02:48,975 --> 00:02:53,695
+我们的 bucket 登录失败了，所以 Pulumi 退回到它自己的云服务
+our bucket login failed, so Pulumi falls back to its cloud service.
+
+48
+00:02:53,933 --> 00:02:57,324
+为了展示剩下的部分，我们让 Pulumi 指向一个本地目录
+To show the rest, we point Pulumi at a local folder,
+
+49
+00:02:57,324 --> 00:02:59,736
+这是录制用的权宜之计：你别跑
+a recording workaround: don't run it.
+
+50
+00:03:00,056 --> 00:03:02,552
+现在 stack 创建好了，和你的一样
+Now the stack is created, as yours is.
+
+51
+00:03:02,800 --> 00:03:05,909
+然后是 pulumi preview --stack dev：三个 image 构建
+Then pulumi preview --stack dev: three image builds,
+
+52
+00:03:05,909 --> 00:03:09,435
+在 preview 里会跳过，还有三个打上时间戳的 tag
+skipped in a preview, and three tags stamped with the time.
+
+53
+00:03:09,755 --> 00:03:13,168
+要创建 4 个：三个 image，加上 stack 本身
++ 4 to create: three images and the stack itself.
+
+54
+00:03:13,416 --> 00:03:15,073
+这些 tag 输出很重要
+Those tag outputs matter:
+
+55
+00:03:15,073 --> 00:03:18,452
+deploy k8s 通过 stack reference 查到它们
+deploy_k8s looks them up through a stack reference,
+
+56
+00:03:18,452 --> 00:03:20,307
+才知道要运行哪些 image
+to know which images to run.
+
+57
+00:03:20,550 --> 00:03:25,606
+最后，pulumi up --stack dev -y：它构建并 push 三个 image
+Last, pulumi up --stack dev -y: it builds and pushes three images.
+
+58
+00:03:25,926 --> 00:03:28,398
+可以跳过，如果你在第 20 讲做过
+Skip it if you did it in lecture 20,
+
+59
+00:03:28,398 --> 00:03:30,596
+但有一个条件，我们接下来会讲
+with one condition we meet next;
+
+60
+00:03:30,596 --> 00:03:32,518
+否则就暂停一下，跑一遍
+otherwise, pause and run it.
+
+61
+00:03:33,767 --> 00:03:35,730
+现在是 Create & Deploy Cluster
+Now Create & Deploy Cluster.
+
+62
+00:03:36,050 --> 00:03:39,588
+在 deployment 目录里，进到 deploy k8s
+From the deployment folder, change into deploy_k8s
+
+63
+00:03:39,588 --> 00:03:41,711
+运行 pulumi stack init dev
+and run pulumi stack init dev:
+
+64
+00:03:41,711 --> 00:03:46,524
+同样的令牌报错，在本地 backend 上则是 Created stack dev
+the same token error, and on the local backend, Created stack 'dev'.
+
+65
+00:03:47,167 --> 00:03:52,227
+然后是三个 config 键：你的项目，以及两个服务账号的邮箱
+Then three config keys: your project, and two service account emails,
+
+66
+00:03:52,227 --> 00:03:54,207
+deployment 和 gcp-service
+deployment and gcp-service.
+
+67
+00:03:54,527 --> 00:03:58,282
+三处都把 ac215-project 换成你的
+Replace ac215-project with yours in all three.
+
+68
+00:03:59,784 --> 00:04:04,179
+第 9 行填 deployment 的邮箱：节点以这个账号运行
+Line 9 takes the deployment email: the nodes run as that account.
+
+69
+00:04:04,499 --> 00:04:10,109
+第 10 行填 gcp-service 的邮箱，API 的 Pod 会扮演这个账号
+Line 10 takes the gcp-service email, which the API Pods will act as.
+
+70
+00:04:10,350 --> 00:04:13,788
+一个额外命令 pulumi config，列出你的三个键
+An extra, pulumi config, lists your three keys
+
+71
+00:04:13,788 --> 00:04:16,927
+还有提交的文件里留下的两个
+and two leftovers from the committed file,
+
+72
+00:04:16,927 --> 00:04:21,038
+setupSSL 和一个 SSH 用户，程序从来没用过
+setupSSL and an SSH user, which the program never uses.
+
+73
+00:04:21,358 --> 00:04:25,177
+键名打错一个字，后面会悄悄失败，所以检查一下这张列表
+A typo in a key name fails quietly later, so check this list.
+
+74
+00:04:25,417 --> 00:04:26,917
+然后是 Preview 这一步
+Then Preview:
+
+75
+00:04:26,917 --> 00:04:29,056
+pulumi preview --stack dev --refresh
+pulumi preview --stack dev --refresh.
+
+76
+00:04:29,106 --> 00:04:30,475
+在本地 backend 上
+On the local backend,
+
+77
+00:04:30,475 --> 00:04:33,669
+setup containers 第 70 行报一个 Python 错误
+a Python error at line 70 of setup_containers.py:
+
+78
+00:04:33,669 --> 00:04:36,212
+NoneType object is not subscriptable
+'NoneType' object is not subscriptable.
+
+79
+00:04:36,532 --> 00:04:40,478
+程序向 images stack 要它的 tag，什么都没拿到
+The program asked the images stack for its tags, and got nothing.
+
+80
+00:04:40,717 --> 00:04:43,485
+你会看到这个，如果 images stack 从来没有
+You see this if the images stack never finished
+
+81
+00:04:43,485 --> 00:04:45,730
+在同一个 state bucket 里跑完 pulumi up
+pulumi up in this same state bucket.
+
+82
+00:04:46,050 --> 00:04:48,909
+只有它已经在那里跑过，跳过才安全
+Skipping it is safe only when it already ran there.
+
+83
+00:04:49,150 --> 00:04:53,514
+所以我们给程序一个带占位 tag 的替身 images stack
+So we gave the program a stand-in images stack with placeholder tags;
+
+84
+00:04:53,514 --> 00:04:54,860
+什么都没构建
+nothing is built.
+
+85
+00:04:54,910 --> 00:04:56,846
+现在真正的计划出现了
+Now the real plan appears:
+
+86
+00:04:56,846 --> 00:05:03,102
+网络、集群、节点池、Kubernetes 对象，一共要创建 23 个
+the network, the cluster, the node pool, the Kubernetes objects, and + 23 to create.
+
+87
+00:05:03,350 --> 00:05:06,851
+还有两行是查询，不算在 23 个里
+Two more lines are lookups, not counted in the 23:
+
+88
+00:05:06,851 --> 00:05:09,793
+stack reference 和 nginx 的 Service
+the stack reference and the nginx Service.
+
+89
+00:05:10,113 --> 00:05:13,290
+在输出里，只有集群名字是已知的
+In the outputs, only the cluster name is known;
+
+90
+00:05:13,290 --> 00:05:16,940
+地址和 URL 要等集群建好才有
+the address and the URL wait until the cluster exists.
+
+91
+00:05:17,184 --> 00:05:19,063
+暂停一下，跑你的 preview
+Pause and run your preview:
+
+92
+00:05:19,063 --> 00:05:22,474
+你应该看到同样的 23 个，只是带着真实的 image tag
+you should see the same 23, with real image tags.
+
+93
+00:05:23,617 --> 00:05:27,500
+然后是重头戏：pulumi up --stack dev --refresh -y
+Then the big one: pulumi up --stack dev --refresh -y.
+
+94
+00:05:27,820 --> 00:05:32,495
+在本地 backend 上，更新开始了，第一个资源，也就是网络
+On the local backend the update starts, and the very first resource, the network,
+
+95
+00:05:32,495 --> 00:05:35,670
+就失败了：Invalid grant: account not found
+fails: invalid_grant: Invalid grant: account not found.
+
+96
+00:05:35,917 --> 00:05:40,504
+网络是第一个需要 Google 的东西，所以从这里开始是示意图
+The network is the first thing that needs Google, so from here on this is a picture.
+
+97
+00:05:40,824 --> 00:05:44,024
+暂停一下，启动你的；从现在起，计费表就开始走了
+Pause and start yours; from now on, the meter runs.
+
+98
+00:05:46,267 --> 00:05:48,400
+Pulumi 按依赖关系来
+Pulumi follows the dependencies.
+
+99
+00:05:48,720 --> 00:05:50,662
+先是网络和它的子网
+First the network and its subnet.
+
+100
+00:05:50,982 --> 00:05:55,409
+然后并排进行：带 NAT 网关的路由器，以及集群
+Then, side by side, the router with its NAT gateway, and the cluster,
+
+101
+00:05:55,409 --> 00:05:59,323
+要等很久：按我们的估算，一刻钟或更久
+the long wait: a quarter of an hour or more, by our estimate.
+
+102
+00:05:59,867 --> 00:06:01,417
+然后是节点池
+Then the node pool.
+
+103
+00:06:01,467 --> 00:06:06,307
+一个用集群输出构建的 Kubernetes provider 会等这个节点池
+A Kubernetes provider, built from the cluster outputs, waits for that pool,
+
+104
+00:06:06,307 --> 00:06:09,147
+所以有节点之前不会创建任何 Pod
+so no Pod is created before there are nodes.
+
+105
+00:06:09,384 --> 00:06:11,285
+通过它创建的有
+Through it come the namespace,
+
+106
+00:06:11,285 --> 00:06:15,593
+namespace、API 的 Kubernetes 服务账号和它的绑定
+the service account of the API and its binding, the two disk claims,
+
+107
+00:06:15,593 --> 00:06:17,938
+两个磁盘 PVC、前端和向量数据库
+the frontend and the vector database.
+
+108
+00:06:18,184 --> 00:06:21,256
+接下来，加载器 Job 填充向量数据库
+Next, the loader Job fills the vector database.
+
+109
+00:06:21,576 --> 00:06:26,923
+Pulumi 要等 Job 完成后才创建 API
+Pulumi creates the API only after the Job completes:
+
+110
+00:06:26,923 --> 00:06:30,728
+第 319 到 321 行设定了这个依赖
+lines 319 to 321 set that dependency.
+
+111
+00:06:30,967 --> 00:06:34,743
+同时，Helm 安装 nginx Ingress controller
+In parallel, Helm installs the nginx Ingress controller.
+
+112
+00:06:35,063 --> 00:06:37,477
+它的 Service 申请一个负载均衡器
+Its Service asks for a load balancer,
+
+113
+00:06:37,477 --> 00:06:40,610
+于是控制器向云平台要一个地址
+so the controllers ask the cloud for an address:
+
+114
+00:06:40,610 --> 00:06:42,764
+第 1 部分的那个指示灯，这次是绿的
+the part 1 lamp, green this time.
+
+115
+00:06:43,084 --> 00:06:46,604
+这个地址变成一个主机名，Ingress 最后创建
+That address becomes a host name, and the Ingress comes last.
+
+116
+00:06:47,584 --> 00:06:49,376
+身份，分两部分
+Identity, in two parts.
+
+117
+00:06:49,696 --> 00:06:54,669
+Pulumi 和 kubectl 通过 GKE 认证插件连到 API server
+Pulumi and kubectl reach the API server through the GKE auth plugin,
+
+118
+00:06:54,669 --> 00:06:58,912
+也就是工具箱的修复 2，所以没有集群密码
+fix two from the toolbox, so there is no cluster password.
+
+119
+00:06:59,650 --> 00:07:03,762
+而 API 的 Pod 带着它的 Kubernetes 服务账号
+And the API Pod wears its Kubernetes service account,
+
+120
+00:07:03,762 --> 00:07:09,271
+Workload Identity 在 Vertex AI 门口把它换成 gcp-service
+which Workload Identity swaps for gcp-service at the door to Vertex AI.
+
+121
+00:07:09,591 --> 00:07:11,874
+集群里没有任何 JSON 密钥
+No JSON key sits in the cluster.
+
+122
+00:07:12,617 --> 00:07:17,187
+记住：Pulumi 只在这个工具箱里给 kubectl 连接一次
+Keep in mind: Pulumi connects kubectl once, inside this toolbox,
+
+123
+00:07:17,187 --> 00:07:19,401
+你退出时工具箱就被删掉了
+which is removed when you exit.
+
+124
+00:07:19,721 --> 00:07:21,748
+下次会话开始时没有连接
+The next session starts unconnected.
+
+125
+00:07:22,068 --> 00:07:25,487
+如果你的运行停下了，卡片列出四个常见原因
+If yours stops, the card shows the four usual causes:
+
+126
+00:07:25,487 --> 00:07:27,230
+暂停一下，对照你的报错
+pause and match your error.
+
+127
+00:07:37,767 --> 00:07:41,308
+第 20 讲在前面放了一个 nginx container
+Lecture 20 put one nginx container in front.
+
+128
+00:07:41,628 --> 00:07:45,148
+那个游戏开了自己的负载均衡器，一个应用一扇门
+The game opened its own load balancer, one door per app.
+
+129
+00:07:45,468 --> 00:07:49,372
+奶酪应用只开一扇门，门后有一位前台
+The cheese app opens one door, with a receptionist behind it.
+
+130
+00:07:49,917 --> 00:07:52,132
+README 画出了这条路径
+The README draws the path:
+
+131
+00:07:52,132 --> 00:07:56,647
+浏览器、负载均衡器、nginx Ingress controller
+browser, load balancer, the nginx Ingress controller,
+
+132
+00:07:56,647 --> 00:08:00,481
+然后是 3000 上的前端或 9000 上的 API
+then the frontend on 3000 or the API on 9000,
+
+133
+00:08:00,481 --> 00:08:03,208
+以及 8000 上的向量数据库
+and the vector database on 8000.
+
+134
+00:08:03,450 --> 00:08:08,741
+有一个小疏漏：README 把虚线箭头从向量数据库画到加载器
+A small slip: the README draws the dotted arrow from the vector database to the loader.
+
+135
+00:08:09,061 --> 00:08:12,858
+数据是反方向流的，从 Job 流进数据库
+The data flows the other way, from the Job into the database.
+
+136
+00:08:13,100 --> 00:08:14,607
+跟着一次点击走
+Follow one click.
+
+137
+00:08:14,657 --> 00:08:20,460
+你的 IP.sslip.io 会指回同一个 IP，什么都不用设置
+<IP>.sslip.io points back to that same IP, with no setup at all.
+
+138
+00:08:20,780 --> 00:08:25,815
+数据包经过云负载均衡器，落到 nginx controller 上
+The packet passes the cloud load balancer and lands on the nginx controller.
+
+139
+00:08:26,450 --> 00:08:29,984
+Ingress 规则从主机名开始
+The Ingress rule starts with the host name:
+
+140
+00:08:29,984 --> 00:08:34,259
+对这个主机，/api-service 去 9000 上的 API
+for that host, /api-service goes to the API on 9000,
+
+141
+00:08:34,259 --> 00:08:37,629
+其他路径都去 3000 上的前端
+every other path to the frontend on 3000.
+
+142
+00:08:37,949 --> 00:08:40,524
+这个 controller 按这条规则走
+The controller follows that rule,
+
+143
+00:08:40,524 --> 00:08:44,349
+就像第 20 讲的 nginx.conf，只是现在是自动生成的
+like the nginx.conf of lecture 20, now generated.
+
+144
+00:08:44,884 --> 00:08:47,913
+这次前缀保留了：没有东西去剪掉它
+This time the prefix is kept: nothing strips it.
+
+145
+00:08:48,233 --> 00:08:53,772
+API 把自己挂在它的根路径 /api-service 下面
+The API mounts itself under its root path, /api-service,
+
+146
+00:08:53,772 --> 00:08:58,025
+所以 /api-service/status 返回版本 3.0
+so /api-service/status answers version 3.0.
+
+147
+00:08:58,967 --> 00:09:06,135
+页面来自前端；然后你的浏览器直接调用 API，在 /api-service
+The page comes from the frontend; then your browser calls the API directly, at /api-service.
+
+148
+00:09:06,934 --> 00:09:12,124
+在集群内部，API 按 Service 名字找到 Chroma
+Inside the cluster, the API reaches Chroma by its Service name,
+
+149
+00:09:12,124 --> 00:09:14,102
+vector-db，port 8000
+vector-db, on port 8000.
+
+150
+00:09:14,900 --> 00:09:19,999
+现在打开裸 IP：同一个负载均衡器，不带 sslip.io
+Now open the bare IP: the same load balancer, without sslip.io.
+
+151
+00:09:20,319 --> 00:09:21,919
+谁来回答？
+What answers?
+
+152
+00:09:30,484 --> 00:09:34,111
+回答的是 nginx controller：404 Not Found
+The nginx controller answers 404 Not Found.
+
+153
+00:09:34,431 --> 00:09:39,871
+规则只匹配那个主机名，所以同一扇门、名字不对，就找不到路由
+The rule matches only that host name, so the same door with the wrong name finds no route.
+
+154
+00:09:40,191 --> 00:09:42,409
+用输出里的 app URL
+Use the app_url from the outputs.
+
+155
+00:09:42,950 --> 00:09:48,535
+这就勾上了负载均衡：门口是云负载均衡器，后面是 nginx
+That ticks load balancing: the cloud load balancer at the door, nginx behind it,
+
+156
+00:09:48,535 --> 00:09:52,166
+每个 Service 再把请求分散到它的 Pod 上
+and each Service spreading requests across its Pods.
+
+157
+00:09:53,400 --> 00:09:55,811
+接下来，试几条 kubectl 命令
+Next, try some kubectl commands.
+
+158
+00:09:56,131 --> 00:09:59,629
+这里没有集群，五条都显示 connection refused
+With no cluster here, all five say connection refused.
+
+159
+00:09:59,949 --> 00:10:03,401
+在任何一个新的工具箱会话里你都会看到一模一样的结果
+You will see exactly this in any new toolbox session:
+
+160
+00:10:03,401 --> 00:10:07,373
+Pulumi 写的 kubeconfig 跟着旧 container 一起没了
+the kubeconfig Pulumi wrote went away with the old container.
+
+161
+00:10:07,617 --> 00:10:10,099
+修复办法就是 Pulumi 跑过的那条命令
+The fix is the command Pulumi ran,
+
+162
+00:10:10,099 --> 00:10:13,019
+在这里是额外步骤：gcloud container clusters
+an extra here: gcloud container clusters
+
+163
+00:10:13,019 --> 00:10:15,574
+get-credentials cheese-app-cluster
+get-credentials cheese-app-cluster.
+
+164
+00:10:15,894 --> 00:10:21,185
+代码把区域传给了 --zone 参数；写成 --region，才名副其实
+The code passes the region to the --zone flag; write --region, which says what it means.
+
+165
+00:10:21,933 --> 00:10:25,939
+连上以后，get all 还是只显示 kubernetes 这个 Service
+Once connected, get all still shows only the kubernetes Service,
+
+166
+00:10:25,939 --> 00:10:28,568
+因为应用在它自己的 namespace 里
+because the app sits in its own namespace.
+
+167
+00:10:28,888 --> 00:10:31,180
+加上 -n cheese-app-namespace
+With -n cheese-app-namespace,
+
+168
+00:10:31,180 --> 00:10:36,397
+你的会列出前端、数据库、API 和 nginx controller 的 Pod
+yours lists the frontend, database, API and nginx controller Pods,
+
+169
+00:10:36,397 --> 00:10:39,085
+还有一个标着 Completed 的加载器 Pod
+and a loader Pod marked Completed.
+
+170
+00:10:39,405 --> 00:10:41,633
+命令 get nodes 显示一个节点，或者两个
+Get nodes shows one node, or two.
+
+171
+00:10:42,167 --> 00:10:44,661
+README 的下一步是进到一个 Pod 的 shell 里
+The next README step shells into a Pod.
+
+172
+00:10:44,855 --> 00:10:47,711
+README 里的 Pod 名字是作者自己的
+The Pod name in the README is the author's own;
+
+173
+00:10:47,711 --> 00:10:50,081
+用你第一条命令打印出来的名字
+use the name your first command prints.
+
+174
+00:10:50,717 --> 00:10:53,797
+进去以后，你拿到的是 API container 里的一个 shell
+Inside, you get a shell in the API container,
+
+175
+00:10:53,797 --> 00:10:55,645
+和我们在游戏里做的一样
+just as we did in the game.
+
+176
+00:10:55,965 --> 00:10:58,504
+打印它的环境变量，找 ROOT PATH 这个变量
+Print its environment and look for ROOT_PATH.
+
+177
+00:10:58,824 --> 00:11:00,424
+暂停一下，试一试
+Pause and try it.
+
+178
+00:11:00,917 --> 00:11:05,760
+为了查看应用，README 给了一段输出，比代码稍旧一点
+To view the app, the README shows an outputs block a little older than the code.
+
+179
+00:11:06,080 --> 00:11:10,499
+现在地址叫 ip address，不叫 nginx ingress ip
+Today the address is called ip_address, not nginx_ingress_ip,
+
+180
+00:11:10,499 --> 00:11:13,759
+Ingress 叫 cheese-app-ingress
+and the Ingress is called cheese-app-ingress.
+
+181
+00:11:14,500 --> 00:11:16,505
+暂停一下，打开你的 app URL
+Pause and open your app_url.
+
+182
+00:11:16,825 --> 00:11:22,732
+页脚显示 API version: 3.0，就证明整条路径都通了
+A footer that says API version: 3.0 proves the whole path works:
+
+183
+00:11:22,732 --> 00:11:25,316
+它请求的是 /api-service/status
+it asks /api-service/status.
+
+184
+00:11:25,636 --> 00:11:28,203
+然后在聊天里选 RAG 模型
+Then pick the RAG model in the chat;
+
+185
+00:11:28,203 --> 00:11:31,055
+有回复，就证明 Vertex AI 和 Chroma 也通了
+a reply proves Vertex AI and Chroma too.
+
+186
+00:11:31,300 --> 00:11:37,828
+刚部署完你可能会看到 502 或 503：API 还在加载 TensorFlow
+Right after deploying you may see 502 or 503: the API is still loading TensorFlow.
+
+187
+00:11:38,148 --> 00:11:39,748
+等一等，再试一次
+Wait, and try again.
+
+188
+00:11:40,883 --> 00:11:44,808
+README 的调试那一块有 14 条 kubectl 命令
+The README's debugging block has 14 kubectl commands.
+
+189
+00:11:45,128 --> 00:11:48,167
+照原样敲，全都会失败；大多数都说找不到
+As typed, they all fail; most say the namespace,
+
+190
+00:11:48,167 --> 00:11:50,888
+cheese-app-cluster-namespace 这个 namespace
+cheese-app-cluster-namespace, is not found.
+
+191
+00:11:51,133 --> 00:11:54,657
+带尖括号的 pod name 那几行是 shell 重定向
+Lines with <pod-name> are shell redirections:
+
+192
+00:11:54,657 --> 00:11:58,493
+把整个占位符连同尖括号一起替换掉
+replace the whole placeholder, brackets included.
+
+193
+00:11:59,233 --> 00:12:02,673
+两处修复：namespace 是 cheese-app-namespace
+Two fixes: the namespace is cheese-app-namespace,
+
+194
+00:12:02,673 --> 00:12:04,779
+而 Job 只有一个 container
+and the Job has one container,
+
+195
+00:12:04,779 --> 00:12:07,446
+所以去掉 -c wait-for-chromadb 这个参数
+so drop the -c wait-for-chromadb flag.
+
+196
+00:12:07,766 --> 00:12:09,366
+暂停一下，试一试
+Pause and try them.
+
+197
+00:12:09,766 --> 00:12:12,907
+在一个确实存在的 Job 上，在替身上做个额外检查
+On a Job that exists, an extra on the stand-in,
+
+198
+00:12:12,907 --> 00:12:15,846
+同样的命令都能用：done，1 个 Succeeded
+the same commands work: done, one succeeded.
+
+199
+00:12:16,166 --> 00:12:18,556
+已经完成的 Job，它的 Pod 不会被替换
+Nothing replaces a finished Job's Pod.
+
+200
+00:12:19,300 --> 00:12:23,416
+说明一点：磁盘挂载在 /chroma/chroma
+A small note: the disk is mounted at /chroma/chroma,
+
+201
+00:12:23,416 --> 00:12:26,660
+但如今的 Chroma 镜像写到 /data
+but today's Chroma image writes to /data.
+
+202
+00:12:26,980 --> 00:12:31,439
+所以向量存在 container 里面，Pod 一重启就没了
+So the vectors live inside the container and vanish when the Pod restarts.
+
+203
+00:12:31,759 --> 00:12:37,902
+把第 150 行改成 /data，或者重启以后再跑一次加载器 Job
+Change line 150 to /data, or run the loader Job again after a restart.
+
+204
+00:12:41,050 --> 00:12:42,387
+现在讲扩展
+Now scaling.
+
+205
+00:12:42,437 --> 00:12:47,287
+课上承诺按 CPU、内存或自定义指标扩展
+The lecture promises scaling on CPU, memory or custom metrics,
+
+206
+00:12:47,287 --> 00:12:51,354
+但代码没有设副本数，也没有 Pod 自动扩缩器
+but the code sets no replicas and no Pod autoscaler.
+
+207
+00:12:51,674 --> 00:12:54,554
+它打开的是节点这一层：一到两个节点
+It switches on the node layer: one to two nodes.
+
+208
+00:12:55,300 --> 00:12:58,628
+调度器按 requests 把 Pod 装到节点上
+The scheduler packs Pods onto nodes by their requests.
+
+209
+00:12:58,948 --> 00:13:02,596
+前端申请四分之一个 CPU 和 2 GB
+The frontend asks for a quarter CPU and 2 gigabytes.
+
+210
+00:13:02,916 --> 00:13:05,195
+Chroma 和 nginx 申请得很少
+Chroma and nginx ask for little,
+
+211
+00:13:05,195 --> 00:13:08,825
+API 什么都没申请，所以谁也没法为它做规划
+and the API for nothing, so nobody can plan for it.
+
+212
+00:13:09,466 --> 00:13:13,903
+把前端扩到 3 个；Milestone 5 要求你展示扩展
+Scale the frontend to 3; Milestone 5 asks you to show scaling.
+
+213
+00:13:14,223 --> 00:13:16,890
+放不下的副本会等着，处于 Pending
+A copy that does not fit waits, pending,
+
+214
+00:13:16,890 --> 00:13:19,557
+直到自动扩缩器加上第二个节点
+until the autoscaler adds a second node.
+
+215
+00:13:19,877 --> 00:13:23,674
+要得再多一些，有些就会一直 Pending：节点池到两个就停了
+Ask for many more, and some stay pending: the pool stops at two.
+
+216
+00:13:24,316 --> 00:13:27,687
+API 的磁盘一次只能挂到一个节点上
+The API's disk attaches to one node at a time.
+
+217
+00:13:28,007 --> 00:13:33,105
+假设你把 API 扩到 3 个，有些副本落在了第二个节点上
+Suppose you scaled the API to 3, and some copies landed on the second node.
+
+218
+00:13:33,425 --> 00:13:36,562
+它们会怎样，自动扩缩器能解决吗？
+What happens to them, and can the autoscaler fix it?
+
+219
+00:13:47,700 --> 00:13:51,160
+它们一直卡在创建中，报 Multi-Attach 错误
+They stay stuck creating, with a Multi-Attach error:
+
+220
+00:13:51,160 --> 00:13:53,289
+磁盘已经挂在节点 1 上了
+the disk already sits on node 1.
+
+221
+00:13:53,609 --> 00:13:56,510
+加节点没用；限制在磁盘
+More nodes do not help; the limit is the disk.
+
+222
+00:13:56,750 --> 00:14:02,374
+这就勾上了扩展，分两层：节点自动扩缩，Pod 由你手动扩
+That ticks scaling, in two levels: nodes automatically, Pods in your hands;
+
+223
+00:14:02,374 --> 00:14:06,947
+按 CPU 的 Pod 自动扩缩器需要 requests，而 API 没有
+a Pod autoscaler on CPU needs requests, and the API has none.
+
+224
+00:14:07,267 --> 00:14:09,144
+缩回 1 个，等你用完以后
+Scale back to 1 when you are done.
+
+225
+00:14:10,383 --> 00:14:15,311
+最后，删除集群：pulumi destroy --stack dev --refresh -y
+Last, delete the cluster: pulumi destroy --stack dev --refresh -y.
+
+226
+00:14:15,631 --> 00:14:17,696
+我们的没有真东西可删
+Ours has nothing real to delete;
+
+227
+00:14:17,696 --> 00:14:21,308
+你的会删掉这个 stack 创建的东西，倒着来
+yours deletes what this stack created, in reverse order,
+
+228
+00:14:21,308 --> 00:14:23,695
+从 Ingress 一直删到网络
+from the Ingress down to the network.
+
+229
+00:14:24,316 --> 00:14:27,169
+然后检查可能残留的东西，这是我们的建议
+Then check what may survive, our suggestion:
+
+230
+00:14:27,169 --> 00:14:30,929
+列出集群、转发规则、磁盘和防火墙规则
+list clusters, forwarding rules, disks and firewall rules.
+
+231
+00:14:31,249 --> 00:14:36,967
+这些是在后台删除的，可能会被落下；找名字里带 pvc 的磁盘
+Those are deleted in the background and can be left behind; look for disks named pvc.
+
+232
+00:14:37,216 --> 00:14:41,120
+registry 里的 image 是故意留下的：在控制台里删掉
+Registry images stay on purpose: delete them in the console.
+
+233
+00:14:41,440 --> 00:14:44,704
+第 20 讲那台机器也删掉，如果它还在运行
+Delete the lecture 20 machine too, if it still runs.
+
+234
+00:14:45,024 --> 00:14:46,366
+暂停一下，检查一遍
+Pause and check.
+
+235
+00:14:46,416 --> 00:14:48,016
+回到三个诉求
+Back to the three asks.
+
+236
+00:14:48,187 --> 00:14:51,170
+故障转移：ReplicaSet 把 Pod 带回来
+Failover: the ReplicaSet brings Pods back,
+
+237
+00:14:51,170 --> 00:14:54,437
+节点自动修复替换坏掉的机器
+and node auto repair replaces broken machines.
+
+238
+00:14:54,757 --> 00:14:59,557
+负载均衡：云负载均衡器、nginx 和 Service
+Load balancing: the cloud load balancer, nginx and the Services.
+
+239
+00:14:59,877 --> 00:15:04,059
+扩展：节点自动扩缩器，还有你手里的 kubectl scale
+Scaling: the node autoscaler, and kubectl scale in your hands.
+
+240
+00:15:04,300 --> 00:15:06,199
+课上列了五个好处
+The lecture lists five payoffs.
+
+241
+00:15:06,519 --> 00:15:08,609
+自助服务：一次 pulumi up
+Self-service: one pulumi up.
+
+242
+00:15:08,929 --> 00:15:11,660
+成本更低：Pod 按 requests 紧凑地装
+Lower cost: Pods packed by their requests.
+
+243
+00:15:11,980 --> 00:15:14,881
+自动调整：节点自动扩缩器
+Automatic adjustment: the node autoscaler.
+
+244
+00:15:15,201 --> 00:15:17,185
+运行平稳：自愈
+Smooth running: self-healing.
+
+245
+00:15:17,505 --> 00:15:21,260
+开发更简单：和第 20 讲一样的 image
+Simpler development: the same images as lecture 20.
+
+246
+00:15:21,500 --> 00:15:22,879
+自测一下
+Test yourself.
+
+247
+00:15:22,929 --> 00:15:28,860
+控制平面里哪个组件决定新 Pod 跑在哪里，哪个发现 Pod 死了？
+Which control plane part decides where a new Pod runs, and which one notices that a Pod died?
+
+248
+00:15:29,180 --> 00:15:32,249
+为什么 get all 只显示 kubernetes 这个 Service
+Why does get all show only the kubernetes Service,
+
+249
+00:15:32,249 --> 00:15:33,849
+用哪个参数能解决？
+and what flag fixes it?
+
+250
+00:15:33,900 --> 00:15:36,532
+名叫 web 的 Service 怎么知道它的 Pod
+How does the web Service know its Pods,
+
+251
+00:15:36,532 --> 00:15:39,703
+API 为什么在 vector-db 找到 Chroma？
+and why does the API reach Chroma at vector-db?
+
+252
+00:15:40,023 --> 00:15:44,162
+从 sslip.io 一路追踪一次点击到 API 的 Pod
+Trace one click from sslip.io to the API Pod;
+
+253
+00:15:44,162 --> 00:15:47,105
+为什么裸 IP 返回 404？
+why does the bare IP answer 404?
+
+254
+00:15:47,350 --> 00:15:50,874
+为什么前端能扩到 3 个，而 API 不行
+Why can the frontend scale to 3 but the API cannot,
+
+255
+00:15:50,874 --> 00:15:53,153
+自动扩缩器加的又是什么？
+and what does the autoscaler add?
+
+256
+00:15:53,473 --> 00:15:56,651
+答案在练习和学习指南里
+Answers are in the exercises and the study guide.
+
+257
+00:15:56,900 --> 00:16:00,212
+下一讲，也就是第 23 讲，这两个 Pulumi 程序
+Next, in lecture 23, the two Pulumi programs,
+
+258
+00:16:00,212 --> 00:16:04,921
+在 app 的版本 4 里，会在每次合并时由 GitHub Actions 运行
+in version 4 of the app, run from GitHub Actions on every merge.

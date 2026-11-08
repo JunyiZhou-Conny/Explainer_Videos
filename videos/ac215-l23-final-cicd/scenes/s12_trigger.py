@@ -126,7 +126,7 @@ class TwoSieves(VoiceScene):
         p2.move_to([0, 0, 0]).shift(UP * (2.75 - p2.get_top()[1]))
         bar_dep = line_bar(p2.code, 1, TURN, 0.22)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(bar_on, bar_if)), ReplacementTransform(p1, p2), s1.animate.shift(DOWN * lift),
+            self.play(FadeOut(VGroup(bar_on, bar_if)), FadeTransform(p1, p2), s1.animate.shift(DOWN * lift),
                       run_time=0.9)
             self.remove(bar_on, bar_if)
             self.play(FadeIn(VGroup(k.job, k.tiles), shift=UP * 0.2), run_time=0.6)
@@ -231,7 +231,8 @@ class TwoSieves(VoiceScene):
                                   lag_ratio=0.3), run_time=0.7)
             k.images(self, k.tiles[2], run_time=0.8)
             vo.wait_until("and the containers")
-            self.play(d.animate.move_to(k.tiles[3]), Circumscribe(k.tiles[3], color=CLOUD, buff=0.05), run_time=0.5)
+            self.play(d.animate.move_to(k.tiles[3].get_top()), Circumscribe(k.tiles[3], color=CLOUD, buff=0.05),
+                      run_time=0.5)
             path = route(k.tiles[3].get_right(), k.server.frame.get_left(), arc=-0.3)
             self.play(GrowArrow(path), run_time=0.5)
             k._recreate(self, run_time=1.0)
@@ -288,7 +289,7 @@ class TwoSieves(VoiceScene):
         aws.move_to(gcp).align_to(gcp, LEFT)
         gcp_to = gcp.copy().next_to(cframe, RIGHT, buff=0.45).set_y(gcp.get_y())
         gnote = grey_chip("the Google Cloud repo's keyword", size=20)
-        gnote.move_to([gcp_to.get_x(), cframe.get_bottom()[1] - 0.35, 0])
+        gnote.move_to([gcp_to.get_x(), cframe.get_bottom()[1] - 0.45, 0])
         if gnote.get_right()[0] > 6.5:
             gnote.shift(LEFT * (gnote.get_right()[0] - 6.5))
         gl = VGroup(*[mono(s, 22, S.GREY) for s in GIT_LINES]).arrange(DOWN, aligned_edge=LEFT, buff=0.22)

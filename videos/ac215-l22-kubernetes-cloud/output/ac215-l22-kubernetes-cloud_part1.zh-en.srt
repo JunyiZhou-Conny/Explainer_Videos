@@ -1,0 +1,1239 @@
+1
+00:00:00,000 --> 00:00:03,064
+这是一台虚拟机上的一个小应用
+Here is a small app on one virtual machine:
+
+2
+00:00:03,064 --> 00:00:07,125
+前面一台 Web 服务器，后面是一个前端和两个 API
+a web server in front, a frontend and two APIs behind it.
+
+3
+00:00:07,445 --> 00:00:10,453
+如果其中一个半夜崩了，谁来重启它？
+If one of them crashes in the night, who restarts it?
+
+4
+00:00:10,700 --> 00:00:13,943
+凌晨两点，一个 API container 崩了
+At two in the morning, one API container crashes.
+
+5
+00:00:14,263 --> 00:00:17,327
+应用负责人要等用户投诉才知道
+The app owner finds out when users complain,
+
+6
+00:00:17,327 --> 00:00:21,367
+运维通过 SSH 登录进去，手动重启它
+and the operator logs in over SSH and restarts it by hand.
+
+7
+00:00:21,617 --> 00:00:25,201
+在第 20 讲里，Docker 能重启崩掉的 container
+In lecture 20, Docker could restart a crashed container,
+
+8
+00:00:25,201 --> 00:00:30,961
+但只限那一台机器：如果机器本身挂了，整个网站就只能等你来救
+but only on that one machine: if the machine itself failed, the whole site waited for you.
+
+9
+00:00:31,200 --> 00:00:33,717
+于是应用负责人要多台服务器
+So the app owner asks for several servers.
+
+10
+00:00:34,037 --> 00:00:39,051
+运维给了三台机器，每个 API 旁边再放一个备份
+The operator answers with three machines, and a backup copy beside each API.
+
+11
+00:00:39,300 --> 00:00:42,351
+每个备份都和它的原件在同一台机器上
+Each backup sits on the same machine as its original.
+
+12
+00:00:42,671 --> 00:00:48,025
+说出一个仍然会让这个 API 挂掉的故障，再说说是谁切换到备份
+Name one failure that still takes that API down, and say who switches to the backup.
+
+13
+00:00:56,867 --> 00:01:01,646
+是机器本身：一块坏掉的磁盘或一次网络故障，会同时带走两份
+The machine itself: one failed disk or network takes both copies at once.
+
+14
+00:01:01,966 --> 00:01:06,509
+而且就算备份活下来了，还是得有人手动切换
+And even when a backup survives, a person still has to switch over by hand.
+
+15
+00:01:06,750 --> 00:01:09,822
+课上要的是，没人醒着也能把三件事做好
+The lecture wants three jobs done with nobody awake.
+
+16
+00:01:10,142 --> 00:01:12,745
+故障转移：一个正常的副本接手
+Failover: a working copy takes over.
+
+17
+00:01:13,065 --> 00:01:16,094
+负载均衡：请求分散到各个副本上
+Load balancing: requests spread across copies.
+
+18
+00:01:16,414 --> 00:01:18,953
+扩展：流量变大时就多开副本
+Scaling: more copies when traffic grows.
+
+19
+00:01:19,200 --> 00:01:21,522
+每当我们看到是谁在做其中一件事
+This card comes back each time we see
+
+20
+00:01:21,522 --> 00:01:24,597
+这张卡片就会回来，那时我们就勾上它
+what does one of these jobs, and we tick it then.
+
+21
+00:01:24,917 --> 00:01:27,221
+三件事用的工具都是 Kubernetes
+The tool for all three is Kubernetes.
+
+22
+00:01:29,267 --> 00:01:31,238
+Kubernetes 是一个编排工具
+Kubernetes is an orchestrator:
+
+23
+00:01:31,238 --> 00:01:34,325
+它在一个由多台机器组成的集群上运行 container
+it runs containers across a cluster of machines
+
+24
+00:01:34,325 --> 00:01:36,691
+并让它们保持你声明的样子
+and keeps them the way you declared.
+
+25
+00:01:37,011 --> 00:01:39,108
+这个名字在希腊语里是舵手的意思
+The name is Greek for helmsman,
+
+26
+00:01:39,108 --> 00:01:41,747
+而第 2 部分用到的工具 Helm，也借了这个词
+and Helm, a tool in part 2, borrows it.
+
+27
+00:01:41,984 --> 00:01:46,144
+左边，一台机器在一个 Docker 引擎上跑所有 container
+On the left, one machine runs every container on one Docker engine.
+
+28
+00:01:46,464 --> 00:01:48,273
+右边，很多台机器，叫作节点
+On the right, many machines,
+
+29
+00:01:48,273 --> 00:01:53,120
+分担这些 container，由一个控制平面来协调
+called nodes, share the containers, and one control plane coordinates them.
+
+30
+00:01:53,367 --> 00:01:57,451
+提醒一句：这里的“部署”指一种部署方式
+A word of warning: here, deployment means a way of deploying,
+
+31
+00:01:57,451 --> 00:02:00,130
+不是我们后面要见到的 Deployment 对象
+not the Deployment object we meet later.
+
+32
+00:02:00,367 --> 00:02:03,610
+在第 20 讲里，奶酪应用跑在一台机器上
+In lecture 20 the cheese app ran on one machine.
+
+33
+00:02:03,930 --> 00:02:08,111
+现在同一个应用搬到集群上，工具里多了 kubectl
+Now the same app goes to a cluster, and the tools gain kubectl.
+
+34
+00:02:08,431 --> 00:02:10,273
+我们的工具箱里已经有它了
+Our toolbox already has it,
+
+35
+00:02:10,273 --> 00:02:14,639
+还有 Helm 和 GKE 认证插件，这两个课件上没列
+plus Helm and the GKE auth plugin, which the slides do not list.
+
+36
+00:02:14,884 --> 00:02:19,466
+跟着做需要：cheese-app-v3，旁边放着你的 secrets 目录
+To follow along: cheese-app-v3 with your secrets folder beside it,
+
+37
+00:02:19,466 --> 00:02:22,799
+再加上 Docker，以及一个开通了结算的 Google Cloud 项目
+Docker, and a Google Cloud project with billing.
+
+38
+00:02:23,119 --> 00:02:27,449
+集群按小时收费，所以每个部分最后都会把它删掉
+A cluster costs money by the hour, so each part ends by deleting it.
+
+39
+00:02:27,684 --> 00:02:32,299
+进度条标出 README 的哪一步，代码面板标出文件和行号
+The tracker names the README step, code panels name their file and lines,
+
+40
+00:02:32,299 --> 00:02:34,639
+your turn 表示暂停一下，自己跑一遍
+and your turn means pause and run it.
+
+41
+00:02:34,959 --> 00:02:37,796
+角落里的灰色标签标出课件的页码
+A grey tag in the corner names the lecture slides.
+
+42
+00:02:38,034 --> 00:02:41,853
+如实说一句：我们录制用的机器没有 Google 账号
+One honest note: our recording machine has no Google account.
+
+43
+00:02:42,173 --> 00:02:44,739
+在你自己的机器上能跑的都是真的
+What runs on a machine you own is real;
+
+44
+00:02:44,739 --> 00:02:48,029
+每个 Google 步骤都停在它第一个真实的报错处
+every Google step stops at its first honest error,
+
+45
+00:02:48,029 --> 00:02:49,938
+我们会告诉你，你那边会输出什么
+and we say what yours prints.
+
+46
+00:02:50,184 --> 00:02:53,976
+我们跟的是 main，也就是课程网站链接的分支
+We follow main, the branch the course site links,
+
+47
+00:02:53,976 --> 00:02:56,221
+用的是 2025 年 11 月的这个 commit
+at this November 2025 commit.
+
+48
+00:02:56,541 --> 00:02:59,068
+看一下 Git 的提交日志，就知道你手上是哪一个
+Git log tells you which one you have.
+
+49
+00:02:59,118 --> 00:03:01,512
+第 1 部分手动做课上的热身
+Part 1 does the lecture's warm-up by hand.
+
+50
+00:03:01,832 --> 00:03:04,264
+第 2 部分把奶酪应用写成代码来部署
+Part 2 deploys the cheese app as code.
+
+51
+00:03:05,400 --> 00:03:07,000
+我们把集群打开看看
+Let's open the cluster.
+
+52
+00:03:07,213 --> 00:03:09,368
+课上分三步画它
+The lecture draws it in three steps.
+
+53
+00:03:09,688 --> 00:03:13,823
+第一步：一个控制平面，箭头指向几个工作节点
+First: one control plane, with arrows to several worker nodes,
+
+54
+00:03:13,823 --> 00:03:16,024
+每个节点都是一台普通的虚拟机
+each an ordinary virtual machine.
+
+55
+00:03:16,267 --> 00:03:18,294
+第二步，两个平面有了名字
+Second, the two planes get names.
+
+56
+00:03:18,614 --> 00:03:20,406
+控制平面是大脑
+The control plane is the brain.
+
+57
+00:03:20,726 --> 00:03:24,544
+在 GKE 上，它由 Google 运行，你永远看不到它的机器
+On GKE, Google runs it, and you never see its machines.
+
+58
+00:03:24,864 --> 00:03:26,959
+工作节点承载你的 container
+The workers carry your containers:
+
+59
+00:03:26,959 --> 00:03:29,856
+对奶酪应用来说，是一个有一到两个节点的节点池
+for the cheese app, a pool of one or two nodes.
+
+60
+00:03:30,100 --> 00:03:31,565
+第三步，各个组件
+Third, the parts.
+
+61
+00:03:31,615 --> 00:03:36,841
+API server 是唯一的入口；其他组件都只和它通信
+The API server is the single entry point; every other part talks only to it.
+
+62
+00:03:37,161 --> 00:03:41,983
+其中 etcd 是集群的记忆：存着集群的状态和配置
+Etcd is the memory of the cluster: its state and configuration.
+
+63
+00:03:42,217 --> 00:03:44,734
+调度器给每个新 Pod 挑一个节点
+The scheduler picks a node for each new Pod.
+
+64
+00:03:45,054 --> 00:03:46,803
+控制器一直在盯着
+The controllers keep watching
+
+65
+00:03:46,803 --> 00:03:50,662
+把你要求的和实际运行的之间的任何差异修正过来
+and fix any difference between what you asked for and what runs;
+
+66
+00:03:50,662 --> 00:03:53,737
+其中一些会向云平台要节点和地址
+some of them ask the cloud for nodes and addresses.
+
+67
+00:03:53,983 --> 00:03:58,079
+每个工作节点上，kubelet 是 API server 的双手
+On every worker, the kubelet is the hands of the API server:
+
+68
+00:03:58,079 --> 00:04:00,468
+它负责启动和停止 container
+it starts and stops the containers.
+
+69
+00:04:00,788 --> 00:04:03,477
+节点上还有 kube-proxy，为 Service 转发流量
+kube-proxy routes traffic for Services,
+
+70
+00:04:03,477 --> 00:04:06,082
+container 运行时负责运行 container
+and a container runtime runs the containers,
+
+71
+00:04:06,082 --> 00:04:07,682
+这些 container 按 Pod 分组
+grouped in Pods.
+
+72
+00:04:07,850 --> 00:04:11,327
+说明一点：课件上写的运行时是 Docker
+A small note: the slide names Docker as the runtime.
+
+73
+00:04:11,647 --> 00:04:14,023
+在 GKE 上是 containerd
+On GKE it is containerd,
+
+74
+00:04:14,023 --> 00:04:16,895
+见 create cluster 那个文件的第 52 行
+line 52 of create_cluster.py.
+
+75
+00:04:17,215 --> 00:04:20,821
+你照样用 Docker 构建 image，它们原样运行
+You still build images with Docker, and they run unchanged.
+
+76
+00:04:21,067 --> 00:04:22,667
+现在顺着箭头走
+Now follow the arrows.
+
+77
+00:04:22,880 --> 00:04:25,793
+每条 kubectl 命令都只去一个地方
+Every kubectl command goes to one place,
+
+78
+00:04:25,793 --> 00:04:29,216
+就是 API server，它把你的愿望存进 etcd
+the API server, which stores your wish in etcd.
+
+79
+00:04:29,536 --> 00:04:32,480
+调度器和 kubelet 都从它那里领活
+The scheduler and the kubelets pick up their work from it.
+
+80
+00:04:32,717 --> 00:04:35,540
+课上给 kubectl 定了一套语法
+The lecture gives kubectl one grammar:
+
+81
+00:04:35,540 --> 00:04:39,032
+命令、类型、可选的名字，再加参数
+a command, a type, an optional name, and flags.
+
+82
+00:04:39,352 --> 00:04:40,646
+命令 get nodes
+Get nodes.
+
+83
+00:04:40,696 --> 00:04:44,727
+命令 get pods。还有 get pods，加一个参数看所有 namespace
+Get pods. Get pods, with a flag for every namespace.
+
+84
+00:04:44,967 --> 00:04:48,423
+遇到卡住的时候，就问问是哪个组件在等
+When something is stuck, ask which of these parts is waiting.
+
+85
+00:04:48,743 --> 00:04:51,454
+这张图上有四个指示灯，之后会一个个亮起来
+Four lamps on this picture will light up later,
+
+86
+00:04:51,454 --> 00:04:53,415
+每个都对应一个你会碰到的症状
+each with a symptom you will meet.
+
+87
+00:04:54,550 --> 00:04:58,198
+README 把这段热身放在奶酪应用的部署之后
+The README keeps this warm-up after the cheese app's deployment.
+
+88
+00:04:58,518 --> 00:05:04,491
+课上先做它，我们也一样：这是和 kubectl 最温和的第一次接触
+The lecture does it first, and so do we: it is the gentlest first contact with kubectl.
+
+89
+00:05:04,733 --> 00:05:07,741
+首先，在控制台里启用五个 API
+First, enable five APIs in the console.
+
+90
+00:05:08,061 --> 00:05:11,901
+有一个小疏漏：Google Container Registry 已经关停了
+A small slip: Google Container Registry has been shut down.
+
+91
+00:05:12,221 --> 00:05:14,589
+改为启用 Artifact Registry
+Enable Artifact Registry instead.
+
+92
+00:05:14,833 --> 00:05:19,676
+然后启动工具箱：在 src 目录里，进到 deployment
+Then start the toolbox: from the src folder, change into deployment and run docker-shell.sh.
+
+93
+00:05:19,676 --> 00:05:21,980
+运行 docker-shell.sh
+Then start the toolbox: from the src folder, change into deployment and run docker-shell.sh.
+
+94
+00:05:22,300 --> 00:05:24,024
+按提交的原样，它会失败
+As committed, it fails:
+
+95
+00:05:24,024 --> 00:05:27,847
+先是 Debian 的 404 Not Found，然后是 pull access denied
+404 Not Found from Debian, then pull access denied.
+
+96
+00:05:28,083 --> 00:05:30,869
+如果你做过第 20 讲，就见过这个
+If you did lecture 20, you have seen this:
+
+97
+00:05:30,869 --> 00:05:35,379
+基础 image 是 Debian bullseye，它的安全更新包已经没了
+the base image is Debian bullseye, whose security packages are gone.
+
+98
+00:05:35,699 --> 00:05:38,686
+Windows 上没有 docker-shell.bat
+On Windows there is no docker-shell.bat.
+
+99
+00:05:39,006 --> 00:05:40,583
+用 WSL
+Use WSL.
+
+100
+00:05:40,633 --> 00:05:44,238
+修复还是那两处一行的修改，在这里是额外步骤
+The fix is the same two one-line edits, an extra here.
+
+101
+00:05:44,558 --> 00:05:46,588
+把 bullseye 换成 bookworm
+Bullseye becomes bookworm,
+
+102
+00:05:46,588 --> 00:05:50,180
+把 google-cloud-sdk 换成 google-cloud-cli
+and google-cloud-sdk becomes google-cloud-cli,
+
+103
+00:05:50,180 --> 00:05:52,132
+再加上它的 GKE 认证插件
+with its GKE auth plugin.
+
+104
+00:05:52,452 --> 00:05:56,143
+每次 kubectl 调用 GKE 都要经过这个插件
+Every kubectl call to GKE goes through that plugin.
+
+105
+00:05:56,383 --> 00:05:57,849
+和第 20 讲一样
+As in lecture 20,
+
+106
+00:05:57,849 --> 00:06:02,335
+也把你的项目填到 docker-shell.sh 的第 13 行
+also put your project on line 13 of docker-shell.sh.
+
+107
+00:06:02,583 --> 00:06:06,423
+再跑一次：大约 92 秒构建完，然后启动
+Run it again: it builds in about 92 seconds and starts.
+
+108
+00:06:06,743 --> 00:06:10,823
+接着登录失败，因为我们的密钥不属于任何账号
+The login then fails, because our key belongs to no account;
+
+109
+00:06:10,823 --> 00:06:14,359
+换成你的，这几行会显示 activated 和 logged in
+with yours, these lines say activated and logged in.
+
+110
+00:06:14,600 --> 00:06:16,679
+在这里暂停一下，启动你的工具箱
+Pause here and start your toolbox;
+
+111
+00:06:16,679 --> 00:06:19,187
+这一部分剩下的步骤都在它的提示符下运行
+the rest of this part runs at its prompt.
+
+112
+00:06:19,433 --> 00:06:21,033
+接下来，检查工具
+Next, check the tools.
+
+113
+00:06:21,246 --> 00:06:24,148
+工具 gcloud 和它的认证插件都在
+The gcloud tool and its auth plugin are there.
+
+114
+00:06:24,468 --> 00:06:27,143
+只敲 kubectl version，会先打印客户端版本
+Plain kubectl version prints the client,
+
+115
+00:06:27,143 --> 00:06:29,150
+然后是 connection refused
+then connection refused: there
+
+116
+00:06:29,150 --> 00:06:32,895
+还没有集群，所以服务端那一半没有人可问
+is no cluster yet, so the server half has nobody to ask.
+
+117
+00:06:33,883 --> 00:06:38,059
+有个小意外：Dockerfile pin 了一个 kubectl 版本
+A small surprise: the Dockerfile pins one kubectl version,
+
+118
+00:06:38,059 --> 00:06:43,099
+但 Google 自己的包胜出了：一个按集群匹配版本的 dispatcher
+but Google's own package wins: a dispatcher that matches each cluster.
+
+119
+00:06:43,333 --> 00:06:47,152
+最后，检查你是否已经认证：gcloud auth list
+Last, check that you are authenticated: gcloud auth list.
+
+120
+00:06:47,472 --> 00:06:49,737
+我们的显示 No credentialed accounts
+Ours says No credentialed accounts;
+
+121
+00:06:49,737 --> 00:06:53,168
+你的会把 deployment 服务账号列为 active
+yours lists the deployment service account as active.
+
+122
+00:06:54,417 --> 00:06:58,351
+现在做 Create Cluster 这一步：gcloud container clusters
+Now Create Cluster: gcloud container clusters create
+
+123
+00:06:58,351 --> 00:07:01,756
+create test-cluster --num-nodes 2 --zone us-east1-c
+test-cluster --num-nodes 2 --zone us-east1-c.
+
+124
+00:07:02,076 --> 00:07:04,892
+我们的马上就停了：no active account
+Ours stops at once: no active account.
+
+125
+00:07:05,212 --> 00:07:09,073
+暂停一下，跑你的；它存在的每个小时都在花钱
+Pause and run yours; it costs money every hour it exists.
+
+126
+00:07:09,717 --> 00:07:11,453
+你的要等一会儿
+Yours takes a short wait,
+
+127
+00:07:11,453 --> 00:07:15,063
+打印一张表，并在你的 kubeconfig 里加一条记录
+prints a table, and adds an entry to your kubeconfig
+
+128
+00:07:15,063 --> 00:07:17,077
+让 kubectl 知道该连哪里
+so kubectl knows where to go.
+
+129
+00:07:17,397 --> 00:07:19,015
+课件上只建一个节点
+The slide makes one node;
+
+130
+00:07:19,015 --> 00:07:22,965
+README 建两个，这样两个副本可以落在不同的机器上
+the README two, so two copies can land on different machines.
+
+131
+00:07:23,200 --> 00:07:26,106
+为了继续往下做，我们起一个小小的真集群
+To keep going, we start a small real cluster
+
+132
+00:07:26,106 --> 00:07:30,731
+在笔记本上用一个叫 kind 的工具：一个控制平面，两个工作节点
+on the laptop with a tool called kind: one control plane, two workers.
+
+133
+00:07:31,051 --> 00:07:33,822
+一样的 API server，一样的 kubectl
+Same API server, same kubectl, same YAML,
+
+134
+00:07:33,822 --> 00:07:35,445
+一样的 YAML，只是没有 Google
+but no Google.
+
+135
+00:07:35,765 --> 00:07:38,176
+它不在 README 里；你别跑
+It is not in the README; don't run it.
+
+136
+00:07:38,750 --> 00:07:42,606
+在这里，连控制平面都是一个我们看得见的 container
+Here even the control plane is a container we can see;
+
+137
+00:07:42,606 --> 00:07:44,340
+在 GKE 上，Google 把它藏起来了
+on GKE, Google hides it.
+
+138
+00:07:44,584 --> 00:07:46,646
+接下来，在控制台里看一圈
+Next, look around the console:
+
+139
+00:07:46,646 --> 00:07:49,601
+Kubernetes Engine、你的集群、它的节点
+Kubernetes Engine, your cluster, its nodes,
+
+140
+00:07:49,601 --> 00:07:51,389
+还有每个节点上的 Pod
+and the Pods on each node.
+
+141
+00:07:51,709 --> 00:07:55,613
+在 Compute Engine 里，你的节点就是普通的虚拟机
+In Compute Engine, your nodes are ordinary virtual machines.
+
+142
+00:07:56,350 --> 00:07:58,505
+然后试几条 kubectl 命令
+Then try some kubectl commands.
+
+143
+00:07:58,825 --> 00:08:00,999
+先来一个额外的，kubectl version
+First an extra, kubectl version:
+
+144
+00:08:00,999 --> 00:08:05,417
+dispatcher 挑了一个和服务端版本匹配的客户端
+the dispatcher picked a client that matches the server's version.
+
+145
+00:08:05,967 --> 00:08:07,788
+README 的第一条命令 get all
+The first README command,
+
+146
+00:08:07,788 --> 00:08:11,212
+只显示一个叫 kubernetes 的 Service
+get all, shows only a service named kubernetes,
+
+147
+00:08:11,212 --> 00:08:13,690
+它就是通往 API server 本身的门
+the door to the API server itself.
+
+148
+00:08:14,010 --> 00:08:17,636
+我们看的是叫 default 的 namespace；这个后面再说
+We are looking in the namespace called default; more on that later.
+
+149
+00:08:18,184 --> 00:08:21,113
+加上所有 namespace，kube-system 就出现了
+With all namespaces, kube-system appears,
+
+150
+00:08:21,113 --> 00:08:24,542
+在这里能按名字认出控制平面
+and here you can spot the control plane by name:
+
+151
+00:08:24,542 --> 00:08:28,829
+etcd、API server、controller manager 和调度器
+etcd, the API server, the controller manager, the scheduler.
+
+152
+00:08:29,149 --> 00:08:31,026
+在 GKE 上这些都是隐藏的
+On GKE those stay hidden.
+
+153
+00:08:31,267 --> 00:08:34,385
+命令 get componentstatuses 会打印一条弃用警告
+componentstatuses prints a deprecation warning,
+
+154
+00:08:34,385 --> 00:08:37,304
+这是预期的，然后是三行 healthy
+which is expected, then three healthy lines.
+
+155
+00:08:37,624 --> 00:08:41,103
+用 get nodes 检查更好：这里三个节点都是 Ready
+Get nodes is the better check: three nodes ready here;
+
+156
+00:08:41,103 --> 00:08:44,003
+你的会显示两个工作节点，没有控制平面
+yours shows two workers and no control plane.
+
+157
+00:08:44,323 --> 00:08:45,966
+暂停一下，五条都试一试
+Pause and try all five.
+
+158
+00:08:47,200 --> 00:08:50,259
+热身部署一个小游戏，tic-tac-toe
+The warm-up deploys a small game, tic-tac-toe,
+
+159
+00:08:50,259 --> 00:08:52,320
+用的是一个文件里的两个对象
+from one file with two objects.
+
+160
+00:08:52,640 --> 00:08:55,013
+Deployment 说明 Pod 里跑什么
+The Deployment says what runs in a Pod,
+
+161
+00:08:55,013 --> 00:08:57,568
+跑几个副本，并保持它们一直运行
+how many copies, and to keep them running.
+
+162
+00:08:57,888 --> 00:09:01,536
+Service 说明流量怎么到达它们，Pod 死了也没关系
+The Service says how traffic reaches them, and lets Pods die.
+
+163
+00:09:01,783 --> 00:09:04,556
+课件省略了把它们粘在一起的那几行
+The slide trims the lines that glue them together.
+
+164
+00:09:04,876 --> 00:09:08,089
+模板给每个 Pod 打上一个 label，run: web
+The template gives every Pod a label, run: web;
+
+165
+00:09:08,089 --> 00:09:11,917
+两个对象都按这个 label 找到自己的 Pod，而不是按名字
+both objects find their Pods by that label, not by name.
+
+166
+00:09:12,467 --> 00:09:15,803
+每个 Pod 运行 dlops/tic-tac-toe 这个 image
+Each Pod runs the image dlops/tic-tac-toe,
+
+167
+00:09:15,803 --> 00:09:17,630
+监听 port 8080
+listening on port 8080.
+
+168
+00:09:17,950 --> 00:09:21,789
+Service 监听 port 80，转发到 8080
+The Service listens on port 80 and forwards to 8080.
+
+169
+00:09:23,033 --> 00:09:26,852
+部署应用：kubectl apply -f，加上这个文件
+Deploy the app: kubectl apply -f, and the file.
+
+170
+00:09:27,172 --> 00:09:29,828
+命令 apply 只是把一个愿望交给 API server
+Apply only hands a wish to the API server;
+
+171
+00:09:29,828 --> 00:09:34,319
+调度器挑两个节点，它们的 kubelet 启动 container
+the scheduler picks two nodes, and their kubelets start the containers.
+
+172
+00:09:34,867 --> 00:09:38,179
+一个额外检查，rollout status，看着它发生
+An extra check, rollout status, watches it happen:
+
+173
+00:09:38,179 --> 00:09:40,298
+先是 0，然后 2 个里 1 个可用
+zero, then one of two available,
+
+174
+00:09:40,298 --> 00:09:43,080
+最后 rolled out，分别在两个不同的工作节点上
+then rolled out, on two different workers.
+
+175
+00:09:44,817 --> 00:09:47,164
+接下来，kubectl get services
+Next, kubectl get services.
+
+176
+00:09:47,484 --> 00:09:50,951
+名叫 web 的 Service 是一个负载均衡器
+The web Service is a load balancer:
+
+177
+00:09:50,951 --> 00:09:57,489
+port 80，映射到每个节点上的 31366，再到 Pod 里的 8080
+port 80, mapped to 31366 on every node, and on to 8080 in the Pod.
+
+178
+00:09:57,809 --> 00:09:59,921
+它的外部 IP 显示 pending
+Its external IP says pending.
+
+179
+00:10:00,467 --> 00:10:03,027
+43 秒以后还是 pending
+43 seconds later it still says pending.
+
+180
+00:10:03,347 --> 00:10:06,504
+集群图上是哪个组件在等，在等什么？
+Which part of the cluster picture is waiting, and on what?
+
+181
+00:10:15,350 --> 00:10:18,209
+是控制器，在等云平台
+The controllers, waiting on the cloud provider.
+
+182
+00:10:18,529 --> 00:10:23,477
+在 GKE 上，它们向 Google 要一个负载均衡器和一个地址
+On GKE they ask Google for a load balancer and an address, which arrives
+
+183
+00:10:23,477 --> 00:10:25,071
+等一会儿就来了
+after a short wait.
+
+184
+00:10:25,121 --> 00:10:27,681
+这个 kind 集群没有云平台可问
+The kind cluster has no cloud to ask.
+
+185
+00:10:28,417 --> 00:10:31,307
+暂停一下：在 GKE 上，等外部 IP 出来
+Pause: on GKE, wait for the external IP,
+
+186
+00:10:31,307 --> 00:10:34,774
+把它复制到浏览器里，游戏就出现了
+copy it into your browser, and the game appears.
+
+187
+00:10:36,017 --> 00:10:37,916
+在替身上，一个额外步骤
+On the stand-in, an extra:
+
+188
+00:10:37,916 --> 00:10:41,350
+对这个 Service 做 port-forward，再 curl：200 OK
+port-forward to the Service, then curl: 200 OK.
+
+189
+00:10:41,670 --> 00:10:44,239
+课上建议在你的浏览器里打开
+The lecture suggests it for your browser,
+
+190
+00:10:44,239 --> 00:10:47,689
+但在工具箱里，这个 port 是在 container 里面打开的
+but from the toolbox the port opens inside the container:
+
+191
+00:10:47,689 --> 00:10:49,289
+就在那里测
+test it there.
+
+192
+00:10:49,933 --> 00:10:53,453
+回到半夜那个问题：谁来重启 container？
+Back to the night-time problem: who restarts the container?
+
+193
+00:10:53,773 --> 00:10:56,034
+在 Kubernetes 里，是控制器
+In Kubernetes, a controller does.
+
+194
+00:10:56,354 --> 00:10:57,954
+我们来看一个控制器干活
+Let's watch one work.
+
+195
+00:10:58,233 --> 00:11:00,281
+一个额外的列表把这条链显示出来
+An extra listing shows the chain.
+
+196
+00:11:00,601 --> 00:11:03,407
+名叫 web 的 Deployment 拥有一个 ReplicaSet
+The Deployment named web owns a ReplicaSet,
+
+197
+00:11:03,407 --> 00:11:06,212
+它的名字加上了 Pod 模板的哈希值
+whose name adds a hash of the Pod template.
+
+198
+00:11:06,532 --> 00:11:08,479
+这个 ReplicaSet 拥有两个 Pod
+The ReplicaSet owns two Pods,
+
+199
+00:11:08,479 --> 00:11:11,566
+每个都带着这个哈希值和一个随机的短后缀
+each with that hash and a short random suffix.
+
+200
+00:11:12,100 --> 00:11:13,499
+看 label 就能确认
+The labels confirm it:
+
+201
+00:11:13,499 --> 00:11:17,220
+每个 Pod 都带着模板哈希和 run: web 这个 label
+every Pod carries the template hash and the run: web label.
+
+202
+00:11:17,466 --> 00:11:19,821
+ReplicaSet 控制器跑一个循环
+The ReplicaSet controller runs a loop:
+
+203
+00:11:19,821 --> 00:11:24,655
+观察 Pod，和你声明的数量比较，针对差异采取行动
+observe the Pods, compare with the number you declared, act on the difference.
+
+204
+00:11:24,975 --> 00:11:28,922
+数量由你设；控制器让它一直成立，就像恒温器
+You set the number; the controller keeps it true, like a thermostat.
+
+205
+00:11:29,466 --> 00:11:33,413
+先再来一个额外的：kubectl scale，replicas 设成 4
+First, one more extra: kubectl scale --replicas=4.
+
+206
+00:11:33,733 --> 00:11:36,558
+又出现两个 Pod，分布在两个工作节点上
+Two more Pods appear, spread over both workers,
+
+207
+00:11:36,558 --> 00:11:38,661
+Service 已经把它们列进去了
+and the Service already lists them.
+
+208
+00:11:38,981 --> 00:11:44,485
+缩回 2 个，记住这条命令：你们项目的 Milestone 5 会要求它
+Scale back to 2, and remember this command: your project's Milestone 5 asks for it.
+
+209
+00:11:45,050 --> 00:11:47,247
+现在删掉两个 web Pod 中的一个
+Now delete one of the two web Pods.
+
+210
+00:11:47,567 --> 00:11:52,623
+一秒钟后，有几个 web Pod，新名字里哪一部分保持不变？
+A second later, how many web Pods are there, and which part of the new name stays the same?
+
+211
+00:12:01,466 --> 00:12:06,245
+两个。命令 delete 一返回，新 Pod 就已经在创建了
+Two. The delete returns, and a new Pod is already being created.
+
+212
+00:12:06,565 --> 00:12:10,042
+它的名字保留了 ReplicaSet 的哈希值，后缀是新的
+Its name keeps the ReplicaSet hash, with a new suffix.
+
+213
+00:12:10,283 --> 00:12:12,480
+15 秒后，两个都在运行
+15 seconds later, both run.
+
+214
+00:12:12,800 --> 00:12:15,872
+没有人登录：循环发现了差异，就动手了
+Nobody logged in: the loop noticed, and acted.
+
+215
+00:12:16,116 --> 00:12:21,364
+这就勾上了故障转移，再加一个如实的补充：这是重启，不是热备
+That ticks failover, with an honest footnote: it is a restart, not a hot standby.
+
+216
+00:12:21,684 --> 00:12:27,487
+只有一个副本时会有一段短暂的空档，所以游戏的文件要求两个副本
+With one replica there is a short gap, which is why the game's file asks for two replicas.
+
+217
+00:12:28,033 --> 00:12:32,193
+在第 20 讲里，Docker 在同一台机器上重启 container
+In lecture 20, Docker restarted a container on the same machine.
+
+218
+00:12:32,513 --> 00:12:35,990
+ReplicaSet 会把新 Pod 放到任何有空间的地方
+A ReplicaSet places a new Pod wherever there is room.
+
+219
+00:12:36,310 --> 00:12:38,700
+声明结果，别去写步骤的脚本
+Declare the result, don't script the steps.
+
+220
+00:12:39,950 --> 00:12:42,745
+Pod 是会死的：新 Pod 拿到了一个新地址
+Pods are mortal: the new Pod got a new address.
+
+221
+00:12:43,065 --> 00:12:44,814
+那流量怎么找到它？
+So how does traffic find it?
+
+222
+00:12:45,134 --> 00:12:46,729
+Service 维护一张列表
+The Service keeps a list of every Pod wearing its label, and that list follows the Pods.
+
+223
+00:12:46,729 --> 00:12:50,339
+记着每个贴着它 label 的 Pod，这张列表跟着 Pod 变
+The Service keeps a list of every Pod wearing its label, and that list follows the Pods.
+
+224
+00:12:52,600 --> 00:12:55,065
+从一个用完即弃的 Pod 里做个额外检查
+An extra from a throwaway Pod:
+
+225
+00:12:55,065 --> 00:13:00,078
+web.default.svc.cluster.local 这个名字指向这个 Service
+the name web.default.svc.cluster.local points to the Service,
+
+226
+00:13:00,078 --> 00:13:03,693
+只取 web 就能拿到游戏页面
+and fetching just web returns the game page.
+
+227
+00:13:04,013 --> 00:13:06,040
+Pod 在变，名字不变
+The name stays while the Pods change.
+
+228
+00:13:06,283 --> 00:13:10,320
+奶酪应用的 API 之后也会这样找到它的数据库
+This is how the cheese app's API will find its database:
+
+229
+00:13:10,320 --> 00:13:12,555
+按 Service 名字，vector-db
+by the Service name, vector-db.
+
+230
+00:13:12,800 --> 00:13:16,704
+再一个额外的：kubectl exec 进到 web 这个 Deployment
+Another extra: kubectl exec into the web Deployment.
+
+231
+00:13:17,024 --> 00:13:19,940
+命令 hostname 打印出其中一个 Pod 的名字
+Hostname prints the name of one Pod, and the game's files are inside.
+
+232
+00:13:19,940 --> 00:13:21,540
+游戏的文件就在里面
+Hostname prints the name of one Pod, and the game's files are inside.
+
+233
+00:13:21,632 --> 00:13:24,619
+README 也是这样进到 API 的 shell 里
+The README shells into the API the same way.
+
+234
+00:13:24,867 --> 00:13:26,659
+为什么 get all 看起来是空的？
+Why did get all look empty?
+
+235
+00:13:26,979 --> 00:13:29,560
+因为 namespace：装对象的目录
+Namespaces: folders for objects.
+
+236
+00:13:29,880 --> 00:13:33,090
+不加参数时，kubectl 只看 default
+Without a flag, kubectl looks only in default;
+
+237
+00:13:33,090 --> 00:13:34,626
+这个额外步骤先把它们列出来
+this extra lists them,
+
+238
+00:13:34,626 --> 00:13:38,115
+再创建并删除 cheese-app-namespace
+then creates and deletes the cheese-app-namespace.
+
+239
+00:13:38,733 --> 00:13:41,711
+所以在第 2 部分，每条和应用有关的命令都要
+So in part 2, every command about the app
+
+240
+00:13:41,711 --> 00:13:45,197
+在参数的位置加上 -n cheese-app-namespace
+gets -n cheese-app-namespace, in the flags slot.
+
+241
+00:13:45,833 --> 00:13:51,124
+删除集群之前，一个额外提示：用同一个文件做 kubectl delete
+Before deleting the cluster, an extra tip: kubectl delete with the same file.
+
+242
+00:13:51,444 --> 00:13:56,372
+在 GKE 上，这样能在集群还在的时候把负载均衡器释放掉
+On GKE, this releases the load balancer while the cluster still exists.
+
+243
+00:13:56,617 --> 00:13:58,923
+然后删除集群：gcloud container clusters
+Then delete the cluster:
+
+244
+00:13:58,923 --> 00:14:03,465
+delete test-cluster --zone us-east1-c
+gcloud container clusters delete test-cluster --zone us-east1-c.
+
+245
+00:14:03,785 --> 00:14:06,601
+你的会问要不要继续；回答 yes
+Yours asks whether to continue; answer yes.
+
+246
+00:14:07,150 --> 00:14:08,750
+替身我们也删掉
+We delete the stand-in too.
+
+247
+00:14:10,650 --> 00:14:14,170
+课上最后一句话用在这里正合适：别忘了删除
+The lecture's last word fits here: don't forget to delete.
+
+248
+00:14:14,490 --> 00:14:18,351
+暂停一下，确认你的测试集群已经没了，第 1 部分就完成了
+Pause, check that your test cluster is gone, and part 1 is done.

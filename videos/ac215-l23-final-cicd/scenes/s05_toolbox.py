@@ -20,7 +20,7 @@ Beats (script.md "## S05"; one voiceover block each):
     tracker; the checklist is born with row 1 "docker-shell.sh:10 · ../../../secrets", ticked.
  4  TRACKER B 3. The terminal clears; `sh docker-shell.sh` → laptop/23: 2 RED, "13" ringed.
  5  TRACKER B 3 · extra. `ls -l /bin/sh; head -1 docker-shell.sh` (extra) → laptop/24: 2–3, `dash` RED;
-    the terminal shrinks to a 3-row strip; an inset of docker-shell.sh:13 with `<<<` ringed RED,
+    the terminal shrinks to a 4-row strip (the folded command and both lines); an inset of docker-shell.sh:13 with `<<<` ringed RED,
     "here-string"; `#!/bin/bash` GREEN; checklist row 2 "Linux: bash docker-shell.sh" + erratum tag.
  6  TRACKER B 3 · extra. The inset goes, the terminal grows (8 rows): `bash docker-shell.sh` (extra)
     → laptop/25: 3, …, 20 (cut), 28 (wrapped), 34; 20, 28, 34 RED; "at the time of recording" on the
@@ -104,10 +104,14 @@ def recolor(glyphs, color):
 def fold_rows(t: Terminal, cmd: str, prefix: int) -> list[str]:
     """The command split into terminal rows the house way (break at a space outside quotes, ' \\'
     at the end of every row but the last, continuation rows indented by 4). Local copy of
-    Terminal.fold that never drops a character on a hard break (see the scene's report)."""
+    Terminal.fold that never drops a character on a hard break (see the scene's report). A row
+    with no space outside quotes breaks at a single space inside them (a long sed expression)
+    before it falls back to a hard break mid-word."""
     limit = t.max_chars
-    outside, q = [], None
+    outside, inside, q = [], [], None
     for i, ch in enumerate(cmd):
+        if q and ch == " " and cmd[i - 1] != " " and cmd[i + 1:i + 2] not in (" ", ""):
+            inside.append(i)
         if q:
             q = None if ch == q else q
         elif ch in "\"'":
@@ -119,7 +123,8 @@ def fold_rows(t: Terminal, cmd: str, prefix: int) -> list[str]:
         room = avail - 2
         cand = [b for b in outside if start < b <= start + room]
         opt = [b for b in cand if cmd[b + 1:b + 2] == "-" and b - start >= room * 0.5]
-        b = (opt or cand or [None])[-1]
+        inner = [b for b in inside if start < b <= start + room and b - start >= room * 0.4]
+        b = (opt or cand or inner or [None])[-1]
         if b is not None:
             rows.append(cmd[start:b] + " \\")
             back.append(cmd[start:b] + " ")
@@ -279,13 +284,13 @@ class StartToolbox(VoiceScene):
         t = term(P_LAPTOP, rows=4)
         names = ["deployment", "src", "cheese-app-aws", "student", "/home/secrets ✗"]
         chips = [grey_chip(n, size=22, mono_font=True) for n in names[:4]] + [err_chip(names[4], size=22, mono_font=True)]
-        for c, (x, y) in zip(chips, [(4.9, -0.75), (2.6, 0.1), (0.3, 0.95), (-2.1, 1.8), (-4.5, 2.5)]):
+        for c, (x, y) in zip(chips, [(4.9, -0.6), (2.6, 0.18), (0.3, 0.96), (-2.1, 1.74), (-4.5, 2.45)]):
             c.move_to([x, y, 0])
         steps = []
         for i in range(4):
             a = arrow(chips[i].get_corner(UL) + RIGHT * 0.25, chips[i + 1].get_corner(DR) + LEFT * 0.25,
                       S.GREY, buff=0.08)
-            lb = mono("../", 20, S.GREY).next_to(a.get_center(), UR, buff=0.08)
+            lb = mono("../", 20, S.GREY).next_to(a.get_center(), DL, buff=0.06)
             steps.append(VGroup(a, lb))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(p1), FadeOut(masked), track(tr, 2, True), run_time=0.5)
@@ -354,7 +359,7 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 5. extra: sh is dash
         inset = code(DS, 13, 13, font_size=T20, trim=70)
-        inset.move_to([0, 0.0, 0])
+        inset.move_to([0, 0.25, 0])
         here = code_span(inset.code, 0, "<<<")
         here_ring = ring(here, ERR, buff=0.08)
         here_lb = label("here-string", 20, ERR)
@@ -371,7 +376,7 @@ class StartToolbox(VoiceScene):
             self.add(t)
             vo.wait_until("which has no here string")
             drop_tags(self, t, ex, run_time=0.2)
-            resize(self, t, 3, keep=[ln24.rows[-1], *o24], run_time=0.5)
+            resize(self, t, 4, keep=[*ln24.rows, *o24], run_time=0.5)
             ex = bar_tags(self, t, extra_row())
             self.play(FadeIn(inset, shift=UP * 0.15), run_time=0.4)
             self.play(Create(here_ring), FadeIn(here_lb, shift=UP * 0.1), run_time=0.5)
@@ -511,25 +516,25 @@ class StartToolbox(VoiceScene):
             run9.remove(idl)
             drop_tags(self, t, idc, FadeOut(VGroup(p26, e_chip, r9, emp, idl)), run_time=0.3)
             self.remove(p26, e_chip, r9, emp, idl)
+            ck_scroll(self, ck, run_time=0.35)
+            ck.add_row(self, ROWS[3], run_time=0.35)
             xl = type_cmd(self, t, "exit", type_time=0.25)
-            pin(self, xl, beside(row_tag("exit the toolbox"), xl, buff=0.4), run_time=0.3)
-            out(self, t, X28.at(43), run_time=0.25)
+            pin(self, xl, beside(row_tag("exit the toolbox"), xl, buff=0.4), run_time=0.25)
+            out(self, t, X28.at(43), run_time=0.2)
             t.set_prompt(P_LAPTOP)
-            retitle(self, t, T_LAPTOP, run_time=0.35)
-            resize(self, t, 9, run_time=0.45)
-            ck_scroll(self, ck, run_time=0.4)
-            ck.add_row(self, ROWS[3], run_time=0.4)
+            retitle(self, t, T_LAPTOP, run_time=0.3)
+            resize(self, t, 9, run_time=0.4)
             vo.wait_until("and put your own account ID")
-            ck_scroll(self, ck, run_time=0.4)
-            ck.add_row(self, ROWS[4], run_time=0.4)
-            type_folded(self, t, C30.cmd, type_time=0.25)
+            ck_scroll(self, ck, run_time=0.35)
+            ck.add_row(self, ROWS[4], run_time=0.35)
+            type_folded(self, t, C30.cmd, type_time=0.2)
             ex = bar_tags(self, t, extra_row())
-            o30 = out(self, t, C30.at(2, 3, 4), run_time=0.4)
-            self.play(*recolor(substring(o30[1], ACCOUNT), SHARED), *recolor(o30[2].glyphs, OWN), run_time=0.4)
-            ck.tick(self, 0)
+            o30 = out(self, t, C30.at(2, 3, 4), run_time=0.35)
+            self.play(*recolor(substring(o30[1], ACCOUNT), SHARED), *recolor(o30[2].glyphs, OWN), run_time=0.35)
             vo.wait_until("AWS S T S get caller identity")
             sts.next_to(t.box, UP, buff=0.12).align_to(t.box, LEFT)
             self.play(FadeIn(sts, shift=DOWN * 0.1), run_time=0.4)
+            ck.tick(self, 0)
             vo.wait_until("once your keys work")
             self.play(Indicate(sts.text, color=INK, scale_factor=1.06), run_time=0.7)
 

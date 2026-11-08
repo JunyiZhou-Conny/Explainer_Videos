@@ -97,6 +97,14 @@ def byhand_bar(t):
     return on_bar(t, tags)
 
 
+def crumb_part(crumb, title: str, part: str) -> VGroup:
+    """The glyphs of `part` in a console breadcrumb (a Text: one glyph per non-space character)."""
+    assert len(crumb.submobjects) == len("".join(title.split())), (len(crumb.submobjects), title)
+    i = title.index(part)
+    a, n = len("".join(title[:i].split())), len("".join(part.split()))
+    return VGroup(*crumb.submobjects[a:a + n])
+
+
 def bars(p, ks, color, opacity: float = 0.22):
     return VGroup(*[line_bar(p.code, k, color, opacity) for k in ks])
 
@@ -137,7 +145,8 @@ class RunnerSecrets(VoiceScene):
             self.play(Indicate(clean.text, color=INK, scale_factor=1.06), run_time=0.7)
 
         # ========================================================== 1. four repository secrets
-        c1 = console_drawing("GitHub › your repository › Settings › Secrets and variables › Actions",
+        CRUMB1 = "GitHub › your repository › Settings › Secrets and variables › Actions"
+        c1 = console_drawing(CRUMB1,
                              [(s, MASKED) for s in SECRETS], where="github")
         at_top(c1)
         c1.shift(LEFT * 0.4)
@@ -150,8 +159,19 @@ class RunnerSecrets(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             gone(self, c0, turn0, fork, clean, t0, bar0)
             self.play(FadeIn(shell1, shift=UP * 0.2), FadeIn(turn1, shift=LEFT * 0.15), run_time=0.7)
-            vo.wait_until("in your repository, settings")
-            self.play(Indicate(c1.crumb, color=TURN, scale_factor=1.04), run_time=1.0)
+            # walk the breadcrumb, one segment per spoken word: the lit segment is where you click
+            walk = [("in your repository", "your repository"), ("settings, secrets", "Settings"),
+                    ("secrets and variables", "Secrets and variables"), ("actions. Add", "Actions")]
+            prev = None
+            for phrase, part in walk:
+                vo.wait_until(phrase)
+                seg = crumb_part(c1.crumb, CRUMB1, part)
+                anims = [seg.animate.set_color(TURN)]
+                if prev is not None:
+                    anims.append(prev.animate.set_color(S.GREY))
+                self.play(*anims, run_time=0.35)
+                prev = seg
+            self.play(prev.animate.set_color(S.GREY), run_time=0.3)
             for i, phrase in enumerate(["the access key ID", "the secret key", "your account ID",
                                         "and AWS S S H key"]):
                 vo.wait_until(phrase)
@@ -184,12 +204,11 @@ class RunnerSecrets(VoiceScene):
             self.play(Indicate(kj.places["vault"].text, color=CLOUD, scale_factor=1.06), run_time=0.7)
             vo.wait_until("and your key a second")
             kj.send(self, "key", "secrets", "vault", arc=-0.6, run_time=1.2)
-            self.play(FadeIn(kc, shift=UP * 0.1), run_time=0.4)
+            self.play(FadeIn(kc, shift=UP * 0.1), FadeIn(shelf, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("Every copy is one more place")
             self.play(LaggedStart(*[Indicate(c, color=TURN, scale_factor=1.4)
                                     for k in ("secrets", "vault") for c in kj.copies[k]], lag_ratio=0.2),
                       run_time=1.2)
-            self.play(FadeIn(shelf, shift=UP * 0.15), run_time=0.5)
             flash_tag(self, cost, COST)
 
         # ========================================================== 3. AWS login on the runner
@@ -388,17 +407,22 @@ class RunnerSecrets(VoiceScene):
             self.play(*[Indicate(VGroup(*r.glyphs[:10]), color=TURN, scale_factor=1.1) for r in rows8[1:]],
                       run_time=0.6)
             vo.wait_until("It copies both")
-            self.play(FadeIn(b88), run_time=0.4)
-            rows8 = out(self, t8, L52[3:], run_time=0.5)
+            # a clean second page (heading again), so the runner's 'config' row does not sit
+            # above the deployment block
+            self.play(FadeIn(b88), FadeOut(t8.lines), run_time=0.35)
+            for m in list(t8.lines):
+                t8.lines.remove(m)
+            put_heading(self, t8, "ci_cd_aws.yml · lines 73–97 · run by hand", run_time=0.25)
+            rows8 = out(self, t8, L52[3:], run_time=0.45)
+            self.play(Indicate(rows8[0], color=TURN, scale_factor=1.06), run_time=0.5)
             vo.wait_until("on the runner only")
-            self.play(Indicate(VGroup(*rows8[1].glyphs[-14:]), color=ROUTE, scale_factor=1.08), run_time=0.6)
+            self.play(Indicate(VGroup(*rows8[1].glyphs[-14:]), color=ROUTE, scale_factor=1.08), run_time=0.5)
             vo.wait_until("never committed")
-            self.play(FadeOut(VGroup(p9, b84, b88, t8, bar8)), run_time=0.5)
+            self.play(FadeOut(VGroup(p9, b84, b88, t8, bar8)), FadeIn(kj2, shift=UP * 0.15), run_time=0.5)
             self.remove(p9, b84, b88, t8, bar8, *p9.get_family(), *t8.get_family())
-            self.play(FadeIn(kj2, shift=UP * 0.15), run_time=0.5)
-            kj2.send(self, "key", "vault", "runner_ssh", run_time=0.9)
-            kj2.send(self, "key", "runner_ssh", "toolbox_ssh", run_time=0.9)
-            self.play(FadeIn(safe, shift=UP * 0.15), run_time=0.5)
+            kj2.send(self, "key", "vault", "runner_ssh", run_time=0.6)
+            kj2.send(self, "key", "runner_ssh", "toolbox_ssh", run_time=0.6)
+            self.play(FadeIn(safe, shift=UP * 0.15), run_time=0.4)
         # a short hold after the block: the key's two places on the runner, and the promise
         self.play(Indicate(safe.text, color=OWN, scale_factor=1.06),
                   Circumscribe(kj2.places["toolbox_ssh"].frame, color=IMAGE, buff=0.06), run_time=1.0)

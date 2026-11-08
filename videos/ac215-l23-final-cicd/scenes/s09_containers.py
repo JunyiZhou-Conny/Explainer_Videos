@@ -414,7 +414,8 @@ class SetupContainers(VoiceScene):
             self.play(Indicate(whence[0], color=INK, scale_factor=1.05), run_time=0.5)
 
         # ========================================================== 7. on a real server: pull, start, load, start
-        cubes = VGroup(*[cube_glyph(0.45) for _ in range(3)]).arrange(RIGHT, buff=0.1).move_to(ecr[0])
+        cubes = VGroup(*[cube_glyph(0.45) for _ in range(3)]).arrange(RIGHT, buff=0.1)
+        cubes.next_to(ecr[0], DOWN, buff=0.15)  # under the box: on it, they hid the ECR label
         bed = cost_tag("Bedrock · per token")
         with self.voiceover(SAY[7]) as vo:
             drop_all(self, p106, fork, wh, run_time=0.4)
@@ -445,7 +446,13 @@ class SetupContainers(VoiceScene):
             bed.move_to([v.containers["api"].get_x(), -2.75, 0])
             self.play(FadeIn(bed, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("The security group")
-            v.ports_inside(self)
+            # V7.ports_inside stacks the three ports with buff 0.02 (the lines touch): same, with air
+            ip = VGroup(*[mono(q, v.size, S.GREY) for q in (":3000", ":8000", ":9000")]).arrange(DOWN, buff=0.1)
+            ip.move_to([v.frame.get_left()[0] + 0.4 + ip.width / 2, v.slots["frontend"][1] + v._o()[1] + 0.05, 0])
+            assert ip.get_bottom()[1] > v.net.line.get_top()[1] + 0.05, (ip.get_bottom(), v.net.line.get_top())
+            self.play(FadeIn(ip), run_time=0.5)
+            v.inner_ports = ip
+            v.keep(self, ip)
             self.play(Indicate(v.sg.line, color=CLOUD, scale_factor=1.0),
                       each([v.inner_ports[i] for i in range(3)], S.GREY), run_time=0.9)
 
@@ -478,6 +485,9 @@ class SetupContainers(VoiceScene):
             vo.wait_until("use S S H")
             self.play(FadeIn(et8, shift=UP * 0.1), run_time=0.4)
             flash_tag(self, e8_tg)
+            self.play(Indicate(e8[1], color=ROUTE, scale_factor=1.05), run_time=0.6)
+            vo.wait_until("or E C 2 Instance Connect")
+            self.play(Indicate(e8[2], color=INK, scale_factor=1.08), run_time=0.6)
             vo.wait_until("Then list containers")
             self.play(FadeIn(turn8, shift=DOWN * 0.1), r122.animate.set_color(TURN), run_time=0.5)
             self.play(Indicate(r122, color=TURN, scale_factor=1.05), run_time=0.5)

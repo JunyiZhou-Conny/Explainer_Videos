@@ -3,8 +3,8 @@ No lecture tag (script.md has no LECTURE mark in S07). V6 TimestampTrail (build 
 
 Beats (script.md "## S07"; one voiceover block each):
 0. TRACKER B 4. README(81–85) card (20 pt: line 81's URL is one word): the URL row flashes on
-   "in U S East 1", the three names on "create three empty private repositories"; on "the vector
-   D B tool" it folds into a GREY chip "README.md · lines 81–85" (top left) and the console drawing "ECR › Private registry › Repositories" (illustration) slides in on the right
+   "in U S East 1", the three names on "create three empty private repositories"; on "the vector D B tool" it shrinks (Transform)
+   into a GREY chip "README.md · lines 81–85" (top left) and the console drawing "ECR › Private registry › Repositories" (illustration) slides in on the right
    with three BLUE rows `<name> · Private` (README order), lit one per name; ▶ your turn on its
    bottom edge. On "Your policy can push" S03's RED dashed chip "no ecr:CreateRepository" returns
    under the README chip.
@@ -172,11 +172,11 @@ class BuildAndPush(VoiceScene):
             self.play(Indicate(rp.rows[81], color=CLOUD, scale_factor=1.03), run_time=0.8)
             vo.wait_until("create three empty private repositories")
             self.play(each([rp.rows[n] for n in (83, 84, 85)], TURN, scale=1.05, lag=0.25), run_time=1.2)
+            # the card shrinks into its chip (what became what), then the console comes in
             vo.wait_until("the vector D B tool")
-            self.play(FadeOut(rp, shift=UP * 0.2), FadeIn(rchip, shift=UP * 0.2), FadeIn(con, shift=LEFT * 0.2),
-                      run_time=0.6)
-            self.remove(rp)
-            self.play(Indicate(con.rows[0].text, color=CLOUD, scale_factor=1.06), run_time=0.6)
+            self.play(ReplacementTransform(rp, rchip), run_time=0.5)
+            self.play(FadeIn(con, shift=LEFT * 0.2), run_time=0.4)
+            self.play(Indicate(con.rows[0].text, color=CLOUD, scale_factor=1.06), run_time=0.4)
             vo.wait_until("the API service")
             self.play(Indicate(con.rows[1].text, color=CLOUD, scale_factor=1.06), run_time=0.5)
             vo.wait_until("and the frontend")
@@ -197,6 +197,8 @@ class BuildAndPush(VoiceScene):
         card = tag_card()
         reg13 = code_span(p1.code, 13 - 2, "register: tag")
         card.move_to([p1.code.code_lines[12 - 2].get_right()[0] + 0.5 + card.width / 2, reg13.get_y(), 0])
+        # hang it from line 13: its top just under line 12's GREEN bar (it touched the bar)
+        card.shift(DOWN * max(0.0, card.get_top()[1] - (b12.get_bottom()[1] - 0.03)))
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(con), FadeOut(rchip), FadeOut(nocreate), FadeOut(turn0), track(tr, 5), run_time=0.6)
             self.remove(con, rchip, nocreate, turn0)
@@ -274,8 +276,10 @@ class BuildAndPush(VoiceScene):
             b58 = line_bar(p58.code, 1, OWN, 0.25)
             self.play(FadeIn(p58, shift=UP * 0.15), run_time=0.5)
             self.play(FadeIn(b58), run_time=0.3)
-            vo.wait_until("dot docker tag")
+            vo.wait_until("in a file")
             trail.save(self)
+            vo.wait_until("dot docker tag")
+            self.play(Indicate(trail.file[1], color=OWN, scale_factor=1.1), run_time=0.6)
 
         # ========================================================== 3. step 5: run it
         t = toolbox_term("40", rows=12)

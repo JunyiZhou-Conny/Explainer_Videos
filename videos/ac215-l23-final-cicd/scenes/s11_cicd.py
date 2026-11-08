@@ -39,6 +39,8 @@ instead of the single this_repo() call, and places its three chips itself on opa
 lines running through the text). The code panel is set at 20 pt so it fits under the loop;
 the erratum chip sits on the panel's top edge, right of its header (no room beside its
 54-character line 1, nor under the panel).
+Critic pass: the slide-10 code card rides inside the pipe at the left of each tile (it sat on the
+pipe's border before); Test turns dashed by a cross-fade (Transform scrambled the dashes mid-way).
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -191,15 +193,20 @@ class WhoPressesRelease(VoiceScene):
                       run_time=0.7)
             cc = code_card().move_to(repo.get_top() + UP * 0.4)
             self.play(FadeIn(cc, shift=DOWN * 0.1), run_time=0.3)
+            # the card rides inside the pipe, on the left of each tile (clear of the tile text)
+            ride_x = tiles.get_left()[0] + 0.45
             vo.wait_until("and every change passes")
-            self.play(cc.animate.move_to([pipe.get_left()[0] - 0.05, tiles[0].get_y(), 0]), run_time=0.5)
+            self.play(cc.animate.move_to([ride_x, tiles[0].get_y(), 0]), run_time=0.5)
             self.play(FadeIn(tiles[0], shift=LEFT * 0.15), run_time=0.5)
+            self.bring_to_front(cc)
             vo.wait_until("coding standards")
-            self.play(cc.animate.move_to([pipe.get_left()[0] - 0.05, tiles[1].get_y(), 0]),
+            self.play(cc.animate.move_to([ride_x, tiles[1].get_y(), 0]),
                       FadeIn(tiles[1], shift=LEFT * 0.15), run_time=0.5)
+            self.bring_to_front(cc)
             vo.wait_until("and static analysis")
-            self.play(cc.animate.move_to([pipe.get_left()[0] - 0.05, tiles[2].get_y(), 0]),
+            self.play(cc.animate.move_to([ride_x, tiles[2].get_y(), 0]),
                       FadeIn(tiles[2].frame), FadeIn(tiles[2].text[0]), run_time=0.5)
+            self.bring_to_front(cc)
             vo.wait_until("which finds defects")
             self.play(FadeIn(tiles[2].text[1:], shift=UP * 0.08), run_time=0.6)
             self.play(cc.animate.move_to(func.get_left() + LEFT * 0.45 + DOWN * 0.0), run_time=0.7)
@@ -297,7 +304,13 @@ class WhoPressesRelease(VoiceScene):
             self.play(lp.light("release", CLOUD), run_time=0.6)
             settle(self, lp)
             vo.wait_until("Test stays dashed")
-            self.play(*lp._set_box("test", S.GREY, dashed=True), run_time=0.6)
+            # solid -> dashed as a cross-fade (a Transform scrambles the dashes mid-way)
+            tb = lp.boxes["test"]
+            t_dash = outline_box(tb.frame.width, tb.frame.height, S.GREY).move_to(tb.frame)
+            self.play(FadeIn(t_dash), tb.frame.animate.set_stroke(opacity=0).set_fill(opacity=0),
+                      tb.text.animate.set_color(S.GREY), run_time=0.6)
+            tb.frame.become(t_dash)
+            self.remove(t_dash)
             self.play(FadeIn(c_test, shift=UP * 0.1), run_time=0.4)
             lp.keep(self, c_test)
             settle(self, lp)
