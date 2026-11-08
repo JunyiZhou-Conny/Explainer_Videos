@@ -1,0 +1,3 @@
+$ pulumi login --local
+Logged in to 7b22ee890fa3 as root (file://~)
+[exit 0]

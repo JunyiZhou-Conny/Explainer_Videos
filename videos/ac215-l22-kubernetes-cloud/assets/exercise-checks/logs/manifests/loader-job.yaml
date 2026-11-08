@@ -1,0 +1,16 @@
+# C1: a Job shaped like setup_containers.py:199-243 (name, namespace, ONE container named
+# vector-db-loader, restart_policy Never, backoff_limit 3); busybox stands in for the loader image
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vector-db-loader
+  namespace: cheese-app-namespace
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: vector-db-loader
+        image: busybox:1.36
+        command: ["sh", "-c", "echo downloading...; sleep 3; echo loaded"]

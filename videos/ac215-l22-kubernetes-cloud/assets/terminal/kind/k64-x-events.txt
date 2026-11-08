@@ -1,0 +1,17 @@
+$ kubectl get events --sort-by=.lastTimestamp | tail -15
+56s         Normal    Started                   pod/hello-job-cpm66               Started container hello-job
+56s         Normal    Created                   pod/hello-job-cpm66               Created container: hello-job
+56s         Normal    Pulled                    pod/hello-job-cpm66               Container image "busybox:1.36" already present on machine
+56s         Normal    Scheduled                 pod/hello-job-cpm66               Successfully assigned default/hello-job-cpm66 to test-cluster-worker2
+48s         Normal    Completed                 job/hello-job                     Job completed
+21s         Normal    Scheduled                 pod/dns-check                     Successfully assigned default/dns-check to test-cluster-worker2
+20s         Normal    Started                   pod/dns-check                     Started container dns-check
+20s         Normal    Created                   pod/dns-check                     Created container: dns-check
+20s         Normal    Pulled                    pod/dns-check                     Container image "busybox:1.36" already present on machine
+17s         Normal    Scheduled                 pod/web-5cd9789488-lmk52          Successfully assigned default/web-5cd9789488-lmk52 to test-cluster-worker2
+17s         Normal    SuccessfulCreate          replicaset/web-5cd9789488         Created pod: web-5cd9789488-lmk52
+17s         Normal    Killing                   pod/web-5cd9789488-5h48s          Stopping container web
+16s         Normal    Started                   pod/web-5cd9789488-lmk52          Started container web
+16s         Normal    Created                   pod/web-5cd9789488-lmk52          Created container: web
+16s         Normal    Pulled                    pod/web-5cd9789488-lmk52          Container image "dlops/tic-tac-toe" already present on machine
+[exit 0]

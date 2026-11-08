@@ -1,0 +1,47 @@
+$ pulumi preview --stack dev --refresh
+Previewing update (dev):
+
+@ previewing update....
+ +  pulumi:pulumi:Stack deploy-k8s-dev create 
+@ previewing update....
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read pulumi:pulumi:StackReference organization/deploy-images/dev
+ +  gcp:compute:Network cheese-app-vpc create 
+ +  gcp:compute:Subnetwork cheese-app-subnet create 
+ +  gcp:container:Cluster cheese-app-cluster create 
+ +  gcp:compute:Router cheese-app-router create 
+@ previewing update....
+ +  gcp:compute:RouterNat cheese-app-nat create 
+ +  gcp:container:NodePool cheese-app-pool create 
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read pulumi:pulumi:StackReference organization/deploy-images/dev
+ +  pulumi:providers:kubernetes gke_k8s_v2 create 
+ +  command:local:Command connect-k8s-command create 
+ +  kubernetes:core/v1:Namespace cheese-app-namespace create 
+ +  kubernetes:helm.sh/v3:Release nginx-f5 create 
+ +  kubernetes:core/v1:PersistentVolumeClaim persistent-pvc create 
+ +  kubernetes:core/v1:ServiceAccount api-ksa create 
+ +  kubernetes:core/v1:PersistentVolumeClaim chromadb-pvc create 
+ +  gcp:serviceaccount:IAMMember api-gsa-wi-user create 
+ +  kubernetes:apps/v1:Deployment frontend create 
+ +  kubernetes:apps/v1:Deployment vector-db create 
+ +  kubernetes:core/v1:Service frontend-service create 
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read kubernetes:core/v1:Service nginx-ingress-service
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read kubernetes:core/v1:Service nginx-ingress-service
+ +  kubernetes:core/v1:Service vector-db-service create 
+ +  kubernetes:batch/v1:Job vector-db-loader create 
+ +  kubernetes:apps/v1:Deployment api create 
+ +  kubernetes:core/v1:Service api-service create 
+ +  kubernetes:networking.k8s.io/v1:Ingress cheese-app-ingress create 
+ +  pulumi:pulumi:Stack deploy-k8s-dev create 
+Outputs:
+    app_url         : [unknown]
+    cluster_endpoint: [unknown]
+    cluster_name    : "cheese-app-cluster"
+    ingress_name    : [unknown]
+    ip_address      : [unknown]
+    kubeconfig      : [unknown]
+    namespace       : [unknown]
+
+Resources:
+    + 23 to create
+
+[exit 0]

@@ -1,0 +1,5 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; kind version; docker version --format 'Docker engine {{.Server.Version}}'
+2026-11-07 20:59 UTC
+kind v0.31.0 go1.25.5 linux/amd64
+Docker engine 29.8.2
+[exit 0]

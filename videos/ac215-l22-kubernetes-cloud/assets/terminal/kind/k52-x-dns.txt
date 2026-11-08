@@ -1,0 +1,13 @@
+$ kubectl run dns-check --image=busybox:1.36 --restart=Never -- sh -c 'nslookup web.default.svc.cluster.local | tail -3; wget -qO- http://web | head -5'; kubectl wait --for=jsonpath='{.status.phase}'=Succeeded pod/dns-check --timeout=120s; kubectl logs dns-check; kubectl delete pod dns-check
+pod/dns-check created
+pod/dns-check condition met
+Name:	web.default.svc.cluster.local
+Address: 10.96.52.79
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Tic Tac Toe</title>
+pod "dns-check" deleted from default namespace
+[exit 0]

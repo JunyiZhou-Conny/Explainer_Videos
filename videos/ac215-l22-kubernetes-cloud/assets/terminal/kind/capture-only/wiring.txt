@@ -1,0 +1,5 @@
+test-cluster-control-plane: CA + docker.io mirror added, containerd restarted
+test-cluster-worker2: CA + docker.io mirror added, containerd restarted
+test-cluster-worker: CA + docker.io mirror added, containerd restarted
+Error response from daemon: endpoint with name cheese-app-deployment already exists in network kind
+kubeconfig written to cheese-app-deployment:/root/.kube/config

@@ -1,0 +1,8 @@
+00:00 The cheese app's cluster, as code
+01:40 Setup and the images stack
+03:33 deploy_k8s: config and a 23-resource plan
+05:23 pulumi up: what builds, in what order
+07:37 The journey of one click
+09:53 kubectl on the app, and the outputs
+11:40 Logs, then scaling at two levels
+14:10 Destroy, audit, recap

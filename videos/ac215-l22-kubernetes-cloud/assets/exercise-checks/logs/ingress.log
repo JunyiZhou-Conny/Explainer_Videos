@@ -1,0 +1,116 @@
+## B8 setup: the controller (Helm), two stand-ins, the Ingress
+$ kubectl get namespace cheese-app-namespace >/dev/null 2>&1 || kubectl create namespace cheese-app-namespace; helm version --short; helm install nginx-f5 nginx-ingress --repo https://helm.nginx.com/stable --version 2.3.1 -n cheese-app-namespace -f nginx-f5-values.yaml --wait --timeout 5m | head -8
+v3.22.1+gd6c1a0e
+NAME: nginx-f5
+LAST DEPLOYED: Sat Nov  7 23:11:39 2026
+NAMESPACE: cheese-app-namespace
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+NGINX Ingress Controller 5.2.1 has been installed.
+[exit 0]
+
+$ kubectl apply -f ingress-backends.yaml && kubectl -n cheese-app-namespace rollout status deployment/api --timeout=180s && kubectl -n cheese-app-namespace rollout status deployment/frontend --timeout=180s
+deployment.apps/frontend created
+service/frontend created
+deployment.apps/api created
+service/api created
+Waiting for deployment "api" rollout to finish: 0 of 1 updated replicas are available...
+deployment "api" successfully rolled out
+deployment "frontend" successfully rolled out
+[exit 0]
+
+$ kubectl get service -n cheese-app-namespace
+NAME                                TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+api                                 ClusterIP   10.96.100.12    <none>        9000/TCP                     2s
+frontend                            ClusterIP   10.96.223.247   <none>        3000/TCP                     2s
+nginx-f5-nginx-ingress-controller   NodePort    10.96.162.44    <none>        80:30687/TCP,443:30894/TCP   12s
+vector-db                           ClusterIP   10.96.199.32    <none>        8000/TCP                     18m
+[exit 0]
+
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); sed "s/HOST_PLACEHOLDER/$IP.sslip.io/" cheese-app-ingress.yaml | kubectl apply -f - && sleep 5 && kubectl get ingress -n cheese-app-namespace
+ingress.networking.k8s.io/cheese-app-ingress created
+NAME                 CLASS   HOSTS                 ADDRESS   PORTS   AGE
+cheese-app-ingress   nginx   172.18.0.4.sslip.io             80      5s
+[exit 0]
+
+## B8 / Q4: one request per line; [Host header] path -> who answered, what it received
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}'); H=$IP.sslip.io; echo "Host: $H  GET /"; curl -s -H "Host: $H" -w '-> HTTP %{http_code}\n' http://$IP:$NP/ | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'
+Host: 172.18.0.4.sslip.io  GET /
+Hostname: frontend-f67c7bdc6-rtjs5
+GET / HTTP/1.1
+Host: 172.18.0.4.sslip.io
+-> HTTP 200
+[exit 0]
+
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}'); H=$IP.sslip.io; echo "Host: $H  GET /api-service/status"; curl -s -H "Host: $H" -w '-> HTTP %{http_code}\n' http://$IP:$NP/api-service/status | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'
+Host: 172.18.0.4.sslip.io  GET /api-service/status
+Hostname: api-5c9b748466-fgbr2
+GET /api-service/status HTTP/1.1
+Host: 172.18.0.4.sslip.io
+-> HTTP 200
+[exit 0]
+
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}'); H=$IP.sslip.io; echo "Host: $H  GET /api-service"; curl -s -H "Host: $H" -w '-> HTTP %{http_code}\n' http://$IP:$NP/api-service | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'
+Host: 172.18.0.4.sslip.io  GET /api-service
+Hostname: api-5c9b748466-fgbr2
+GET /api-service HTTP/1.1
+Host: 172.18.0.4.sslip.io
+-> HTTP 200
+[exit 0]
+
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}'); H=$IP.sslip.io; echo "Host: $H  GET /api-service/"; curl -s -H "Host: $H" -w '-> HTTP %{http_code}\n' http://$IP:$NP/api-service/ | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'
+Host: 172.18.0.4.sslip.io  GET /api-service/
+Hostname: api-5c9b748466-fgbr2
+GET /api-service/ HTTP/1.1
+Host: 172.18.0.4.sslip.io
+-> HTTP 200
+[exit 0]
+
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}'); H=$IP.sslip.io; echo "Host: $H  GET /api-servicex/status"; curl -s -H "Host: $H" -w '-> HTTP %{http_code}\n' http://$IP:$NP/api-servicex/status | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'
+Host: 172.18.0.4.sslip.io  GET /api-servicex/status
+Hostname: api-5c9b748466-fgbr2
+GET /api-servicex/status HTTP/1.1
+Host: 172.18.0.4.sslip.io
+-> HTTP 200
+[exit 0]
+
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}'); H=$IP.sslip.io; echo "Host: $H  GET /status"; curl -s -H "Host: $H" -w '-> HTTP %{http_code}\n' http://$IP:$NP/status | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'
+Host: 172.18.0.4.sslip.io  GET /status
+Hostname: frontend-f67c7bdc6-rtjs5
+GET /status HTTP/1.1
+Host: 172.18.0.4.sslip.io
+-> HTTP 200
+[exit 0]
+
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}'); H=$IP; echo "Host: $H  GET /"; curl -s -H "Host: $H" -w '-> HTTP %{http_code}\n' http://$IP:$NP/ | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'
+Host: 172.18.0.4  GET /
+<head><title>404 Not Found</title></head>
+-> HTTP 404
+[exit 0]
+
+$ IP=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].status.hostIP}'); NP=$(kubectl get service -n cheese-app-namespace nginx-f5-nginx-ingress-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}'); H=$IP; echo "Host: $H  GET /api-service/status"; curl -s -H "Host: $H" -w '-> HTTP %{http_code}\n' http://$IP:$NP/api-service/status | grep -E '^Hostname|^GET|^Host:|<title>|^-> HTTP'
+Host: 172.18.0.4  GET /api-service/status
+<head><title>404 Not Found</title></head>
+-> HTTP 404
+[exit 0]
+
+## B8: the location blocks the controller generated from the Ingress
+$ P=$(kubectl get pod -n cheese-app-namespace -l app.kubernetes.io/name=nginx-ingress -o jsonpath='{.items[0].metadata.name}'); kubectl exec -n cheese-app-namespace $P -- sh -c 'ls /etc/nginx/conf.d; grep -hE "server_name|location " /etc/nginx/conf.d/cheese-app-namespace-cheese-app-ingress.conf'
+cheese-app-namespace-cheese-app-ingress.conf
+	server_name 172.18.0.4.sslip.io;
+	location /api-service {
+	location / {
+[exit 0]
+
+## cleanup
+$ kubectl delete -f ingress-backends.yaml; kubectl delete ingress -n cheese-app-namespace cheese-app-ingress; helm uninstall nginx-f5 -n cheese-app-namespace
+deployment.apps "frontend" deleted from cheese-app-namespace namespace
+service "frontend" deleted from cheese-app-namespace namespace
+deployment.apps "api" deleted from cheese-app-namespace namespace
+service "api" deleted from cheese-app-namespace namespace
+ingress.networking.k8s.io "cheese-app-ingress" deleted from cheese-app-namespace namespace
+release "nginx-f5" uninstalled
+[exit 0]
+

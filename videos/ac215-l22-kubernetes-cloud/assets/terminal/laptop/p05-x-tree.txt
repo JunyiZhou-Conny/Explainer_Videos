@@ -1,0 +1,38 @@
+$ ls -la; ls -la secrets; ls cheese-app-v3/src/deployment cheese-app-v3/src/deployment/deploy_k8s
+total 20
+drwxr-sr-x    5 student  student       4096 Nov  7 20:47 .
+drwxr-xr-x    1 root     root          4096 Nov  7 20:47 ..
+drwxrwsrwx    2 student  student       4096 Nov  7 20:47 .docker
+drwxr-sr-x    4 student  student       4096 Nov  7 20:47 cheese-app-v3
+drwxr-sr-x    2 student  student       4096 Nov  7 20:47 secrets
+total 12
+drwxr-sr-x    2 student  student       4096 Nov  7 20:47 .
+drwxr-sr-x    5 student  student       4096 Nov  7 20:47 ..
+-rw-r--r--    1 student  student       2110 Nov  7 20:47 deployment.json
+cheese-app-v3/src/deployment:
+Dockerfile
+README.md
+deploy-k8s-tic-tac-toe.yml
+deploy_images
+deploy_k8s
+deploy_single_vm
+docker-entrypoint.sh
+docker-shell.sh
+docker_config.json
+emoji.yaml
+nginx-conf
+pyproject.toml
+uv.lock
+visualizer.yaml
+
+cheese-app-v3/src/deployment/deploy_k8s:
+Pulumi.dev.yaml
+Pulumi.ssl.yaml
+Pulumi.yaml
+__main__.py
+create_cluster.py
+create_network.py
+setup_containers.py
+setup_loadbalancer.py
+setup_loadbalancer_ssl.py
+[exit 0]

@@ -1,0 +1,283 @@
+$ pulumi up --stack dev --refresh -y
+Previewing update (dev):
+
+@ previewing update....
+ +  pulumi:pulumi:Stack deploy-k8s-dev create 
+@ previewing update....
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read pulumi:pulumi:StackReference organization/deploy-images/dev
+ +  gcp:compute:Network cheese-app-vpc create 
+ +  gcp:compute:Subnetwork cheese-app-subnet create 
+ +  gcp:container:Cluster cheese-app-cluster create 
+ +  gcp:compute:Router cheese-app-router create 
+ +  gcp:compute:RouterNat cheese-app-nat create 
+ +  gcp:container:NodePool cheese-app-pool create 
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read pulumi:pulumi:StackReference organization/deploy-images/dev
+ +  pulumi:providers:kubernetes gke_k8s_v2 create 
+ +  command:local:Command connect-k8s-command create 
+@ previewing update....
+ +  kubernetes:core/v1:Namespace cheese-app-namespace create 
+ +  kubernetes:core/v1:PersistentVolumeClaim persistent-pvc create 
+ +  kubernetes:core/v1:PersistentVolumeClaim chromadb-pvc create 
+ +  kubernetes:helm.sh/v3:Release nginx-f5 create 
+ +  kubernetes:apps/v1:Deployment frontend create 
+ +  kubernetes:core/v1:ServiceAccount api-ksa create 
+ +  gcp:serviceaccount:IAMMember api-gsa-wi-user create 
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read kubernetes:core/v1:Service nginx-ingress-service
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read kubernetes:core/v1:Service nginx-ingress-service
+ +  kubernetes:apps/v1:Deployment vector-db create 
+ +  kubernetes:core/v1:Service frontend-service create 
+ +  kubernetes:core/v1:Service vector-db-service create 
+ +  kubernetes:batch/v1:Job vector-db-loader create 
+ +  kubernetes:apps/v1:Deployment api create 
+ +  kubernetes:core/v1:Service api-service create 
+ +  kubernetes:networking.k8s.io/v1:Ingress cheese-app-ingress create 
+ +  pulumi:pulumi:Stack deploy-k8s-dev create 
+Outputs:
+    app_url         : [unknown]
+    cluster_endpoint: [unknown]
+    cluster_name    : "cheese-app-cluster"
+    ingress_name    : [unknown]
+    ip_address      : [unknown]
+    kubeconfig      : [unknown]
+    namespace       : [unknown]
+
+Resources:
+    + 23 to create
+
+Updating (dev):
+
+@ updating....
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (0s) 
+@ updating....
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) read pulumi:pulumi:StackReference organization/deploy-images/dev
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) read pulumi:pulumi:StackReference organization/deploy-images/dev
+@ updating....
+ +  gcp:compute:Network cheese-app-vpc creating (0s) 
+ +  gcp:compute:Network cheese-app-vpc creating (0s) error:   sdk-v2/provider2.go:572: sdk.helper_schema: Error creating Network: Post "https://compute.googleapis.com/compute/beta/projects/ac215-project/global/networks?alt=json": oauth2: cannot fetch token: 400 Bad Request
+ +  gcp:compute:Network cheese-app-vpc creating (0s) error: 1 error occurred:
+ +  gcp:compute:Network cheese-app-vpc **creating failed** error: 1 error occurred:
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) error: update failed
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) Traceback (most recent call last):
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1084, in do_rpc_call
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     return monitor.RegisterResource(req)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)            ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/grpc/_channel.py", line 1166, in __call__
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     return _end_unary_response_blocking(state, call, False, None)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/grpc/_channel.py", line 996, in _end_unary_response_blocking
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) 	status = StatusCode.UNAVAILABLE
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) 	details = "resource monitor shut down while waiting on step's done channel"
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) 	debug_error_string = "UNKNOWN:Error received from peer  {grpc_status:14, grpc_message:"resource monitor shut down while waiting on step\'s done channel"}"
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) >
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) Traceback (most recent call last):
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 966, in do_register
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     resolver = await prepare_resource(
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)                ^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)         res, ty, custom, remote, props, opts, typ
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     )
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 190, in prepare_resource
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     serialized_props = await rpc.serialize_properties(
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ...<13 lines>...
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     )
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/rpc.py", line 222, in serialize_properties
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     result = await serialize_property(
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ...<8 lines>...
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     )
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/rpc.py", line 591, in serialize_property
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     is_known = await output._is_known
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)                ^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/output.py", line 122, in is_value_known
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     return await is_known and not contains_unknowns(await future)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)            ^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1088, in do_register
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     resp = await asyncio.get_event_loop().run_in_executor(None, do_rpc_call)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     result = self.fn(*self.args, **self.kwargs)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1086, in do_rpc_call
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     handle_grpc_error(exn)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~~~~~~~~~~~~^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/settings.py", line 324, in handle_grpc_error
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     raise grpc_error_to_exception(exn)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) pulumi.errors.RunError: Resource monitor has terminated, shutting down
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) Traceback (most recent call last):
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/root/.pulumi/bin/pulumi-language-python-exec", line 232, in <module>
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     loop.run_until_complete(coro)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 713, in run_until_complete
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     self.run_forever()
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 684, in run_forever
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     self._run_once()
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 2061, in _run_once
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     handle._run()
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/asyncio/events.py", line 89, in _run
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     self._context.run(self._callback, *self._args)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1091, in do_register
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     f"exception when preparing or executing rpc for {ty=} {name=}: {traceback.format_exc()}"
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)                                                                     ~~~~~~~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/traceback.py", line 212, in format_exc
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     return "".join(format_exception(sys.exception(), limit=limit, chain=chain))
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/traceback.py", line 155, in format_exception
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     return list(te.format(chain=chain, colorize=colorize))
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/traceback.py", line 1404, in format
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     yield from _ctx.emit(exc.stack.format(colorize=colorize))
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)                          ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/traceback.py", line 756, in format
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     formatted_frame = self.format_frame_summary(frame_summary, colorize=colorize)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/traceback.py", line 590, in format_frame_summary
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     show_carets = self._should_show_carets(start_offset, end_offset, all_lines, anchors)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/traceback.py", line 707, in _should_show_carets
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     tree = ast.parse('\n'.join(all_lines))
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/ast.py", line 50, in parse
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     return compile(source, filename, mode, flags,
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)                    _feature_version=feature_version, optimize=optimize)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) KeyboardInterrupt
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) Traceback (most recent call last):
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/root/.pulumi/bin/pulumi-language-python-exec", line 244, in <module>
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     executor.shutdown(wait=True)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     t.join()
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)   File "/usr/local/lib/python3.13/threading.py", line 1095, in join
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     self._handle.join(timeout)
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s)     ~~~~~~~~~~~~~~~~~^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-k8s-dev creating (1s) KeyboardInterrupt
+ +  pulumi:pulumi:Stack deploy-k8s-dev **creating failed** 1 error; 102 messages
+Diagnostics:
+  gcp:compute:Network (cheese-app-vpc):
+    error:   sdk-v2/provider2.go:572: sdk.helper_schema: Error creating Network: Post "https://compute.googleapis.com/compute/beta/projects/ac215-project/global/networks?alt=json": oauth2: cannot fetch token: 400 Bad Request
+    Response: {"error":"invalid_grant","error_description":"Invalid grant: account not found"}: provider=google-beta@9.3.0
+    error: 1 error occurred:
+    	* Error creating Network: Post "https://compute.googleapis.com/compute/beta/projects/ac215-project/global/networks?alt=json": oauth2: cannot fetch token: 400 Bad Request
+    Response: {"error":"invalid_grant","error_description":"Invalid grant: account not found"}
+
+  pulumi:pulumi:Stack (deploy-k8s-dev):
+    error: update failed
+
+    Traceback (most recent call last):
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1084, in do_rpc_call
+        return monitor.RegisterResource(req)
+               ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/grpc/_channel.py", line 1166, in __call__
+        return _end_unary_response_blocking(state, call, False, None)
+      File "/home/app/.venv/lib/python3.13/site-packages/grpc/_channel.py", line 996, in _end_unary_response_blocking
+        raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+    	status = StatusCode.UNAVAILABLE
+    	details = "resource monitor shut down while waiting on step's done channel"
+    	debug_error_string = "UNKNOWN:Error received from peer  {grpc_status:14, grpc_message:"resource monitor shut down while waiting on step\'s done channel"}"
+    >
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 966, in do_register
+        resolver = await prepare_resource(
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+            res, ty, custom, remote, props, opts, typ
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        )
+        ^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 190, in prepare_resource
+        serialized_props = await rpc.serialize_properties(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        ...<13 lines>...
+        )
+        ^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/rpc.py", line 222, in serialize_properties
+        result = await serialize_property(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+        ...<8 lines>...
+        )
+        ^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/rpc.py", line 591, in serialize_property
+        is_known = await output._is_known
+                   ^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/output.py", line 122, in is_value_known
+        return await is_known and not contains_unknowns(await future)
+               ^^^^^^^^^^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1088, in do_register
+        resp = await asyncio.get_event_loop().run_in_executor(None, do_rpc_call)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+        result = self.fn(*self.args, **self.kwargs)
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1086, in do_rpc_call
+        handle_grpc_error(exn)
+        ~~~~~~~~~~~~~~~~~^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/settings.py", line 324, in handle_grpc_error
+        raise grpc_error_to_exception(exn)
+    pulumi.errors.RunError: Resource monitor has terminated, shutting down
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/root/.pulumi/bin/pulumi-language-python-exec", line 232, in <module>
+        loop.run_until_complete(coro)
+        ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 713, in run_until_complete
+        self.run_forever()
+        ~~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 684, in run_forever
+        self._run_once()
+        ~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 2061, in _run_once
+        handle._run()
+        ~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/events.py", line 89, in _run
+        self._context.run(self._callback, *self._args)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1091, in do_register
+        f"exception when preparing or executing rpc for {ty=} {name=}: {traceback.format_exc()}"
+                                                                        ~~~~~~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/traceback.py", line 212, in format_exc
+        return "".join(format_exception(sys.exception(), limit=limit, chain=chain))
+                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 155, in format_exception
+        return list(te.format(chain=chain, colorize=colorize))
+      File "/usr/local/lib/python3.13/traceback.py", line 1404, in format
+        yield from _ctx.emit(exc.stack.format(colorize=colorize))
+                             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 756, in format
+        formatted_frame = self.format_frame_summary(frame_summary, colorize=colorize)
+      File "/usr/local/lib/python3.13/traceback.py", line 590, in format_frame_summary
+        show_carets = self._should_show_carets(start_offset, end_offset, all_lines, anchors)
+      File "/usr/local/lib/python3.13/traceback.py", line 707, in _should_show_carets
+        tree = ast.parse('\n'.join(all_lines))
+      File "/usr/local/lib/python3.13/ast.py", line 50, in parse
+        return compile(source, filename, mode, flags,
+                       _feature_version=feature_version, optimize=optimize)
+    KeyboardInterrupt
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/root/.pulumi/bin/pulumi-language-python-exec", line 244, in <module>
+        executor.shutdown(wait=True)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+        t.join()
+        ~~~~~~^^
+      File "/usr/local/lib/python3.13/threading.py", line 1095, in join
+        self._handle.join(timeout)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^
+    KeyboardInterrupt
+
+Resources:
+    + 1 created
+    2 errored
+
+Duration: 3s
+
+[exit 1]

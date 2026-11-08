@@ -1,0 +1,23 @@
+$ kubectl get deployment,replicaset,pods,service,endpoints -o wide; kubectl get pods --show-labels
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME                  READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES              SELECTOR
+deployment.apps/web   2/2     2            2           76s   web          dlops/tic-tac-toe   run=web
+
+NAME                             DESIRED   CURRENT   READY   AGE   CONTAINERS   IMAGES              SELECTOR
+replicaset.apps/web-5cd9789488   2         2         2       76s   web          dlops/tic-tac-toe   pod-template-hash=5cd9789488,run=web
+
+NAME                       READY   STATUS    RESTARTS   AGE   IP           NODE                   NOMINATED NODE   READINESS GATES
+pod/web-5cd9789488-5h48s   1/1     Running   0          76s   10.244.1.2   test-cluster-worker2   <none>           <none>
+pod/web-5cd9789488-bmkj5   1/1     Running   0          76s   10.244.2.2   test-cluster-worker    <none>           <none>
+
+NAME                 TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+service/kubernetes   ClusterIP      10.96.0.1     <none>        443/TCP        12m   <none>
+service/web          LoadBalancer   10.96.52.79   <pending>     80:31366/TCP   76s   run=web
+
+NAME                   ENDPOINTS                         AGE
+endpoints/kubernetes   172.19.0.4:6443                   12m
+endpoints/web          10.244.1.2:8080,10.244.2.2:8080   76s
+NAME                   READY   STATUS    RESTARTS   AGE   LABELS
+web-5cd9789488-5h48s   1/1     Running   0          76s   pod-template-hash=5cd9789488,run=web
+web-5cd9789488-bmkj5   1/1     Running   0          76s   pod-template-hash=5cd9789488,run=web
+[exit 0]

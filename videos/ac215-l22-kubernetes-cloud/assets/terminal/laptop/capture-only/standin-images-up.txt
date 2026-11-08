@@ -1,0 +1,45 @@
+$ pulumi up --stack dev -y; pulumi stack output --stack dev
+Previewing update (dev):
+
+ +  pulumi:pulumi:Stack deploy-images-dev create 
+ +  pulumi:pulumi:Stack deploy-images-dev create 
+Outputs:
+    cheese-app-api-service-tags   : [
+        [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-api-service:placeholder"
+    ]
+    cheese-app-frontend-react-tags: [
+        [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:placeholder"
+    ]
+    cheese-app-vector-db-cli-tags : [
+        [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-vector-db-cli:placeholder"
+    ]
+
+Resources:
+    + 1 to create
+
+Updating (dev):
+
+ +  pulumi:pulumi:Stack deploy-images-dev creating (0s) 
+ +  pulumi:pulumi:Stack deploy-images-dev created (0.00s) 
+Outputs:
+    cheese-app-api-service-tags   : [
+        [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-api-service:placeholder"
+    ]
+    cheese-app-frontend-react-tags: [
+        [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:placeholder"
+    ]
+    cheese-app-vector-db-cli-tags : [
+        [0]: "us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-vector-db-cli:placeholder"
+    ]
+
+Resources:
+    + 1 created
+
+Duration: 1s
+
+Current stack outputs (3):
+    OUTPUT                          VALUE
+    cheese-app-api-service-tags     ["us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-api-service:placeholder"]
+    cheese-app-frontend-react-tags  ["us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:placeholder"]
+    cheese-app-vector-db-cli-tags   ["us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-vector-db-cli:placeholder"]
+[exit 0]

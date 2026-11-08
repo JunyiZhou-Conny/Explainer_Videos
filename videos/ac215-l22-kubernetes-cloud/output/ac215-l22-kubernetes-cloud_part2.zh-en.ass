@@ -1,0 +1,272 @@
+[Script Info]
+Title: AC215 · L22, part 2: the cheese app on GKE as Pulumi code — plan, traffic, scaling, teardown
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.44,Bilingual,,0,0,0,,第 2 部分：把奶酪应用作为 Pulumi 代码部署到 GKE 上\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2: the cheese app on GKE, as Pulumi code.
+Dialogue: 0,0:00:03.76,0:00:05.26,Bilingual,,0,0,0,,课程链接落在这一节\N{\fs33\c&H00C8C0B8&\bord1.4}The course link lands
+Dialogue: 0,0:00:05.26,0:00:08.08,Bilingual,,0,0,0,,Deployment with Scaling using Kubernetes\N{\fs33\c&H00C8C0B8&\bord1.4}on Deployment with Scaling using Kubernetes;
+Dialogue: 0,0:00:08.08,0:00:13.08,Bilingual,,0,0,0,,集群的步骤，接在下一个小节 Create & Deploy Cluster 里\N{\fs33\c&H00C8C0B8&\bord1.4}the cluster steps continue under the next heading, Create & Deploy Cluster.
+Dialogue: 0,0:00:13.82,0:00:17.12,Bilingual,,0,0,0,,这是整个计划，一块一块地从第 20 讲对过来\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the plan, piece by piece from lecture 20.
+Dialogue: 0,0:00:17.44,0:00:20.30,Bilingual,,0,0,0,,每个长期运行的 container 变成一个 Deployment\N{\fs33\c&H00C8C0B8&\bord1.4}Each long-running container becomes a Deployment.
+Dialogue: 0,0:00:20.62,0:00:22.91,Bilingual,,0,0,0,,一次性的加载器变成一个 Job\N{\fs33\c&H00C8C0B8&\bord1.4}The one-shot loader becomes a Job:
+Dialogue: 0,0:00:22.91,0:00:27.83,Bilingual,,0,0,0,,运行失败会重试几次，一旦成功，就保持完成状态\N{\fs33\c&H00C8C0B8&\bord1.4}it retries a failed run a few times, and once it succeeds, it stays done.
+Dialogue: 0,0:00:28.37,0:00:33.04,Bilingual,,0,0,0,,Docker 网络上的 container 名字变成带 DNS 名字的 Service\N{\fs33\c&H00C8C0B8&\bord1.4}Container names on a Docker network become Services with DNS names.
+Dialogue: 0,0:00:33.36,0:00:39.50,Bilingual,,0,0,0,,VM 磁盘上的目录变成两个 PVC，每个背后是一块云磁盘\N{\fs33\c&H00C8C0B8&\bord1.4}The folders on the VM disk become two persistent volume claims, each backed by a cloud disk.
+Dialogue: 0,0:00:39.75,0:00:42.98,Bilingual,,0,0,0,,那个 nginx container 变成一个 Ingress controller\N{\fs33\c&H00C8C0B8&\bord1.4}The nginx container becomes an Ingress controller
+Dialogue: 0,0:00:42.98,0:00:44.58,Bilingual,,0,0,0,,加上一条 Ingress 规则\N{\fs33\c&H00C8C0B8&\bord1.4}with an Ingress rule.
+Dialogue: 0,0:00:44.68,0:00:49.16,Bilingual,,0,0,0,,JSON 密钥变成 Workload Identity，完全没有密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}The JSON key becomes Workload Identity, with no key file at all.
+Dialogue: 0,0:00:49.48,0:00:52.38,Bilingual,,0,0,0,,一台机器变成一个有一到两个节点的节点池\N{\fs33\c&H00C8C0B8&\bord1.4}One machine becomes a pool of one or two nodes.
+Dialogue: 0,0:00:52.62,0:00:54.54,Bilingual,,0,0,0,,外面围着一个私有网络\N{\fs33\c&H00C8C0B8&\bord1.4}Around it, a private network.
+Dialogue: 0,0:00:54.86,0:00:57.14,Bilingual,,0,0,0,,节点没有公网地址\N{\fs33\c&H00C8C0B8&\bord1.4}The nodes get no public addresses;
+Dialogue: 0,0:00:57.14,0:00:59.84,Bilingual,,0,0,0,,一个 Cloud NAT 网关让它们能往外连\N{\fs33\c&H00C8C0B8&\bord1.4}a Cloud NAT gateway lets them reach out,
+Dialogue: 0,0:00:59.84,0:01:02.73,Bilingual,,0,0,0,,比如从 Docker Hub 拉取 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}for example to pull Chroma from Docker Hub.
+Dialogue: 0,0:01:03.05,0:01:06.85,Bilingual,,0,0,0,,应用放在一个 namespace 里，前面是一个负载均衡器\N{\fs33\c&H00C8C0B8&\bord1.4}The app sits in one namespace, behind one load balancer.
+Dialogue: 0,0:01:08.45,0:01:12.12,Bilingual,,0,0,0,,在 deploy k8s 里，程序用四次调用说了同样的事\N{\fs33\c&H00C8C0B8&\bord1.4}The program in deploy_k8s says the same in four calls,
+Dialogue: 0,0:01:12.12,0:01:17.15,Bilingual,,0,0,0,,一个文件一次：网络、集群、container、负载均衡器\N{\fs33\c&H00C8C0B8&\bord1.4}one per file: the network, the cluster, the containers, the load balancer.
+Dialogue: 0,0:01:17.47,0:01:21.46,Bilingual,,0,0,0,,第 17 行让 HTTPS 版本保持关闭\N{\fs33\c&H00C8C0B8&\bord1.4}Line 17 keeps the HTTPS variant switched off.
+Dialogue: 0,0:01:22.20,0:01:26.27,Bilingual,,0,0,0,,它运行期间一直在花钱：区域集群的管理费\N{\fs33\c&H00C8C0B8&\bord1.4}While it is up, it costs money: the fee of a regional cluster,
+Dialogue: 0,0:01:26.27,0:01:30.54,Bilingual,,0,0,0,,一到两个节点、一个负载均衡器、一个 NAT 网关和两块磁盘\N{\fs33\c&H00C8C0B8&\bord1.4}one or two nodes, a load balancer, one NAT gateway and two disks.
+Dialogue: 0,0:01:30.86,0:01:34.17,Bilingual,,0,0,0,,按我们的估算，大约每天 5 到 8 美元\N{\fs33\c&H00C8C0B8&\bord1.4}By our estimate, roughly five to eight dollars a day:
+Dialogue: 0,0:01:34.17,0:01:37.80,Bilingual,,0,0,0,,去查一下价格计算器，当天就 destroy 掉\N{\fs33\c&H00C8C0B8&\bord1.4}check the pricing calculator, and destroy it the same day.
+Dialogue: 0,0:01:40.13,0:01:43.59,Bilingual,,0,0,0,,这一节再次启用那五个 API\N{\fs33\c&H00C8C0B8&\bord1.4}This section enables the five APIs again;
+Dialogue: 0,0:01:43.59,0:01:48.22,Bilingual,,0,0,0,,把 Vertex AI API 也打开，API 的 Pod 要调用它\N{\fs33\c&H00C8C0B8&\bord1.4}turn on the Vertex AI API too, which the API Pods call.
+Dialogue: 0,0:01:48.97,0:01:52.32,Bilingual,,0,0,0,,你还需要第 20 讲的两个服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}You also need the two service accounts from lecture 20.
+Dialogue: 0,0:01:52.64,0:01:55.62,Bilingual,,0,0,0,,其中 deployment 账号做工具箱要做的事\N{\fs33\c&H00C8C0B8&\bord1.4}The deployment account does what the toolbox does,
+Dialogue: 0,0:01:55.62,0:01:58.01,Bilingual,,0,0,0,,在这里它还是节点的身份\N{\fs33\c&H00C8C0B8&\bord1.4}and here it is also the nodes' identity.
+Dialogue: 0,0:01:58.33,0:02:03.20,Bilingual,,0,0,0,,而 gcp-service 账号是给 API 的 Pod 用的，不需要密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}The gcp-service account is for the API Pods, with no key file.
+Dialogue: 0,0:02:03.93,0:02:06.41,Bilingual,,0,0,0,,README 漏掉了两个一次性的步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Two one-time steps the README leaves out.
+Dialogue: 0,0:02:06.73,0:02:09.07,Bilingual,,0,0,0,,deployment 账号很可能需要一个角色\N{\fs33\c&H00C8C0B8&\bord1.4}The deployment account very likely
+Dialogue: 0,0:02:09.07,0:02:12.03,Bilingual,,0,0,0,,gcp-service 上的 Service Account Admin\N{\fs33\c&H00C8C0B8&\bord1.4}needs Service Account Admin on gcp-service;
+Dialogue: 0,0:02:12.03,0:02:13.63,Bilingual,,0,0,0,,这一点我们没法测试\N{\fs33\c&H00C8C0B8&\bord1.4}we could not test this.
+Dialogue: 0,0:02:13.94,0:02:17.99,Bilingual,,0,0,0,,还要创建 registry 仓库 cheese-app-repository\N{\fs33\c&H00C8C0B8&\bord1.4}And create the registry repository, cheese-app-repository,
+Dialogue: 0,0:02:17.99,0:02:19.59,Bilingual,,0,0,0,,没有任何代码会创建它\N{\fs33\c&H00C8C0B8&\bord1.4}which no code creates.
+Dialogue: 0,0:02:20.27,0:02:23.52,Bilingual,,0,0,0,,把 deployment 的密钥放进 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}The deployment key goes in the secrets folder,
+Dialogue: 0,0:02:23.52,0:02:26.35,Bilingual,,0,0,0,,和 repo 并排，和第 20 讲一样\N{\fs33\c&H00C8C0B8&\bord1.4}beside the repository, as in lecture 20.
+Dialogue: 0,0:02:27.08,0:02:30.56,Bilingual,,0,0,0,,然后是第 1 部分的工具箱步骤，命令一样\N{\fs33\c&H00C8C0B8&\bord1.4}Then the toolbox steps from part 1, the same commands;
+Dialogue: 0,0:02:30.56,0:02:34.81,Bilingual,,0,0,0,,如果工具箱还在运行，脚本会直接接入它\N{\fs33\c&H00C8C0B8&\bord1.4}if the toolbox is still running, the script simply attaches to it.
+Dialogue: 0,0:02:35.05,0:02:39.72,Bilingual,,0,0,0,,接下来是 images stack，只在你之前没构建过时才做\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the images stack, only if you have not built it before:
+Dialogue: 0,0:02:39.72,0:02:41.71,Bilingual,,0,0,0,,进到 deploy images\N{\fs33\c&H00C8C0B8&\bord1.4}change into deploy_images,
+Dialogue: 0,0:02:41.71,0:02:45.70,Bilingual,,0,0,0,,运行 pulumi stack init dev，再把 gcp:project 设成你的\N{\fs33\c&H00C8C0B8&\bord1.4}pulumi stack init dev, and set gcp:project to yours.
+Dialogue: 0,0:02:46.02,0:02:48.97,Bilingual,,0,0,0,,我们的显示 Pulumi access token must be set\N{\fs33\c&H00C8C0B8&\bord1.4}Ours says PULUMI_ACCESS_TOKEN must be set:
+Dialogue: 0,0:02:48.97,0:02:53.70,Bilingual,,0,0,0,,我们的 bucket 登录失败了，所以 Pulumi 退回到它自己的云服务\N{\fs33\c&H00C8C0B8&\bord1.4}our bucket login failed, so Pulumi falls back to its cloud service.
+Dialogue: 0,0:02:53.93,0:02:57.32,Bilingual,,0,0,0,,为了展示剩下的部分，我们让 Pulumi 指向一个本地目录\N{\fs33\c&H00C8C0B8&\bord1.4}To show the rest, we point Pulumi at a local folder,
+Dialogue: 0,0:02:57.32,0:02:59.74,Bilingual,,0,0,0,,这是录制用的权宜之计：你别跑\N{\fs33\c&H00C8C0B8&\bord1.4}a recording workaround: don't run it.
+Dialogue: 0,0:03:00.06,0:03:02.55,Bilingual,,0,0,0,,现在 stack 创建好了，和你的一样\N{\fs33\c&H00C8C0B8&\bord1.4}Now the stack is created, as yours is.
+Dialogue: 0,0:03:02.80,0:03:05.91,Bilingual,,0,0,0,,然后是 pulumi preview --stack dev：三个 image 构建\N{\fs33\c&H00C8C0B8&\bord1.4}Then pulumi preview --stack dev: three image builds,
+Dialogue: 0,0:03:05.91,0:03:09.44,Bilingual,,0,0,0,,在 preview 里会跳过，还有三个打上时间戳的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}skipped in a preview, and three tags stamped with the time.
+Dialogue: 0,0:03:09.76,0:03:13.17,Bilingual,,0,0,0,,要创建 4 个：三个 image，加上 stack 本身\N{\fs33\c&H00C8C0B8&\bord1.4}+ 4 to create: three images and the stack itself.
+Dialogue: 0,0:03:13.42,0:03:15.07,Bilingual,,0,0,0,,这些 tag 输出很重要\N{\fs33\c&H00C8C0B8&\bord1.4}Those tag outputs matter:
+Dialogue: 0,0:03:15.07,0:03:18.45,Bilingual,,0,0,0,,deploy k8s 通过 stack reference 查到它们\N{\fs33\c&H00C8C0B8&\bord1.4}deploy_k8s looks them up through a stack reference,
+Dialogue: 0,0:03:18.45,0:03:20.31,Bilingual,,0,0,0,,才知道要运行哪些 image\N{\fs33\c&H00C8C0B8&\bord1.4}to know which images to run.
+Dialogue: 0,0:03:20.55,0:03:25.61,Bilingual,,0,0,0,,最后，pulumi up --stack dev -y：它构建并 push 三个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Last, pulumi up --stack dev -y: it builds and pushes three images.
+Dialogue: 0,0:03:25.93,0:03:28.40,Bilingual,,0,0,0,,可以跳过，如果你在第 20 讲做过\N{\fs33\c&H00C8C0B8&\bord1.4}Skip it if you did it in lecture 20,
+Dialogue: 0,0:03:28.40,0:03:30.60,Bilingual,,0,0,0,,但有一个条件，我们接下来会讲\N{\fs33\c&H00C8C0B8&\bord1.4}with one condition we meet next;
+Dialogue: 0,0:03:30.60,0:03:32.52,Bilingual,,0,0,0,,否则就暂停一下，跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}otherwise, pause and run it.
+Dialogue: 0,0:03:33.77,0:03:35.73,Bilingual,,0,0,0,,现在是 Create & Deploy Cluster\N{\fs33\c&H00C8C0B8&\bord1.4}Now Create & Deploy Cluster.
+Dialogue: 0,0:03:36.05,0:03:39.59,Bilingual,,0,0,0,,在 deployment 目录里，进到 deploy k8s\N{\fs33\c&H00C8C0B8&\bord1.4}From the deployment folder, change into deploy_k8s
+Dialogue: 0,0:03:39.59,0:03:41.71,Bilingual,,0,0,0,,运行 pulumi stack init dev\N{\fs33\c&H00C8C0B8&\bord1.4}and run pulumi stack init dev:
+Dialogue: 0,0:03:41.71,0:03:46.52,Bilingual,,0,0,0,,同样的令牌报错，在本地 backend 上则是 Created stack dev\N{\fs33\c&H00C8C0B8&\bord1.4}the same token error, and on the local backend, Created stack 'dev'.
+Dialogue: 0,0:03:47.17,0:03:52.23,Bilingual,,0,0,0,,然后是三个 config 键：你的项目，以及两个服务账号的邮箱\N{\fs33\c&H00C8C0B8&\bord1.4}Then three config keys: your project, and two service account emails,
+Dialogue: 0,0:03:52.23,0:03:54.21,Bilingual,,0,0,0,,deployment 和 gcp-service\N{\fs33\c&H00C8C0B8&\bord1.4}deployment and gcp-service.
+Dialogue: 0,0:03:54.53,0:03:58.28,Bilingual,,0,0,0,,三处都把 ac215-project 换成你的\N{\fs33\c&H00C8C0B8&\bord1.4}Replace ac215-project with yours in all three.
+Dialogue: 0,0:03:59.78,0:04:04.18,Bilingual,,0,0,0,,第 9 行填 deployment 的邮箱：节点以这个账号运行\N{\fs33\c&H00C8C0B8&\bord1.4}Line 9 takes the deployment email: the nodes run as that account.
+Dialogue: 0,0:04:04.50,0:04:10.11,Bilingual,,0,0,0,,第 10 行填 gcp-service 的邮箱，API 的 Pod 会扮演这个账号\N{\fs33\c&H00C8C0B8&\bord1.4}Line 10 takes the gcp-service email, which the API Pods will act as.
+Dialogue: 0,0:04:10.35,0:04:13.79,Bilingual,,0,0,0,,一个额外命令 pulumi config，列出你的三个键\N{\fs33\c&H00C8C0B8&\bord1.4}An extra, pulumi config, lists your three keys
+Dialogue: 0,0:04:13.79,0:04:16.93,Bilingual,,0,0,0,,还有提交的文件里留下的两个\N{\fs33\c&H00C8C0B8&\bord1.4}and two leftovers from the committed file,
+Dialogue: 0,0:04:16.93,0:04:21.04,Bilingual,,0,0,0,,setupSSL 和一个 SSH 用户，程序从来没用过\N{\fs33\c&H00C8C0B8&\bord1.4}setupSSL and an SSH user, which the program never uses.
+Dialogue: 0,0:04:21.36,0:04:25.18,Bilingual,,0,0,0,,键名打错一个字，后面会悄悄失败，所以检查一下这张列表\N{\fs33\c&H00C8C0B8&\bord1.4}A typo in a key name fails quietly later, so check this list.
+Dialogue: 0,0:04:25.42,0:04:26.92,Bilingual,,0,0,0,,然后是 Preview 这一步\N{\fs33\c&H00C8C0B8&\bord1.4}Then Preview:
+Dialogue: 0,0:04:26.92,0:04:29.06,Bilingual,,0,0,0,,pulumi preview --stack dev --refresh\N{\fs33\c&H00C8C0B8&\bord1.4}pulumi preview --stack dev --refresh.
+Dialogue: 0,0:04:29.11,0:04:30.47,Bilingual,,0,0,0,,在本地 backend 上\N{\fs33\c&H00C8C0B8&\bord1.4}On the local backend,
+Dialogue: 0,0:04:30.47,0:04:33.67,Bilingual,,0,0,0,,setup containers 第 70 行报一个 Python 错误\N{\fs33\c&H00C8C0B8&\bord1.4}a Python error at line 70 of setup_containers.py:
+Dialogue: 0,0:04:33.67,0:04:36.21,Bilingual,,0,0,0,,NoneType object is not subscriptable\N{\fs33\c&H00C8C0B8&\bord1.4}'NoneType' object is not subscriptable.
+Dialogue: 0,0:04:36.53,0:04:40.48,Bilingual,,0,0,0,,程序向 images stack 要它的 tag，什么都没拿到\N{\fs33\c&H00C8C0B8&\bord1.4}The program asked the images stack for its tags, and got nothing.
+Dialogue: 0,0:04:40.72,0:04:43.49,Bilingual,,0,0,0,,你会看到这个，如果 images stack 从来没有\N{\fs33\c&H00C8C0B8&\bord1.4}You see this if the images stack never finished
+Dialogue: 0,0:04:43.49,0:04:45.73,Bilingual,,0,0,0,,在同一个 state bucket 里跑完 pulumi up\N{\fs33\c&H00C8C0B8&\bord1.4}pulumi up in this same state bucket.
+Dialogue: 0,0:04:46.05,0:04:48.91,Bilingual,,0,0,0,,只有它已经在那里跑过，跳过才安全\N{\fs33\c&H00C8C0B8&\bord1.4}Skipping it is safe only when it already ran there.
+Dialogue: 0,0:04:49.15,0:04:53.51,Bilingual,,0,0,0,,所以我们给程序一个带占位 tag 的替身 images stack\N{\fs33\c&H00C8C0B8&\bord1.4}So we gave the program a stand-in images stack with placeholder tags;
+Dialogue: 0,0:04:53.51,0:04:54.86,Bilingual,,0,0,0,,什么都没构建\N{\fs33\c&H00C8C0B8&\bord1.4}nothing is built.
+Dialogue: 0,0:04:54.91,0:04:56.85,Bilingual,,0,0,0,,现在真正的计划出现了\N{\fs33\c&H00C8C0B8&\bord1.4}Now the real plan appears:
+Dialogue: 0,0:04:56.85,0:05:03.10,Bilingual,,0,0,0,,网络、集群、节点池、Kubernetes 对象，一共要创建 23 个\N{\fs33\c&H00C8C0B8&\bord1.4}the network, the cluster, the node pool, the Kubernetes objects, and + 23 to create.
+Dialogue: 0,0:05:03.35,0:05:06.85,Bilingual,,0,0,0,,还有两行是查询，不算在 23 个里\N{\fs33\c&H00C8C0B8&\bord1.4}Two more lines are lookups, not counted in the 23:
+Dialogue: 0,0:05:06.85,0:05:09.79,Bilingual,,0,0,0,,stack reference 和 nginx 的 Service\N{\fs33\c&H00C8C0B8&\bord1.4}the stack reference and the nginx Service.
+Dialogue: 0,0:05:10.11,0:05:13.29,Bilingual,,0,0,0,,在输出里，只有集群名字是已知的\N{\fs33\c&H00C8C0B8&\bord1.4}In the outputs, only the cluster name is known;
+Dialogue: 0,0:05:13.29,0:05:16.94,Bilingual,,0,0,0,,地址和 URL 要等集群建好才有\N{\fs33\c&H00C8C0B8&\bord1.4}the address and the URL wait until the cluster exists.
+Dialogue: 0,0:05:17.18,0:05:19.06,Bilingual,,0,0,0,,暂停一下，跑你的 preview\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run your preview:
+Dialogue: 0,0:05:19.06,0:05:22.47,Bilingual,,0,0,0,,你应该看到同样的 23 个，只是带着真实的 image tag\N{\fs33\c&H00C8C0B8&\bord1.4}you should see the same 23, with real image tags.
+Dialogue: 0,0:05:23.62,0:05:27.50,Bilingual,,0,0,0,,然后是重头戏：pulumi up --stack dev --refresh -y\N{\fs33\c&H00C8C0B8&\bord1.4}Then the big one: pulumi up --stack dev --refresh -y.
+Dialogue: 0,0:05:27.82,0:05:32.50,Bilingual,,0,0,0,,在本地 backend 上，更新开始了，第一个资源，也就是网络\N{\fs33\c&H00C8C0B8&\bord1.4}On the local backend the update starts, and the very first resource, the network,
+Dialogue: 0,0:05:32.50,0:05:35.67,Bilingual,,0,0,0,,就失败了：Invalid grant: account not found\N{\fs33\c&H00C8C0B8&\bord1.4}fails: invalid_grant: Invalid grant: account not found.
+Dialogue: 0,0:05:35.92,0:05:40.50,Bilingual,,0,0,0,,网络是第一个需要 Google 的东西，所以从这里开始是示意图\N{\fs33\c&H00C8C0B8&\bord1.4}The network is the first thing that needs Google, so from here on this is a picture.
+Dialogue: 0,0:05:40.82,0:05:44.02,Bilingual,,0,0,0,,暂停一下，启动你的；从现在起，计费表就开始走了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and start yours; from now on, the meter runs.
+Dialogue: 0,0:05:46.27,0:05:48.40,Bilingual,,0,0,0,,Pulumi 按依赖关系来\N{\fs33\c&H00C8C0B8&\bord1.4}Pulumi follows the dependencies.
+Dialogue: 0,0:05:48.72,0:05:50.66,Bilingual,,0,0,0,,先是网络和它的子网\N{\fs33\c&H00C8C0B8&\bord1.4}First the network and its subnet.
+Dialogue: 0,0:05:50.98,0:05:55.41,Bilingual,,0,0,0,,然后并排进行：带 NAT 网关的路由器，以及集群\N{\fs33\c&H00C8C0B8&\bord1.4}Then, side by side, the router with its NAT gateway, and the cluster,
+Dialogue: 0,0:05:55.41,0:05:59.32,Bilingual,,0,0,0,,要等很久：按我们的估算，一刻钟或更久\N{\fs33\c&H00C8C0B8&\bord1.4}the long wait: a quarter of an hour or more, by our estimate.
+Dialogue: 0,0:05:59.87,0:06:01.42,Bilingual,,0,0,0,,然后是节点池\N{\fs33\c&H00C8C0B8&\bord1.4}Then the node pool.
+Dialogue: 0,0:06:01.47,0:06:06.31,Bilingual,,0,0,0,,一个用集群输出构建的 Kubernetes provider 会等这个节点池\N{\fs33\c&H00C8C0B8&\bord1.4}A Kubernetes provider, built from the cluster outputs, waits for that pool,
+Dialogue: 0,0:06:06.31,0:06:09.15,Bilingual,,0,0,0,,所以有节点之前不会创建任何 Pod\N{\fs33\c&H00C8C0B8&\bord1.4}so no Pod is created before there are nodes.
+Dialogue: 0,0:06:09.38,0:06:11.28,Bilingual,,0,0,0,,通过它创建的有 namespace\N{\fs33\c&H00C8C0B8&\bord1.4}Through it come the namespace,
+Dialogue: 0,0:06:11.28,0:06:14.26,Bilingual,,0,0,0,,API 的 Kubernetes 服务账号和它的绑定\N{\fs33\c&H00C8C0B8&\bord1.4}the service account of the API and its binding,
+Dialogue: 0,0:06:14.26,0:06:17.94,Bilingual,,0,0,0,,两个磁盘 PVC，还有前端和向量数据库\N{\fs33\c&H00C8C0B8&\bord1.4}the two disk claims, the frontend and the vector database.
+Dialogue: 0,0:06:18.18,0:06:21.26,Bilingual,,0,0,0,,接下来，加载器 Job 填充向量数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the loader Job fills the vector database.
+Dialogue: 0,0:06:21.58,0:06:26.92,Bilingual,,0,0,0,,Pulumi 要等 Job 完成后才创建 API\N{\fs33\c&H00C8C0B8&\bord1.4}Pulumi creates the API only after the Job completes:
+Dialogue: 0,0:06:26.92,0:06:30.73,Bilingual,,0,0,0,,第 319 到 321 行设定了这个依赖\N{\fs33\c&H00C8C0B8&\bord1.4}lines 319 to 321 set that dependency.
+Dialogue: 0,0:06:30.97,0:06:34.74,Bilingual,,0,0,0,,同时，Helm 安装 nginx Ingress controller\N{\fs33\c&H00C8C0B8&\bord1.4}In parallel, Helm installs the nginx Ingress controller.
+Dialogue: 0,0:06:35.06,0:06:37.48,Bilingual,,0,0,0,,它的 Service 申请一个负载均衡器\N{\fs33\c&H00C8C0B8&\bord1.4}Its Service asks for a load balancer,
+Dialogue: 0,0:06:37.48,0:06:40.61,Bilingual,,0,0,0,,于是控制器向云平台要一个地址\N{\fs33\c&H00C8C0B8&\bord1.4}so the controllers ask the cloud for an address:
+Dialogue: 0,0:06:40.61,0:06:42.76,Bilingual,,0,0,0,,第 1 部分的那个指示灯，这次是绿的\N{\fs33\c&H00C8C0B8&\bord1.4}the part 1 lamp, green this time.
+Dialogue: 0,0:06:43.08,0:06:46.60,Bilingual,,0,0,0,,这个地址变成一个主机名，Ingress 最后创建\N{\fs33\c&H00C8C0B8&\bord1.4}That address becomes a host name, and the Ingress comes last.
+Dialogue: 0,0:06:47.58,0:06:49.38,Bilingual,,0,0,0,,身份，分两部分\N{\fs33\c&H00C8C0B8&\bord1.4}Identity, in two parts.
+Dialogue: 0,0:06:49.70,0:06:54.67,Bilingual,,0,0,0,,Pulumi 和 kubectl 通过 GKE 认证插件连到 API server\N{\fs33\c&H00C8C0B8&\bord1.4}Pulumi and kubectl reach the API server through the GKE auth plugin,
+Dialogue: 0,0:06:54.67,0:06:58.91,Bilingual,,0,0,0,,也就是工具箱的修复 2，所以没有集群密码\N{\fs33\c&H00C8C0B8&\bord1.4}fix two from the toolbox, so there is no cluster password.
+Dialogue: 0,0:06:59.65,0:07:03.76,Bilingual,,0,0,0,,而 API 的 Pod 带着它的 Kubernetes 服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}And the API Pod wears its Kubernetes service account,
+Dialogue: 0,0:07:03.76,0:07:09.27,Bilingual,,0,0,0,,Workload Identity 在 Vertex AI 门口把它换成 gcp-service\N{\fs33\c&H00C8C0B8&\bord1.4}which Workload Identity swaps for gcp-service at the door to Vertex AI.
+Dialogue: 0,0:07:09.59,0:07:11.87,Bilingual,,0,0,0,,集群里没有任何 JSON 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}No JSON key sits in the cluster.
+Dialogue: 0,0:07:12.62,0:07:17.19,Bilingual,,0,0,0,,记住：Pulumi 只在这个工具箱里给 kubectl 连接一次\N{\fs33\c&H00C8C0B8&\bord1.4}Keep in mind: Pulumi connects kubectl once, inside this toolbox,
+Dialogue: 0,0:07:17.19,0:07:19.40,Bilingual,,0,0,0,,你退出时工具箱就被删掉了\N{\fs33\c&H00C8C0B8&\bord1.4}which is removed when you exit.
+Dialogue: 0,0:07:19.72,0:07:21.75,Bilingual,,0,0,0,,下次会话开始时没有连接\N{\fs33\c&H00C8C0B8&\bord1.4}The next session starts unconnected.
+Dialogue: 0,0:07:22.07,0:07:25.49,Bilingual,,0,0,0,,如果你的运行停下了，卡片列出四个常见原因\N{\fs33\c&H00C8C0B8&\bord1.4}If yours stops, the card shows the four usual causes:
+Dialogue: 0,0:07:25.49,0:07:27.23,Bilingual,,0,0,0,,暂停一下，对照你的报错\N{\fs33\c&H00C8C0B8&\bord1.4}pause and match your error.
+Dialogue: 0,0:07:37.77,0:07:41.31,Bilingual,,0,0,0,,第 20 讲在前面放了一个 nginx container\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 20 put one nginx container in front.
+Dialogue: 0,0:07:41.63,0:07:45.15,Bilingual,,0,0,0,,那个游戏开了自己的负载均衡器，一个应用一扇门\N{\fs33\c&H00C8C0B8&\bord1.4}The game opened its own load balancer, one door per app.
+Dialogue: 0,0:07:45.47,0:07:49.37,Bilingual,,0,0,0,,奶酪应用只开一扇门，门后有一位前台\N{\fs33\c&H00C8C0B8&\bord1.4}The cheese app opens one door, with a receptionist behind it.
+Dialogue: 0,0:07:49.92,0:07:52.13,Bilingual,,0,0,0,,README 画出了这条路径\N{\fs33\c&H00C8C0B8&\bord1.4}The README draws the path:
+Dialogue: 0,0:07:52.13,0:07:56.65,Bilingual,,0,0,0,,浏览器、负载均衡器、nginx Ingress controller\N{\fs33\c&H00C8C0B8&\bord1.4}browser, load balancer, the nginx Ingress controller,
+Dialogue: 0,0:07:56.65,0:08:00.48,Bilingual,,0,0,0,,然后是 3000 上的前端或 9000 上的 API\N{\fs33\c&H00C8C0B8&\bord1.4}then the frontend on 3000 or the API on 9000,
+Dialogue: 0,0:08:00.48,0:08:03.21,Bilingual,,0,0,0,,以及 8000 上的向量数据库\N{\fs33\c&H00C8C0B8&\bord1.4}and the vector database on 8000.
+Dialogue: 0,0:08:03.45,0:08:08.74,Bilingual,,0,0,0,,有一个小疏漏：README 把虚线箭头从向量数据库画到加载器\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README draws the dotted arrow from the vector database to the loader.
+Dialogue: 0,0:08:09.06,0:08:12.86,Bilingual,,0,0,0,,数据是反方向流的，从 Job 流进数据库\N{\fs33\c&H00C8C0B8&\bord1.4}The data flows the other way, from the Job into the database.
+Dialogue: 0,0:08:13.10,0:08:14.61,Bilingual,,0,0,0,,跟着一次点击走\N{\fs33\c&H00C8C0B8&\bord1.4}Follow one click.
+Dialogue: 0,0:08:14.66,0:08:20.46,Bilingual,,0,0,0,,你的 IP.sslip.io 会指回同一个 IP，什么都不用设置\N{\fs33\c&H00C8C0B8&\bord1.4}<IP>.sslip.io points back to that same IP, with no setup at all.
+Dialogue: 0,0:08:20.78,0:08:25.81,Bilingual,,0,0,0,,数据包经过云负载均衡器，落到 nginx controller 上\N{\fs33\c&H00C8C0B8&\bord1.4}The packet passes the cloud load balancer and lands on the nginx controller.
+Dialogue: 0,0:08:26.45,0:08:29.98,Bilingual,,0,0,0,,Ingress 规则从主机名开始\N{\fs33\c&H00C8C0B8&\bord1.4}The Ingress rule starts with the host name:
+Dialogue: 0,0:08:29.98,0:08:34.26,Bilingual,,0,0,0,,对这个主机，/api-service 去 9000 上的 API\N{\fs33\c&H00C8C0B8&\bord1.4}for that host, /api-service goes to the API on 9000,
+Dialogue: 0,0:08:34.26,0:08:37.63,Bilingual,,0,0,0,,其他路径都去 3000 上的前端\N{\fs33\c&H00C8C0B8&\bord1.4}every other path to the frontend on 3000.
+Dialogue: 0,0:08:37.95,0:08:40.52,Bilingual,,0,0,0,,这个 controller 按这条规则走\N{\fs33\c&H00C8C0B8&\bord1.4}The controller follows that rule,
+Dialogue: 0,0:08:40.52,0:08:44.35,Bilingual,,0,0,0,,就像第 20 讲的 nginx.conf，只是现在是自动生成的\N{\fs33\c&H00C8C0B8&\bord1.4}like the nginx.conf of lecture 20, now generated.
+Dialogue: 0,0:08:44.88,0:08:47.91,Bilingual,,0,0,0,,这次前缀保留了：没有东西去剪掉它\N{\fs33\c&H00C8C0B8&\bord1.4}This time the prefix is kept: nothing strips it.
+Dialogue: 0,0:08:48.23,0:08:53.77,Bilingual,,0,0,0,,API 把自己挂在它的根路径 /api-service 下面\N{\fs33\c&H00C8C0B8&\bord1.4}The API mounts itself under its root path, /api-service,
+Dialogue: 0,0:08:53.77,0:08:58.02,Bilingual,,0,0,0,,所以 /api-service/status 返回版本 3.0\N{\fs33\c&H00C8C0B8&\bord1.4}so /api-service/status answers version 3.0.
+Dialogue: 0,0:08:58.97,0:09:06.13,Bilingual,,0,0,0,,页面来自前端；然后你的浏览器直接调用 API，在 /api-service\N{\fs33\c&H00C8C0B8&\bord1.4}The page comes from the frontend; then your browser calls the API directly, at /api-service.
+Dialogue: 0,0:09:06.93,0:09:12.12,Bilingual,,0,0,0,,在集群内部，API 按 Service 名字找到 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the cluster, the API reaches Chroma by its Service name,
+Dialogue: 0,0:09:12.12,0:09:14.10,Bilingual,,0,0,0,,vector-db，port 8000\N{\fs33\c&H00C8C0B8&\bord1.4}vector-db, on port 8000.
+Dialogue: 0,0:09:14.90,0:09:20.00,Bilingual,,0,0,0,,现在打开裸 IP：同一个负载均衡器，不带 sslip.io\N{\fs33\c&H00C8C0B8&\bord1.4}Now open the bare IP: the same load balancer, without sslip.io.
+Dialogue: 0,0:09:20.32,0:09:21.92,Bilingual,,0,0,0,,谁来回答？\N{\fs33\c&H00C8C0B8&\bord1.4}What answers?
+Dialogue: 0,0:09:30.48,0:09:34.11,Bilingual,,0,0,0,,回答的是 nginx controller：404 Not Found\N{\fs33\c&H00C8C0B8&\bord1.4}The nginx controller answers 404 Not Found.
+Dialogue: 0,0:09:34.43,0:09:39.87,Bilingual,,0,0,0,,规则只匹配那个主机名，所以同一扇门、名字不对，就找不到路由\N{\fs33\c&H00C8C0B8&\bord1.4}The rule matches only that host name, so the same door with the wrong name finds no route.
+Dialogue: 0,0:09:40.19,0:09:42.41,Bilingual,,0,0,0,,用输出里的 app URL\N{\fs33\c&H00C8C0B8&\bord1.4}Use the app_url from the outputs.
+Dialogue: 0,0:09:42.95,0:09:48.54,Bilingual,,0,0,0,,这就勾上了负载均衡：门口是云负载均衡器，后面是 nginx\N{\fs33\c&H00C8C0B8&\bord1.4}That ticks load balancing: the cloud load balancer at the door, nginx behind it,
+Dialogue: 0,0:09:48.54,0:09:52.17,Bilingual,,0,0,0,,每个 Service 再把请求分散到它的 Pod 上\N{\fs33\c&H00C8C0B8&\bord1.4}and each Service spreading requests across its Pods.
+Dialogue: 0,0:09:53.40,0:09:55.81,Bilingual,,0,0,0,,接下来，试几条 kubectl 命令\N{\fs33\c&H00C8C0B8&\bord1.4}Next, try some kubectl commands.
+Dialogue: 0,0:09:56.13,0:09:59.63,Bilingual,,0,0,0,,这里没有集群，五条都显示 connection refused\N{\fs33\c&H00C8C0B8&\bord1.4}With no cluster here, all five say connection refused.
+Dialogue: 0,0:09:59.95,0:10:03.40,Bilingual,,0,0,0,,在任何一个新的工具箱会话里你都会看到一模一样的结果\N{\fs33\c&H00C8C0B8&\bord1.4}You will see exactly this in any new toolbox session:
+Dialogue: 0,0:10:03.40,0:10:07.37,Bilingual,,0,0,0,,Pulumi 写的 kubeconfig 跟着旧 container 一起没了\N{\fs33\c&H00C8C0B8&\bord1.4}the kubeconfig Pulumi wrote went away with the old container.
+Dialogue: 0,0:10:07.62,0:10:11.19,Bilingual,,0,0,0,,修复办法就是 Pulumi 跑过的那条命令，在这里是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is the command Pulumi ran, an extra here:
+Dialogue: 0,0:10:11.19,0:10:14.07,Bilingual,,0,0,0,,gcloud container clusters get-credentials\N{\fs33\c&H00C8C0B8&\bord1.4}gcloud container clusters get-credentials
+Dialogue: 0,0:10:14.07,0:10:15.67,Bilingual,,0,0,0,,加上 cheese-app-cluster\N{\fs33\c&H00C8C0B8&\bord1.4}cheese-app-cluster.
+Dialogue: 0,0:10:15.89,0:10:21.18,Bilingual,,0,0,0,,代码把区域传给了 --zone 参数；写成 --region，才名副其实\N{\fs33\c&H00C8C0B8&\bord1.4}The code passes the region to the --zone flag; write --region, which says what it means.
+Dialogue: 0,0:10:21.93,0:10:25.94,Bilingual,,0,0,0,,连上以后，get all 还是只显示 kubernetes 这个 Service\N{\fs33\c&H00C8C0B8&\bord1.4}Once connected, get all still shows only the kubernetes Service,
+Dialogue: 0,0:10:25.94,0:10:28.57,Bilingual,,0,0,0,,因为应用在它自己的 namespace 里\N{\fs33\c&H00C8C0B8&\bord1.4}because the app sits in its own namespace.
+Dialogue: 0,0:10:28.89,0:10:31.18,Bilingual,,0,0,0,,加上 -n cheese-app-namespace\N{\fs33\c&H00C8C0B8&\bord1.4}With -n cheese-app-namespace,
+Dialogue: 0,0:10:31.18,0:10:36.40,Bilingual,,0,0,0,,你的会列出前端、数据库、API 和 nginx controller 的 Pod\N{\fs33\c&H00C8C0B8&\bord1.4}yours lists the frontend, database, API and nginx controller Pods,
+Dialogue: 0,0:10:36.40,0:10:39.08,Bilingual,,0,0,0,,还有一个标着 Completed 的加载器 Pod\N{\fs33\c&H00C8C0B8&\bord1.4}and a loader Pod marked Completed.
+Dialogue: 0,0:10:39.40,0:10:41.63,Bilingual,,0,0,0,,命令 get nodes 显示一个节点，或者两个\N{\fs33\c&H00C8C0B8&\bord1.4}Get nodes shows one node, or two.
+Dialogue: 0,0:10:42.17,0:10:44.66,Bilingual,,0,0,0,,README 的下一步是进到一个 Pod 的 shell 里\N{\fs33\c&H00C8C0B8&\bord1.4}The next README step shells into a Pod.
+Dialogue: 0,0:10:44.85,0:10:47.71,Bilingual,,0,0,0,,README 里的 Pod 名字是作者自己的\N{\fs33\c&H00C8C0B8&\bord1.4}The Pod name in the README is the author's own;
+Dialogue: 0,0:10:47.71,0:10:50.08,Bilingual,,0,0,0,,用你第一条命令打印出来的名字\N{\fs33\c&H00C8C0B8&\bord1.4}use the name your first command prints.
+Dialogue: 0,0:10:50.72,0:10:53.80,Bilingual,,0,0,0,,进去以后，你拿到的是 API container 里的一个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, you get a shell in the API container,
+Dialogue: 0,0:10:53.80,0:10:55.64,Bilingual,,0,0,0,,和我们在游戏里做的一样\N{\fs33\c&H00C8C0B8&\bord1.4}just as we did in the game.
+Dialogue: 0,0:10:55.96,0:10:58.50,Bilingual,,0,0,0,,打印它的环境变量，找 ROOT PATH 这个变量\N{\fs33\c&H00C8C0B8&\bord1.4}Print its environment and look for ROOT_PATH.
+Dialogue: 0,0:10:58.82,0:11:00.42,Bilingual,,0,0,0,,暂停一下，试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it.
+Dialogue: 0,0:11:00.92,0:11:05.76,Bilingual,,0,0,0,,为了查看应用，README 给了一段输出，比代码稍旧一点\N{\fs33\c&H00C8C0B8&\bord1.4}To view the app, the README shows an outputs block a little older than the code.
+Dialogue: 0,0:11:06.08,0:11:10.50,Bilingual,,0,0,0,,现在地址叫 ip address，不叫 nginx ingress ip\N{\fs33\c&H00C8C0B8&\bord1.4}Today the address is called ip_address, not nginx_ingress_ip,
+Dialogue: 0,0:11:10.50,0:11:13.76,Bilingual,,0,0,0,,Ingress 叫 cheese-app-ingress\N{\fs33\c&H00C8C0B8&\bord1.4}and the Ingress is called cheese-app-ingress.
+Dialogue: 0,0:11:14.50,0:11:16.50,Bilingual,,0,0,0,,暂停一下，打开你的 app URL\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and open your app_url.
+Dialogue: 0,0:11:16.82,0:11:22.73,Bilingual,,0,0,0,,页脚显示 API version: 3.0，就证明整条路径都通了\N{\fs33\c&H00C8C0B8&\bord1.4}A footer that says API version: 3.0 proves the whole path works:
+Dialogue: 0,0:11:22.73,0:11:25.32,Bilingual,,0,0,0,,它请求的是 /api-service/status\N{\fs33\c&H00C8C0B8&\bord1.4}it asks /api-service/status.
+Dialogue: 0,0:11:25.64,0:11:28.20,Bilingual,,0,0,0,,然后在聊天里选 RAG 模型\N{\fs33\c&H00C8C0B8&\bord1.4}Then pick the RAG model in the chat;
+Dialogue: 0,0:11:28.20,0:11:31.05,Bilingual,,0,0,0,,有回复，就证明 Vertex AI 和 Chroma 也通了\N{\fs33\c&H00C8C0B8&\bord1.4}a reply proves Vertex AI and Chroma too.
+Dialogue: 0,0:11:31.30,0:11:37.83,Bilingual,,0,0,0,,刚部署完你可能会看到 502 或 503：API 还在加载 TensorFlow\N{\fs33\c&H00C8C0B8&\bord1.4}Right after deploying you may see 502 or 503: the API is still loading TensorFlow.
+Dialogue: 0,0:11:38.15,0:11:39.75,Bilingual,,0,0,0,,等一等，再试一次\N{\fs33\c&H00C8C0B8&\bord1.4}Wait, and try again.
+Dialogue: 0,0:11:40.88,0:11:44.81,Bilingual,,0,0,0,,README 的调试那一块有 14 条 kubectl 命令\N{\fs33\c&H00C8C0B8&\bord1.4}The README's debugging block has 14 kubectl commands.
+Dialogue: 0,0:11:45.13,0:11:48.17,Bilingual,,0,0,0,,照原样敲，全都会失败；大多数都说这个 namespace\N{\fs33\c&H00C8C0B8&\bord1.4}As typed, they all fail; most say the namespace,
+Dialogue: 0,0:11:48.17,0:11:50.89,Bilingual,,0,0,0,,cheese-app-cluster-namespace，找不到\N{\fs33\c&H00C8C0B8&\bord1.4}cheese-app-cluster-namespace, is not found.
+Dialogue: 0,0:11:51.13,0:11:54.66,Bilingual,,0,0,0,,带尖括号的 pod name 那几行是 shell 重定向\N{\fs33\c&H00C8C0B8&\bord1.4}Lines with <pod-name> are shell redirections:
+Dialogue: 0,0:11:54.66,0:11:58.49,Bilingual,,0,0,0,,把整个占位符连同尖括号一起替换掉\N{\fs33\c&H00C8C0B8&\bord1.4}replace the whole placeholder, brackets included.
+Dialogue: 0,0:11:59.23,0:12:02.67,Bilingual,,0,0,0,,两处修复：namespace 是 cheese-app-namespace\N{\fs33\c&H00C8C0B8&\bord1.4}Two fixes: the namespace is cheese-app-namespace,
+Dialogue: 0,0:12:02.67,0:12:04.78,Bilingual,,0,0,0,,而 Job 只有一个 container\N{\fs33\c&H00C8C0B8&\bord1.4}and the Job has one container,
+Dialogue: 0,0:12:04.78,0:12:07.45,Bilingual,,0,0,0,,所以去掉 -c wait-for-chromadb 这个参数\N{\fs33\c&H00C8C0B8&\bord1.4}so drop the -c wait-for-chromadb flag.
+Dialogue: 0,0:12:07.77,0:12:09.37,Bilingual,,0,0,0,,暂停一下，试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try them.
+Dialogue: 0,0:12:09.77,0:12:12.91,Bilingual,,0,0,0,,在一个确实存在的 Job 上，在替身上做个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}On a Job that exists, an extra on the stand-in,
+Dialogue: 0,0:12:12.91,0:12:15.85,Bilingual,,0,0,0,,同样的命令都能用：done，1 个 Succeeded\N{\fs33\c&H00C8C0B8&\bord1.4}the same commands work: done, one succeeded.
+Dialogue: 0,0:12:16.17,0:12:18.56,Bilingual,,0,0,0,,已经完成的 Job，它的 Pod 不会被替换\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing replaces a finished Job's Pod.
+Dialogue: 0,0:12:19.30,0:12:23.42,Bilingual,,0,0,0,,说明一点：磁盘挂载在 /chroma/chroma\N{\fs33\c&H00C8C0B8&\bord1.4}A small note: the disk is mounted at /chroma/chroma,
+Dialogue: 0,0:12:23.42,0:12:26.66,Bilingual,,0,0,0,,但如今的 Chroma 镜像写到 /data\N{\fs33\c&H00C8C0B8&\bord1.4}but today's Chroma image writes to /data.
+Dialogue: 0,0:12:26.98,0:12:31.44,Bilingual,,0,0,0,,所以向量存在 container 里面，Pod 一重启就没了\N{\fs33\c&H00C8C0B8&\bord1.4}So the vectors live inside the container and vanish when the Pod restarts.
+Dialogue: 0,0:12:31.76,0:12:37.90,Bilingual,,0,0,0,,把第 150 行改成 /data，或者重启以后再跑一次加载器 Job\N{\fs33\c&H00C8C0B8&\bord1.4}Change line 150 to /data, or run the loader Job again after a restart.
+Dialogue: 0,0:12:41.05,0:12:42.39,Bilingual,,0,0,0,,现在讲扩展\N{\fs33\c&H00C8C0B8&\bord1.4}Now scaling.
+Dialogue: 0,0:12:42.44,0:12:47.29,Bilingual,,0,0,0,,课上承诺按 CPU、内存或自定义指标扩展\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture promises scaling on CPU, memory or custom metrics,
+Dialogue: 0,0:12:47.29,0:12:51.35,Bilingual,,0,0,0,,但代码没有设副本数，也没有 Pod 自动扩缩器\N{\fs33\c&H00C8C0B8&\bord1.4}but the code sets no replicas and no Pod autoscaler.
+Dialogue: 0,0:12:51.67,0:12:54.55,Bilingual,,0,0,0,,它打开的是节点这一层：一到两个节点\N{\fs33\c&H00C8C0B8&\bord1.4}It switches on the node layer: one to two nodes.
+Dialogue: 0,0:12:55.30,0:12:58.63,Bilingual,,0,0,0,,调度器按 requests 把 Pod 装到节点上\N{\fs33\c&H00C8C0B8&\bord1.4}The scheduler packs Pods onto nodes by their requests.
+Dialogue: 0,0:12:58.95,0:13:02.60,Bilingual,,0,0,0,,前端申请四分之一个 CPU 和 2 GB\N{\fs33\c&H00C8C0B8&\bord1.4}The frontend asks for a quarter CPU and 2 gigabytes.
+Dialogue: 0,0:13:02.92,0:13:05.19,Bilingual,,0,0,0,,Chroma 和 nginx 申请得很少\N{\fs33\c&H00C8C0B8&\bord1.4}Chroma and nginx ask for little,
+Dialogue: 0,0:13:05.19,0:13:08.83,Bilingual,,0,0,0,,API 什么都没申请，所以谁也没法为它做规划\N{\fs33\c&H00C8C0B8&\bord1.4}and the API for nothing, so nobody can plan for it.
+Dialogue: 0,0:13:09.47,0:13:13.90,Bilingual,,0,0,0,,把前端扩到 3 个；Milestone 5 要求你展示扩展\N{\fs33\c&H00C8C0B8&\bord1.4}Scale the frontend to 3; Milestone 5 asks you to show scaling.
+Dialogue: 0,0:13:14.22,0:13:16.89,Bilingual,,0,0,0,,放不下的副本会等着，处于 Pending\N{\fs33\c&H00C8C0B8&\bord1.4}A copy that does not fit waits, pending,
+Dialogue: 0,0:13:16.89,0:13:19.56,Bilingual,,0,0,0,,直到自动扩缩器加上第二个节点\N{\fs33\c&H00C8C0B8&\bord1.4}until the autoscaler adds a second node.
+Dialogue: 0,0:13:19.88,0:13:23.67,Bilingual,,0,0,0,,要得再多一些，有些就会一直 Pending：节点池到两个就停了\N{\fs33\c&H00C8C0B8&\bord1.4}Ask for many more, and some stay pending: the pool stops at two.
+Dialogue: 0,0:13:24.32,0:13:27.69,Bilingual,,0,0,0,,API 的磁盘一次只能挂到一个节点上\N{\fs33\c&H00C8C0B8&\bord1.4}The API's disk attaches to one node at a time.
+Dialogue: 0,0:13:28.01,0:13:33.11,Bilingual,,0,0,0,,假设你把 API 扩到 3 个，有些副本落在了第二个节点上\N{\fs33\c&H00C8C0B8&\bord1.4}Suppose you scaled the API to 3, and some copies landed on the second node.
+Dialogue: 0,0:13:33.43,0:13:36.56,Bilingual,,0,0,0,,它们会怎样，自动扩缩器能解决吗？\N{\fs33\c&H00C8C0B8&\bord1.4}What happens to them, and can the autoscaler fix it?
+Dialogue: 0,0:13:47.70,0:13:51.16,Bilingual,,0,0,0,,它们一直卡在创建中，报 Multi-Attach 错误\N{\fs33\c&H00C8C0B8&\bord1.4}They stay stuck creating, with a Multi-Attach error:
+Dialogue: 0,0:13:51.16,0:13:53.29,Bilingual,,0,0,0,,磁盘已经挂在节点 1 上了\N{\fs33\c&H00C8C0B8&\bord1.4}the disk already sits on node 1.
+Dialogue: 0,0:13:53.61,0:13:56.51,Bilingual,,0,0,0,,加节点没用；限制在磁盘\N{\fs33\c&H00C8C0B8&\bord1.4}More nodes do not help; the limit is the disk.
+Dialogue: 0,0:13:56.75,0:14:02.37,Bilingual,,0,0,0,,这就勾上了扩展，分两层：节点自动扩缩，Pod 由你手动扩\N{\fs33\c&H00C8C0B8&\bord1.4}That ticks scaling, in two levels: nodes automatically, Pods in your hands;
+Dialogue: 0,0:14:02.37,0:14:06.95,Bilingual,,0,0,0,,按 CPU 的 Pod 自动扩缩器需要 requests，而 API 没有\N{\fs33\c&H00C8C0B8&\bord1.4}a Pod autoscaler on CPU needs requests, and the API has none.
+Dialogue: 0,0:14:07.27,0:14:09.14,Bilingual,,0,0,0,,缩回 1 个，等你用完以后\N{\fs33\c&H00C8C0B8&\bord1.4}Scale back to 1 when you are done.
+Dialogue: 0,0:14:10.38,0:14:15.31,Bilingual,,0,0,0,,最后，删除集群：pulumi destroy --stack dev --refresh -y\N{\fs33\c&H00C8C0B8&\bord1.4}Last, delete the cluster: pulumi destroy --stack dev --refresh -y.
+Dialogue: 0,0:14:15.63,0:14:17.70,Bilingual,,0,0,0,,我们的没有真东西可删\N{\fs33\c&H00C8C0B8&\bord1.4}Ours has nothing real to delete;
+Dialogue: 0,0:14:17.70,0:14:21.31,Bilingual,,0,0,0,,你的会删掉这个 stack 创建的东西，倒着来\N{\fs33\c&H00C8C0B8&\bord1.4}yours deletes what this stack created, in reverse order,
+Dialogue: 0,0:14:21.31,0:14:23.70,Bilingual,,0,0,0,,从 Ingress 一直删到网络\N{\fs33\c&H00C8C0B8&\bord1.4}from the Ingress down to the network.
+Dialogue: 0,0:14:24.32,0:14:27.17,Bilingual,,0,0,0,,然后检查可能残留的东西，这是我们的建议\N{\fs33\c&H00C8C0B8&\bord1.4}Then check what may survive, our suggestion:
+Dialogue: 0,0:14:27.17,0:14:30.93,Bilingual,,0,0,0,,列出集群、转发规则、磁盘和防火墙规则\N{\fs33\c&H00C8C0B8&\bord1.4}list clusters, forwarding rules, disks and firewall rules.
+Dialogue: 0,0:14:31.25,0:14:36.97,Bilingual,,0,0,0,,这些是在后台删除的，可能会被落下；找名字里带 pvc 的磁盘\N{\fs33\c&H00C8C0B8&\bord1.4}Those are deleted in the background and can be left behind; look for disks named pvc.
+Dialogue: 0,0:14:37.22,0:14:41.12,Bilingual,,0,0,0,,registry 里的 image 是故意留下的：在控制台里删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Registry images stay on purpose: delete them in the console.
+Dialogue: 0,0:14:41.44,0:14:44.70,Bilingual,,0,0,0,,第 20 讲那台机器也删掉，如果它还在运行\N{\fs33\c&H00C8C0B8&\bord1.4}Delete the lecture 20 machine too, if it still runs.
+Dialogue: 0,0:14:45.02,0:14:46.37,Bilingual,,0,0,0,,暂停一下，检查一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and check.
+Dialogue: 0,0:14:46.42,0:14:48.02,Bilingual,,0,0,0,,回到三个诉求\N{\fs33\c&H00C8C0B8&\bord1.4}Back to the three asks.
+Dialogue: 0,0:14:48.19,0:14:51.17,Bilingual,,0,0,0,,故障转移：ReplicaSet 把 Pod 带回来\N{\fs33\c&H00C8C0B8&\bord1.4}Failover: the ReplicaSet brings Pods back,
+Dialogue: 0,0:14:51.17,0:14:54.44,Bilingual,,0,0,0,,节点自动修复替换坏掉的机器\N{\fs33\c&H00C8C0B8&\bord1.4}and node auto repair replaces broken machines.
+Dialogue: 0,0:14:54.76,0:14:59.56,Bilingual,,0,0,0,,负载均衡：云负载均衡器、nginx 和 Service\N{\fs33\c&H00C8C0B8&\bord1.4}Load balancing: the cloud load balancer, nginx and the Services.
+Dialogue: 0,0:14:59.88,0:15:04.06,Bilingual,,0,0,0,,扩展：节点自动扩缩器，还有你手里的 kubectl scale\N{\fs33\c&H00C8C0B8&\bord1.4}Scaling: the node autoscaler, and kubectl scale in your hands.
+Dialogue: 0,0:15:04.30,0:15:06.20,Bilingual,,0,0,0,,课上列了五个好处\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture lists five payoffs.
+Dialogue: 0,0:15:06.52,0:15:08.61,Bilingual,,0,0,0,,自助服务：一次 pulumi up\N{\fs33\c&H00C8C0B8&\bord1.4}Self-service: one pulumi up.
+Dialogue: 0,0:15:08.93,0:15:11.66,Bilingual,,0,0,0,,成本更低：Pod 按 requests 紧凑地装\N{\fs33\c&H00C8C0B8&\bord1.4}Lower cost: Pods packed by their requests.
+Dialogue: 0,0:15:11.98,0:15:14.88,Bilingual,,0,0,0,,自动调整：节点自动扩缩器\N{\fs33\c&H00C8C0B8&\bord1.4}Automatic adjustment: the node autoscaler.
+Dialogue: 0,0:15:15.20,0:15:17.19,Bilingual,,0,0,0,,运行平稳：自愈\N{\fs33\c&H00C8C0B8&\bord1.4}Smooth running: self-healing.
+Dialogue: 0,0:15:17.51,0:15:21.26,Bilingual,,0,0,0,,开发更简单：和第 20 讲一样的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Simpler development: the same images as lecture 20.
+Dialogue: 0,0:15:21.50,0:15:22.88,Bilingual,,0,0,0,,自测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Test yourself.
+Dialogue: 0,0:15:22.93,0:15:28.86,Bilingual,,0,0,0,,控制平面里哪个组件决定新 Pod 跑在哪里，哪个发现 Pod 死了？\N{\fs33\c&H00C8C0B8&\bord1.4}Which control plane part decides where a new Pod runs, and which one notices that a Pod died?
+Dialogue: 0,0:15:29.18,0:15:32.25,Bilingual,,0,0,0,,为什么 get all 只显示 kubernetes 这个 Service\N{\fs33\c&H00C8C0B8&\bord1.4}Why does get all show only the kubernetes Service,
+Dialogue: 0,0:15:32.25,0:15:33.85,Bilingual,,0,0,0,,用哪个参数能解决？\N{\fs33\c&H00C8C0B8&\bord1.4}and what flag fixes it?
+Dialogue: 0,0:15:33.90,0:15:36.53,Bilingual,,0,0,0,,名叫 web 的 Service 怎么知道它的 Pod\N{\fs33\c&H00C8C0B8&\bord1.4}How does the web Service know its Pods,
+Dialogue: 0,0:15:36.53,0:15:39.70,Bilingual,,0,0,0,,API 为什么在 vector-db 找到 Chroma？\N{\fs33\c&H00C8C0B8&\bord1.4}and why does the API reach Chroma at vector-db?
+Dialogue: 0,0:15:40.02,0:15:44.16,Bilingual,,0,0,0,,从 sslip.io 一路追踪一次点击到 API 的 Pod\N{\fs33\c&H00C8C0B8&\bord1.4}Trace one click from sslip.io to the API Pod;
+Dialogue: 0,0:15:44.16,0:15:47.11,Bilingual,,0,0,0,,为什么裸 IP 返回 404？\N{\fs33\c&H00C8C0B8&\bord1.4}why does the bare IP answer 404?
+Dialogue: 0,0:15:47.35,0:15:50.87,Bilingual,,0,0,0,,为什么前端能扩到 3 个，而 API 不行\N{\fs33\c&H00C8C0B8&\bord1.4}Why can the frontend scale to 3 but the API cannot,
+Dialogue: 0,0:15:50.87,0:15:53.15,Bilingual,,0,0,0,,自动扩缩器加的又是什么？\N{\fs33\c&H00C8C0B8&\bord1.4}and what does the autoscaler add?
+Dialogue: 0,0:15:53.47,0:15:56.65,Bilingual,,0,0,0,,答案在练习和学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises and the study guide.
+Dialogue: 0,0:15:56.90,0:16:00.21,Bilingual,,0,0,0,,下一讲，也就是第 23 讲，这两个 Pulumi 程序\N{\fs33\c&H00C8C0B8&\bord1.4}Next, in lecture 23, the two Pulumi programs,
+Dialogue: 0,0:16:00.21,0:16:04.92,Bilingual,,0,0,0,,在 app 的版本 4 里，会在每次合并时由 GitHub Actions 运行\N{\fs33\c&H00C8C0B8&\bord1.4}in version 4 of the app, run from GitHub Actions on every merge.

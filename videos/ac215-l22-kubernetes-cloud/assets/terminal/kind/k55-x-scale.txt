@@ -1,0 +1,14 @@
+$ kubectl scale deployment web --replicas=4; kubectl rollout status deployment/web --timeout=180s; kubectl get pods -l run=web -o wide; kubectl get endpoints web
+deployment.apps/web scaled
+Waiting for deployment "web" rollout to finish: 2 of 4 updated replicas are available...
+Waiting for deployment "web" rollout to finish: 3 of 4 updated replicas are available...
+deployment "web" successfully rolled out
+NAME                   READY   STATUS    RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES
+web-5cd9789488-5h48s   1/1     Running   0          2m18s   10.244.1.2   test-cluster-worker2   <none>           <none>
+web-5cd9789488-bmkj5   1/1     Running   0          2m18s   10.244.2.2   test-cluster-worker    <none>           <none>
+web-5cd9789488-gmbqz   1/1     Running   0          1s      10.244.2.3   test-cluster-worker    <none>           <none>
+web-5cd9789488-grq79   1/1     Running   0          1s      10.244.1.4   test-cluster-worker2   <none>           <none>
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME   ENDPOINTS                                                     AGE
+web    10.244.1.2:8080,10.244.1.4:8080,10.244.2.2:8080 + 1 more...   2m18s
+[exit 0]

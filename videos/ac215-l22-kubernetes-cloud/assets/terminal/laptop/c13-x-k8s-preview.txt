@@ -1,0 +1,40 @@
+$ pulumi preview --stack dev --refresh
+Previewing update (dev):
+
+@ previewing update.......
+ +  pulumi:pulumi:Stack deploy-k8s-dev create 
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read pulumi:pulumi:StackReference organization/deploy-images/dev
+ +  pulumi:pulumi:Stack deploy-k8s-dev create read pulumi:pulumi:StackReference organization/deploy-images/dev
+ +  pulumi:pulumi:Stack deploy-k8s-dev create error: Program failed with an unhandled exception:
+@ previewing update....
+ +  gcp:compute:Network cheese-app-vpc create 
+ +  pulumi:pulumi:Stack deploy-k8s-dev create 1 error
+Diagnostics:
+  pulumi:pulumi:Stack (deploy-k8s-dev):
+    error: Program failed with an unhandled exception:
+    Traceback (most recent call last):
+      File "/root/.pulumi/bin/pulumi-language-python-exec", line 232, in <module>
+        loop.run_until_complete(coro)
+        ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+        return future.result()
+               ~~~~~~~~~~~~~^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/stack.py", line 181, in run_in_stack
+        await run_pulumi_func(run)
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/stack.py", line 85, in run_pulumi_func
+        await wait_for_rpcs()
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/stack.py", line 157, in wait_for_rpcs
+        await task
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/output.py", line 274, in run
+        transformed: Input[U] = func(value)
+                                ~~~~^^^^^^^
+      File "/app/deploy_k8s/setup_containers.py", line 70, in <lambda>
+        lambda tags: tags[0]
+                     ~~~~^^^
+    TypeError: 'NoneType' object is not subscriptable
+
+Resources:
+    + 2 to create
+    1 errored
+
+[exit 1]

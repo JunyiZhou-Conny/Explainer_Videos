@@ -1,0 +1,2 @@
+$ pulumi config set gcp:project ac215-project --stack dev
+[exit 0]

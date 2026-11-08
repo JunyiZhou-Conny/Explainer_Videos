@@ -1,0 +1,10 @@
+$ kind delete cluster --name test-cluster; docker ps -a --format '{{.Names}}'; docker images
+Deleting cluster "test-cluster" ...
+Deleted nodes: ["test-cluster-control-plane" "test-cluster-worker2" "test-cluster-worker"]
+cheese-app-deployment
+IMAGE                          ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-deployment:latest   d08e31f23070       2.61GB             0B   U    
+kindest/node:v1.34.11          d5a15ef99125        903MB             0B        
+python:3.13-slim-bookworm      2bcb8e1e5080        121MB             0B        
+python:3.13-slim-bullseye      86046c4d86df        121MB             0B        
+[exit 0]

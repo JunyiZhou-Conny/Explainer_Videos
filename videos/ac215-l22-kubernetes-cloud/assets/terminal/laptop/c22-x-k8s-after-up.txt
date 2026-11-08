@@ -1,0 +1,24 @@
+$ pulumi stack --show-urns | head -40; pulumi stack output
+Current stack is dev:
+    Managed by 7b22ee890fa3
+    Last updated: now (2026-11-07 20:51:17.845052041 +0000 UTC)
+    Pulumi version used: v3.274.1
+    Secrets provider: passphrase
+Current stack resources (4):
+    TYPE                             NAME
+    pulumi:pulumi:Stack              deploy-k8s-dev
+    │  URN: urn:pulumi:dev::deploy-k8s::pulumi:pulumi:Stack::deploy-k8s-dev
+    ├─ pulumi:pulumi:StackReference  organization/deploy-images/dev
+    │     URN: urn:pulumi:dev::deploy-k8s::pulumi:pulumi:StackReference::organization/deploy-images/dev
+    ├─ pulumi:providers:pulumi       default
+    │     URN: urn:pulumi:dev::deploy-k8s::pulumi:providers:pulumi::default
+    └─ pulumi:providers:gcp          default_9_3_0
+          URN: urn:pulumi:dev::deploy-k8s::pulumi:providers:gcp::default_9_3_0
+
+Current stack outputs (0):
+    No output values currently in this stack
+
+Use `pulumi stack select` to change stack; `pulumi stack ls` lists known ones
+Current stack outputs (0):
+    No output values currently in this stack
+[exit 0]

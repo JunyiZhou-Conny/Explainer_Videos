@@ -1,0 +1,43 @@
+$ kubectl describe job hello-job
+Name:             hello-job
+Namespace:        default
+Selector:         batch.kubernetes.io/controller-uid=e5fbfb10-028e-4d2a-a1d3-84ae15026fe5
+Labels:           batch.kubernetes.io/controller-uid=e5fbfb10-028e-4d2a-a1d3-84ae15026fe5
+                  batch.kubernetes.io/job-name=hello-job
+                  controller-uid=e5fbfb10-028e-4d2a-a1d3-84ae15026fe5
+                  job-name=hello-job
+Annotations:      <none>
+Parallelism:      1
+Completions:      1
+Completion Mode:  NonIndexed
+Suspend:          false
+Backoff Limit:    6
+Start Time:       Sat, 07 Nov 2026 21:13:33 +0000
+Completed At:     Sat, 07 Nov 2026 21:13:41 +0000
+Duration:         8s
+Pods Statuses:    0 Active (0 Ready) / 1 Succeeded / 0 Failed
+Pod Template:
+  Labels:  batch.kubernetes.io/controller-uid=e5fbfb10-028e-4d2a-a1d3-84ae15026fe5
+           batch.kubernetes.io/job-name=hello-job
+           controller-uid=e5fbfb10-028e-4d2a-a1d3-84ae15026fe5
+           job-name=hello-job
+  Containers:
+   hello-job:
+    Image:      busybox:1.36
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      sh
+      -c
+      echo loading...; sleep 5; echo done
+    Environment:   <none>
+    Mounts:        <none>
+  Volumes:         <none>
+  Node-Selectors:  <none>
+  Tolerations:     <none>
+Events:
+  Type    Reason            Age   From            Message
+  ----    ------            ----  ----            -------
+  Normal  SuccessfulCreate  8s    job-controller  Created pod: hello-job-cpm66
+  Normal  Completed         0s    job-controller  Job completed
+[exit 0]

@@ -1,7 +1,7 @@
 # L22 lecture slides — Scaling: Kubernetes (cloud)
 
 Source: one deck, `L22_scaling_kubernetes_cloud` (45 slides), titled "Lecture 22: Scaling:
-Kubernetes (cloud)" (AC215/E115, Pavlos Protopapas, SEAS/Harvard). These are the instructor's
+Kubernetes (cloud)" (AC215/E115, the course staff, SEAS/Harvard). These are the instructor's
 lecture slides (PDF), provided by the student for study; the PDFs are not in this repository;
 slide numbers are PDF page numbers. The page numbers printed in the slide footers agree with the
 PDF pages (slides 1, 27–29, 44 and 45 print none). This digest was written from the deck's
@@ -19,15 +19,15 @@ in bold (slides 3, 16, 31, 42).
 - Slide 1 · title slide (Harvard shield, course badge AC215/E115)
 - Slide 2 · outline: Motivation; Introduction to Kubernetes; Tutorial: Deploying a Kubernetes
   Cluster; Advantages of using Kubernetes
-- Slides 3–15 · **Motivation** (a story: "Pavlos" wants an app, "*Support*" runs it)
+- Slides 3–15 · **Motivation** (a story: "‹instructor›" wants an app, "*Support*" runs it)
   - 3 · section divider ("Motivation" in bold)
-  - 4 · Pavlos wants one frontend and two backends (diagram: Frontend → API 1, API 2)
+  - 4 · ‹instructor› wants one frontend and two backends (diagram: Frontend → API 1, API 2)
   - 5 · "Motivation - 3 Containers in 1 VM": Support's architecture, one VM with an NGINX
     container in front of two API services and the frontend (diagram)
   - 6 · live demo link, "Demo… [3 Containers in 1 VM]"
-  - 7 · what happens when a container crashes: Pavlos must call Support, who SSHes in, restarts
+  - 7 · what happens when a container crashes: ‹instructor› must call Support, who SSHes in, restarts
     a container to reset its memory, or relaunches a dead one
-  - 8 · "Motivation - 3 Containers in 3 VM": Pavlos asks for the app on several servers so one
+  - 8 · "Motivation - 3 Containers in 3 VM": ‹instructor› asks for the app on several servers so one
     can fail over to a backup (quoted request)
   - 9 · Support's answer: three VMs, a second copy of each API (diagram)
   - 10 · live demo link, "Demo… [3 Containers in 3 VMs]"
@@ -147,7 +147,7 @@ in bold (slides 3, 16, 31, 42).
 
 ## Diagrams
 
-- **Slide 4 · the app Pavlos wants.** A blue box "Frontend" on the left with two grey arrows
+- **Slide 4 · the app ‹instructor› wants.** A blue box "Frontend" on the left with two grey arrows
   fanning right to a green box "API 1" (upper) and an orange box "API 2" (lower). Purpose: the
   shape of the demo app, one frontend calling two independent backends.
 - **Slide 5 · three containers in one VM.** At the top, a small screenshot of the demo web page
@@ -260,7 +260,7 @@ in bold (slides 3, 16, 31, 42).
   that label link; it is the mechanism the slide leaves out.
 - **Pictures that are not diagrams:** slide 1 (Harvard shield), slides 17–18 (Kubernetes logo),
   slides 32–36, 38 and 40 (terminal output, quoted below), slide 41 (QR code for the tutorial
-  link), slide 44 (photo of a man labelled "Prof. Pavlos" hurling a bag towards a blue dumpster,
+  link), slide 44 (photo of a man labelled "Prof. ‹instructor›" hurling a bag towards a blue dumpster,
   captioned "Delete! Delete! Delete!"), slide 45 (an animated-film celebration scene captioned
   "When the lecture is finally over!", one character labelled "Students").
 
@@ -268,7 +268,7 @@ in bold (slides 3, 16, 31, 42).
 
 | Lecture term | Slides | Note on the tutorial README / digest |
 |---|---|---|
-| "Pavlos", "*Support*" | 4–15 | Story roles: the app owner and the operations team. Not in the tutorial. |
+| "‹instructor›", "*Support*" | 4–15 | Story roles: the app owner and the operations team. Not in the tutorial. |
 | "Frontend", "API 1", "API 2"; "API Service 1/2" | 4–13 | The lecture's demo app (a "Deployment Demo" page plus two APIs), not the cheese app. Its source is not in any tutorial repository we have. |
 | "Virtual Machine", "Compute Instance (Virtual Machine)" | 5, 9, 21 | L20's `deploy_single_vm`. |
 | "NGINX Container" | 5, 9, 21 | L20's nginx container with a hand-written `nginx.conf`. In L22 the tutorial replaces it with the F5 NGINX Ingress Controller (installed by Helm) plus an Ingress object (§3.4). The slides never mention Ingress, apart from the console menu label "Services & Ingress" in slide 37's screenshot. |

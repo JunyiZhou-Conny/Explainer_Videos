@@ -1,0 +1,6 @@
+$ kubectl scale deployment web --replicas=2; sleep 10; kubectl get pods -l run=web
+deployment.apps/web scaled
+NAME                   READY   STATUS    RESTARTS   AGE
+web-5cd9789488-5h48s   1/1     Running   0          2m28s
+web-5cd9789488-bmkj5   1/1     Running   0          2m28s
+[exit 0]

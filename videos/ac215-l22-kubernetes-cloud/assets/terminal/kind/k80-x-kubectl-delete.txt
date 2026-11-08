@@ -1,0 +1,5 @@
+$ kubectl delete -f deploy-k8s-tic-tac-toe.yml; kubectl delete job hello-job
+deployment.apps "web" deleted from default namespace
+service "web" deleted from default namespace
+job.batch "hello-job" deleted from default namespace
+[exit 0]
