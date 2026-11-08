@@ -1,0 +1,10 @@
+$ docker exec nginx nginx -v; docker exec nginx ls /etc/nginx
+nginx version: nginx/1.30.6
+conf.d
+fastcgi_params
+mime.types
+modules
+nginx.conf
+scgi_params
+uwsgi_params
+[exit 0]

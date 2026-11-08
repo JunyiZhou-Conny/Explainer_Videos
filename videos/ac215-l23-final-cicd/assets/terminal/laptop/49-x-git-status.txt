@@ -1,0 +1,5 @@
+$ cd /home/student/cheese-app-aws && git status --short
+ M src/deployment/Dockerfile
+ M src/deployment/docker-shell.sh
+ M src/deployment/inventory.yml
+[exit 0]

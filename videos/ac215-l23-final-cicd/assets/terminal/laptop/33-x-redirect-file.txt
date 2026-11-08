@@ -1,0 +1,45 @@
+$ bash docker-shell.sh
+
+[+] Building 0.2s (20/20) FINISHED                                                                                                               docker:default
+ => [internal] load build definition from Dockerfile                                                                                                       0.0s
+ => => transferring dockerfile: 2.30kB                                                                                                                     0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                                                                            0.0s
+ => [internal] load .dockerignore                                                                                                                          0.0s
+ => => transferring context: 2B                                                                                                                            0.0s
+ => [ 1/15] FROM docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                    0.0s
+ => => resolve docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                      0.0s
+ => [internal] load build context                                                                                                                          0.0s
+ => => transferring context: 708B                                                                                                                          0.0s
+ => CACHED [ 2/15] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client unzip            0.0s
+ => CACHED [ 3/15] RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" &&     unzip awscliv2.zip &&     ./aws/inst  0.0s
+ => CACHED [ 4/15] RUN install -m 0755 -d /etc/apt/keyrings                                                                                                0.0s
+ => CACHED [ 5/15] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg                             0.0s
+ => CACHED [ 6/15] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                                                                              0.0s
+ => CACHED [ 7/15] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu     0.0s
+ => CACHED [ 8/15] RUN apt-get update &&     apt-get install -y jq docker-ce                                                                               0.0s
+ => CACHED [ 9/15] RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg  0.0s
+ => CACHED [10/15] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" &&     usermod -aG docker app &&     mkdir -p /a  0.0s
+ => CACHED [11/15] WORKDIR /app                                                                                                                            0.0s
+ => CACHED [12/15] ADD --chown=app:app Pipfile Pipfile.lock /app/                                                                                          0.0s
+ => CACHED [13/15] RUN pipenv sync                                                                                                                         0.0s
+ => CACHED [14/15] ADD --chown=app:app . /app                                                                                                              0.0s
+ => CACHED [15/15] RUN set -ex;     ansible-galaxy collection install community.general community.kubernetes                                               0.0s
+ => exporting to image                                                                                                                                     0.1s
+ => => exporting layers                                                                                                                                    0.0s
+ => => exporting manifest sha256:552a7751f3d245052257089a1e6f3bdb028446c26ea8a28e85d553c0a05bdc81                                                          0.0s
+ => => exporting config sha256:d3079c5d0b5542a34ef1dbeb285ff3d70c2f7505fb05d6589096903af0d3f7e6                                                            0.0s
+ => => exporting attestation manifest sha256:0503780bebb119eb95c5b7da16b61f01dc6d1b9e9c28cedd45b9c7afc5b4dc6a                                              0.0s
+ => => exporting manifest list sha256:5b4669b643d42a2a95239b9de78501d55bd6a10b17f26a59651c113dea52b978                                                     0.0s
+ => => naming to docker.io/library/cheese-app-deployment:latest                                                                                            0.0s
+ => => unpacking to docker.io/library/cheese-app-deployment:latest                                                                                         0.0s
+root@be38088b8b19:/app# ls /
+'=9.0.0'       app   boot   etc              home   lib32   libx32   mnt   proc   run    secrets   sys   usr   vector-db
+ api-service   bin   dev    frontend-react   lib    lib64   media    opt   root   sbin   srv       tmp   var
+root@be38088b8b19:/app# head -3 "/=9.0.0"; tail -1 "/=9.0.0"
+Collecting ansible
+  Downloading ansible-6.7.0-py3-none-any.whl (42.8 MB)
+Collecting openshift
+Successfully installed MarkupSafe-2.1.5 PyYAML-6.0.3 ansible-6.7.0 ansible-core-2.13.13 apache-libcloud-3.8.0 boto3-1.37.38 botocore-1.37.38 certifi-2026.10.23 cffi-1.17.1 charset-normalizer-3.5.2 cryptography-47.0.0 distlib-0.4.4 docker-7.2.0 durationpy-0.11 filelock-3.16.1 idna-3.15 jinja2-3.1.6 jmespath-1.0.1 kubernetes-35.0.0 oauthlib-3.3.1 openshift-0.13.2 packaging-26.2 pipenv-2024.4.1 platformdirs-4.3.6 pycparser-2.23 python-dateutil-2.9.0.post0 python-discovery-1.6.1 python-string-utils-1.0.0 requests-2.32.4 requests-oauthlib-2.0.0 resolvelib-0.8.1 s3transfer-0.11.5 setuptools-75.3.4 six-1.17.0 typing-extensions-4.13.2 urllib3-2.2.3 virtualenv-21.4.3 websocket-client-1.8.0
+root@be38088b8b19:/app# exit
+exit
+[exit 0]

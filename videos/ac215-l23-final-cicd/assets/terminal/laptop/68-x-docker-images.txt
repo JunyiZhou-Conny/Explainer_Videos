@@ -1,0 +1,9 @@
+$ docker images
+IMAGE                          ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-deployment:latest   03b574787eca       2.52GB          595MB        
+chromadb/chroma:0.5.18         d8819dafd306        667MB          146MB        
+chromadb/chroma:latest         1e0b73a187a2        826MB          176MB        
+nginx:stable                   42c68eab6f7e        242MB         66.5MB        
+python:3.12-slim-bookworm      935c3c5b1235        188MB         47.9MB        
+ubuntu:20.04                   880f4a93b0bd        110MB         27.7MB        
+[exit 0]

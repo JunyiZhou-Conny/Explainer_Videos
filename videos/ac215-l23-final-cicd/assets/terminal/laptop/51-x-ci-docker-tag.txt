@@ -1,0 +1,6 @@
+$ cd /home/student/runner/cheese-app-aws && export GITHUB_ENV=~/runner/github_env && echo $(date +%Y%m%d%H%M%S) > /home/student/runner/cheese-app-aws/src/deployment/.docker-tag
+export DOCKER_TAG=$(cat /home/student/runner/cheese-app-aws/src/deployment/.docker-tag)
+echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+cat $GITHUB_ENV
+DOCKER_TAG=20261108011909
+[exit 0]

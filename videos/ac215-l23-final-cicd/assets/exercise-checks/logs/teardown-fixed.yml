@@ -1,0 +1,42 @@
+# B5: one way to make README:147 delete what README:94 created. Only the changes are listed here;
+# ans-in.sh applies them to a copy of src/deployment/deploy-create-instance.yml (5950118):
+#  1. "Create EC2 instance" (lines 40-61) gets `when: cluster_state == "present"`, like its neighbours.
+#  2. "Remove EBS volume" (lines 94-100), which needs a volume id that only a create run registers,
+#     is replaced by the four tasks below: they look everything up by name, so they work in a
+#     fresh toolbox, days after the create run. Order matters: the instance first (its own two disks
+#     go with it, delete_on_termination), then the separate 50 GB volume, then the security group,
+#     which AWS refuses to delete while an instance still uses it.
+# Checked offline only (no AWS account): it parses, and with cluster_state=absent the first task
+# that runs is the terminate call (see ansible.log, B5). What AWS answers was not run.
+    - name: Terminate EC2 instance
+      amazon.aws.ec2_instance:
+        region: "{{ aws_region }}"
+        state: absent
+        filters:
+          "tag:Name": "{{ aws_instance_name }}"
+          instance-state-name: ["pending", "running", "stopping", "stopped"]
+        wait: yes
+      when: cluster_state == "absent"
+
+    - name: Find the EBS volume by its Name tag
+      amazon.aws.ec2_vol_info:
+        region: "{{ aws_region }}"
+        filters:
+          "tag:Name": "{{ persistent_disk_name }}"
+      register: found_volumes
+      when: cluster_state == "absent"
+
+    - name: Remove EBS volume
+      amazon.aws.ec2_vol:
+        region: "{{ aws_region }}"
+        id: "{{ item.id }}"
+        state: absent
+      loop: "{{ found_volumes.volumes | default([]) }}"
+      when: cluster_state == "absent"
+
+    - name: Remove security group
+      amazon.aws.ec2_group:
+        name: app_security_group
+        region: "{{ aws_region }}"
+        state: absent
+      when: cluster_state == "absent"

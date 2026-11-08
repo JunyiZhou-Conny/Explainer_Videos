@@ -1,0 +1,1504 @@
+1
+00:00:00,000 --> 00:00:02,607
+这个 repo 有 39 个 commit
+This repository has 39 commits,
+
+2
+00:00:02,607 --> 00:00:07,232
+其中 33 个带着同一条信息：/run-deploy-app
+and 33 of them carry the same message: /run-deploy-app.
+
+3
+00:00:07,552 --> 00:00:09,152
+这句话就是一个按钮
+That sentence is a button.
+
+4
+00:00:09,408 --> 00:00:13,056
+push 到 main 以后，它会重新构建应用，再重新部署一台服务器
+Pushed to main, it rebuilds the app and redeploys a server.
+
+5
+00:00:13,300 --> 00:00:15,732
+有一次，斜杠倒向了另一边
+And once, the slash leans the other way.
+
+6
+00:00:16,052 --> 00:00:20,063
+对工作流来说，那是另一句话，什么都不会运行
+To the workflow, that is a different sentence, and nothing runs at all.
+
+7
+00:00:20,383 --> 00:00:21,683
+就差一个字符
+One character.
+
+8
+00:00:21,733 --> 00:00:26,000
+一句话是怎么部署一台服务器的，一个字符又为什么拦住了它？
+How does a sentence deploy a server, and why did one character stop it?
+
+9
+00:00:26,320 --> 00:00:29,605
+到第 2 部分结束时，你会亲手 push 这句话
+By the end of part 2, you'll push that sentence yourself.
+
+10
+00:00:29,850 --> 00:00:34,991
+这是这门课的最后一讲：最终部署与回顾，分三节
+This is the course's last lecture: final deployment and review, in three parts.
+
+11
+00:00:35,311 --> 00:00:38,479
+它的动机是一个好玩的预测网页
+Its motivation is a playful prediction web page;
+
+12
+00:00:38,479 --> 00:00:41,384
+我们的理解是，哪怕是一个玩具级的预测应用
+our reading of it: even a toy prediction app
+
+13
+00:00:41,384 --> 00:00:45,146
+也只有在某个地方跑着、并且保持最新时才有用
+is only useful when it runs somewhere, and stays current.
+
+14
+00:00:45,383 --> 00:00:48,754
+我们录制用的这台机器没有 AWS 账号
+This recording machine has no AWS account.
+
+15
+00:00:49,074 --> 00:00:51,378
+笔记本上的一切都是真实运行的
+Everything on the laptop ran for real.
+
+16
+00:00:51,698 --> 00:00:56,737
+每条和 AWS 打交道的命令，都照 README 写的原样跑了
+Every command that talks to AWS ran exactly as the README writes it,
+
+17
+00:00:56,737 --> 00:00:58,738
+一直跑到它真实的第一个报错
+up to its real first error.
+
+18
+00:00:59,058 --> 00:01:03,453
+控制台、服务器和 GitHub 都是示意图，标着 illustration
+The consoles, the server and GitHub are drawings, marked illustration.
+
+19
+00:01:03,700 --> 00:01:07,539
+你需要 Docker、一个你自己的、开通了结算的 AWS 账号
+You need Docker, your own AWS account with billing,
+
+20
+00:01:07,539 --> 00:01:10,249
+第 2 部分还需要一个 GitHub repo
+and for part 2, a GitHub repository.
+
+21
+00:01:10,569 --> 00:01:13,535
+这一讲会让一台服务器一直运行，直到你删掉它
+This lecture runs a server until you delete it.
+
+22
+00:01:13,855 --> 00:01:15,847
+进度条标出 README 的哪一步
+The tracker names the README step,
+
+23
+00:01:15,847 --> 00:01:18,015
+your turn 表示暂停一下，自己跑一遍
+and your turn means pause and run it.
+
+24
+00:01:19,450 --> 00:01:21,050
+这是课上的总图
+Here is the lecture's map.
+
+25
+00:01:21,285 --> 00:01:23,293
+开发团队把代码 commit 到 GitHub
+The dev team commits to GitHub,
+
+26
+00:01:23,293 --> 00:01:28,346
+GitHub Actions 负责构建并部署到云上，用户在那里访问应用
+GitHub Actions builds and deploys to the cloud, and users reach the app there.
+
+27
+00:01:28,583 --> 00:01:31,997
+在它上面，是画成一条链的应用，从数据一直到前端
+Above it, the app as one chain, from data to frontend.
+
+28
+00:01:32,233 --> 00:01:34,768
+课件讲的是 Google Cloud
+The slides speak Google Cloud;
+
+29
+00:01:34,768 --> 00:01:38,740
+我们跟的是 AWS 的 repo，和第 15 讲一样
+we follow the AWS repository, as in lecture 15.
+
+30
+00:01:39,060 --> 00:01:41,705
+现在把同一张总图换成 AWS 的说法
+Now the same map in AWS words.
+
+31
+00:01:42,025 --> 00:01:45,311
+Kubernetes 集群变成了一台 EC2 服务器
+The Kubernetes cluster becomes one EC2 server
+
+32
+00:01:45,311 --> 00:01:47,209
+上面跑着 Docker container
+running Docker containers.
+
+33
+00:01:47,529 --> 00:01:51,817
+image registry 变成了 ECR，里面有三个仓库
+The image registry becomes ECR, with three repositories.
+
+34
+00:01:52,137 --> 00:01:54,313
+Pulumi 变成了 Ansible 的 playbook
+Pulumi becomes Ansible playbooks.
+
+35
+00:01:54,550 --> 00:01:58,030
+服务账号密钥变成了两份密钥
+The service account key becomes two secrets:
+
+36
+00:01:58,030 --> 00:02:01,035
+一个 IAM 访问密钥和一个 EC2 密钥对
+an IAM access key and an EC2 key pair.
+
+37
+00:02:01,355 --> 00:02:03,769
+关键词变成了 /run-deploy-app
+The keyword becomes /run-deploy-app,
+
+38
+00:02:03,769 --> 00:02:07,926
+Ingress 变成了前门的一个 nginx container
+and the ingress becomes one nginx container at the front door.
+
+39
+00:02:08,167 --> 00:02:10,895
+这里没有 Kubernetes，也没有 Pulumi
+There's no Kubernetes and no Pulumi here:
+
+40
+00:02:10,895 --> 00:02:14,887
+一台服务器，由 Ansible 配置好，也没有机器学习那条线
+one server, set up by Ansible, and no machine learning lane.
+
+41
+00:02:15,133 --> 00:02:17,437
+课上列了五件要自动化的事
+The lecture lists five things to automate.
+
+42
+00:02:17,757 --> 00:02:19,072
+对这个 repo 来说
+For this repo:
+
+43
+00:02:19,072 --> 00:02:23,176
+pipeline 的 job 和模型训练，没有，那是第 15 讲的事
+pipeline jobs and model training, no, those were lecture 15.
+
+44
+00:02:23,496 --> 00:02:27,080
+前端和后端的部署，有，而且总是一起
+Frontend and backend deployment, yes, always together.
+
+45
+00:02:27,400 --> 00:02:31,091
+构建和 push container，有：三个应用 image
+Building and pushing containers, yes: three app images.
+
+46
+00:02:31,333 --> 00:02:34,980
+课上的计划是：我们已经有了一个部署 container
+The lecture's plan: we already have a deployment container,
+
+47
+00:02:34,980 --> 00:02:36,773
+那就让 GitHub Actions 来运行它
+so let GitHub Actions run it.
+
+48
+00:02:37,093 --> 00:02:39,215
+在这里，它叫 cheese-app-deployment
+Here it's called cheese-app-deployment.
+
+49
+00:02:39,433 --> 00:02:42,974
+课件上说：在那个 container 里调用命令行
+The slides say: invoke the command line in that container.
+
+50
+00:02:43,294 --> 00:02:45,854
+在这里，就是 ansible-playbook 命令
+Here, that means ansible-playbook commands.
+
+51
+00:02:46,174 --> 00:02:50,847
+第 1 部分由你来敲；第 2 部分，它们会作为一长串命令送过来
+In part 1 you type them; in part 2, they arrive as one long command.
+
+52
+00:02:52,083 --> 00:02:55,880
+最开始这几条命令是额外的；README 里没有 clone 这一步
+These first commands are extra; the README has no clone step.
+
+53
+00:02:56,200 --> 00:02:59,101
+只有一个分支，从我们固定版本以来没有变过
+One branch, unchanged since we pinned it,
+
+54
+00:02:59,101 --> 00:03:01,790
+src 里面就是 deployment 目录
+and inside src, the deployment folder.
+
+55
+00:03:02,033 --> 00:03:05,809
+要启用的 API 列表写在一段注释里
+The list of APIs to enable sits inside a comment;
+
+56
+00:03:05,809 --> 00:03:08,582
+在 AWS 上没有什么需要打开的
+on AWS there's nothing to switch on.
+
+57
+00:03:08,902 --> 00:03:13,404
+检查一下：API 调用的是 us-east-1 里的 Bedrock 模型
+One check: the API calls Bedrock models in us-east-1,
+
+58
+00:03:13,404 --> 00:03:18,246
+那是 2024 年选的，所以确认一下你的账号还能用它们
+chosen in 2024, so check your account can still use them.
+
+59
+00:03:18,483 --> 00:03:23,112
+第 2 步，在 IAM 控制台里：用这段 JSON 创建一个策略
+Step 2, in the IAM console: create a policy from this JSON.
+
+60
+00:03:23,432 --> 00:03:27,282
+它允许一次身份检查和九个 ECR 操作
+It allows one identity check and nine ECR actions,
+
+61
+00:03:27,282 --> 00:03:30,515
+用来登录、push 和 pull，对任何资源都适用
+to log in, push and pull, on any resource.
+
+62
+00:03:31,350 --> 00:03:35,480
+把它命名为 CheeseAppECRPolicy，暂停一下，把它创建好
+Name it CheeseAppECRPolicy, and pause to create it;
+
+63
+00:03:35,480 --> 00:03:38,475
+一个额外检查表明这段 JSON 能正常解析
+an extra check shows the JSON parses.
+
+64
+00:03:38,795 --> 00:03:42,592
+它不能创建仓库，所以稍后你要手动建三个
+It can't create a repository, so you'll make three by hand later.
+
+65
+00:03:42,833 --> 00:03:47,057
+第 3 步：创建一个用户，deployment-ac215-user
+Step 3: create a user, deployment-ac215-user.
+
+66
+00:03:47,377 --> 00:03:50,673
+给它挂上三个 AWS 托管策略
+It gets three policies AWS manages:
+
+67
+00:03:50,673 --> 00:03:53,969
+S3、EC2 和 Bedrock 的完全访问权限
+full access to S3, EC2 and Bedrock.
+
+68
+00:03:54,289 --> 00:03:56,422
+再加上你自己的 ECR 策略
+And your own ECR policy.
+
+69
+00:03:56,666 --> 00:04:02,511
+第 4 步：为第三方服务创建一个访问密钥，再下载 CSV 文件
+Step 4: create an access key for a third party service, and download the CSV file.
+
+70
+00:04:02,831 --> 00:04:05,656
+把它存进你 clone 旁边的一个 secrets 目录里
+Save it in a secrets folder beside your clone,
+
+71
+00:04:05,656 --> 00:04:08,357
+不是 clone 里面，这样它就永远不会被 commit
+not inside it, so it can never be committed.
+
+72
+00:04:08,600 --> 00:04:13,635
+第 5 步：创建一个 EC2 密钥对，把它的 pem 文件也存到那里
+Step 5: create an EC2 key pair, and save its pem file there too.
+
+73
+00:04:13,955 --> 00:04:20,248
+徽章负责和 AWS 的 API 打交道；钥匙打开你服务器的 SSH 门
+The badge talks to the AWS API; the key opens the SSH door of your server.
+
+74
+00:04:20,483 --> 00:04:22,574
+一个额外检查暴露出一个小出入
+An extra check shows a small gap.
+
+75
+00:04:22,894 --> 00:04:27,246
+README 把密钥对叫作 cheese-app-ac215-key-pair
+The README names the key pair cheese-app-ac215-key-pair.
+
+76
+00:04:27,566 --> 00:04:32,920
+代码要的却是 ac215_2024，三个文件里都是
+The code expects ac215_2024, in three files.
+
+77
+00:04:33,240 --> 00:04:40,174
+最省事的修法：就用这个名字，这样文件就是 ac215_2024.pem
+Easiest fix: use that name, so the file is ac215_2024.pem.
+
+78
+00:04:40,416 --> 00:04:43,317
+额外一步：对 pem 文件执行 chmod 400
+Extra: chmod 400 on the pem file.
+
+79
+00:04:43,637 --> 00:04:47,328
+SSH 会拒绝一个别人也能打开的私钥
+SSH refuses a private key that others can open.
+
+80
+00:04:49,467 --> 00:04:53,136
+第 6 步，部署准备，带来一个新工具：Ansible
+Step 6, deployment setup, brings a new tool: Ansible.
+
+81
+00:04:53,456 --> 00:04:57,360
+第 20 讲的 Pulumi，描述的是你想要的基础设施
+Pulumi, in lecture 20, described the infrastructure you want.
+
+82
+00:04:57,680 --> 00:05:00,123
+Ansible 按顺序执行一串 task
+Ansible runs an ordered list of tasks
+
+83
+00:05:00,123 --> 00:05:02,566
+对象是 inventory 里的那些机器
+against the machines in an inventory.
+
+84
+00:05:02,886 --> 00:05:05,398
+它的很多模块描述的是一个状态
+Many of its modules describe a state;
+
+85
+00:05:05,398 --> 00:05:08,454
+这个 repo 也跑了不少 shell 命令
+this repo also runs plenty of shell commands.
+
+86
+00:05:08,700 --> 00:05:10,577
+一个 playbook 就是一串 play
+A playbook is a list of plays.
+
+87
+00:05:10,897 --> 00:05:13,732
+每个 play 写明它的 hosts，也装着 task
+Each play names its hosts and holds tasks,
+
+88
+00:05:13,732 --> 00:05:15,825
+而每个 task 调用一个模块
+and each task calls one module.
+
+89
+00:05:16,145 --> 00:05:19,162
+其中 hosts 这一行决定 task 在哪里运行
+The hosts line decides where tasks run:
+
+90
+00:05:19,162 --> 00:05:21,947
+localhost 表示在你的工具箱容器里
+localhost means inside your toolbox;
+
+91
+00:05:21,947 --> 00:05:25,042
+appserver 表示在服务器上，通过 SSH
+appserver means on the server, over SSH.
+
+92
+00:05:25,284 --> 00:05:27,780
+这就是那个 inventory，写成一个文件
+Here is that inventory, as one file.
+
+93
+00:05:28,100 --> 00:05:30,959
+Ansible 以 ubuntu 用户的身份登录
+Ansible logs in as the user ubuntu.
+
+94
+00:05:31,279 --> 00:05:34,538
+第 4 行指向给 GitHub Actions 用的密钥
+Line 4 points at the key for GitHub Actions;
+
+95
+00:05:34,538 --> 00:05:38,169
+第 7 行被注释掉了，指向你笔记本上的密钥
+line 7, commented out, at the key on your laptop.
+
+96
+00:05:38,489 --> 00:05:43,374
+第 9 到 11 行从环境变量里取你的密钥：什么都不用填
+Lines 9 to 11 take your keys from the environment: nothing to type.
+
+97
+00:05:43,617 --> 00:05:48,396
+然后是这台机器：区域 us-east-1，一个 t2.large 实例
+Then the machine: the region, us-east-1, and a t2.large instance.
+
+98
+00:05:48,716 --> 00:05:50,934
+密钥对的名字，标着 change this
+The key pair name, marked change this.
+
+99
+00:05:51,254 --> 00:05:55,713
+适用于那个区域的一个 Ubuntu 系统映像，还有磁盘的名字和大小
+An Ubuntu machine image for that region, and the disk names and sizes.
+
+100
+00:05:55,950 --> 00:05:59,107
+README 的四个要点指的正是这几行
+The README's four bullets point at exactly these lines.
+
+101
+00:05:59,427 --> 00:06:03,854
+现在改两处：密钥对的名字，除非你的已经对上了
+Change two now: the key pair name, unless yours already matches,
+
+102
+00:06:03,854 --> 00:06:08,281
+还有第 24 行，NextAuth secret，改成你自己的一个随机值
+and line 24, the NEXTAUTH_SECRET, to a random value of your own.
+
+103
+00:06:08,601 --> 00:06:10,820
+第 30 行的 host 稍后再填
+The host on line 30 comes later.
+
+104
+00:06:13,584 --> 00:06:15,498
+每次运行最后都有一个 recap
+Every run ends with a recap;
+
+105
+00:06:15,498 --> 00:06:18,917
+成功的意思是 failed 和 unreachable 都保持为 0
+success means failed and unreachable stay at zero.
+
+106
+00:06:19,237 --> 00:06:23,205
+一个声明式的 task 跑两次，第二次会报 ok
+A declarative task run twice reports ok the second time.
+
+107
+00:06:25,950 --> 00:06:28,382
+第 1 步：进到 deployment 目录
+Step 1: go to the deployment folder.
+
+108
+00:06:28,702 --> 00:06:32,798
+这里有那几个 playbook、inventory 和 docker-shell.sh
+Here are the playbooks, the inventory and docker-shell.sh.
+
+109
+00:06:33,033 --> 00:06:34,519
+打开这个脚本
+Open the script.
+
+110
+00:06:34,569 --> 00:06:38,430
+它把你 CSV 的第二行拆成两个变量
+It splits the second line of your CSV into two variables.
+
+111
+00:06:38,750 --> 00:06:43,807
+第 17 行把作者的账号 ID 写死了，这里是一个占位符
+Line 17 hard codes the account ID of the author, a placeholder here.
+
+112
+00:06:44,050 --> 00:06:46,023
+照 clone 下来的原样运行，它就停了
+Run it as cloned, and it stops:
+
+113
+00:06:46,023 --> 00:06:47,741
+credentials file not found
+credentials file not found.
+
+114
+00:06:48,061 --> 00:06:53,309
+从 deployment 目录往上四个 ../，就到了 /home，多上了一层
+Four ../ from the deployment folder end at /home, one level too far.
+
+115
+00:06:53,550 --> 00:06:57,817
+第 2 步就是这个修复：往上三层，用 sed 或者你的编辑器改
+Step 2 is that fix: three levels up, with sed or your editor.
+
+116
+00:06:58,137 --> 00:06:59,737
+现在文件找到了
+Now the file is found.
+
+117
+00:07:03,383 --> 00:07:07,735
+第 3 步：sh docker-shell.sh，完全照着写的来
+Step 3: sh docker-shell.sh, exactly as written.
+
+118
+00:07:08,055 --> 00:07:10,818
+意外 1，在这台 Ubuntu 笔记本上
+Surprise 1, on this Ubuntu laptop:
+
+119
+00:07:10,818 --> 00:07:14,882
+第 13 行有语法错误，redirection unexpected
+a syntax error on line 13, redirection unexpected.
+
+120
+00:07:15,117 --> 00:07:19,234
+额外说明：在 Ubuntu 上，sh 就是 dash，它没有 here string
+Extra: on Ubuntu, sh is dash, which has no here-string (<<<).
+
+121
+00:07:19,554 --> 00:07:23,266
+而且敲 sh 会跳过第一行，那一行要的是 bash
+And typing sh skips the first line, which asks for bash.
+
+122
+00:07:23,586 --> 00:07:27,447
+在 Mac 上 README 这一行能用；在 Linux 上，换成 bash
+On a Mac the README line works; on Linux, use bash instead.
+
+123
+00:07:27,683 --> 00:07:33,592
+意外 2，录制时，在我们的机器上：构建停在了 15 步里的第 9 步
+Surprise 2, at the time of recording, on our machine: the build stops at step 9 of 15.
+
+124
+00:07:33,912 --> 00:07:36,615
+这里 curl 验证不了 Helm 的下载站点
+Curl can't verify the Helm download site,
+
+125
+00:07:36,615 --> 00:07:38,329
+所以签名密钥没能下载下来
+so no signing key arrives.
+
+126
+00:07:38,567 --> 00:07:42,067
+而且脚本不会停下：set -e 被注释掉了
+And the script doesn't stop: set -e is commented out,
+
+127
+00:07:42,067 --> 00:07:44,775
+所以它会去运行一个根本没构建出来的 image
+so it runs an image that was never built.
+
+128
+00:07:45,095 --> 00:07:47,868
+要看构建输出，不能只看最后一行
+Check the build output, not just the last line.
+
+129
+00:07:48,117 --> 00:07:50,570
+我们的机器不信任那张证书的根证书
+Our machine didn't trust that certificate's root.
+
+130
+00:07:50,890 --> 00:07:52,419
+你的笔记本可能信任
+Your laptop may.
+
+131
+00:07:52,469 --> 00:07:54,052
+没有哪个 playbook 用到 Helm
+No playbook uses Helm,
+
+132
+00:07:54,052 --> 00:07:58,357
+所以删掉这两行和 helm 这个词，工具箱容器就能构建了
+so delete these two lines and the word helm, and the toolbox builds.
+
+133
+00:08:04,150 --> 00:08:08,225
+意外 3：在工具箱容器里，/secrets 是空的
+Surprise 3: inside the toolbox, /secrets is empty.
+
+134
+00:08:08,545 --> 00:08:13,878
+第 26 行也是同样的四个 ../，所以 Docker 挂载了一个空目录
+Line 26 has the same four ../, so Docker mounted an empty folder.
+
+135
+00:08:14,198 --> 00:08:16,609
+提示符里的 ID 每次启动都会变
+The prompt ID changes on every start.
+
+136
+00:08:16,850 --> 00:08:19,284
+所以照第 10 行的样子改第 26 行
+So fix line 26 like line 10,
+
+137
+00:08:19,284 --> 00:08:22,674
+再在第 17 行填上你自己的账号 ID
+and put your own account ID on line 17.
+
+138
+00:08:22,994 --> 00:08:26,138
+运行 aws sts get-caller-identity 就能看到它
+aws sts get-caller-identity shows it,
+
+139
+00:08:26,138 --> 00:08:27,837
+前提是你的密钥能用
+once your keys work.
+
+140
+00:08:28,083 --> 00:08:31,521
+再运行一次 bash docker-shell.sh
+Run bash docker-shell.sh again:
+
+141
+00:08:31,521 --> 00:08:36,954
+两个文件都在，你的叫 ac215_2024.pem
+both files are there, yours named ac215_2024.pem,
+
+142
+00:08:36,954 --> 00:08:40,392
+四个 AWS 变量也都设好了
+and four AWS variables are set.
+
+143
+00:08:40,712 --> 00:08:42,889
+暂停一下，自己走到这个提示符
+Pause, and get to this prompt yourself.
+
+144
+00:08:45,033 --> 00:08:46,761
+工具箱容器是怎么启动的？
+How was the toolbox started?
+
+145
+00:08:47,081 --> 00:08:49,705
+第 36 行挂载了 Docker socket
+Line 36 mounts the Docker socket.
+
+146
+00:08:50,025 --> 00:08:53,189
+然后是挂在 /app 的 deployment 目录、你的密钥
+Then the deployment folder at /app, your secrets,
+
+147
+00:08:53,189 --> 00:08:54,868
+再是三个应用目录
+and the three app folders.
+
+148
+00:08:55,188 --> 00:09:00,009
+第 43 到 46 行把你的密钥作为环境变量传进去
+Lines 43 to 46 hand in your keys as environment variables.
+
+149
+00:09:00,250 --> 00:09:01,523
+想一想
+A question.
+
+150
+00:09:01,573 --> 00:09:05,647
+在工具箱容器里，Ansible 为前端运行 docker build
+Inside the toolbox, Ansible runs docker build for the frontend.
+
+151
+00:09:05,967 --> 00:09:10,298
+这个 image 落在谁的磁盘上：工具箱容器的，还是你笔记本的？
+Whose disk does the image land on: the toolbox's, or your laptop's?
+
+152
+00:09:19,133 --> 00:09:20,512
+你笔记本的
+Your laptop's.
+
+153
+00:09:20,562 --> 00:09:23,342
+工具箱容器里没有运行 Docker 引擎
+No Docker engine runs inside the toolbox;
+
+154
+00:09:23,342 --> 00:09:25,647
+Ansible 的 Docker 模块通过
+the Docker module of Ansible talks
+
+155
+00:09:25,647 --> 00:09:28,562
+socket 和你笔记本上的 Docker 通信
+through the socket to your laptop's Docker.
+
+156
+00:09:28,882 --> 00:09:32,381
+所以 image 落在工具箱容器旁边，而不是里面
+So the image lands beside the toolbox, not inside it.
+
+157
+00:09:32,701 --> 00:09:36,797
+这也是为什么在里面跑一次 prune，清掉的会是你笔记本上的东西
+That's also why a prune, run from inside, would sweep your laptop.
+
+158
+00:09:37,033 --> 00:09:42,791
+额外检查：AWS 命令行、Docker、kubectl 和 Ansible 都在
+Extra checks: the AWS command line, Docker, kubectl and Ansible are there,
+
+159
+00:09:42,791 --> 00:09:47,443
+但不是 Dockerfile 要的那个 Ansible。不加引号的话
+but not the Ansible the Dockerfile asked for. Without quotes,
+
+160
+00:09:47,443 --> 00:09:51,205
+那条 pip install 里的大于号就是 shell 的重定向
+the greater than sign in that pip install is a shell redirect.
+
+161
+00:09:51,525 --> 00:09:56,191
+所以根目录里有一个名字以等号开头的文件
+So the root folder holds a file whose name starts with an equals sign:
+
+162
+00:09:56,191 --> 00:10:00,656
+pip 把日志写在那里，装的是旧版 Python 上的 Ansible 6
+pip wrote its log there, and installed Ansible 6, on an old Python.
+
+163
+00:10:00,976 --> 00:10:03,444
+加上引号就能修好，但先别动
+Quoting fixes it, but leave it for now:
+
+164
+00:10:03,444 --> 00:10:06,608
+provision 那个 playbook 依赖这个旧 Ansible
+the provision playbook relies on this old Ansible.
+
+165
+00:10:06,850 --> 00:10:08,563
+这就解释了那些警告
+That explains the warnings:
+
+166
+00:10:08,563 --> 00:10:12,559
+旧版 Python、一个不支持这个 Ansible 的 collection
+the old Python, a collection that doesn't support this Ansible,
+
+167
+00:10:12,559 --> 00:10:14,159
+还有一个旧的模块名
+and an old module name.
+
+168
+00:10:14,338 --> 00:10:15,938
+从现在起我们把它们隐藏掉
+We hide them from now on.
+
+169
+00:10:16,116 --> 00:10:21,513
+运行 aws sts get-caller-identity，结果是：安全令牌无效
+aws sts get-caller-identity: the security token is invalid.
+
+170
+00:10:21,833 --> 00:10:23,455
+我们的是占位符
+Ours is a placeholder.
+
+171
+00:10:23,775 --> 00:10:27,124
+用你的密钥，它会打印出你的账号 ID 和你的用户
+With your key, this prints your account ID and your user.
+
+172
+00:10:29,466 --> 00:10:31,319
+这张 inventory 图里先是 all
+The inventory graph shows all,
+
+173
+00:10:31,319 --> 00:10:33,263
+然后是 appserver，再下面是一台主机
+then appserver, then one host.
+
+174
+00:10:33,583 --> 00:10:36,058
+五个 playbook 也全都通过了语法检查
+And all five playbooks pass a syntax check.
+
+175
+00:10:36,378 --> 00:10:37,978
+工具箱容器准备好了
+The toolbox is ready.
+
+176
+00:10:39,017 --> 00:10:44,881
+第 4 步：在 ECR 里，在 us-east-1，创建三个空的私有仓库
+Step 4: in ECR, in us-east-1, create three empty private repositories:
+
+177
+00:10:44,881 --> 00:10:49,321
+向量数据库工具、API 服务和前端
+the vector DB tool, the API service and the frontend.
+
+178
+00:10:49,641 --> 00:10:52,564
+你的策略可以往里面 push，但不能创建它们
+Your policy can push to them, but not create them.
+
+179
+00:10:52,800 --> 00:10:56,640
+第一个 playbook 在 localhost 上运行，也就是工具箱容器里
+The first playbook runs on localhost, inside the toolbox.
+
+180
+00:10:56,960 --> 00:10:59,413
+第 1 个 task 让 Docker 登录 ECR
+Task 1 logs Docker in to ECR.
+
+181
+00:10:59,733 --> 00:11:03,318
+第 2 个 task 用日期打一个 tag，精确到秒
+Task 2 stamps a tag from the date, down to the second,
+
+182
+00:11:03,318 --> 00:11:06,240
+再把它 register 下来，让后面的 task 能用
+and registers it, so later tasks can use it.
+
+183
+00:11:06,484 --> 00:11:08,281
+然后它构建前端
+Then it builds the frontend
+
+184
+00:11:08,281 --> 00:11:11,744
+用的是 /frontend-react，也就是脚本挂载的那个目录
+from /frontend-react, the folder the script mounted,
+
+185
+00:11:11,744 --> 00:11:14,740
+用这个 tag 给 image 命名，再 push 上去
+names the image with that tag, and pushes it.
+
+186
+00:11:15,060 --> 00:11:18,111
+API 和向量数据库工具紧随其后
+The API and the vector DB tool follow.
+
+187
+00:11:18,431 --> 00:11:22,078
+最后，它把 tag 存进一个文件：.docker-tag
+Last, it saves the tag in a file: .docker-tag.
+
+188
+00:11:22,317 --> 00:11:28,205
+第 5 步：ansible-playbook deploy-docker-images.yml
+Step 5: ansible-playbook deploy-docker-images.yml -i inventory.yml.
+
+189
+00:11:28,525 --> 00:11:29,867
+暂停一下，自己跑一遍
+Pause and run it.
+
+190
+00:11:29,917 --> 00:11:35,336
+我们第一个真实的报错：在 ECR 登录这一步，安全令牌无效
+Our first real error: at the ECR login, the security token is invalid.
+
+191
+00:11:35,656 --> 00:11:40,669
+第二行是第一行导致的：docker login 收到的是一个空密码
+The second line follows from the first: docker login received an empty password.
+
+192
+00:11:40,989 --> 00:11:42,805
+这次的 recap 显示 failed 为 1
+The recap says failed, 1.
+
+193
+00:11:43,000 --> 00:11:44,983
+额外检查：一个 image 都没构建出来
+Extra: no image was built.
+
+194
+00:11:45,283 --> 00:11:48,462
+笔记本上仍然只有工具箱容器和它的基础 image
+The laptop still holds only the toolbox and its base.
+
+195
+00:11:48,700 --> 00:11:51,059
+用你的密钥，11 个 task 全部会运行
+With your keys, all 11 tasks run:
+
+196
+00:11:51,059 --> 00:11:54,275
+三个 image 在你的笔记本上构建好并 push 上去
+three images built on your laptop and pushed,
+
+197
+00:11:54,275 --> 00:11:56,849
+你的 tag 写进 .docker-tag
+and your tag written to .docker-tag.
+
+198
+00:11:57,169 --> 00:11:59,474
+找一下 failed 为 0，就在 recap 里
+Look for failed, zero, in the recap.
+
+199
+00:11:59,717 --> 00:12:02,682
+最后一个 task 是 docker system prune -a
+The last task is docker system prune -a.
+
+200
+00:12:03,002 --> 00:12:06,992
+没有 -f，它会提问，得不到回答，于是什么都不删
+Without -f, it asks, gets no answer, and removes nothing.
+
+201
+00:12:07,312 --> 00:12:10,420
+每次 push 都会在 ECR 里多存三个 image
+Every push stores three more images in ECR,
+
+202
+00:12:10,420 --> 00:12:12,517
+而且没有任何东西删除旧的 tag
+and nothing deletes old tags.
+
+203
+00:12:14,267 --> 00:12:19,408
+第 6 步从 localhost 出发，通过 AWS 的 API 创建服务器
+Step 6 creates the server from localhost, through the AWS API.
+
+204
+00:12:19,728 --> 00:12:25,542
+首先是一个安全组，port 22、80 和 443 对所有人开放
+First, a security group with ports 22, 80 and 443 open to anyone,
+
+205
+00:12:25,542 --> 00:12:27,600
+再加一块 50 GB 的磁盘
+and a 50 gigabyte disk.
+
+206
+00:12:27,920 --> 00:12:29,639
+然后是一个 t2.large 实例
+Then a t2.large instance
+
+207
+00:12:29,639 --> 00:12:33,723
+用的是你的密钥对，还自带两块 100 GB 的磁盘
+with your key pair and two 100 gigabyte disks of its own.
+
+208
+00:12:34,043 --> 00:12:37,286
+最后，它尝试把那块 50 GB 的磁盘附加上去
+Last, it tries to attach the 50 gigabyte disk.
+
+209
+00:12:37,534 --> 00:12:39,242
+从这里开始，就开始计费了
+From here, the meter runs:
+
+210
+00:12:39,242 --> 00:12:44,894
+实例按小时计费，直到你终止它，还有它的磁盘和公有 IP 地址
+the instance by the hour until you terminate it, its disks, and its public IP address.
+
+211
+00:12:45,934 --> 00:12:47,598
+暂停一下，跑第 6 步
+Pause and run step 6.
+
+212
+00:12:47,918 --> 00:12:50,616
+Gathering Facts 能通过，接着就失败了
+Gathering facts works, then it fails:
+
+213
+00:12:50,616 --> 00:12:55,065
+AWS 无法验证所提供的访问凭据
+AWS was not able to validate the provided access credentials.
+
+214
+00:12:55,385 --> 00:12:58,734
+用真实的密钥时，留意那个没测试过的附加 task
+With real keys, watch the untested attach task.
+
+215
+00:12:59,054 --> 00:13:03,512
+如果它失败了，服务器照样能用；清理的时候把那块备用磁盘删掉
+If it fails, the server still works; delete that spare disk when you clean up.
+
+216
+00:13:03,750 --> 00:13:06,203
+说明一点：这个标题写的是 GCP
+A kind note: the heading says GCP;
+
+217
+00:13:06,203 --> 00:13:09,999
+它是从 Google Cloud 版的 README 里带过来的。第 7 步
+it came over from the Google Cloud README. Step 7:
+
+218
+00:13:09,999 --> 00:13:16,390
+把你实例的公有 IP 地址从 EC2 控制台复制进 inventory
+copy the public IP address of your instance from the EC2 console into the inventory,
+
+219
+00:13:16,390 --> 00:13:18,064
+放在 appserver 的 hosts 下面
+under appserver hosts.
+
+220
+00:13:18,384 --> 00:13:20,176
+我们填的是一个占位名
+Ours is a placeholder name.
+
+221
+00:13:20,417 --> 00:13:23,937
+有一个小疏漏：第 9 步的换密钥现在就得做
+A small slip: the key switch of step 9 is needed now.
+
+222
+00:13:24,257 --> 00:13:27,414
+暂停一下，注释掉第 4 行，打开第 7 行
+Pause, comment out line 4 and turn on line 7.
+
+223
+00:13:27,734 --> 00:13:34,561
+它读的是 /secrets/ac215_2024.pem：必须正好是这个名字
+It reads /secrets/ac215_2024.pem: that exact name.
+
+224
+00:13:34,881 --> 00:13:37,484
+第 4 行的密钥不在你的工具箱容器里
+The key on line 4 isn't in your toolbox.
+
+225
+00:13:37,734 --> 00:13:39,170
+第 8 步：暂停一下
+Step 8: pause and run
+
+226
+00:13:39,170 --> 00:13:42,385
+运行 ansible-playbook deploy-provision-instance.yml
+ansible-playbook deploy-provision-instance.yml.
+
+227
+00:13:42,705 --> 00:13:43,705
+UNREACHABLE
+Unreachable:
+
+228
+00:13:43,705 --> 00:13:47,654
+Could not resolve hostname external IP，这是我们的占位符
+could not resolve hostname EXTERNAL_IP, our placeholder.
+
+229
+00:13:47,974 --> 00:13:51,707
+在你的服务器上，Ansible 以 ubuntu 身份登录，用你的密钥
+On yours, Ansible logs in as ubuntu, with your key.
+
+230
+00:13:52,027 --> 00:13:53,729
+主机密钥检查是关闭的
+Host key checking is off,
+
+231
+00:13:53,729 --> 00:13:56,998
+所以新服务器会被无条件信任：这是一个取舍
+so a new server is trusted blindly: a trade-off.
+
+232
+00:13:57,234 --> 00:14:00,891
+在真实的服务器上，38 个 task 会安装 Docker
+On a real server, 38 tasks install Docker,
+
+233
+00:14:00,891 --> 00:14:05,767
+然后格式化第二块磁盘，把它挂载到 /mnt/disk-1
+then format the second disk and mount it at /mnt/disk-1.
+
+234
+00:14:06,087 --> 00:14:11,641
+它们会安装 AWS 命令行，再用你的密钥运行 aws configure
+They install the AWS command line and run aws configure with your keys:
+
+235
+00:14:11,641 --> 00:14:14,770
+你的徽章现在在服务器上有了一份副本
+your badge now has a copy on the server.
+
+236
+00:14:16,517 --> 00:14:19,589
+第 9 步：换密钥，已经在第 8 步之前做过了
+Step 9: the key switch, done before step 8.
+
+237
+00:14:20,217 --> 00:14:22,436
+在你运行第 10 步之前，有两个额外步骤
+Two extras before you run step 10.
+
+238
+00:14:22,756 --> 00:14:26,042
+这个 playbook 用 latest 这个 tag 启动 Chroma
+The playbook starts Chroma at the tag latest:
+
+239
+00:14:26,042 --> 00:14:32,249
+录制时它是版本 1，对旧的 API 返回状态码 410 Gone
+at the time of recording, version 1, which answers the old API with status 410, gone.
+
+240
+00:14:35,150 --> 00:14:37,867
+客户端和这个 repo 的 compose 文件都
+The clients and the repo's compose file
+
+241
+00:14:37,867 --> 00:14:40,654
+pin 在一个更早的版本上，它返回 200
+pin an older version, which answers 200.
+
+242
+00:14:40,974 --> 00:14:44,708
+所以先把第 151 行改成那个版本
+So change deploy-setup-containers.yml:151 to that version first.
+
+243
+00:14:46,934 --> 00:14:49,872
+第二，加载器用的是 docker run -it
+Second, the loader uses docker run -it,
+
+244
+00:14:49,872 --> 00:14:52,886
+没有终端的话 Docker 会拒绝
+which Docker refuses without a terminal.
+
+245
+00:14:53,206 --> 00:14:56,634
+我们没法测试 Ansible 会不会提供一个终端
+We couldn't test whether Ansible provides one;
+
+246
+00:14:56,634 --> 00:14:58,795
+如果那个 task 失败了，就去掉 -it
+if that task fails, drop -it.
+
+247
+00:14:59,034 --> 00:15:02,618
+第 10 步：ansible-playbook deploy-setup-containers.yml
+Step 10: ansible-playbook deploy-setup-containers.yml.
+
+248
+00:15:02,938 --> 00:15:04,360
+暂停一下，自己跑一遍
+Pause and run it.
+
+249
+00:15:04,410 --> 00:15:07,133
+我们的是 UNREACHABLE，原因一样
+Ours is unreachable, for the same reason;
+
+250
+00:15:07,133 --> 00:15:09,658
+下面是它在真实服务器上做的事
+here is what it does on a real server.
+
+251
+00:15:09,900 --> 00:15:13,331
+它把你的密钥写进一个只有 root 能打开的文件
+It writes your keys to a file only root can open,
+
+252
+00:15:13,331 --> 00:15:15,292
+这是服务器上的第二份副本
+a second copy on the server,
+
+253
+00:15:15,292 --> 00:15:19,564
+再把它们作为环境变量交给 API 的 container
+and hands them to the API container as environment variables.
+
+254
+00:15:19,884 --> 00:15:22,783
+它创建一个 Docker 网络 appnetwork
+It creates a Docker network, appnetwork,
+
+255
+00:15:22,783 --> 00:15:26,626
+在数据磁盘上建两个目录，再登录 ECR
+and two folders on the data disk, and logs in to ECR.
+
+256
+00:15:26,867 --> 00:15:32,788
+然后它挑选 tag：工具箱容器环境里的 Docker tag 变量优先
+Then it picks the tag: a DOCKER_TAG variable in the toolbox's environment wins;
+
+257
+00:15:32,788 --> 00:15:35,187
+否则就用 .docker-tag 文件
+otherwise, the .docker-tag file.
+
+258
+00:15:35,507 --> 00:15:37,406
+从你的笔记本上跑，用的是这个文件
+From your laptop, it's the file.
+
+259
+00:15:37,650 --> 00:15:39,592
+它 pull 那三个 image
+It pulls the three images
+
+260
+00:15:39,592 --> 00:15:43,943
+前端起在 port 3000，Chroma 起在 8000
+and starts the frontend on port 3000 and Chroma on 8000.
+
+261
+00:15:44,263 --> 00:15:47,914
+一个一次性的 container 把向量数据库填好
+A throwaway container fills the vector database,
+
+262
+00:15:47,914 --> 00:15:50,045
+然后 API 在 9000 上启动
+then the API starts on 9000.
+
+263
+00:15:50,365 --> 00:15:52,776
+安全组让这些 port 保持关闭
+The security group keeps those ports shut.
+
+264
+00:15:53,017 --> 00:15:55,556
+第 11 步：在服务器上四处看看
+Step 11: look around on the server.
+
+265
+00:15:55,876 --> 00:15:58,785
+README 写 GCP console 的地方
+Where the README says GCP console,
+
+266
+00:15:58,785 --> 00:16:01,523
+你就以 ubuntu 身份用你的密钥 SSH 进去
+use SSH as ubuntu with your key,
+
+267
+00:16:01,523 --> 00:16:03,577
+或者用 EC2 Instance Connect
+or EC2 Instance Connect.
+
+268
+00:16:03,897 --> 00:16:07,204
+然后列出 container、跟踪日志，或者开一个 shell
+Then list containers, follow logs, or open a shell.
+
+269
+00:16:07,450 --> 00:16:10,031
+这是它们在我们笔记本上的样子，作为替身
+Here they are on our laptop, as a stand-in.
+
+270
+00:16:10,351 --> 00:16:13,253
+表格里 image 那一列带着 tag：就在那里检查
+The image column carries the tag: check it there.
+
+271
+00:16:13,573 --> 00:16:16,858
+其中 nginx 那几行要等下一步做完才管用
+The nginx lines work only after the next step.
+
+272
+00:16:18,600 --> 00:16:25,171
+课上的路由：一个地址，/ 交给前端，/api/ 交给 API
+The lecture's routing: one address, / to the frontend, /api/ to the API.
+
+273
+00:16:25,491 --> 00:16:28,010
+这里同样的结构放在一台机器上
+Here the same shape sits on one machine,
+
+274
+00:16:28,010 --> 00:16:30,717
+Ingress 变成了一个 nginx container
+and the ingress becomes an nginx container.
+
+275
+00:16:30,967 --> 00:16:35,511
+第 12 步说要创建 nginx.conf；它其实已经在 repo 里了
+Step 12 says create nginx.conf; it's already in the repo.
+
+276
+00:16:35,831 --> 00:16:37,538
+它监听 port 80
+It listens on port 80.
+
+277
+00:16:37,858 --> 00:16:43,059
+以 /api/ 开头的路径交给 9000 上的 API 服务
+Paths that start with /api/ go to the API service on 9000;
+
+278
+00:16:43,059 --> 00:16:47,095
+其余的都交给 3000 上的前端
+everything else goes to the frontend on 3000.
+
+279
+00:16:47,333 --> 00:16:52,112
+预测一下：浏览器向 nginx 请求 /api/newsletters
+Predict: the browser asks nginx for /api/newsletters.
+
+280
+00:16:52,432 --> 00:16:54,992
+API 服务收到的是哪个路径？
+Which path does the API service receive?
+
+281
+00:16:55,312 --> 00:16:57,659
+看第 37 行的最末尾
+Look at the very end of line 37.
+
+282
+00:17:06,500 --> 00:17:08,100
+/newsletters
+/newsletters.
+
+283
+00:17:08,164 --> 00:17:12,772
+Port 9000 后面那个结尾斜杠，会替换掉匹配到的前缀
+The trailing slash after port 9000 replaces the matched prefix.
+
+284
+00:17:13,092 --> 00:17:15,980
+我们笔记本上的替身证实了这一点
+Our stand-ins on the laptop confirm it,
+
+285
+00:17:15,980 --> 00:17:19,535
+而不带最后那个斜杠的 /api 会得到一个重定向
+and /api without its last slash gets a redirect.
+
+286
+00:17:21,433 --> 00:17:24,486
+前端在同一个主机上调用 /api
+The frontend calls /api on the same host,
+
+287
+00:17:24,486 --> 00:17:28,879
+而 API 注册路由时不带这个前缀：两边对得上
+and the API mounts its routes without the prefix: they fit.
+
+288
+00:17:29,233 --> 00:17:30,819
+第 13 步：暂停一下
+Step 13: pause and run
+
+289
+00:17:30,819 --> 00:17:33,990
+运行 ansible-playbook deploy-setup-webserver.yml
+ansible-playbook deploy-setup-webserver.yml.
+
+290
+00:17:34,310 --> 00:17:35,910
+又是 UNREACHABLE
+Unreachable again.
+
+291
+00:17:35,974 --> 00:17:39,087
+在真实的服务器上，它会拷贝配置
+On a real server, it copies the config,
+
+292
+00:17:39,087 --> 00:17:43,079
+在 port 80 和 443 上启动 nginx，再重启它
+starts nginx on ports 80 and 443, and restarts it.
+
+293
+00:17:43,317 --> 00:17:46,794
+第 14 步：在浏览器里打开你服务器的地址
+Step 14: open your server's address in a browser.
+
+294
+00:17:47,114 --> 00:17:48,992
+真正干活的只有 port 80
+Only port 80 does the work.
+
+295
+00:17:49,312 --> 00:17:53,046
+Port 443 是开着的，也转发给了 nginx
+Port 443 is open and forwarded to nginx,
+
+296
+00:17:53,046 --> 00:17:57,247
+但 nginx 在那里什么都不提供：还没有 HTTPS
+but nginx serves nothing there: no HTTPS yet.
+
+297
+00:17:57,483 --> 00:18:01,664
+这就是第 1 部分：大约十几条命令和五个 playbook，全部手动
+That's part 1: about a dozen commands and five playbooks, by hand.
+
+298
+00:18:01,984 --> 00:18:04,991
+如果你就停在这里，那就终止实例
+If you stop here, terminate the instance
+
+299
+00:18:04,991 --> 00:18:09,427
+删掉它那个 50 GB 的 volume，在 EC2 控制台里今天就做
+and delete its 50 gigabyte volume in the EC2 console today:
+
+300
+00:18:09,427 --> 00:18:13,035
+README 的删除步骤会失败，第 2 部分会讲到
+the README's delete step fails, as part 2 shows.
+
+301
+00:18:13,355 --> 00:18:16,086
+接下来，由一条 commit 信息来完成重新部署
+Next, a commit message does the redeploy.

@@ -1,1097 +1,604 @@
-# L23 · Final Deployment and Review: CI/CD (cheese-app-v4) — tutorial digest
+# L23 · Final Deployment and Review (GCP lecture, AWS tutorial) — tutorial digest
 
-- **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166048/. I could not open Ed. The lecture-to-tutorial mapping comes from the course-site source, `tutorials_demo.md:288-294`, which links only the v4 README anchor `#cheese-app---automation` (GCP) plus an AWS variant (`cheese-app-aws`, "No K8s"). That AWS repo is not in the local clones, so it is not covered here.
-- **Primary repo:** `dlops-io/cheese-app-v4`, branch `main`, commit `033f18713b9e1e7985a3080e85edab3ff01cefef`, committed 2025-12-02 14:13:03 -0500 (message "Test pipeline /run-ml-pipeline"). The branch has 78 commits.
-  - The other branch, `origin/pipenv`, is at `31f38b1417f75350dc7c0cd5db5562df8c138744` (2025-04-29 19:34:54 -0400). It is the older Pipenv + Ansible version of the same tutorial. It is not used by this lecture; I cite it only for history.
-- **Context repos (diff base and upstream pieces):**
-  - `dlops-io/cheese-app-v3`, `main`, `3ecef56fea879ac480d260c0906cd95baf05179a`, 2025-11-28 16:00:06 -0500. This is the app you deployed with Pulumi in L20 and on GKE in L22, and the base of the v3→v4 diff in §7.
-  - `dlops-io/ml-workflow`, `main`, `972ffbb5cb148f9fa6256e7137300dff2b174e2e`, 2025-10-23 10:28:44 -0400 (L15). v4's `src/workflow/` is copied from it, and so is the trainer package the pipeline's training step expects in GCS.
-  - `dlops-io/cheese-app-ci-cd`, `main`, `b8458ff0cc1898700b32a873b4665f43f50df71e`, 2025-11-13 13:59:04 -0500 (L21). It holds the CI workflow, used for comparison.
-- **README sections this lecture covers.** The README is a single page, `README.md:1-208`, and it is all in scope.
-  - [`#cheese-app---automation`](https://github.com/dlops-io/cheese-app-v4#cheese-app---automation) (1-19)
-  - `#setup-environments` (21-70)
-  - `#ensure-kubernetes-cluster-is-up` (72-129)
-  - `#setup-github-action-workflow-credentials` (133-145)
-  - `#continuous-integration-and-continuous-deployment-cicd` (147-157)
-  - `#frontend--backend-changes` (160-194)
-  - `#ml-component-changes` (197-204)
+- **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166048/ (not opened; the lecture side is `SLIDES.md`).
+- **Series decision (Conny, issue #125):** L23 follows the **AWS** variant of the tutorial, exactly as L15 did (`videos/ac215-l15-vertex-ml-workflows/`). The lecture slides speak Google Cloud (GKE, Artifact Registry, Vertex AI, a service-account key in a GitHub secret); they decide the *concepts*. The AWS repo and our captures decide what the video *shows*. Section 7 maps one vocabulary onto the other. The course site lists this repo for L23 as the AWS variant, marked "No K8s" (source: the coordinator's lecture entry and the previous digest's citation of the course-site file `tutorials_demo.md:288-294`; that file is not in this sandbox, so the citation was not re-checked).
+- **Primary repo:** `dlops-io/cheese-app-aws`, branch `main`, commit `5950118b0ed97c12c799920846d3eb70b1a47385`, committed 2024-11-21 18:27:08 -0500 (message "cleanup"; it deletes 26 lines from `src/deployment/deploy-setup-containers.yml`). The branch has 39 commits; the 20 commits that touch the workflow file include a run of eleven `/run-deploy-app` commits on 2024-11-21, i.e. the workflow was debugged by pushing.
+  - Re-checked with `git ls-remote` on 2026-11-08: `HEAD` = `refs/heads/main` = `5950118`. **No other branches, no tags.**
+  - The repo is a year older than the GCP version (`cheese-app-v4` is from 2025-12). Several things it installs at build time are unpinned (see §6), so "it worked in 2024" and "it builds today" are different claims; this digest says which one each line makes.
+- **Context repo (the slides' GCP version):** `dlops-io/cheese-app-v4`, `main`, `033f18713b9e1e7985a3080e85edab3ff01cefef`, 2025-12-02 14:13:03 -0500 ("Test pipeline /run-ml-pipeline"). `git ls-remote` on 2026-11-08: `main` = `HEAD` = `033f187`; one other branch, `pipenv` @ `31f38b1`. Used only to explain slides 17–20 (§7); nothing in the video's walkthrough comes from it.
+- **README sections covered:** the whole of `cheese-app-aws/README.md` (148 lines), top to bottom: "Cheese App AWS" → "Deployment to AWS" (`:3-5`) → "API's to enable in AWS before you begin" (`:7-13`, empty) → "Setup AWS Keys for Authentication" (`:15-60`) → "Create AWS EC2 Key Pair" (`:62-64`) → "Deployment Setup" (`:67-72`) → "Deployment Steps" (`:74-77`) → "Create Empty ECR Repositories" (`:79-85`) → "Build and Push Docker Containers to AWS ECR" (`:87-90`) → "Create Compute Instance (VM) Server in GCP" (`:92-97`) → "Provision Compute Instance in GCP" (`:99-103`) → "Setup Docker Containers in the Compute Instance" (`:105-132`) → "Configure Nginx file for Web Server" (`:136-137`) → "Setup Webserver on the Compute Instance" (`:139-143`) → "Delete the Compute Instance / Persistent disk" (`:145-148`). The README never mentions the GitHub Actions workflow; the CI/CD half of this lecture lives only in `.github/workflows/ci_cd_aws.yml` (131 lines), which this digest walks as its own Part.
 - **Colab notebooks:** none.
-- **Files read in full:**
-  - Both workflows (`.github/workflows/app-ci-cd-gcp.yml`, `ml-ci-cd-gcp.yml`).
-  - Everything in `src/deployment/` except the v3 carry-overs `deploy_single_vm/`, `nginx-conf/`, `emoji.yaml`, `visualizer.yaml`, and `uv.lock`, which I only listed: `Dockerfile`, `docker-shell.sh`, `docker-entrypoint.sh`, `deploy-k8s-update.sh`, `deploy-ml-images.sh`, `docker_config.json`, `dockerignore`, `.gitignore`, `pyproject.toml`, `deploy_images/*`, `deploy_images_ml/*`, `deploy_k8s/*`.
-  - All of `src/workflow/` (`Dockerfile`, `docker-shell.sh`, `docker-entrypoint.sh`, `cli.py`, `model.py`, `pyproject.toml`; I grepped the compiled `*.yaml`).
-  - `src/data-collector/*` and `src/data-processor/*`: the Dockerfiles, entrypoints and shells, and the CLIs. I scanned the helpers (`downloader.py`, `cleanser.py`, `tfrecords.py`).
-  - `src/api-service/` (`Dockerfile`, `docker-entrypoint.sh`, `docker-shell.sh`, `api/service.py`; I grepped the routers and utils).
-  - `src/frontend-react/` (`Dockerfile`, `.env.*`, `Common.js`, `Header.jsx`, `Footer.jsx`, `DataService.js`).
-  - `src/vector-db/` (entrypoint, `docker-compose.yml`, and the `load`/`download` parts of `cli.py`).
-  - `images/ci-cd.png`.
-  - The full v4 git log, the last ten commits' diffs, and the v3→v4 tree diff.
-- **How claims were checked:**
-  - Every `path:line` below was checked with `sed -n`/`grep -n`. Paths without a repo prefix are relative to `cheese-app-v4/`.
-  - Every code excerpt in §5 was compared byte-for-byte against the file by a script.
-  - I did **not** run any repo Dockerfile, script, Pulumi program or workflow. Claims I reasoned out but could not run are marked *(reasoned, not run)*.
-  - The bash quoting behaviour in §6 and Exercise 3 was tested with my own two-line shell snippet, not the repo's files.
+- **Files read in full:** `README.md`; `.github/workflows/ci_cd_aws.yml`; everything in `src/deployment/` (`Dockerfile`, `docker-shell.sh`, `docker-entrypoint.sh`, `docker-entrypoint_working.sh`, `inventory.yml`, `ansible.cfg`, `Pipfile`, `.docker-tag`, the five `deploy-*.yml` playbooks, `nginx-conf/nginx/nginx.conf`); `src/api-service/` (`Dockerfile`, `docker-entrypoint.sh`, `docker-shell.sh`, `Pipfile`, `api/service.py`, the router imports, `api/utils/llm_rag_utils.py`; the other utils grepped); `src/vector-db/` (`Dockerfile`, `docker-entrypoint.sh`, `docker-shell.sh`, `docker-compose.yml`, the setup, `download()`, `load()` and argparse parts of `cli.py`); `src/frontend-react/` (`Dockerfile`, `Dockerfile.dev`, `.env.*`, `next.config.js`, `Common.js`, the `DataService.js` URL lines, `package.json`).
+- **How claims were checked (2026-11-08):**
+  - Every `path:line` below was checked with `sed -n`/`cat -n`/`grep -n` at `5950118`. Paths are relative to `cheese-app-aws/` unless prefixed `cheese-app-v4/`.
+  - The deployment image was built here from the tutorial's own `src/deployment/Dockerfile` (unchanged copy, in a scratch folder), on a capture-only `ubuntu:20.04` re-tag that adds the sandbox proxy's CA and https apt sources (as in L15). The unchanged build **fails** in this sandbox at the Helm step (§6 G3); a second build from a capture-only copy with the two Helm lines removed succeeded and is what the version numbers below come from.
+  - Inside that image: `ansible --version`, `ansible-galaxy collection list`, `ansible-doc` for every module the playbooks use, `ansible-playbook --syntax-check` for all five playbooks (all pass), `ansible-playbook --list-tasks`, `ansible-inventory --graph`, and `ansible-playbook deploy-docker-images.yml`, `deploy-create-instance.yml … cluster_state=present` and `… cluster_state=absent` run with **AWS's documented dummy keys** (`AKIAIOSFODNN7EXAMPLE` / `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`) and `AWS_ACCOUNT_ID=YOUR_ACCOUNT_ID`, each up to its first real error. No Docker socket was mounted into these runs.
+  - `docker-shell.sh:1-21` was run under `dash` (`sh`) and `bash` in `ubuntu:20.04` against a placeholder CSV holding the dummy keys.
+  - The vector store's download (`https://github.com/dlops-io/datasets/releases/download/v4.0/cheese-books-embeddings.zip`, 22,925,732 bytes) was downloaded and inspected as data (zip listing, one JSON line), never executed.
+  - `chromadb/chroma:latest` (pulled 2026-11-08; `/api/v2/version` answers `"1.0.0"`) was run for one minute to probe `/api/v1/heartbeat` and `/api/v2/heartbeat`, then removed.
+  - Not built: the api-service image (TensorFlow 2.17, large) and the frontend image. Claims about them are from the files and marked *(read, not run)*.
+  - All capture images and build cache were deleted afterwards.
+
+**Masking rule for every frame and file.** The repo commits several things that must never appear unmasked:
+- `src/deployment/docker-shell.sh:17` hard-codes the tutorial author's 12-digit AWS account id → show `export AWS_ACCOUNT_ID="YOUR_ACCOUNT_ID"`.
+- `src/deployment/inventory.yml:30` lists the author's server's public IP → show `<EXTERNAL_IP>:`.
+- `inventory.yml:24` and `src/frontend-react/.env.production:3` (and `.env.development:5`) commit `NEXTAUTH_SECRET` values → show `<nextauth-secret>`.
+- Access keys only ever as `<aws-access-key-id>` / `<aws-secret-access-key>`, or AWS's own documented dummy pair, labelled as such. ECR registry hosts as `YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com`.
+- The repo's commit authors are staff: never show `git log` author lines.
 
 ---
 
 ## 1. What you build
 
-v3 left you with the full Formaggio cheese app running on a GKE cluster: a Next.js frontend, a FastAPI API, a ChromaDB vector DB and its loader Job, behind an Ingress. You deployed it by hand by running `pulumi up` inside the `deployment` container on your laptop. v4 adds the last layer of the course: **a `git push` to `main` becomes the deploy button.**
+The cheese app you have been building all term (Next.js frontend, FastAPI API, ChromaDB vector DB plus its loader) goes live on **one AWS virtual machine**, and two kinds of automation take over from your hands:
 
-Two GitHub Actions workflows listen to every push to `main`. They read the **commit message** to decide what to do:
+**Part 1 — Ansible from your laptop (the README).** Everything runs inside one toolbox container, `cheese-app-deployment` (Ubuntu 20.04 + AWS CLI v2 + Docker CLI + kubectl + Ansible), started by `sh docker-shell.sh` in `src/deployment/`. From its shell you run five Ansible playbooks against an inventory file:
 
-- **`/deploy-app` in the message** (`app-ci-cd-gcp.yml:9`): a fresh GitHub-hosted Ubuntu VM checks out the repo and authenticates to GCP with a service-account key stored as a repository secret. It builds the same `deployment` toolbox container you use locally and runs `deploy-k8s-update.sh` inside it. That script runs `pulumi up` twice:
-  1. In `deploy_images`, it rebuilds the API, frontend and vector-db-cli images, tags them with a fresh timestamp, and pushes them to Artifact Registry.
-  2. In `deploy_k8s`, it reads those new tags from the shared Pulumi state and patches the Kubernetes Deployments. Kubernetes then rolls the pods over to the new images.
-- **`/run-…` in the message** (`ml-ci-cd-gcp.yml:9`): another fresh VM builds the `workflow` container (L15's Kubeflow Pipelines (KFP) CLI). Depending on the exact keyword, it submits the data-collector pipeline, the data-processor pipeline, or the full collect → process → train → deploy pipeline to **Vertex AI Pipelines**.
+| README step | Playbook | Runs on | What it does |
+| --- | --- | --- | --- |
+| Build and push (`README.md:89`) | `deploy-docker-images.yml` | `localhost` (the toolbox, using your laptop's Docker daemon through the mounted socket) | logs in to ECR, builds `cheese-app-frontend-react`, `cheese-app-api-service`, `cheese-app-vector-db-cli`, tags each `:<YYYYmmddHHMMSS>`, pushes to ECR, writes the tag to `.docker-tag` |
+| Create instance (`:94`) | `deploy-create-instance.yml` with `cluster_state=present` | `localhost` (AWS API calls through boto3) | security group (22, 80, 443 open to the world), a 50 GB gp3 EBS volume, a `t2.large` EC2 instance from an Ubuntu AMI with your key pair, waits for SSH |
+| Provision (`:102`) | `deploy-provision-instance.yml` | `appserver` over SSH, `become: true` | installs Docker CE, mounts the data disk at `/mnt/disk-1`, installs AWS CLI v2, writes your access keys with `aws configure` |
+| Setup containers (`:116`) | `deploy-setup-containers.yml` | `appserver` | writes `/srv/secrets/aws-credentials`, creates Docker network `appnetwork`, logs the VM in to ECR, pulls the three images at the saved tag, starts `frontend` (3000), `vector-db` (`chromadb/chroma:latest`, 8000), runs the vector-db CLI once to download and load the embeddings, starts `api-service` (9000) |
+| Setup webserver (`:141`) | `deploy-setup-webserver.yml` | `appserver` | copies `nginx-conf/nginx/` to `/conf`, starts `nginx:stable` on 80/443 with `/api/` → `api-service:9000`, `/` → `frontend:3000` |
+| Delete (`:147`) | `deploy-create-instance.yml` with `cluster_state=absent` | `localhost` | meant to tear down; **fails before any AWS call** at this commit (§6 G9) |
 
-The README itself admits (`README.md:157`) that only the CD part is implemented: no tests run in these workflows. The deployed app is served at `https://<static-ip>.sslip.io`, not at v3's `http://<nginx-ip>.sslip.io`, because v4's `Pulumi.dev.yaml` turns on the HTTPS load balancer (`deploy_k8s/Pulumi.dev.yaml:7`).
+Then you open `http://<EXTERNAL_IP>/` (`README.md:143`).
+
+**Part 2 — GitHub Actions does the redeploy (`.github/workflows/ci_cd_aws.yml`, not in the README).** On every push to `main` whose commit message contains `/run-`, a fresh GitHub-hosted Ubuntu runner checks out the repo, logs in to AWS with three repository secrets, builds the three app images with plain `docker build`, tags them with a fresh timestamp and pushes them to ECR. If the message also contains `/run-deploy-app`, it builds the same `cheese-app-deployment` toolbox image and runs two of the playbooks inside it: `deploy-setup-containers.yml` (with the new tag) and `deploy-setup-webserver.yml`. The VM must already exist and be provisioned, and its IP must already be committed in `inventory.yml`: CI never creates or provisions the machine.
+
+There are **no tests** anywhere in the workflow: like the GCP version (`cheese-app-v4/README.md:157`, "The CI part is not implemented in this tutorial"), this is continuous *deployment* only, even though the workflow is named "Continuous Integration and Continuous Deployment" (`ci_cd_aws.yml:1`).
 
 ```
- YOUR LAPTOP (bootstrap once; edit code; git push)                 GITHUB  <you>/cheese-app-v4
- +---------------------------------------------+   git push main   +------------------------------------------+
- | cheese-app-v4/src/{api-service,frontend-... }| ----------------> | .github/workflows/app-ci-cd-gcp.yml      |
- | ../secrets/deployment.json  (never in git)  |                   | .github/workflows/ml-ci-cd-gcp.yml       |
- | sh docker-shell.sh -> cheese-app-deployment |                   | Actions secret GOOGLE_APPLICATION_       |
- |   (pulumi up by hand: first images+cluster) |                   |   CREDENTIALS = contents of deployment.json|
- +---------------------------------------------+                   +------------------------------------------+
-                                                     msg contains "/deploy-app" |        | msg contains "/run-"
-                     +----------------------------------------------------------+        +---------------------+
-                     v                                                                                         v
- RUNNER VM A (ubuntu-latest, fresh per run)                               RUNNER VM B (ubuntu-latest, fresh per run)
- +------------------------------------------------------------+          +----------------------------------------------+
- | auth@v1: writes key file, exports GOOGLE_APPLICATION_CRED. |          | auth@v1 (same secret)                        |
- | docker build src/deployment -> cheese-app-deployment       |          | docker build src/workflow -> cheese-app-workflow|
- | docker run ... cheese-app-deployment deploy-k8s-update.sh  |          | docker run ... python cli.py --data_collector |
- |  +- container (root): gcloud, pulumi, kubectl, uv ------+  |          |                 | --data_processor | --pipeline|
- |  | 1) deploy_images: pulumi up --> /var/run/docker.sock |  |          |  reads deploy-images-ml/dev.json from GCS     |
- |  |    builds 3 linux/amd64 images on the runner daemon  |  |          |  compiles KFP YAML, aip.PipelineJob.run()     |
- |  | 2) deploy_k8s:    pulumi up --> GKE API server       |  |          +----------------------------------------------+
- |  +-----------------------------------------------------+  |               | read state              | submit (runs as
- +------------------------------------------------------------+               |                         v  ml-workflow SA)
-        | push :<YYYYmmddHHMMSS>     | read+write state                       |     VERTEX AI PIPELINES
-        v                            v                                        |     Data Collector  -> gs://<bkt>/raw.zip
- ARTIFACT REGISTRY             GCS gs://<proj>-pulumi-state-bucket <----------+     Data Processor  -> gs://<bkt>/clean.zip
- us-docker.pkg.dev/<proj>/      .pulumi/stacks/deploy-images/dev.json                Model Training  (trainer tar from
- cheese-app-repository/         .pulumi/stacks/deploy-images-ml/dev.json               gs://cheese-app-trainer-code) -> gs://<bkt>/model
-  cheese-app-api-service:<ts>   .pulumi/stacks/deploy-k8s/dev.json                   Model Deploy -> Model Registry + NEW Endpoint
-  cheese-app-frontend-react:<ts>                                                       (n1-standard-4, 1 replica, billed 24/7)
-  cheese-app-vector-db-cli:<ts>
-  cheese-app-data-{collector,processor}:<ts>  (built only by deploy-ml-images.sh, by hand)
-        | image pull (nodes run as the deployment SA)
-        v
- GKE cheese-app-cluster (regional us-central1; 1-2 n2d-standard-2 nodes in us-central1-a; private nodes + Cloud NAT)
- namespace cheese-app-namespace
-   Deployment frontend  (Next.js :3000)                     <- Service frontend :3000 (ClusterIP)
-   Deployment api       (FastAPI :9000, PVC persistent-pvc 5Gi at /persistent) <- Service api :9000 (NEG + BackendConfig)
-   Deployment vector-db (chromadb/chroma :8000, PVC chromadb-pvc 10Gi)         <- Service vector-db :8000
-   Job vector-db-loader (cli.py --download --load --chunk_type recursive-split) --> vector-db:8000
-   Ingress cheese-app-ingress (class gce = Google HTTPS LB, global static IP, Google-managed cert, HTTP->HTTPS)
-       /            -> frontend:3000
-       /api-service -> api:9000      (api mounts its routes under ROOT_PATH=/api-service)
-        ^
-        |  https://<static-ip>.sslip.io
-     BROWSER  (footer shows "Frontend version" from the bundle + "API version" from GET /api-service/status)
-
- api pods --Workload Identity: KSA api-ksa -> GSA gcp-service--> Vertex AI Gemini (chat, RAG, agent)
- api pods --HTTPS--> github.com/dlops-io/models release v4.0 (CNN .keras)   <-- NOT the Vertex endpoint the ML lane creates
+ YOUR LAPTOP                                             GITHUB  <you>/cheese-app-aws
+ +---------------------------------------------+         +-------------------------------------------+
+ | secrets/  (CSV access keys, .pem key pair)  |  push   | .github/workflows/ci_cd_aws.yml           |
+ | src/deployment$ sh docker-shell.sh          | ------> | secrets: AWS_ACCESS_KEY_ID,               |
+ |  -> cheese-app-deployment (toolbox)         |  main   |   AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT_ID,  |
+ |     ansible-playbook deploy-*.yml           |         |   AWS_SSH_KEY                             |
+ +----------------------+----------------------+         +---------------------+---------------------+
+        build+push      |  create, provision,                 msg has "/run-"  | build+push (docker)
+        (laptop docker) |  setup over SSH                     "/run-deploy-app"| setup-containers +
+                        v                                                      v setup-webserver
+ +--------------------------------------------------------------------------------------------------+
+ | AWS us-east-1                                                                                    |
+ |  ECR: cheese-app-frontend-react / cheese-app-api-service / cheese-app-vector-db-cli  :<timestamp>|
+ |  EC2 t2.large "cheese-app-demo" (Ubuntu), security group 22/80/443, EBS at /mnt/disk-1           |
+ |    docker network "appnetwork":                                                                  |
+ |      nginx :80 --/api/--> api-service :9000 --> vector-db :8000 (Chroma)                         |
+ |            \----/-----> frontend :3000                       Bedrock (Claude, Titan) <- api      |
+ +--------------------------------------------------------------------------------------------------+
+                                     ^ browser: http://<EXTERNAL_IP>/
 ```
-
----
 
 ## 2. Prerequisites and costs
 
 ### Accounts and local installs
-- A GCP project with billing. You need permission to create service accounts and keys.
-- A GitHub account and **your own repository** containing cheese-app-v4. GitHub only runs workflow files that sit in `.github/workflows/` at the **root** of the repository that receives the push.
-  - So if you keep all course material in one umbrella repo (for example `MLOps_Learning/` with `cheese-app-v4/` as a subfolder), these workflows will never fire.
-  - In that case, either give cheese-app-v4 its own repo, or move the two YAML files to the umbrella repo's root. Then change every `${{ github.workspace }}/src/...` to `${{ github.workspace }}/cheese-app-v4/src/...` (`app-ci-cd-gcp.yml:34,41-47`; `ml-ci-cd-gcp.yml:34,41-44,61-64,81-84`).
-  - Also in that layout, `src/deployment/docker-shell.sh:9`'s `$(pwd)/../../../secrets/` resolves to `<umbrella>/secrets/`, which is **inside** the umbrella repo. Add `secrets/` to the umbrella repo's `.gitignore` before you put `deployment.json` there.
-  - If you **fork** `dlops-io/cheese-app-v4` instead, Actions are disabled on forks until you enable them on the fork's Actions tab.
-- Docker Desktop and git locally. On Apple Silicon, `docker-shell.sh` builds the toolbox for `linux/amd64` (`src/deployment/docker-shell.sh:32`), so it runs under emulation: slow but correct.
-- Optional: a domain name (`README.md:105-123`). Without one, the app uses `<ip>.sslip.io`.
+- An AWS account with billing enabled, console access, and Amazon Bedrock model access in `us-east-1` for the models the API calls (`anthropic.claude-3-5-sonnet-20240620-v1:0` in `api/utils/llm_utils.py:35`, `anthropic.claude-3-sonnet-20240229-v1:0` in `llm_rag_utils.py:22` and `llm_cnn_utils.py:47`, `amazon.titan-embed-text-v1` in `llm_rag_utils.py:21`). The README does not mention Bedrock model access at all (open question in §10).
+- Docker on the laptop. Nothing else: AWS CLI, Ansible and kubectl live in the toolbox image.
+- A GitHub repo of your own (a fork or a copy) for Part 2, with Actions enabled.
 
-### GCP APIs (README.md:31-38)
-Vertex AI, Compute Engine, Service Usage, Cloud Resource Manager, Artifact Registry and Kubernetes Engine.
+### AWS services and the empty "APIs" section
+`README.md:7-13` has a heading "API's to enable in AWS before you begin" whose list (ECR, IAM, VPC, Security Groups, Load Balancer) is inside an HTML comment, so it renders as an empty section. AWS has no per-API enablement step like GCP; the video can say so in one sentence and move on. No load balancer is used anywhere in the code.
 
-*(Reasoned, not run.)* The Workload Identity binding (`deploy_k8s/create_cluster.py:184-189`) calls the IAM API. If `pulumi up` reports `SERVICE_DISABLED` for `iam.googleapis.com`, enable it.
+### Identity: one IAM user, one key pair
+- **Customer-managed policy `CheeseAppECRPolicy`** (`README.md:19-46`): `sts:GetCallerIdentity` plus nine ECR actions (`GetAuthorizationToken`, `BatchCheckLayerAvailability`, `PutImage`, `InitiateLayerUpload`, `UploadLayerPart`, `CompleteLayerUpload`, `ListImages`, `BatchGetImage`, `GetDownloadUrlForLayer`) on `"Resource": "*"`. It does **not** include `ecr:CreateRepository`; that is why the README has you create the three repositories in the console (`:79-85`).
+- **IAM user `deployment-ac215-user`** (`:48-50`) with AWS-managed policies `AmazonS3FullAccess`, `AmazonEC2FullAccess`, `AmazonBedrockFullAccess`, plus `CheeseAppECRPolicy`.
+- **Access key** for "Third Party Service" (`:52`), downloaded as `deployment-ac215-user_accessKeys.csv` and saved in a `secrets/` folder next to the clone (`:54-60`). `docker-shell.sh:13` reads line 2 of that CSV as `AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY`.
+- **EC2 key pair** (`:64`): the README names it `cheese-app-ac215-key-pair`; the code expects a key pair named `ac215_2024` (`inventory.yml:16`, with the comment `## Change this`) and a private key file `ac215_2024.pem` (`inventory.yml:4`, `:7`; `docker-shell.sh:27`; `ci_cd_aws.yml:81`). Pick one name and use it in all three places (§6 G6).
+- The same access key does everything: it pushes images from the laptop and from CI, creates the EC2 resources, is written onto the VM twice (`aws configure` in `deploy-provision-instance.yml:288-292`, and `/srv/secrets/aws-credentials` in `deploy-setup-containers.yml:36-44`), and is passed as environment variables into the api-service and vector-db containers (`deploy-setup-containers.yml:165-168`, `:184-186`), which use it to call Bedrock. See C6.
 
-### Service accounts, keys and secrets: where the code expects them
-
-| Identity | Who uses it | Roles | Where the code expects it |
-|---|---|---|---|
-| `deployment` | You, inside the `deployment` container; **and** both GitHub workflows; **and** the GKE nodes (`deploy_k8s/create_cluster.py:50`) | Listed in `README.md:44-51`: Compute Admin, Compute OS Login, Container Registry Service Agent, Kubernetes Engine Admin, Service Account User, Storage Admin, Vertex AI Administrator. v3 listed **Artifact Registry Administrator** instead of Container Registry Service Agent (`cheese-app-v3/README.md:243`); keep that role too (see §6 #9). | Local: key at `<parent of cheese-app-v4>/secrets/deployment.json`. `docker-shell.sh:9` sets `SECRETS_DIR=$(pwd)/../../../secrets/`, `:38` mounts it at `/secrets`, and `:14` sets `GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json`. CI: an Actions repository secret named exactly `GOOGLE_APPLICATION_CREDENTIALS` whose value is the whole JSON (`README.md:141-145`; `app-ci-cd-gcp.yml:21`, `ml-ci-cd-gcp.yml:21`). |
-| `gcp-service` | API pods and the vector-db loader Job, via Workload Identity (`create_cluster.py:150-189`, `setup_containers.py:209,261`) | **Not in the v4 README.** v3 lists Storage Object Viewer, Vertex AI Administrator, Artifact Registry Reader (`cheese-app-v3/README.md:251-256`). | Its email goes in `deploy_k8s/Pulumi.dev.yaml:6` (`security:gcp_ksa_service_account_email`). No key file is needed in the cluster. |
-| `ml-workflow` | Vertex AI pipeline steps run **as** it (`src/workflow/cli.py:110,157,316`) | **Not in the v4 README.** It comes from L15 (`ml-workflow` README). | Email in `GCS_SERVICE_ACCOUNT` (`ml-ci-cd-gcp.yml:51,71,91`; `docker-shell.sh:17`). The submitter (the `deployment` SA in CI) needs `actAs` on it; that is what "Service Account User" provides. |
-
-Also note `src/deployment/docker-shell.sh:10,39`, which mounts `secrets/.ssh` read-only into the container. It is a leftover from the single-VM tutorial and is not needed for GKE.
-
-### Buckets and artifacts that must already exist
-- **Pulumi state bucket** `gs://<GCP_PROJECT>-pulumi-state-bucket`. It is created automatically by `src/deployment/docker-entrypoint.sh:15-20` (the name comes from `docker-shell.sh:15`).
-- **Artifact Registry repository** `cheese-app-repository` in the `us` multi-region. No code or README step creates it: `artifactregistry` is imported at `deploy_images/__main__.py:4` but never used, and the v3 README does not create it either. If your L20/L22 image push worked, it already exists. Otherwise, run this command once. It is my suggestion and does not appear in the repo:
-  ```sh
-  gcloud artifacts repositories create cheese-app-repository --repository-format=docker --location=us
-  ```
-- **For the ML lane only** (none of this is in the v4 README; it all comes from L15):
-  - The data bucket (`GCS_BUCKET_NAME`, default `cheese-app-ml-workflow-demo`). Bucket names are global, so you need your own name.
-  - The trainer-code bucket (`GCS_PACKAGE_URI`, which already includes `gs://`; default `gs://cheese-app-trainer-code`) holding `$GCS_PACKAGE_URI/cheese-app-trainer.tar.gz`, uploaded by `ml-workflow/src/model-training/package-trainer.sh:1-4`. `src/workflow/model.py:26` reads it.
-  - The `deploy-images-ml/dev` Pulumi stack, created by `src/deployment/deploy-ml-images.sh`. The README never mentions it, yet `src/workflow/cli.py:29` reads it.
-
-### Values hard-coded to the instructor's project (change all of them)
-
-| File:line | Value |
-|---|---|
-| `src/deployment/docker-shell.sh:11,16-18` | `GCP_PROJECT="ac215-project"`, bucket names, `ml-workflow@ac215-project…` (the README only mentions `GCP_PROJECT`, at `README.md:78`) |
-| `src/deployment/deploy_images/Pulumi.dev.yaml:3`, `deploy_images_ml/Pulumi.dev.yaml:3`, `deploy_k8s/Pulumi.dev.yaml:3,5,6` | `gcp:project: ac215-project`, SA emails |
-| `.github/workflows/app-ci-cd-gcp.yml:52,55` | `GCP_PROJECT=ac215-project`, `PULUMI_BUCKET=gs://ac215-project-pulumi-state-bucket` |
-| `.github/workflows/ml-ci-cd-gcp.yml:48-54` (repeated at `68-74`, `88-94`) | project, `GCS_BUCKET_NAME`, `GCS_SERVICE_ACCOUNT`, `GCS_PACKAGE_URI`, `PULUMI_BUCKET` (no `gs://` here) |
-| `src/workflow/docker-shell.sh:8-13` | the same ML values, for running the workflow container locally |
-
-Stack **config** lives in the committed `Pulumi.dev.yaml` files, while stack **state** lives in the bucket. The CI runner only sees what you committed, so your edited `Pulumi.dev.yaml` files must be pushed.
+### Values committed in the repo that you must change
+| File:line | Value at this commit | Change to |
+| --- | --- | --- |
+| `src/deployment/docker-shell.sh:10` | `CSV_FILE="../../../../secrets/deployment-ac215-user_accessKeys.csv"` (four levels up) | the path to your CSV; the README's own layout needs three levels (`README.md:76`) |
+| `docker-shell.sh:26` | `SECRETS_DIR=$(pwd)/../../../../secrets/` | the same folder (the README does not mention this line) |
+| `docker-shell.sh:17` | the author's account id | `YOUR_ACCOUNT_ID` (your 12-digit id) |
+| `inventory.yml:4` / `:7` | CI key path active, local path commented | for local runs, the `/secrets/...` line (`README.md:107-111`) |
+| `inventory.yml:16` | `aws_keypair_name: "ac215_2024"` | your key pair's name |
+| `inventory.yml:17` | `aws_ami_id: "ami-0e86e20dae9224db8"` | an Ubuntu AMI in your region (AMI ids are per region; this one is for `us-east-1`; which Ubuntu release it is was not checked) |
+| `inventory.yml:24` | a committed `NEXTAUTH_SECRET` | your own random value |
+| `inventory.yml:30` | the author's server IP | your instance's public IP, after the create step (`README.md:97`) |
 
 ### What costs money, and how to switch it off
-Prices are approximate list prices from GCP's public pricing pages. Check the current pages; I did not bill anything.
-
-| Resource | Created by | Rough cost | Shut down with |
-|---|---|---|---|
-| GKE **regional** cluster `cheese-app-cluster` (`location=region`, `create_cluster.py:24`) | `deploy_k8s` | Cluster fee about $0.10/h. GKE's free-tier credit covers zonal/Autopilot clusters, not regional ones. | `pulumi destroy --stack dev --refresh -y` in `deploy_k8s` (`cheese-app-v3/README.md:511`) |
-| 1–2 × `n2d-standard-2` nodes, 50 GB disk each (`create_cluster.py:14-15,63-66`) | `deploy_k8s` | about $0.08/h per node plus disk | same destroy |
-| Global static IP and HTTPS load balancer, Google-managed cert (`setup_loadbalancer_ssl.py:12-17`) | `deploy_k8s` (SSL mode) | forwarding rules about $0.025/h, plus traffic | same destroy |
-| Cloud NAT and router (`create_network.py:28-48`) | `deploy_k8s` | small hourly fee plus per-GB processing | same destroy |
-| PVCs 5 Gi + 10 Gi (`setup_containers.py:17-46`) | `deploy_k8s` | a few cents per day | same destroy; check that the disks disappear under Compute Engine > Disks |
-| Artifact Registry images (several GB; **a new tag on every deploy**, `deploy_images/__main__.py:13`) | every `/deploy-app` | about $0.10/GB-month above the free tier | **not** removed by destroy (`retain_on_delete=True`, `deploy_images/__main__.py:31`). Delete old tags, or add a cleanup policy. |
-| Vertex AI **Endpoint** with 1 × `n1-standard-4` replica (`src/workflow/model.py:95-103`) | every `/run-ml-pipeline` creates **another** endpoint | about $0.2/h **each, 24/7** | Console > Vertex AI > Online prediction: undeploy the model, then delete the endpoint |
-| Vertex AI pipeline runs and the training job | `/run-*` | per-run fee plus training compute | they stop by themselves |
-| GitHub Actions minutes | every push to `main` | free for public repos; private repos use the plan's monthly quota | — |
-
-When you are done for the term:
-1. Delete the `GOOGLE_APPLICATION_CREDENTIALS` secret and the `deployment` key (IAM > Service accounts > Keys). The key can create clusters in your project.
-2. Disable the workflows (Actions tab > workflow > "…" > Disable).
-
----
+*(Prices are AWS's public on-demand list prices for `us-east-1` as we know them; not re-checked against a live price page on 2026-11-08 — say "roughly" and point to the pricing pages.)*
+- **EC2 `t2.large`** (`inventory.yml:15`), running 24/7 from the create step until you terminate it: about $0.09 per hour.
+- **EBS:** the instance's two 100 GB gp2 volumes (`deploy-create-instance.yml:47-57`, deleted with the instance) and the separate 50 GB gp3 volume (`:27-37`), which survives the instance and keeps billing until you delete it.
+- **Public IPv4 address** on the instance: AWS bills public IPv4 addresses by the hour.
+- **ECR storage:** three images per deploy, a new timestamp tag every time; nothing ever deletes old tags.
+- **Bedrock:** per token, every chat message.
+- **GitHub Actions:** free minutes on public repos; billed minutes on private ones beyond the free tier.
+- **Switch-off:** the README's delete command fails at this commit (§6 G9). Clean up in the console (or with the AWS CLI): terminate the instance, delete the leftover 50 GB volume, delete security group `app_security_group`, delete the three ECR repositories, delete (or deactivate) the access key, delete the key pair and the IAM user if you made them only for this. Shown as an `illustration` checklist in the video.
 
 ## 3. Concepts this tutorial teaches
 
-### C1. Continuous Integration vs Delivery vs Deployment, and "git as the control panel"
-- **Explanation:** The README defines three terms (`README.md:151-155`):
-  - **Continuous integration** tests every change.
-  - **Continuous delivery** makes every change *releasable*.
-  - **Continuous deployment** *releases* every change automatically.
+### C1. Integration, delivery, deployment — and what this workflow actually does (slides 7–12)
+CI: every change is merged into a shared branch often and checked automatically (build, tests, linting). Continuous delivery: every change that passes is *ready* to release, but a person presses the button. Continuous deployment: every change that passes goes to production with no person in between. `ci_cd_aws.yml` has no test step, so it is CD with the gates switched off: a push to `main` with the right words in the message rebuilds and redeploys whatever is in the commit. Misconception to defuse: a green workflow run means "the steps exited 0", not "the app works".
 
-  v4 does deployment without the integration part (`README.md:157`). In v4 the *repository* becomes the control panel: you no longer type `pulumi up`; you type a commit message.
-- **Mental model:** a pipeline of gates between "I saved a file" and "a user sees it": commit → build → (test) → package → release → run. CI fills the early gates. CD removes the human from the last ones.
-- **Analogy:** a restaurant. CI is the kitchen tasting every dish. Continuous delivery means the dish is plated and waiting at the pass. Continuous deployment means a conveyor belt carries every plated dish to the table.
-- **Common misconception:** "We have GitHub Actions, so we have CI/CD." The v4 workflows are named "Continuous Integration and Continuous Deployment" (`app-ci-cd-gcp.yml:1`), but they never run a test. A broken API ships just as fast as a working one.
-- **Possible static visual (not one of the five animated concepts):** the six gates are drawn as a horizontal track. A commit dot runs along it. The CI gates (lint, test) are drawn dashed and *greyed out* for v4, so the dot passes straight through them, while the "build/package/release/run" gates light up. A second run with L21's `ci.yml` bolted on shows the dot stopped at a red test gate.
+### C2. Two sieves on one string: the commit message **[ANIMATE]** (slides 18, 20)
+`on: push: branches: [ "main" ]` (`ci_cd_aws.yml:3-5`): every push to `main` creates a workflow run. Then two `contains()` filters read the same string, `github.event.head_commit.message`:
+- job level, `if: contains(github.event.head_commit.message, '/run-')` (`:9`): without `/run-` the whole job is skipped;
+- step level, `if: contains(github.event.head_commit.message, '/run-deploy-app')` (`:100`): only the final "Run Deployment Container" step is gated.
+So `/run-deploy-app` builds, pushes **and** deploys; any other message containing `/run-` (for example `/run-tests`) builds and pushes new images but deploys nothing; a message without `/run-` does nothing. `head_commit` is the last commit of the push: a push of three commits is judged by the last message only. `contains()` on strings is case-insensitive in GitHub Actions expressions. The slides' keyword is `/deploy-app` (GCP repo); here it is `/run-deploy-app` (§7).
 
-### C2. Event → workflow → job-level filter on the commit message **[ANIMATE]**
-- **Explanation:**
-  - Both workflows trigger on *every* push to `main` (`on: push: branches: ["main"]`, `app-ci-cd-gcp.yml:3-5`, `ml-ci-cd-gcp.yml:3-5`). The *job* then decides whether to run: `if: contains(github.event.head_commit.message, '/deploy-app')` (`app-ci-cd-gcp.yml:9`) or `'/run-'` (`ml-ci-cd-gcp.yml:9`).
-  - Inside the ML job, three step-level `if:`s pick which pipeline to submit (`ml-ci-cd-gcp.yml:37,57,77`).
-  - Three properties of `contains()` and `head_commit` matter, all from GitHub's documented behaviour:
-    1. It is a **substring** test.
-    2. It is **case-insensitive**.
-    3. It looks only at the **last** commit of the push.
-- **Mental model:** each push drops a string into two sieves. The app sieve has one hole (`/deploy-app`). The ML sieve has a coarse hole (`/run-`) that admits the job, then three finer holes that admit steps.
-- **Analogy:** an email server routing on a subject-line keyword, like "[URGENT]".
-- **Common misconceptions:**
-  - "No keyword means no workflow run." The workflow *runs* on every push; only its job is skipped, which is why each push shows two entries in the Actions tab.
-  - "The README's `/run-deploy-app` (`README.md:162`) deploys the app." It contains `/run-`, not `/deploy-app`. It wakes the **ML** job, which builds the workflow container and then skips all three steps. The app is never deployed.
-- **Animation:** a commit message types itself into a box. Two sieves sit below. The characters fall; substrings highlight as they match (`/deploy-app` lights up the left sieve; `/run-` the right one). Replay with `/run-deploy-app`: the left sieve stays dark because the slash is in the wrong place, while the right one opens and three smaller sieves all stay closed.
+### C3. One toolbox, two operators, sibling containers **[ANIMATE]** (slides 17–18)
+The same `src/deployment/Dockerfile` builds the toolbox on your laptop (`docker-shell.sh:32`) and on the runner (`ci_cd_aws.yml:41-44`). Inside it, `docker` commands do not run a Docker daemon of their own: the host's socket is mounted (`docker-shell.sh:36`, `ci_cd_aws.yml:114`), so `docker build`/`docker push` from Ansible's `docker_image` module create **sibling** images on the host's daemon. That is why the build paths are `/frontend-react`, `/api-service`, `/vector-db` (`deploy-docker-images.yml:21`, `:34`, `:47`): `docker-shell.sh:40-42` mounts the three app folders at exactly those paths. Difference between the two operators:
+- laptop: the deployment folder is mounted at `/app` (`docker-shell.sh:37`), secrets at `/secrets` (`:38`), the shell is interactive (`-ti`, `:35`) and you type the playbooks;
+- runner: the deployment folder is mounted at `/deployment` (`ci_cd_aws.yml:115`), the CI-written secrets folder at `/root/.ssh` (`:116`), and a `bash -c` string runs two playbooks non-interactively (`:123-131`). The runner never mounts the app folders: CI builds the app images with plain `docker build` on the runner itself (`:52-70`), not with the playbook.
+- `ENTRYPOINT` is commented out in the toolbox Dockerfile (`Dockerfile:62`; `CMD ["/bin/bash"]` at `:64`), so `docker-entrypoint.sh` (which would write `~/.aws/credentials` and log in to ECR) never runs. Nothing breaks, because the AWS CLI and boto3 read `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`/`AWS_DEFAULT_REGION` from the environment (`docker-shell.sh:43-45`), and both `deploy-docker-images.yml:9` and the CI step `:129` do their own ECR login.
 
-### C3. The toolbox container runs the same on your laptop and on a CI runner **[ANIMATE]**
-- **Explanation:** the `deployment` image bundles gcloud, the GKE auth plugin, Docker (the `docker-ce` package, of which only the client is used), kubectl, Helm, Pulumi and uv (`src/deployment/Dockerfile:14-55`). v4 makes it CI-ready with two small edits:
-  1. It **bakes the code into the image** with `ADD --chown=app:app . /app` (`Dockerfile:72`). A runner has no `-v "$BASE_DIR":/app` mount, unlike `docker-shell.sh:37`.
-  2. The entrypoint now **runs its arguments** as a script instead of always opening a shell (`docker-entrypoint.sh:32-40`).
+### C4. Ansible in one picture: inventory, plays, tasks, modules **[ANIMATE]** (not in the slides)
+- **Inventory** (`inventory.yml`): group `all` with variables (`:2-25`) and one child group `appserver` with one host, the VM's IP (`:27-30`). `ansible-inventory -i inventory.yml --graph` prints `@all` → `@appserver` → the IP (captured).
+- **Playbook** = a list of plays; each play has `hosts:` (`localhost` or `appserver`), optional `connection: ssh` and `become: true` (sudo on the VM), and a list of **tasks**; each task calls one **module** (`shell`, `apt`, `file`, `copy`, `docker_image`, `docker_container`, `docker_network`, `ec2_group`, `ec2_vol`, `amazon.aws.ec2_instance`, …) with arguments.
+- `hosts: localhost` plays run inside the toolbox and talk to AWS's API (create-instance) or to the host Docker daemon (docker-images). `hosts: appserver` plays SSH to the VM as `ubuntu` (`inventory.yml:3`) with the `.pem` key and run each module there.
+- Modules are mostly **declarative**: `state: present` / `state: started` say what should be true, and re-running converges instead of duplicating. `shell:` tasks are the exception: they run every time (`deploy-provision-instance.yml:118-137`, `:288-292`). The `when:` lines (`deploy-create-instance.yml:24`, `:37`, `:74`, …) make one playbook do both create and delete — in intention (§6 G9).
+- `ansible.cfg:2` sets `host_key_checking = False`, and `inventory.yml:8` passes `-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null`: a fresh VM's host key is accepted blindly. Convenient for a course, a trade-off worth naming.
 
-  The container does not run its own Docker daemon. It talks to the host's daemon through the mounted socket `/var/run/docker.sock` (`app-ci-cd-gcp.yml:39`, `docker-shell.sh:36`); this is "Docker-out-of-Docker". Images built by Pulumi inside the container are really built by the laptop's or the runner's daemon.
-- **Mental model:** a portable workshop in a crate. On your laptop you climb in and work by hand (interactive shell). On the runner a robot opens the crate and pushes one button (`deploy-k8s-update.sh`).
-- **Analogy:** a pilot's checklist binder that works the same in the simulator and in the real cockpit.
-- **Common misconception:** "CI runs my local container." It rebuilds the image from the committed `src/deployment/` on a fresh VM (`app-ci-cd-gcp.yml:32-35`). Your local `pulumi-plugins/` cache, local edits you did not commit, and the `secrets/` folder do not exist there.
-- **Animation:** split screen, laptop on the left, runner VM on the right. The same crate is drawn on both. On the left, a hand reaches in (an interactive shell). On the right, the crate's lid opens and a single button labelled `deploy-k8s-update.sh` is pressed. A cable (the socket) runs from each crate to the machine's own Docker engine, which starts stamping out image cubes.
+### C5. One timestamp, followed from build to running container **[ANIMATE]** (slides 18–19, 36)
+- Laptop route: `date +%Y%m%d%H%M%S` (`deploy-docker-images.yml:12`) → registered as `tag` → image names `<registry>/cheese-app-…:{{ tag.stdout }}` (`:23`, `:36`, `:49`) → pushed (`:25-56`) → saved with `echo {{ tag.stdout }} > .docker-tag` (`:58`). The committed `.docker-tag` holds `20241121211313` (`src/deployment/.docker-tag:1`), the author's last tag.
+- CI route: `echo $(date +%Y%m%d%H%M%S) > …/.docker-tag` and `DOCKER_TAG` into `$GITHUB_ENV` (`ci_cd_aws.yml:46-50`) → `docker tag …:latest …:${{ env.DOCKER_TAG }}` and `docker push` (`:57-70`) → `-e DOCKER_TAG` into the toolbox (`:121`) and again as `--extra-vars … docker_tag=$DOCKER_TAG` (`:130`).
+- On the VM: `deploy-setup-containers.yml` copies `.docker-tag` over (`:67-71`), then sets `docker_tag` from the `DOCKER_TAG` environment variable if it is set (`:101-104`), else from the file (`:106-114`); pulls the three images at that tag (`:120-129`); and recreates each container (`recreate: yes`, `:136`, `:153`, `:180`).
+- What this is **not**: a rolling update. Each container is stopped and replaced in place on one machine, so there is a short outage per deploy; contrast with v4's Kubernetes rolling update (§7). "Release" in the slides' loop = the moment the timestamped image lands in ECR.
 
-### C4. Immutable timestamp tags and a cross-stack reference produce a rolling update **[ANIMATE]**
-- **Explanation:**
-  1. `deploy_images` computes `timestamp_tag = datetime.datetime.now().strftime("%Y%m%d%H%M%S")` on **every** run (`deploy_images/__main__.py:13`). Each image is pushed as `us-docker.pkg.dev/<proj>/cheese-app-repository/<name>:<timestamp>` and the tag list is exported (`:25,34-35`).
-  2. `deploy_k8s` reads those exports through `pulumi.StackReference("organization/deploy-images/dev")` (`setup_containers.py:10-14`) and plugs `tags[0]` into the pod templates of the frontend and api Deployments (`:69-71`, `:276-278`) and of the loader Job (`:214`).
-  3. A changed image string means a changed pod template. Pulumi patches the Deployment, and Kubernetes replaces pods one at a time (the default RollingUpdate strategy).
-- **Mental model:** a relay race. The timestamp is the baton, passed from the image stack, through the state bucket, to the K8s stack, and into the pods.
-- **Analogy:** printing a new edition of a book with a new ISBN instead of pasting corrections into the old copies. The library (the cluster) swaps editions on the shelf one copy at a time.
-- **Common misconceptions:**
-  - "Only the component I changed is redeployed." Every `/deploy-app` rebuilds and re-tags **all three** images. The API, the frontend and the loader Job all roll, even if you touched one CSS class *(reasoned, not run)*.
-  - "Using `:latest` would be simpler." With a fixed tag the pod template would not change, so Kubernetes would not roll anything. `image_pull_policy="IfNotPresent"` (`setup_containers.py:72,279`) would also keep the cached old image on the node.
-- **Animation:** a clock emits a string `20251202134824`. It is stamped onto three image cubes flying into a registry shelf. The same string then appears in a JSON card labelled `deploy-images/dev.json` in a bucket. A pipe carries it into the K8s stack, where it replaces the old string inside a Deployment box. Finally the pod circles swap one by one: the new pod fades in, turns green (ready), and the old one fades out.
+### C6. Who holds which credential, where **[ANIMATE]** (slides 18–19)
+One IAM user's access key pair travels: CSV in `secrets/` → shell variables (`docker-shell.sh:13-15`) → toolbox environment (`:43-46`) → Ansible variables via `lookup('env', …)` (`inventory.yml:9-11`, `deploy-setup-containers.yml:8-11`) → the VM (`aws configure`, `deploy-provision-instance.yml:288-292`; `/srv/secrets/aws-credentials`, mode 0600, `deploy-setup-containers.yml:36-44`) → the api-service and vector-db loader as environment variables (`:165-168`, `:184-186`). In CI the same values come from repository secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ACCOUNT_ID` (`ci_cd_aws.yml:21-22`, `:33`, `:102-104`), and the SSH private key from `AWS_SSH_KEY` (`:81`, `:108`). Second identity: the EC2 **key pair**, whose private half lets Ansible SSH in as `ubuntu`. Lesson for the video: long-lived keys copied onto a server work, but AWS's preferred pattern is an **instance role** (the VM gets temporary credentials without a key file) and, for GitHub, OIDC federation instead of stored keys; mention as the "next step", not as the tutorial.
 
-### C5. Shared remote state is the integration point
-- **Explanation:**
-  - Your laptop, runner A and runner B have no shared disk. What they share is the Pulumi state bucket: `pulumi login $PULUMI_BUCKET` (`docker-entrypoint.sh:23`). The images stack writes outputs there, and the K8s stack reads them.
-  - The ML workflow doesn't even use Pulumi. It downloads the raw state file `.pulumi/stacks/deploy-images-ml/dev.json` with the GCS client and digs out the `pulumi:pulumi:Stack` resource's outputs (`src/workflow/cli.py:28-57`).
-  - DIY (bucket) backends lock a stack during an update. Two overlapping pushes therefore make the second `pulumi up` fail with a "stack is locked" error, because the workflows declare no `concurrency:` group *(reasoned, not run)*.
-- **Mental model:** a shared whiteboard in a hallway. Each worker writes results on it and reads others' results from it.
-- **Analogy:** a restaurant's order tickets on a rail. The kitchen (images stack) clips a ticket, and the waiter (K8s stack) reads it.
-- **Common misconception:** "CI state is separate from my laptop's." They are the *same* stacks. A local `pulumi up` and a CI run can overwrite each other's tags, and a local `pulumi destroy` destroys what CI deployed.
+### C7. One VM, five containers, one front door **[ANIMATE]** (slide 37 shows the same shape with Kubernetes)
+On Docker network `appnetwork` (`deploy-setup-containers.yml:47-53`), containers reach each other by name. `nginx` publishes 80 and 443 (`deploy-setup-webserver.yml:29-31`) and is the only entry the security group lets in besides SSH (`deploy-create-instance.yml:12-21`; ports 3000/8000/9000 are published on the VM but closed by the security group). `nginx.conf`:
+- `location ^~ /api/ { proxy_pass http://api-service:9000/; … }` (`nginx.conf:35-44`): the trailing `/` in `proxy_pass` replaces the matched `/api/` prefix, so the browser's `/api/newsletters` reaches FastAPI as `/newsletters`, which is where `service.py:25` mounts that router.
+- `location / { proxy_pass http://frontend:3000; … }` (`:47-55`).
+- The frontend calls `/api/...` on the same host because `.env.production:2` sets `NEXT_PUBLIC_BASE_API_URL=/api`, which `Common.js:2` reads at build time.
+- Data: Chroma persists to `/mnt/disk-1/chromadb` (`deploy-setup-containers.yml:162`), the API's `/persistent` to `/mnt/disk-1/persistent` (`:193`), both on the disk mounted by the provision playbook (`deploy-provision-instance.yml:159-176`).
+- The vector DB is filled once per deploy by a throwaway container: `cheese-app-vector-db-cli … cli.py --download --load --chunk_type recursive-split` (`deploy-setup-containers.yml:164-173`), which downloads pre-computed chunks and embeddings from a GitHub release and loads them into collection `recursive-split-collection` (`src/vector-db/cli.py:470-487`, `:293-311`).
 
-### C6. Identity: who is authenticated where **[ANIMATE]**
-- **Explanation:** five hops carry one identity.
-  1. The repository secret holds the `deployment` SA's JSON key.
-  2. `google-github-actions/auth@v1` (`app-ci-cd-gcp.yml:18-21`) writes it to a credentials file on the runner and exports `GOOGLE_APPLICATION_CREDENTIALS` with that path (documented behaviour of the action).
-  3. `docker run --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/deployment.json` puts the file at the path the container expects (`app-ci-cd-gcp.yml:49-50`).
-  4. The entrypoint runs `gcloud auth activate-service-account --key-file …` and `gcloud auth configure-docker us-docker.pkg.dev` (`docker-entrypoint.sh:10-13`). From then on, image pushes (credentials from the `gcloud` credential helper in `docker_config.json:2-5`), Pulumi's GCP provider (which reads the key via `GOOGLE_APPLICATION_CREDENTIALS`), and Pulumi's Kubernetes provider, whose generated kubeconfig calls `gke-gcloud-auth-plugin` (`create_cluster.py:107-114`), all act as `deployment`.
-  5. Inside the cluster, pods use a *different* identity. The KSA `api-ksa` is annotated to impersonate the `gcp-service` GSA (`create_cluster.py:150-189`), so the API can call Gemini without any key file.
-
-  In the ML lane, Vertex AI runs the pipeline steps as a third identity, `ml-workflow`, because `job.run(service_account=GCS_SERVICE_ACCOUNT)` asks it to (`src/workflow/cli.py:110`).
-- **Mental model:** a key card that is photocopied at each door: GitHub vault → runner file → container file → gcloud login → cluster. Then two separate badges (`gcp-service`, `ml-workflow`) are issued *by Google* to workloads that never see a key.
-- **Analogy:** a valet key (the JSON key) versus a hotel issuing room cards to guests (Workload Identity).
-- **Common misconception:** "The `Configure Docker Client` step (`app-ci-cd-gcp.yml:24-26`) is what lets the images push." It configures the *runner's* Docker for `gcr.io`. The push is driven from inside the container, with credentials from the container's own config (the bind-mounted `docker_config.json` plus the entrypoint's `configure-docker us-docker.pkg.dev`). That step is redundant here.
-- **Animation:** a glowing key leaves a vault icon (GitHub Secrets), drops into a runner box as a file icon, travels down a bind-mount tube into the container box, and becomes a "logged in as deployment@" badge. The badge then sprouts three arrows (Artifact Registry, GCS state, GKE). In a second shot, inside the cluster, an `api` pod receives a different badge from a Google icon (Workload Identity), with no key involved.
-
-### C7. Two loops, one map: the app CD loop and the ML loop (and where they don't touch) **[ANIMATE]**
-- **Explanation:** v4's diagram (`images/ci-cd.png`) draws one big cycle: Data Collector → Data Processor → Model Training → Model Deploy → Backend API → Frontend → Users, all driven by Dev Team commits through GitHub Actions. The code implements **two separate loops**:
-  - The **app loop:** `/deploy-app` → images → GKE.
-  - The **ML loop:** `/run-…` → Vertex AI pipeline → a new Vertex endpoint.
-
-  The arrow "Model Deploy → Backend API" is *not* implemented. The API loads a fixed CNN from a GitHub release at import time (`src/api-service/api/utils/llm_cnn_utils.py:110-149`, URL at `:124`). The trainer the pipeline runs also downloads a fixed dataset from a GitHub release (`ml-workflow/src/model-training/package/trainer/task.py:103-104`) rather than the `clean.zip` the processor just wrote.
-- **Mental model:** two gears drawn next to each other, with the connecting tooth (model registry → API) left for you to build in MS5.
-- **Analogy:** a bakery with a test kitchen. The test kitchen (ML loop) perfects recipes, and the shop (app loop) sells bread. Until someone carries the new recipe card from the test kitchen to the shop, customers get the old bread.
-- **Common misconception:** "Running `/run-ml-pipeline` updates what users see." It creates a new Vertex endpoint that nothing in the app calls.
-- **Animation:** reproduce `ci-cd.png` as a single circular conveyor. Then "pull it apart": the conveyor splits into two loops that spin independently. The arrow between Model Deploy and Backend API flickers and turns into a dashed "TODO (MS5)" arrow.
-
-### C8. A cloud load balancer in front of Kubernetes: Ingress class, health checks, certificates
-- **Explanation:**
-  - With `setupSSL: "true"` (`deploy_k8s/Pulumi.dev.yaml:7`), `__main__.py:37-41` uses `setup_loadbalancer_ssl`. The Ingress is annotated `kubernetes.io/ingress.class: gce` (`setup_loadbalancer_ssl.py:56`), so **GKE creates a Google HTTPS load balancer** with a reserved global IP, a Google-managed certificate for `<ip>.sslip.io` (or your domain), and an HTTP→HTTPS redirect.
-  - A Google load balancer health-checks each backend. The API only answers under `/api-service` (`src/api-service/api/service.py:49-50` mounts it at `ROOT_PATH`). So v4 adds a `BackendConfig` whose health check probes `/api-service/` on port 9000 (`setup_containers.py:325-345`), and annotates the Service to use it with container-native load balancing (NEG) (`:353-356`).
-  - v3's default path, with `setupSSL` false, was an NGINX ingress controller installed by Helm behind a plain L4 LoadBalancer (`setup_loadbalancer.py:11-46`).
-- **Mental model:** NGINX mode is a doorman you hire and run inside the building. GCE mode rents Google's front desk outside the building, and that desk phones each room to check someone is home.
-- **Analogy:** a building receptionist (the LB) who calls each office (backend) every 10 s. If nobody answers three times, visitors are not sent there.
-- **Common misconception:** "HTTPS works right after `pulumi up`." Google-managed certificates take a while to become Active after DNS points at the IP. Until then, HTTPS fails, and HTTP is redirected to HTTPS.
-
----
+### C8. Same lecture, other cloud: the term map (slides 17–20)
+| Slides (GCP, `cheese-app-v4`) | This repo (AWS, `cheese-app-aws`) |
+| --- | --- |
+| Artifact Registry / "GCR" | ECR (three repositories, created by hand) |
+| GKE cluster, Deployments, rolling update | one EC2 VM, `docker_container` with `recreate: yes` |
+| Pulumi programs (`pulumi up`) | Ansible playbooks (`ansible-playbook`) |
+| service-account JSON key, secret `GOOGLE_APPLICATION_CREDENTIALS` | IAM user access key CSV; secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ACCOUNT_ID`, `AWS_SSH_KEY` |
+| `google-github-actions/auth@v1` | `aws-actions/configure-aws-credentials@v4` |
+| commit keyword `/deploy-app` | `/run-deploy-app` (and `/run-` for build-only) |
+| Ingress / Google HTTPS load balancer | `nginx` container on port 80 |
+| `/run-ml-pipeline` → Vertex AI Pipelines | nothing: the AWS repo has no ML workflow (the AWS ML pipeline is L15's `ml-workflow-aws`, SageMaker) |
+| Gemini / Vertex AI embeddings | Bedrock: Claude 3 / 3.5 Sonnet, Titan embeddings |
 
 ## 4. Step-by-step walkthrough
 
-The README has six parts. Below, each README step is numbered in order. I added steps the README needs but omits, marked **(not in README)**. Commands in `bash` blocks are copied verbatim from the README. Commands in `sh` blocks are mine or come from another file named next to them.
+README order. "Capture" says what the video can show for real from this sandbox (no AWS credentials).
 
-### Part A: one-time setup (README.md:21-70)
+### Part A — one-time setup in the console (`README.md:1-72`)
+1. **Read the goal** (`:3-5`): deploy with Ansible playbooks, "automate all the deployment steps".
+2. **"API's to enable"** (`:7-13`): renders empty (commented list). Capture: none; one sentence.
+3. **Create policy `CheeseAppECRPolicy`** (`:19-46`): IAM → Policies → Create policy → JSON, paste `:22-44`, "Review Policy", name, create. Capture: `illustration` (schematic console). Extra check that can be captured: the JSON parses (`python3 -m json.tool` or `jq .` on a copy).
+4. **Create IAM user `deployment-ac215-user`** with `AmazonS3FullAccess`, `AmazonEC2FullAccess`, `AmazonBedrockFullAccess` (`:48`), and attach `CheeseAppECRPolicy` (`:50`). Capture: `illustration`.
+5. **Create an access key** → "Third Party Service" → download the CSV (`:52`), save it as `secrets/deployment-ac215-user_accessKeys.csv` next to the clone (`:54-60`; the tree shows `cheese_app_aws` and `secrets` side by side). Capture: `illustration`; locally, a placeholder CSV with AWS's documented dummy keys, labelled.
+6. **Create EC2 key pair** (`:64`) and save the `.pem` in `secrets/`. Capture: `illustration`. Add (not in README): `chmod 400` on the `.pem` (§6 G7), and the name mismatch (§6 G6).
+7. **"Deployment Setup"** (`:67-72`): four bullets saying "add … details in inventory.yml": ansible user (`inventory.yml:3`), instance details (`:14-23`), access-key details (`:9-12`, env lookups, nothing to type), key pair (`:4`/`:7`, `:16`). Capture: code panel of `inventory.yml` with the masked lines.
 
-**A0. Make the repo yours (not in README).**
-- Action: `README.md:29` only says "Clone repo from here". For CD you need a GitHub repo *you* can push to, with your own secrets: a fork, or a fresh repo you push this code to.
-- Under the hood: workflows run in the repo that receives the push. Secrets are per-repo.
-- Checkpoint: your repo's **Actions** tab lists two workflows. Both have the same name, "Continuous Integration and Continuous Deployment" (`app-ci-cd-gcp.yml:1`, `ml-ci-cd-gcp.yml:1`).
-- If it fails: a fork shows "Workflows aren't being run on this forked repository". Click "I understand… enable them".
+### Part B — start the toolbox (`README.md:74-77`)
+8. `cd src/deployment` (`:75`).
+9. **Edit `CSV_FILE`** in `docker-shell.sh` to `"../../../secrets/deployment-ac215-user_accessKeys.csv"` (`:76`; the file has four `../` at `docker-shell.sh:10`). Also edit `SECRETS_DIR` (`:26`) and `AWS_ACCOUNT_ID` (`:17`) — not in the README (§6 G4, G5).
+10. **`sh docker-shell.sh`** (`:77`). It reads the CSV (`docker-shell.sh:11-21`), builds `cheese-app-deployment` for `linux/amd64` (`:32`) and opens a root shell in `/app` (`:35-48`). Capture: real, with caveats: on Linux `sh` is `dash` and the script stops at line 13 with `Syntax error: redirection unexpected` (captured, §6 G2) — `bash docker-shell.sh` works; the unchanged build fails in this sandbox at the Helm step (§6 G3), so the capture uses the capture-only Dockerfile without Helm and says so. Extra checks worth capturing inside: `aws --version` (2.39.6 at the time of recording), `ansible --version` (core 2.13.13, §6 G1), `docker --version` (CLI 28.1.1), `ansible-inventory -i inventory.yml --graph`, and `aws sts get-caller-identity` up to its error with dummy keys (`InvalidClientTokenId`).
 
-**A1. Enable APIs (README.md:31-38).** Search for and enable the six APIs in the console.
-- Checkpoint: APIs & Services > Enabled APIs lists them.
+### Part C — registry and images (`README.md:79-90`)
+11. **Create three empty private ECR repositories** in `us-east-1` (`:81-85`): `cheese-app-vector-db-cli`, `cheese-app-api-service`, `cheese-app-frontend-react`. Capture: `illustration`. Not in README, CLI alternative: `aws ecr create-repository --repository-name <name> --region us-east-1` (needs `ecr:CreateRepository`, which the README's policy lacks; a console user with admin rights can run it).
+12. **`ansible-playbook deploy-docker-images.yml -i inventory.yml`** (`:89`). Tasks (`deploy-docker-images.yml:8-60`): ECR login → timestamp → build+push frontend, api-service, vector-db-cli (each with `platform: linux/amd64/v2`) → save `.docker-tag` → `docker system prune -a`. Capture: real up to its first error: with dummy keys, task "Login to AWS ECR" fails with `UnrecognizedClientException … The security token included in the request is invalid.` followed by `Error: Cannot perform an interactive login from a non TTY device` (captured 2026-11-08; the second line is `docker login` receiving an empty password). What success looks like: `expected`/described only (the README documents no output).
 
-**A2. Create the `deployment` service account and key (README.md:40-55).**
-- Grant the roles listed in `README.md:44-51`, and add **Artifact Registry Administrator** (see §6 #9).
-- Create a JSON key and save it as `secrets/deployment.json` **beside** the repo folder (`README.md:57-70`).
-- If you are building the cluster from scratch, also create `gcp-service` (`cheese-app-v3/README.md:251-256`). For the ML lane you also need `ml-workflow` (from L15).
-- Files involved: `src/deployment/docker-shell.sh:9` (`SECRETS_DIR=$(pwd)/../../../secrets/`), which resolves from `src/deployment/` to the folder beside `cheese-app-v4/`.
-- Checkpoint: `ls ../secrets` (from the repo root) shows `deployment.json`.
+### Part D — the machine (`README.md:92-103`)
+13. **`ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=present`** (`:94`). Tasks (`deploy-create-instance.yml`): security group `app_security_group` 80/443/22 from `0.0.0.0/0` (`:7-24`); EBS 50 GB gp3 in `us-east-1a` (`:27-37`); EC2 instance (`:40-61`, no `when:`); wait for `running` (`:65-74`); wait for SSH (`:76-82`); attach the EBS volume at `/dev/sdf` (`:85-92`); a second SSH wait (`:102-104`); `add_host` (`:106-108`). Capture: real up to its first error: task "Create security group" → `AuthFailure … AWS was not able to validate the provided access credentials` (captured with dummy keys). The heading says "in GCP" (§10 E1).
+14. **Copy the instance's public IP** from the console into `inventory.yml` under `appserver: hosts:` (`README.md:97`; `inventory.yml:27-30`). Capture: `illustration` + code panel with `<EXTERNAL_IP>:`. Extra (not in README): `aws ec2 describe-instances --filters Name=tag:Name,Values=cheese-app-demo --query "Reservations[].Instances[].PublicIpAddress"`.
+15. **`ansible-playbook deploy-provision-instance.yml -i inventory.yml`** (`:102`). 38 tasks (`--list-tasks`, captured): remove old Docker apt sources, import Docker's GPG key, add the Docker repo (code name from `lsb_release -cs`, or `focal` for releases not in the list, `:18-28`), install `docker-ce`, format `/dev/xvdf` if empty and mount it at `/mnt/disk-1` (`:159-176`), disable unattended upgrades, `apt upgrade`, install python3-docker etc., install AWS CLI v2, `aws configure` with your keys (`:288-292`), start Docker. Capture: `--list-tasks` and `--syntax-check` are real; a run needs a reachable host: show the command, then `illustration`/described (an SSH-unreachable error to a documentation IP such as `203.0.113.10` could be captured as the honest first error).
 
-**A3. Replace the instructor's project values (only partly in README).**
-- `README.md:78` says to change `GCP_PROJECT` in `docker-shell.sh`. You also need every row of the table in §2: the `Pulumi.dev.yaml` files, both workflow YAMLs, and the ML bucket and SA names.
-- Then commit these edits **without** a trigger keyword. Otherwise CI starts before your cluster exists.
+### Part E — containers and web server (`README.md:105-143`)
+16. **Switch the key line** (`:107-111`): for a laptop run, comment out `inventory.yml:4` and uncomment `:7`. Capture: code panel.
+17. **`ansible-playbook deploy-setup-containers.yml -i inventory.yml`** (`:116`). Tasks (`deploy-setup-containers.yml:16-207`): debug prints, `/srv/secrets/aws-credentials`, network `appnetwork`, `/mnt/disk-1/persistent` and `/mnt/disk-1/chromadb` (mode 0777), copy `.docker-tag`, ECR login on the VM, choose the tag, pull three images, start `frontend` (3000, `NEXTAUTH_SECRET`/`NEXTAUTH_URL`), start `vector-db` (`chromadb/chroma:latest`, 8000), run the loader once, start `api-service` (9000, AWS keys, `S3_BUCKET_NAME`, Chroma host/port, two volumes), print network info. Capture: `--syntax-check` real; run: show command + `illustration`. Watch for §6 G10 (Chroma `latest`) and G11 (embedding size) in the narration of what to expect.
+18. **Inspect on the server** (`:120-132`): SSH in, then `sudo docker container ls`, `sudo docker container logs api-service -f`, `… frontend -f`, `… nginx -f`, `sudo docker exec -it api-service /bin/bash`, `sudo docker exec -it nginx /bin/bash`. The README says "from the GCP console" (§10 E2); on AWS: `ssh -i secrets/<key>.pem ubuntu@<EXTERNAL_IP>` or EC2 Instance Connect. Capture: commands shown; output `illustration` or described. (The `nginx` lines only work after step 20; the README lists them here.)
+19. **"Configure Nginx file"** (`:136-137`): the file already exists, `nginx-conf/nginx/nginx.conf`. Capture: code panel `nginx.conf:34-55`.
+20. **`ansible-playbook deploy-setup-webserver.yml -i inventory.yml`** (`:141`): ensure `appnetwork`, copy `./nginx-conf/nginx` → `/conf`, start `nginx:stable` on 80/443 with `/conf/nginx/nginx.conf` mounted, restart it. Capture: `--syntax-check` real; run: `illustration`.
+21. **Open `http://<External IP>/`** (`:143`). Capture: `illustration` (schematic browser), never a screenshot of someone's live app. Extra that *can* be captured locally: the nginx routing itself, by running `nginx:stable` with this `nginx.conf` and two tiny stand-in containers named `api-service` and `frontend` on a local network, then `curl localhost/api/x` vs `curl localhost/` — tag `extra`.
 
-### Part B: make sure the cluster is up (README.md:72-129)
+### Part F — CI/CD with GitHub Actions (not in the README; `.github/workflows/ci_cd_aws.yml`)
+22. **Add four repository secrets** (Settings → Secrets and variables → Actions → New repository secret): `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ACCOUNT_ID`, `AWS_SSH_KEY` (the whole `.pem` text). Names from `ci_cd_aws.yml:21-22`, `:33`, `:81`, `:102-108`. The README never lists them (§10 E4). Capture: `illustration`.
+23. **Commit the inventory with your VM's IP and the CI key line active** (`inventory.yml:4` as shipped), because the runner reads the committed file.
+24. **Push with the keyword:** `git commit -m "… /run-deploy-app"` then `git push` to `main`. What runs (`ci_cd_aws.yml`): echo context (`:12-15`) → checkout (`:16-17`) → AWS credentials (`:18-23`) → `aws sts get-caller-identity` and `aws s3 ls` (`:25-28`) → ECR login (`:30-33`) → `ls` (`:38-40`) → build the toolbox (`:41-44`) → timestamp to `.docker-tag` and `$GITHUB_ENV` (`:46-50`) → build/tag/push frontend, vector-db-cli, api-service (`:52-70`) → write `~/.ssh/config` and `~/.ssh/ac215_2024.pem` from `AWS_SSH_KEY`, copy both into `src/deployment/secrets/` (`:72-90`) → list them (`:92-97`) → **only with `/run-deploy-app`:** run the toolbox with the socket, `src/deployment` at `/deployment`, the secrets at `/root/.ssh`, fix permissions, ECR login, `deploy-setup-containers.yml` with `--extra-vars` and `-vv`, then `deploy-setup-webserver.yml` (`:99-131`). Capture: the workflow file as code panels; the local git commit with the keyword can be captured in a scratch repo; the run itself is `illustration` (no Actions run is ours to show).
+25. **Verify:** reload `http://<EXTERNAL_IP>/`; on the VM, `sudo docker container ls` shows the new tag in the IMAGE column.
 
-`README.md:16-17` says you can skip to "View the App" if your L22 cluster is still running. See §6 #6 for why that is risky: v4's config switches the load balancer type.
-
-**B1. Run the `deployment` container (README.md:76-79).**
-- Action: `cd src/deployment`, then run `sh docker-shell.sh` (the README writes this inline at `README.md:79`).
-- Under the hood:
-  - `docker-shell.sh:24-26` re-enters an already-running container if one exists.
-  - Otherwise `:32` builds `cheese-app-deployment` for `linux/amd64`, and `:35-56` runs it with these mounts: the Docker socket, the code at `/app`, `secrets` at `/secrets`, `docker_config.json` as `/root/.docker/config.json`, a `pulumi-plugins` cache, and the five app folders at `/api-service`, `/frontend-react`, `/vector-db`, `/data-collector`, `/data-processor`.
-  - The entrypoint (`docker-entrypoint.sh:10-27`) activates the SA, sets the project, configures Docker for `us-docker.pkg.dev`, creates or reuses the state bucket, runs `pulumi login gs://…`, and lists stacks.
-- Checkpoint: you see `Container is running!!!`, then `Bucket already exists. Skipping creation.` (or `Bucket does not exist. Creating...`), `Logging into Pulumi using GCS bucket: gs://<proj>-pulumi-state-bucket`, a listing under `Available Pulumi stacks in GCS:`, and a bash prompt in `/app`.
-- If it fails:
-  - An `ERROR: (gcloud.auth.activate-service-account)` line saying `/secrets/deployment.json` cannot be read → the key is not at `../../../secrets/deployment.json` relative to `src/deployment`. (Exact wording depends on the gcloud version; not run.)
-  - A very slow first build is normal on Apple Silicon (emulated amd64). See §6 #12 about the build context.
-
-**B2. Build and push the app images (README.md:81-91).** Inside the container:
-- Action: `cd deploy_images`, then:
-  ```bash
-  pulumi stack select dev
-  ```
-  ```bash
-  pulumi up --stack dev -y
-  ```
-- Under the hood: three `docker_build.Image` resources (`deploy_images/__main__.py:23-74`) build `../../api-service`, `../../frontend-react` and `../../vector-db` (that is, the `/api-service`, `/frontend-react` and `/vector-db` mounts) for `linux/amd64` on your host's Docker daemon. They push them with tag `<YYYYmmddHHMMSS>` and export `*-ref` and `*-tags`.
-- Checkpoint: an `Outputs:` block with `cheese-app-api-service-tags`, `cheese-app-frontend-react-tags` and `cheese-app-vector-db-cli-tags`, all ending in the same timestamp. The images then appear in Artifact Registry.
-- If it fails:
-  - `no stack named 'dev' found` → you never created it in this bucket. Run `pulumi stack init dev` (from `cheese-app-v3/README.md:420`), then retry.
-  - `Repository "cheese-app-repository" not found` → create it (§2).
-  - `denied: Permission "artifactregistry.repositories.uploadArtifacts" denied` → add Artifact Registry Administrator or Writer to `deployment`.
-
-**B2½. Build and push the ML images (not in README).** Still inside the container, from `/app`:
-```sh
-sh deploy-ml-images.sh        # src/deployment/deploy-ml-images.sh:1-3
-```
-- Under the hood: the script runs `cd deploy_images_ml`, `pulumi stack select dev` and `pulumi up --stack dev -y`. That builds `cheese-app-data-collector` and `cheese-app-data-processor` (`deploy_images_ml/__main__.py:18-54`) and writes the stack file `src/workflow/cli.py:29` later reads.
-- On the first run, `pulumi stack select dev` fails with `no stack named 'dev' found`. Do `cd deploy_images_ml && pulumi stack init dev && pulumi up --stack dev -y` once. (This is my suggestion, combining the script with v3's init step.)
-- Checkpoint: the bucket now has `.pulumi/stacks/deploy-images-ml/dev.json`.
-
-**B3. Create and deploy the cluster (README.md:93-103).**
-- Action: `cd ../deploy_k8s`, then:
-  ```bash
-  pulumi stack select dev
-  ```
-  ```bash
-  pulumi up --stack dev --refresh -y
-  ```
-- Under the hood, `deploy_k8s/__main__.py:24-46` runs:
-  1. `create_network`: VPC, subnet, router, NAT.
-  2. `create_cluster`: a regional GKE cluster with private nodes and Workload Identity; a node pool of 1–2 `n2d-standard-2` nodes in `us-central1-a` running as the `deployment` SA; a kubeconfig built for `gke-gcloud-auth-plugin`; the namespace; the KSA plus its IAM binding; and a `gcloud container clusters get-credentials` local command.
-  3. `setup_containers`: two PVCs; the frontend, vector-db and api Deployments and Services; the loader Job; and the BackendConfig.
-  4. A load balancer: SSL mode, because `Pulumi.dev.yaml:7` is `"true"`.
-- Checkpoint: `setupSSL: True` and `domain: None` are printed (`__main__.py:20-21`). Then `Outputs:` lists `app_url`, `cluster_endpoint`, `cluster_name`, `ingress_name`, `ip_address`, `kubeconfig` and `namespace` (`__main__.py:49-55`). A first create takes a long time; the cluster is the slow part.
-- If it fails:
-  - 403 / permission errors naming `ac215-project`, or errors about the SA emails → you have not replaced the instructor's values in `deploy_k8s/Pulumi.dev.yaml:3,5,6`. (`deploy_k8s/__main__.py:14` reads the project with `.get`, so a missing `gcp:project` does not produce Pulumi's "Missing required configuration variable" error here; `deploy_images/__main__.py:9` uses `.require` and does.)
-  - 403 on `api-gsa-wi-user` → your `deployment` SA cannot set IAM policy on `gcp-service` (see §6 #10).
-  - The `vector-db-loader` Job does not finish → read its logs: `kubectl logs job/vector-db-loader -n cheese-app-namespace` (my suggestion).
-
-**B4. View the app (README.md:105-129).**
-- Action: open the `app_url` output, `https://<ip>.sslip.io`.
-- The README says to copy `nginx_ingress_ip` (`README.md:107,126`). **No such output exists in v4**; use `ip_address`/`app_url`. The README's `http://<YOUR INGRESS IP>.sslip.io` (`:127`) is redirected to HTTPS.
-- **If you have a domain (`README.md:105-123`):** the README's steps are an A record pointing at the ingress IP, a wait for DNS, then `http://your-domain.com`. In v4's SSL mode you also have to tell Pulumi the host name, otherwise the Ingress rule and the managed certificate are for `<ip>.sslip.io` only (`setup_loadbalancer_ssl.py:18-21`, `deploy_k8s/__main__.py:19`). The instructor's `deploy-k8s:domain: formaggio.dlops.io` line was deleted in commit `a533054`. My suggestion, inside the container in `deploy_k8s`: `pulumi config set deploy-k8s:domain <your-domain>`, commit the changed `Pulumi.dev.yaml`, re-run `pulumi up`, point the A record at the `ip_address` output, and open `https://<your-domain>` once the certificate is Active.
-- Checkpoint: the Formaggio home page loads. The footer shows `Frontend version: 1` and `API version: 1.0.1` (`Footer.jsx:37`; `Common.js:3`; `service.py:36`). `APP_VERSION = 1.0` is a JavaScript number, so it renders as `1`.
-- If it fails:
-  - A certificate error, or `ERR_SSL_VERSION_OR_CIPHER_MISMATCH`, means the managed cert is still provisioning. Wait, and check it with `kubectl describe managedcertificate managed-certificates -n cheese-app-namespace` (my suggestion).
-  - A 502 on `/api-service/...` means the backend health check is failing. Check that the BackendConfig exists (`setup_containers.py:325-345`).
-
-### Part C: GitHub credentials (README.md:133-145)
-
-**C1. Add the repository secret.**
-- Action: repo **Settings → Secrets and variables → Actions → New repository secret**. Name: `GOOGLE_APPLICATION_CREDENTIALS`. Value: the full contents of `deployment.json` (`README.md:141-145`).
-- Under the hood: `${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}` is injected into `auth@v1` (`app-ci-cd-gcp.yml:21`, `ml-ci-cd-gcp.yml:21`) and masked in logs.
-- If it fails: `the GitHub Action workflow must specify exactly one of "workload_identity_provider" or "credentials_json"` means the secret name is misspelled or the secret is empty. That is the auth action's error for an empty input.
-
-### Part D: app changes trigger a deploy (README.md:160-194)
-
-**D1. Change the API version.**
-- Action: `README.md:164-171` says to edit `service.py` "line 29" to return `"version": "2.0"`. In the current code the endpoint is at `src/api-service/api/service.py:34-36` and returns `{"version": "1.0.1"}`; line 29 is the `/` route. Edit line 36.
-
-**D2. Change the frontend version.** `README.md:173-177` is correct: `src/frontend-react/src/services/Common.js:3` is `export const APP_VERSION = 1.0;`. Set it to `2.2`.
-
-**D3. Change the header colour.**
-- `README.md:179-184` points to "line 69" of `Header.jsx`. The `className` is actually at `src/frontend-react/src/components/layout/Header.jsx:41`, and it currently reads `bg-sky-800`, because the instructor's demo commit `e8f6d3c` changed 700→800. Change it to `bg-sky-700` (or any Tailwind colour).
-- The colour shows only after you scroll down 50 px (`Header.jsx:23`).
-
-**D4. Commit with the keyword and push, outside the container (README.md:186-194).**
-```bash
-git add .
-git commit -m "update frontend and backend version and header color /deploy-app"
-git push
-```
-- Ignore `README.md:162`, which says the keyword is `/run-deploy-app`. The workflow tests for `/deploy-app` (`app-ci-cd-gcp.yml:9`). `README.md:188` and the example commit are right.
-
-**D5. Watch the run.** Actions tab → the run named `<you> submitted a CI CD Action for App Deployment` (`app-ci-cd-gcp.yml:2`).
-- Steps, in order (`app-ci-cd-gcp.yml:12-56`):
-  1. Four `echo` lines show the message, the event (`push`), the OS (`Linux`) and the branch (`refs/heads/main`).
-  2. Checkout.
-  3. Auth.
-  4. gcloud setup.
-  5. Docker configure.
-  6. Two more `echo` lines (`:27-28`).
-  7. `ls` of the workspace. It shows `README.md`, `images` and `src`, plus the auth action's `gha-creds-*.json` file.
-  8. "Build Deployment Container".
-  9. "Run Deploy App". This log shows the same entrypoint banner as B1, the argument `deploy-k8s-update.sh` echoed (`docker-entrypoint.sh:33`), then two Pulumi updates: images first, then K8s.
-- The parallel ML workflow run for the same push shows its job as **skipped**.
-- If it fails, see §6. Most common: wrong secret, wrong project or bucket names in the YAML, missing Artifact Registry permission, or a stack lock from an overlapping run.
-
-**D6. Verify.**
-- Reload `app_url` and scroll. The footer should read `Frontend version: 2.2` and `API version: 2.0`, and the header turns sky blue.
-- Optional, inside your local deployment container (my suggestions):
-```sh
-gcloud container clusters get-credentials cheese-app-cluster --region us-central1 --project <your-project>
-kubectl get deploy -n cheese-app-namespace -o wide          # IMAGES column shows the new :<timestamp>
-kubectl rollout history deployment/api -n cheese-app-namespace
-```
-
-### Part E: ML changes trigger Vertex AI pipelines (README.md:197-204)
-
-**E1. Data collector.**
-- Action: commit with `/run-data-collector` in the message (`README.md:203`) and push.
-- Under the hood:
-  1. `ml-ci-cd-gcp.yml:32-35` builds `src/workflow`.
-  2. `:36-55` runs `cheese-app-workflow python cli.py --data_collector`. The workflow entrypoint activates the key and runs `uv run python cli.py --data_collector` (`src/workflow/docker-entrypoint.sh:14-28`).
-  3. `cli.py:64-110` reads the latest collector tag from the Pulumi state file, compiles a one-step KFP pipeline into `data_collector.yaml`, and submits it as `cheese-app-data-collector-<8 chars>` to run as `ml-workflow`. `job.run(...)` blocks until the run ends, so the Actions step stays "in progress" for the whole pipeline, and turns red if the Vertex run fails (the SDK raises on a failed pipeline).
-  4. On Vertex, the collector container runs `uv run python cli.py --search --nums 10 --query brie+cheese … --bucket <bkt>` (`src/data-collector/docker-entrypoint.sh:21`, `src/workflow/cli.py:79-84`) and uploads `raw.zip` (`src/data-collector/cli.py:63-66`).
-- Checkpoint: Vertex AI → Pipelines shows the run, and `gs://<bkt>/raw.zip` exists.
-
-**E2. Data processor.** Commit with `/run-data-processor` (`README.md:204`).
-- Under the hood: the same flow with `--data_processor` (`ml-ci-cd-gcp.yml:56-75`, `cli.py:113-157`). The processor runs `--clean`, which downloads `raw.zip`, de-duplicates and verifies the images, and uploads `clean.zip` (`src/data-processor/cli.py:42-75`).
-
-**E3. Full pipeline.** Commit with `/run-ml-pipeline` (`README.md:202`).
-- Under the hood: `cli.py:221-316` builds a four-task pipeline chained with `.after()`: Data Collector (50 images per query) → Data Processor → Model Training (15 epochs, `mobilenetv2`) → Model Deploy.
-  - Training launches a separate Vertex custom job from the trainer tarball (`model.py:25-63`).
-  - Deploy uploads `gs://<bkt>/model` and deploys it to a **new endpoint** (`model.py:84-103`).
-- Checkpoint: four green nodes in the Vertex pipeline graph, a new model in Model Registry, and a new endpoint under Online prediction.
-- If it fails:
-  - `404 … .pulumi/stacks/deploy-images-ml/dev.json` → do B2½.
-  - `403 … iam.serviceAccounts.actAs` → the `deployment` SA lacks Service Account User on `ml-workflow`.
-  - A training step failing to find `cheese-app-trainer.tar.gz` → upload it (§2).
-- Note: the training component calls `job.run(..., sync=False)` (`model.py:62`). The L15 digest traced in the SDK that the component's process still waits for the job at exit, but an exception in the background thread is not re-raised. So a failed training job can leave the step green.
-
-### Part F: clean up (not in README)
-Run these inside the deployment container (commands from `cheese-app-v3/README.md:511`, plus my additions):
-```sh
-cd /app/deploy_k8s && pulumi destroy --stack dev --refresh -y
-```
-Then, in the console:
-1. Undeploy and delete every Vertex AI endpoint the pipeline created.
-2. Delete old Artifact Registry tags.
-3. Delete the Actions secret and the SA key, or disable the workflows.
-
----
+### Part G — teardown (`README.md:145-148`, plus what is missing)
+26. **`ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=absent`** (`:147`). Capture: real, and it fails locally: "Create security group" and "Create EBS volume" are skipped, then "Create EC2 instance" fails with `The task includes an option with an undefined variable. The error was: 'dict object' has no attribute 'group_id'` (captured 2026-11-08). Nothing is deleted (§6 G9).
+27. **Manual cleanup** (not in README): terminate instance `cheese-app-demo`; delete the 50 GB volume `cheese-app-demo-disk`; delete security group `app_security_group`; delete the ECR repositories (or their images); deactivate/delete the access key; delete the key pair; remove the four GitHub secrets. Capture: `illustration` checklist with a GOLD cost tag.
 
 ## 5. Code tour
 
 ### Key files
-```
-cheese-app-v4/
-├── .github/workflows/
-│   ├── app-ci-cd-gcp.yml        # on push to main + "/deploy-app": build deployment image, run deploy-k8s-update.sh
-│   └── ml-ci-cd-gcp.yml         # on push to main + "/run-": build workflow image, submit a Vertex pipeline
-├── images/ci-cd.png             # the course-wide CI/CD picture (README.md:11)
-├── README.md                    # the tutorial (208 lines)
-└── src/
-    ├── api-service/             # FastAPI; api/service.py mounts everything under ROOT_PATH (/api-service in K8s)
-    ├── frontend-react/          # Next.js; Common.js (APP_VERSION), layout/Header.jsx (colour), layout/Footer.jsx (shows versions)
-    ├── vector-db/               # ChromaDB loader CLI (image cheese-app-vector-db-cli; run as a K8s Job)
-    ├── data-collector/          # NEW in v4: Bing image scraper -> gs://<bkt>/raw.zip (Vertex pipeline step)
-    ├── data-processor/          # NEW in v4: dedupe/verify -> gs://<bkt>/clean.zip (Vertex pipeline step)
-    ├── workflow/                # NEW in v4: KFP pipeline CLI (from L15 ml-workflow) + Pulumi-state lookup of image tags
-    │   ├── cli.py, model.py     # pipelines and the training/deploy components
-    │   └── *.yaml               # compiled pipeline specs (build artefacts, overwritten on each run)
-    └── deployment/              # the toolbox container
-        ├── Dockerfile           # gcloud, kubectl, helm, pulumi, uv; v4 bakes the code in (ADD . /app)
-        ├── docker-shell.sh      # local: build + run interactively with mounts
-        ├── docker-entrypoint.sh # auth, state-bucket login, then shell OR run the given script
-        ├── deploy-k8s-update.sh # NEW: what CI runs: deploy_images then deploy_k8s
-        ├── deploy-ml-images.sh  # NEW: build ML images (nothing calls it automatically)
-        ├── deploy_images/       # Pulumi: build+push api/frontend/vector-db-cli with a timestamp tag
-        ├── deploy_images_ml/    # NEW Pulumi project: build+push data-collector/processor
-        ├── deploy_k8s/          # Pulumi: network, GKE, workloads, ingress (SSL mode on in v4)
-        └── deploy_single_vm/    # v3 carry-over (L20), unused here
-```
+| Path | Lines | Role |
+| --- | --- | --- |
+| `README.md` | 148 | the AWS deployment steps |
+| `.github/workflows/ci_cd_aws.yml` | 131 | the CI/CD workflow |
+| `src/deployment/Dockerfile` | 65 | the toolbox image |
+| `src/deployment/docker-shell.sh` | 49 | start the toolbox on a laptop |
+| `src/deployment/inventory.yml` | 30 | hosts and variables |
+| `src/deployment/deploy-docker-images.yml` | 60 | build and push |
+| `src/deployment/deploy-create-instance.yml` | 108 | security group, EBS, EC2 |
+| `src/deployment/deploy-provision-instance.yml` | 297 | Docker, disk, AWS CLI on the VM |
+| `src/deployment/deploy-setup-containers.yml` | 208 | the app's containers |
+| `src/deployment/deploy-setup-webserver.yml` | 38 | nginx |
+| `src/deployment/nginx-conf/nginx/nginx.conf` | 57 | routes |
+| `src/deployment/docker-entrypoint.sh`, `docker-entrypoint_working.sh` | 52, 55 | unused (ENTRYPOINT commented out) |
 
-### Excerpt 1: the trigger
-
-**`.github/workflows/app-ci-cd-gcp.yml:1-9`**
-```
-name: Continuous Integration and Continuous Deployment
-run-name: ${{ github.actor }} submitted a CI CD Action for App Deployment
+### Excerpt 1: the trigger (`ci_cd_aws.yml:3-9`)
+```yaml
 on:
   push:
     branches: [ "main" ]
 
 jobs:
   Explore-GitHub-Actions:
-    if: contains(github.event.head_commit.message, '/deploy-app')
+    if: contains(github.event.head_commit.message, '/run-')
 ```
-- `name` is identical in both workflow files, so tell them apart by `run-name`, which is evaluated per run.
-- `on.push.branches` means pushes to other branches, PRs and tags never trigger it. A merged PR triggers it via the merge commit's message.
-- The job-level `if` gates the whole job. Skipped jobs cost no runner time.
-- `head_commit` is the **last** commit of the push.
-- `Explore-GitHub-Actions` is a leftover name from GitHub's starter template. The ML file uses the same job id.
-
-### Excerpt 2: checkout and authentication
-
-**`.github/workflows/app-ci-cd-gcp.yml:16-26`**
+and the second sieve (`:99-100`):
+```yaml
+      - name: Run Deployment Container
+        if: contains(github.event.head_commit.message, '/run-deploy-app')
 ```
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - id: 'auth'
-        uses: google-github-actions/auth@v1
+
+### Excerpt 2: logging in to AWS in CI (`ci_cd_aws.yml:18-33`)
+```yaml
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
-      - name: Configure Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-      - name: Configure Docker Client
-        run: |-
-          gcloud auth configure-docker # --quiet #authenticate to gcr
-```
-- `checkout@v4` puts the pushed commit into `$GITHUB_WORKSPACE`.
-- `auth@v1` with `credentials_json` writes the key to a file in the workspace and exports `GOOGLE_APPLICATION_CREDENTIALS`. The later "Run Deploy App" step's `docker run` uses that variable (Excerpt 3).
-- `setup-gcloud@v1` puts gcloud on the runner's PATH.
-- The last step configures the *runner's* Docker for `gcr.io`-style hosts. Nothing in this workflow pushes from the runner's own Docker client, so it is redundant. `# --quiet` is commented out, so the command runs without `--quiet`.
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  
+          
+      - name: Verify AWS Credentials
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls
 
-### Excerpt 3: running the toolbox in CI
-
-**`.github/workflows/app-ci-cd-gcp.yml:36-49`**
+      - name: Login to Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 ```
-      - name: Run Deploy App
-        run: |-
+
+### Excerpt 3: one image, one timestamp (`ci_cd_aws.yml:46-58`)
+```yaml
+      - name: Generate Docker tag
+        run: |
+          echo $(date +%Y%m%d%H%M%S) > ${{ github.workspace }}/src/deployment/.docker-tag
+          export DOCKER_TAG=$(cat ${{ github.workspace }}/src/deployment/.docker-tag)
+          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+      
+      - name: Build and Push Docker Images
+        run: |
+          # Frontend React
+          cd ${{ github.workspace }}/src/frontend-react/
+          docker build -t cheese-app-frontend-react -f Dockerfile .
+          docker tag cheese-app-frontend-react:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cheese-app-frontend-react:${{ env.DOCKER_TAG }}
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cheese-app-frontend-react:${{ env.DOCKER_TAG }}
+```
+(`:60-70` repeat this for `vector-db` and `api-service`.)
+
+### Excerpt 4: running the toolbox in CI (`ci_cd_aws.yml:113-131`)
+```yaml
           docker run --rm --name cheese-app-deployment \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v $HOME/.ssh:/home/app/.ssh \
-            -v "${{ github.workspace }}/src/deployment/docker_config.json":/root/.docker/config.json \
-            -v "${{ github.workspace }}/src/deployment/pulumi-plugins":/root/.pulumi/plugins \
-            -v ${{ github.workspace }}/src/frontend-react:/frontend-react \
-            -v ${{ github.workspace }}/src/api-service:/api-service \
-            -v ${{ github.workspace }}/src/vector-db:/vector-db \
-            -v ${{ github.workspace }}/src/data-collector:/data-collector \
-            -v ${{ github.workspace }}/src/data-processor:/data-processor \
-            --volume $GITHUB_WORKSPACE:/workspace \
-            --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/deployment.json \
+            -v ${{ github.workspace }}/src/deployment:/deployment \
+            -v ${{ github.workspace }}/src/deployment/secrets:/root/.ssh \
+            -e AWS_ACCESS_KEY_ID \
+            -e AWS_SECRET_ACCESS_KEY \
+            -e AWS_DEFAULT_REGION \
+            -e AWS_ACCOUNT_ID \
+            -e DOCKER_TAG \
+            cheese-app-deployment \
+            /bin/bash -c "cd /deployment && \
 ```
-- There is no `-it`: this is non-interactive.
-- The Docker socket gives the container the runner's daemon, so Pulumi's image builds happen there.
-- The app folders are mounted at the **same absolute paths** as locally (`docker-shell.sh:42-46`). That is why `deploy_images/__main__.py:20`'s relative `../../api-service`, resolved from `/app/deploy_images`, finds `/api-service` both locally and in CI.
-- There is **no** `-v …:/app` mount. Code under `/app` comes from the image (Excerpt 4).
-- `src/deployment/pulumi-plugins` is git-ignored (`src/deployment/.gitignore:1`, `/pulumi-*`), so on the runner that mount source does not exist and Docker creates an empty directory. Pulumi's provider plugins are therefore downloaded again on every run *(reasoned, not run)*.
-- The last line bind-mounts the key file the auth action wrote.
-- The following lines (`:50-56`) set `GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json`, `USE_GKE_GCLOUD_AUTH_PLUGIN=True`, project, zone, region and `PULUMI_BUCKET`, and finally name the image and the argument `deploy-k8s-update.sh`.
+…then (`:124-131`) `chown`/`chmod` of `/root/.ssh`, `ls -la /root/.ssh`, ECR login, `ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook deploy-setup-containers.yml -i inventory.yml --extra-vars "… docker_tag=$DOCKER_TAG" -vv`, `ansible-playbook deploy-setup-webserver.yml -i inventory.yml`. `-e NAME` with no value copies the variable from the step's `env:` (`:101-108`).
 
-### Excerpt 4: baking the code into the image
-
-**`src/deployment/Dockerfile:63-75`**
-```
-# Set the working directory
-WORKDIR /app
-
-# Copy dependency files first for better layer caching
-COPY --chown=app:app pyproject.toml uv.lock* ./
-
-# Install Python dependencies
-RUN uv sync --frozen
-
-ADD --chown=app:app . /app
-
-# Start a new shell to use the installed SDK
-ENTRYPOINT ["/bin/bash","docker-entrypoint.sh"]
-```
-- The lock-first copy keeps the `uv sync` layer cached when only code changes. It installs into `/home/app/.venv` (`UV_PROJECT_ENVIRONMENT`, `Dockerfile:8`), which the Pulumi projects use through `toolchain: uv` (`deploy_images/Pulumi.yaml:3-6`).
-- The `ADD` line is the one-line v3→v4 change that makes CI possible: the image now *contains* `deploy-k8s-update.sh`, `deploy_images/` and `deploy_k8s/`.
-- Locally, `docker-shell.sh:37` still mounts your working tree over `/app`, so local edits win there.
-- There is no `USER` line, so the container runs as root. The Docker credential helper config is therefore read from `/root/.docker/config.json`.
-
-### Excerpt 5: interactive or scripted
-
-**`src/deployment/docker-entrypoint.sh:29-40`**
-```
-# Run Bash for interactive mode
-#/bin/bash
-
-args="$@"
-echo $args
-
-if [[ -z ${args} ]]; 
-then
-    /bin/bash
+### Excerpt 5: reading the CSV (`docker-shell.sh:9-21`, account id masked)
+```bash
+# Read AWS credentials from CSV file
+CSV_FILE="../../../../secrets/deployment-ac215-user_accessKeys.csv"
+if [ -f "$CSV_FILE" ]; then
+    # Skip the header line and read the second line, removing any quotes and whitespace
+    IFS=',' read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY <<< "$(sed -n '2p' "$CSV_FILE" | tr -d '"' | tr -d ' ')"
+    export AWS_ACCESS_KEY_ID=$(echo "$AWS_ACCESS_KEY_ID" | tr -d '\r')
+    export AWS_SECRET_ACCESS_KEY=$(echo "$AWS_SECRET_ACCESS_KEY" | tr -d '\r')
+    export AWS_DEFAULT_REGION="us-east-1"
+    export AWS_ACCOUNT_ID="YOUR_ACCOUNT_ID"
 else
-  /bin/bash $args
+    echo "Error: AWS credentials file not found at $CSV_FILE"
+    exit 1
 fi
 ```
-- With no arguments (local `docker-shell.sh`), you get a shell.
-- With `deploy-k8s-update.sh` (CI), bash runs that script in `/app`.
-- Because `/bin/bash $args` is the **last** command, its exit code becomes the container's exit code, which `docker run --rm` passes to the Actions step. That is how a failure reaches the red ✗, but only if the script itself exits non-zero (Excerpt 6).
-- Lines `10-27`, above this excerpt, do the gcloud and Pulumi login every time the container starts.
+`<<<` (here-string) is a bash feature: this is the line `dash` rejects (§6 G2).
 
-### Excerpt 6: the deploy script CI runs
+### Excerpt 6: the toolbox run on a laptop (`docker-shell.sh:32-48`)
+```bash
+docker build -t $IMAGE_NAME --platform=linux/amd64 -f Dockerfile .
 
-**`src/deployment/deploy-k8s-update.sh:1-9`**
+# Run the container
+docker run --rm --name $IMAGE_NAME -ti \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v "$BASE_DIR":/app \
+-v "$SECRETS_DIR":/secrets \
+-v "$HOME/.ssh":/home/app/.ssh \
+-v "$BASE_DIR/../api-service":/api-service \
+-v "$BASE_DIR/../frontend-react":/frontend-react \
+-v "$BASE_DIR/../vector-db":/vector-db \
+-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+-e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION \
+-e AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID \
+-e SSH_KEY_PATH=$SSH_KEY_PATH \
+$IMAGE_NAME
 ```
+The container runs as root (the Dockerfile creates user `app` at `:39-42` but never switches to it), so `/home/app/.ssh` is not root's `~/.ssh`; Ansible uses the explicit key path from the inventory anyway. `SSH_KEY_PATH` is exported but nothing reads it; the inventory's local line reads `AWS_SSH_KEY` and falls back to `/secrets/ac215_2024.pem` (`inventory.yml:7`).
 
-cd deploy_images
-pulumi stack select dev
-pulumi up --stack dev -y
+### Excerpt 7: the inventory (`inventory.yml:1-30`, masked)
+```yaml
+all:
+  vars:
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: "/root/.ssh/ac215_2024.pem" ## Github Actions
 
-cd ..
-cd deploy_k8s
-pulumi stack select dev
-pulumi up --stack dev -y
+    ## from local mac
+    # ansible_ssh_private_key_file: "{{ lookup('env', 'AWS_SSH_KEY') | default('/secrets/ac215_2024.pem', true) }}"   
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+    aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+    aws_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+    aws_account_id: "{{ lookup('env','AWS_ACCOUNT_ID') }}"
+    aws_application_credentials: "/secrets/deployment-ac215-user_accessKeys.csv"
+
+    aws_region: "us-east-1"
+    aws_instance_type: "t2.large"
+    aws_keypair_name: "ac215_2024"  ## Change this 
+    aws_ami_id: "ami-0e86e20dae9224db8"  
+    docker_network_name: "appnetwork"
+    machine_instance_name: "cheese-app-demo"
+    machine_disk_size: 100
+    persistent_disk_name: "cheese-app-demo-disk"
+    persistent_disk_size: 50
+    aws_instance_name: "cheese-app-demo"
+    nextauth_secret: "<nextauth-secret>"
+    nextauth_url: "http://{{ inventory_hostname }}"
+
+  children:
+    appserver:
+      hosts:
+        <EXTERNAL_IP>:
 ```
-- The order matters: images first, so the K8s stack's `StackReference` sees the new tags.
-- There is no `--refresh`, so Pulumi trusts its state and won't notice manual `kubectl` edits.
-- There is no `set -e`, so the script's exit code is that of the last `pulumi up` only. A failed image build followed by a no-op K8s update reports **success** (§6 #4).
+Unused at this commit: `aws_application_credentials`, `machine_instance_name`, `nextauth_url` (the container gets `NEXTAUTH_URL` directly, `deploy-setup-containers.yml:145`).
 
-### Excerpt 7: build, push and export an image
+### Excerpt 8: build and push with Ansible (`deploy-docker-images.yml:1-30`)
+```yaml
+- name: "Build docker images and push them to ECR"
+  hosts: localhost
+  gather_facts: false
+  vars:
+    aws_account_id: "{{ lookup('env','AWS_ACCOUNT_ID') }}"
+    ecr_registry: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
+  tasks:
+  - name: Login to AWS ECR
+    shell: "aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ ecr_registry }}"
 
-**`src/deployment/deploy_images/__main__.py:23-35`**
+  - name: "Get timestamp for docker tag"
+    shell: "(date +%Y%m%d%H%M%S)"
+    register: tag
+  - name: Print tag
+    debug:
+      var: tag
+
+  - name: Build frontend container image
+    community.general.docker_image:
+      build:
+        path: /frontend-react
+        platform: linux/amd64/v2
+      name: "{{ ecr_registry }}/cheese-app-frontend-react:{{ tag.stdout}}"
+      source: build
+  - name: Push frontend image to ECR
+    community.general.docker_image:
+      name: "{{ ecr_registry }}/cheese-app-frontend-react:{{ tag.stdout}}"
+      repository: "{{ ecr_registry }}/cheese-app-frontend-react:{{ tag.stdout}}"
+      push: yes
+      source: local
 ```
-api_service_image = docker_build.Image(
-    f"build-{image_config["image_name"]}",
-    tags=[pulumi.Output.concat(registry_url, "/", image_config["image_name"], ":", timestamp_tag)],
-    context=docker_build.BuildContextArgs(location=image_config["context_path"]),
-    dockerfile={"location": f"{image_config["context_path"]}/{image_config["dockerfile"]}"},
-    platforms=[docker_build.Platform.LINUX_AMD64],
-    push=True,
-    opts=pulumi.ResourceOptions(custom_timeouts=CustomTimeouts(create="30m"),
-                                retain_on_delete=True)
-)
-# Export references to stack
-pulumi.export("cheese-app-api-service-ref", api_service_image.ref)
-pulumi.export("cheese-app-api-service-tags", api_service_image.tags)
+`community.general.docker_image` is a redirect to `community.docker.docker_image`; at build time today the playbook prints a deprecation warning that the redirect "will be removed in community.general 18.0.0" (captured from `--syntax-check`).
+
+### Excerpt 9: create, and the teardown that cannot work (`deploy-create-instance.yml:39-46`, `:94-100`)
+```yaml
+    # # Replace GCP instance with EC2 instance
+    - name: Create EC2 instance
+      amazon.aws.ec2_instance:
+        instance_type: "{{ aws_instance_type }}"
+        image_id: "{{ aws_ami_id }}"
+        region: "{{ aws_region }}"
+        security_group: "{{ security_group.group_id }}"
+        key_name: "{{ aws_keypair_name }}"
 ```
-- `timestamp_tag` (from `:13`) changes on every run, so `tags` changes, so Pulumi rebuilds and pushes even when the code is identical.
-- `LINUX_AMD64` matches the GKE nodes (`n2d` = AMD x86). On an Apple Silicon laptop this is an emulated build. On the GitHub runner it is native.
-- `retain_on_delete=True` means `pulumi destroy` does not delete images from the registry.
-- The `"…"` quotes nested inside the f-strings need Python ≥ 3.12. The container uses 3.13 (`Dockerfile:4`).
-- The exported `-tags` list is what Excerpt 8 consumes.
-
-### Excerpt 8: the cross-stack pipe
-
-**`src/deployment/deploy_k8s/setup_containers.py:8-14`**
+```yaml
+    # Replace GCP disk removal with EBS volume removal
+    - name: Remove EBS volume
+      ec2_vol:
+        region: "{{ aws_region }}"
+        id: "{{ ebs_volume.volume_id }}"
+        state: absent
+      when: cluster_state == "absent"
 ```
-    # Get image references from deploy_images stack
-    # For local backend, use: "organization/project/stack"
-    images_stack = pulumi.StackReference("organization/deploy-images/dev")
-    # Get the image tags (these are arrays, so we take the first element)
-    api_service_tag = images_stack.get_output("cheese-app-api-service-tags")
-    frontend_tag = images_stack.get_output("cheese-app-frontend-react-tags")
-    vector_db_cli_tag = images_stack.get_output("cheese-app-vector-db-cli-tags")
+The create task has no `when:` and no `state:`; nothing in the file terminates the instance.
+
+### Excerpt 10: pick the tag, run the containers (`deploy-setup-containers.yml:101-114`, `:131-145`)
+```yaml
+    - name: Set docker tag from environment if available
+      set_fact:
+        docker_tag: "{{ lookup('env', 'DOCKER_TAG') }}"
+      when: lookup('env', 'DOCKER_TAG') != ""
+
+    - name: Set docker tag from file if environment variable is not set
+      block:
+        - name: Read docker tag from file
+          shell: "cat .docker-tag"
+          register: tag_file
+        - name: Set docker tag from file
+          set_fact:
+            docker_tag: "{{ tag_file.stdout }}"
+      when: lookup('env', 'DOCKER_TAG') == ""
 ```
-- With a DIY (bucket) backend, the organization is the literal `organization`. `deploy-images` is the project name from `deploy_images/Pulumi.yaml:1`, and `dev` is the stack.
-- `get_output` returns a lazy `Output`. It resolves at deploy time to whatever the images stack *last* exported.
-
-### Excerpt 9: the tag lands in the pod template
-
-**`src/deployment/deploy_k8s/setup_containers.py:273-285`**
+```yaml
+    - name: Create frontend container
+      docker_container:
+        name: "frontend"
+        image: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/cheese-app-frontend-react:{{ docker_tag }}"
+        state: started
+        recreate: yes
+        pull: yes
+        restart: yes
+        published_ports:
+          - 3000:3000
+        networks:
+          - name: "{{docker_network_name}}"
+        env:
+          NEXTAUTH_SECRET: "{{ nextauth_secret }}"  
+          NEXTAUTH_URL: "http://{{ inventory_hostname }}"  
 ```
-                    containers=[
-                        k8s.core.v1.ContainerArgs(
-                            name="api",
-                            image=api_service_tag.apply(
-                                lambda tags: tags[0]
-                            ),  # API container image (placeholder - needs to be filled)
-                            image_pull_policy="IfNotPresent",
-                            ports=[
-                                k8s.core.v1.ContainerPortArgs(
-                                    container_port=9000,  # API server port
-                                    protocol="TCP",
-                                )
-                            ],
+`lookup('env', …)` reads the environment of the *controller* (the toolbox), not of the VM. `cat .docker-tag` runs on the VM, in the SSH user's home, where `:67-71` copied the file.
+
+### Excerpt 11: the loader run (`deploy-setup-containers.yml:164-173`)
+```yaml
+    - name: Load Vector DB
+      shell: docker run --rm -it 
+        -e AWS_ACCESS_KEY_ID="{{ aws_access_key }}" 
+        -e AWS_SECRET_ACCESS_KEY="{{ aws_secret_key }}" 
+        -e AWS_DEFAULT_REGION="{{ aws_region }}"
+        -e CHROMADB_HOST="vector-db" 
+        -e CHROMADB_PORT="8000" 
+        --network "{{docker_network_name}}" 
+        "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/cheese-app-vector-db-cli:{{ docker_tag }}" 
+        cli.py --download --load --chunk_type recursive-split
 ```
-- `.apply(lambda tags: tags[0])` turns the exported list into the single image string.
-- When it differs from the live Deployment's, Pulumi patches `spec.template`, and Kubernetes starts a rolling update.
-- The comment "placeholder - needs to be filled" is stale; it *is* filled.
-- `IfNotPresent` is safe only because every tag is unique.
-- The same pattern feeds the frontend (`:69-71`) and the loader Job (`:214`).
+The image's entrypoint turns the arguments into `pipenv run python cli.py --download --load --chunk_type recursive-split` (`src/vector-db/docker-entrypoint.sh:5-13`).
 
-### Excerpt 10: v4's HTTPS front door
-
-**`src/deployment/deploy_k8s/setup_loadbalancer_ssl.py:50-61`**
+### Excerpt 12: the routes (`nginx.conf:34-55`)
+```nginx
+		# API - Make this location block handle all /api paths
+		location ^~ /api/ {
+			# Remove the rewrite since we want to preserve the full path after /api/
+			proxy_pass http://api-service:9000/;
 ```
-    ingress = k8s.networking.v1.Ingress(
-        f"{app_name}-ingress",
-        metadata=k8s.meta.v1.ObjectMetaArgs(
-            name=f"{app_name}-ingress",
-            namespace=namespace.metadata.name,
-            annotations={
-                "kubernetes.io/ingress.class": "gce",
-                "kubernetes.io/ingress.global-static-ip-name": ip_address.name,
-                "networking.gke.io/managed-certificates": "managed-certificates",
-                "networking.gke.io/v1beta1.frontend-config": "https-redirect",
-            },
-        ),
+```nginx
+		# Frontend
+		location / {
+			proxy_pass http://frontend:3000;
 ```
-- `ingress.class: gce` hands the Ingress to GKE's built-in controller, which provisions a Google external HTTPS LB.
-- `global-static-ip-name` pins it to the `GlobalAddress` from `:12-17`.
-- `managed-certificates` names the `ManagedCertificate` (`:24-34`) for the host. The host is `<ip>.sslip.io` because no `deploy-k8s:domain` is set: it was removed in commit `a533054`.
-- The `frontend-config` annotation applies the HTTP→HTTPS redirect (`:37-47`).
-- Paths `/api-service` and `/` follow at `:62-97`.
-- Together with the API's BackendConfig health check (`setup_containers.py:325-345`, wired via the Service annotations at `:353-356`), these are the v4 changes that make the GCE load balancer work.
+(each block also sets `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Real-IP`, `Host`, `proxy_redirect off`, `proxy_buffering off`.)
 
-### Excerpt 11: an ML step in CI
-
-**`.github/workflows/ml-ci-cd-gcp.yml:36-46`**
+### Excerpt 13: the toolbox Dockerfile's install line (`Dockerfile:31-37`)
+```dockerfile
+RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && \
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list  && \
+    curl https://baltocdn.com/helm/signing.asc | apt-key add -&& \
+    echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends kubectl helm python3.9 python3-pip && \
+    pip install ansible>=9.0.0 openshift docker apache-libcloud boto3 botocore pipenv
 ```
-      - name: Run Data Collector
-        if: contains(github.event.head_commit.message, '/run-data-collector')
-        run: |-
-          docker run --rm --name cheese-app-workflow \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v ${{ github.workspace }}/src/frontend-react:/frontend-react \
-            -v ${{ github.workspace }}/src/api-service:/api-service \
-            -v ${{ github.workspace }}/src/data-collector:/data-collector \
-            -v ${{ github.workspace }}/src/data-processor:/data-processor \
-            --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/deployment.json \
-            -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json \
-```
-- A step-level `if` runs inside the job admitted by `'/run-'`.
-- The socket and the four source mounts are copied from the deploy job but unused. The workflow container only talks to GCP APIs, and it builds **no** images.
-- In CI the pipeline is submitted with the `deployment` key. Locally, `src/workflow/docker-shell.sh:27` uses `ml-workflow.json` instead.
-- The env lines that follow (`:47-54`) must match your project. Note `PULUMI_BUCKET` here is a bare bucket name (`:54`), because `cli.py` passes it to `storage.Client().bucket()`.
-
-### Excerpt 12: reading Pulumi state without Pulumi
-
-**`src/workflow/cli.py:36-51`**
-```
-    client = storage.Client()
-    bucket = client.bucket(bucket_name)
-    blob = bucket.blob(stack_path)
-
-    # Download and parse JSON
-    stack_content = blob.download_as_text()
-    stack_data = json.loads(stack_content)
-
-    # Extract outputs from the stack resource
-    outputs = {}
-    for resource in (
-        stack_data.get("checkpoint", {}).get("latest", {}).get("resources", [])
-    ):
-        if resource.get("type") == "pulumi:pulumi:Stack":
-            outputs = resource.get("outputs", {})
-            break
-```
-- This is the only diff between v4's `workflow/cli.py` and L15's `ml-workflow/src/workflow/cli.py`. L15 hard-coded `dlops/cheese-app-*` Docker Hub images; v4 looks up the newest Artifact Registry tags.
-- `stack_path` is `.pulumi/stacks/deploy-images-ml/dev.json` (`:29`).
-- In a Pulumi checkpoint file, stack outputs live on the root resource of type `pulumi:pulumi:Stack`.
-- If the file is missing, `download_as_text()` raises `NotFound` (404) and the CI step fails.
-- It reads **whatever was last built**. CI never rebuilds these images (§6 #3).
-
----
 
 ## 6. Gotchas and common errors
 
-1. **`/run-deploy-app` deploys nothing.**
-   - Symptom: you follow `README.md:162`. The "App Deployment" run shows the job skipped, and the "ML Tasks" run builds a container and skips every step.
-   - Cause: `app-ci-cd-gcp.yml:9` tests `'/deploy-app'`. In `/run-deploy-app` the character before `deploy` is `-`, not `/`. `/run-` still matches `ml-ci-cd-gcp.yml:9`.
-   - Fix: use `/deploy-app` (`README.md:188,192`).
+Verified ones first; *(reasoned, not run)* marks the rest.
 
-2. **Keyword in the wrong commit of a multi-commit push.**
-   - Symptom: you pushed three commits, the first one says `/deploy-app`, and nothing deploys.
-   - Cause: only `github.event.head_commit.message`, the last commit, is checked (`app-ci-cd-gcp.yml:9`). The same applies to a merged PR: the merge or squash commit's message is what counts.
-   - Fix: `git commit --allow-empty -m "redeploy /deploy-app" && git push` (my suggestion), or put the keyword in the PR title before squash-merging.
-
-3. **The ML pipeline runs old data-collector or data-processor code.**
-   - Symptom: you edit `src/data-collector/cli.py`, push with `/run-data-collector`, and the logs on Vertex show the old behaviour.
-   - Cause: `ml-ci-cd-gcp.yml` builds only `src/workflow` (`:32-35`). The step images come from the last `deploy-images-ml` state (`src/workflow/cli.py:29,67-69`), which is only updated by `deploy-ml-images.sh`, run by hand.
-   - The Ansible-era version said this explicitly: `#ansible-playbook deploy-docker-images-ml.yml -i inventory.yml # Uncomment to rebuild ML images` (`git show origin/pipenv:src/deployment/run-data-collector.sh`).
-   - Fix: run `sh deploy-ml-images.sh` in the deployment container first, or add a step to `ml-ci-cd-gcp.yml` that runs `cheese-app-deployment deploy-ml-images.sh` before the workflow container.
-
-4. **A green deploy that deployed nothing** *(reasoned, not run)*.
-   - Symptom: `deploy_images` fails (permission, disk, build error), but the run is green and the site is unchanged.
-   - Cause: `deploy-k8s-update.sh:1-9` has no `set -e`. The K8s `pulumi up` then sees unchanged tags, reports no changes, and exits 0. That exit code propagates through `docker-entrypoint.sh:39` and `docker run`.
-   - Fix: add `set -e` as the first line of the script.
-
-5. **`no stack named 'dev' found`.**
-   - Symptom: `pulumi stack select dev` errors (README B2/B3, or `deploy-ml-images.sh:2`).
-   - Cause: the v4 README never runs `pulumi stack init` (compare `cheese-app-v3/README.md:420,440`). A new state bucket, or one that never had `deploy-images-ml`, has no such stack.
-   - Fix: `pulumi stack init dev` once per project directory, then `pulumi up --stack dev -y`.
-
-6. **Your L22 URL stops working after the first CD run.**
-   - Symptom: the old `http://<nginx-ip>.sslip.io` is dead. A new IP appears, and HTTPS shows certificate errors for a while.
-   - Cause: v3 had `deploy-k8s:setupSSL: "false"` (`cheese-app-v3/src/deployment/deploy_k8s/Pulumi.dev.yaml:7`), and v3's program ignored that key anyway: it hard-coded `setupSSL = False` (`cheese-app-v3/src/deployment/deploy_k8s/__main__.py:17`). v4 reads the key (`deploy_k8s/__main__.py:18`) and sets it to `"true"` (`deploy_k8s/Pulumi.dev.yaml:7`). The first v4 `pulumi up` replaces the NGINX Helm release and L4 LoadBalancer with a GCE Ingress, a new global IP and a managed cert. The README still describes the NGINX output (`README.md:107,126`).
-   - Fix: decide which mode you want. Set `deploy-k8s:setupSSL` accordingly, and commit it **before** the first `/deploy-app`. Read the new `app_url` output.
-
-7. **The commit message breaks the workflow (verified with bash).**
-   - Symptom: the first `echo` step fails with `unexpected EOF while looking for matching `"'`.
-   - Cause: `${{ github.event.head_commit.message }}` is pasted into the shell script *before* bash runs (`app-ci-cd-gcp.yml:12`, `ml-ci-cd-gcp.yml:12`). An unbalanced `"` in the message, as in `fix 5" screen /deploy-app`, makes the script syntactically invalid. Backticks or `$(…)` in a message are **executed**: I tested `` use `date +%Y` here /deploy-app ``, which printed `use 2026 here`. That is a script-injection hole.
-   - Fix: pass the message through an env var instead: `env: MSG: ${{ github.event.head_commit.message }}` and `run: echo "Comment $MSG"`.
-
-8. **Hard-coded instructor values.**
-   - Symptom: `403 … ac215-project`, `AccessDenied` on `gs://cheese-app-ml-workflow-demo`, or `Bucket … not found`.
-   - Cause: the workflow YAMLs, `Pulumi.dev.yaml` files and shell scripts embed `ac215-project`, the instructor's buckets and the SA emails (§2 table). The README only mentions one of them (`README.md:78`).
-   - Fix: change them all, and commit.
-
-9. **Artifact Registry permission.**
-   - Symptom: `denied: Permission "artifactregistry.repositories.uploadArtifacts" denied` during `deploy_images`, or pods stuck in `ImagePullBackOff`.
-   - Cause: v4's role list (`README.md:44-51`) drops v3's **Artifact Registry Administrator** (`cheese-app-v3/README.md:243`) in favour of "Container Registry Service Agent". That is a Google-managed service-agent role, and I could not confirm it grants Artifact Registry upload. Storage Admin does not cover `*.pkg.dev`. The nodes pull as the same SA (`create_cluster.py:50`).
-   - Fix: grant `deployment` Artifact Registry Administrator (or Writer).
-
-10. **Workload Identity binding fails on a fresh cluster** *(reasoned, not run)*.
-    - Symptom: `pulumi up` in `deploy_k8s` fails on `api-gsa-wi-user` with `iam.serviceAccounts.setIamPolicy` denied.
-    - Cause: `gcp.serviceaccount.IAMMember` (`create_cluster.py:184-189`) sets IAM policy on the `gcp-service` SA. None of the listed `deployment` roles obviously includes `iam.serviceAccounts.setIamPolicy`; Service Account User grants `actAs`, not policy editing.
-    - Fix: run that first `pulumi up` as a project Owner, or grant `deployment` "Service Account Admin" on `gcp-service`.
-
-11. **Overlapping pushes lock the stack** *(reasoned, not run)*.
-    - Symptom: the second run fails with a message that the stack is locked by another update.
-    - Cause: both runs, and your laptop, share `gs://<proj>-pulumi-state-bucket`. Neither workflow declares `concurrency:`.
-    - Fix: add `concurrency: { group: deploy-app, cancel-in-progress: false }` to the workflow. If a crashed run leaves a stale lock, run `pulumi cancel` in that stack.
-
-12. **The `dockerignore` file is ignored.**
-    - Symptom: `sh docker-shell.sh` sends a huge build context, and the image contains your local `pulumi-plugins/`.
-    - Cause: the file is named `src/deployment/dockerignore` without the leading dot, and Docker only reads `.dockerignore`. Meanwhile `docker-shell.sh:21` creates `pulumi-plugins/` inside the build context, and `Dockerfile:72` `ADD`s everything.
-    - Fix: rename it to `.dockerignore`.
-
-13. **Every deploy rebuilds everything, slowly, and fills the registry.**
-    - Symptom: long "Run Deploy App" steps, and Artifact Registry growing by several GB per deploy.
-    - Causes:
-      - A new timestamp on every run (`deploy_images/__main__.py:13`).
-      - No layer cache on a fresh runner. The API image installs `tensorflow==2.19.0` (`src/api-service/pyproject.toml:13`).
-      - `retain_on_delete=True` (`:31`).
-    - Fixes: use a content-based tag (for example `${{ github.sha }}` passed in as config), add an Artifact Registry cleanup policy, and consider build caching.
-
-14. **The API rollout can stall on its ReadWriteOnce volume** *(reasoned, not run)*.
-    - Symptom: `pulumi up` waits for `deployment/api` until it times out. The new pod shows `Multi-Attach error`.
-    - Cause: the api pod mounts `persistent-pvc` with `ReadWriteOnce` (`setup_containers.py:24,265-272,286-290`). The default RollingUpdate starts the new pod *before* stopping the old one. If the scheduler places it on the second autoscaled node, the disk cannot attach.
-    - Fix: give the api Deployment `strategy=Recreate`, or drop the RWO volume. Also don't scale `api` past 1 replica for MS5 scaling demos; scale `frontend` instead.
-
-15. **Every `/run-ml-pipeline` leaves another billed endpoint.**
-    - Symptom: the Vertex AI Online prediction list grows, and so does the bill.
-    - Cause: `deployed_model.deploy(...)` without an `endpoint=` argument (`src/workflow/model.py:95-103`) creates a new endpoint each time, with `min_replica_count=1`.
-    - Fix: undeploy and delete after each demo, or change the code to reuse one endpoint.
-
-16. **`python cli.py --model_deploy` crashes** (not reachable from CI, but tempting to try locally).
-    - Symptom: `TypeError: model_deploy() got an unexpected keyword argument 'bucket_name'`.
-    - Cause: `src/workflow/cli.py:199` calls `model_deploy(...)`, which resolves to the CLI function defined at `:193`, not the component imported as `model_deploy_job` (`:18`). The L15 digest found the same bug in `ml-workflow/src/workflow/cli.py:154,160`.
-    - Fix: call `model_deploy_job(bucket_name=GCS_BUCKET_NAME)`.
-
-17. **Two `PULUMI_BUCKET` formats.** `deployment` expects `gs://…` (`docker-shell.sh:15`, `app-ci-cd-gcp.yml:55`; used by `gsutil` and `pulumi login`). `workflow` expects a bare bucket name (`ml-ci-cd-gcp.yml:54`, `src/workflow/docker-shell.sh:13`; used by `storage.Client().bucket()`). Copy-pasting between them gives a GCS API error when `cli.py` downloads the state file (if `gs://` reaches `cli.py`; the client does not strip the prefix), or `gsutil` and `pulumi login` failures (if the prefix is missing in `deployment`). This is *(reasoned, not run)*.
-
-18. **Secrets in the repo.**
-    - `src/frontend-react/.env.development:5` and `.env.production:3` commit a `NEXTAUTH_SECRET`.
-    - The Actions secret holds a long-lived key of a very powerful SA. Anyone who can push a workflow file to your repo can read it.
-    - Fixes: regenerate the NextAuth secret for your own deployment. For your project, consider keyless GitHub→GCP auth: Workload Identity Federation, `workload_identity_provider` in `google-github-actions/auth`.
-
-19. **Old action versions.** `google-github-actions/auth@v1` and `setup-gcloud@v1` (`app-ci-cd-gcp.yml:19,23`) are older majors; newer ones exist. I could not check whether v1 still runs without warnings on today's runners. If a run warns about deprecated Node versions, bump the majors.
-
----
+- **G1. `pip install ansible>=9.0.0` is a shell redirect, not a version pin** (`Dockerfile:37`). Unquoted, `>=9.0.0` sends pip's output to a file named `=9.0.0` in `/` and installs whatever pip picks. Captured: the file `/=9.0.0` exists in the built image and holds pip's log; the image has **ansible 6.7.0 / ansible-core 2.13.13** on Python 3.8.10 (`pip3 show ansible`, `ansible --version`). Fix: `pip install "ansible>=9.0.0"` — but ansible 9 needs a newer Python than Ubuntu 20.04's 3.8, so the honest fix is a newer base image. Side effect worth knowing: `deploy-provision-instance.yml:56-57` uses `args: warn: false`, which ansible-core 2.14+ rejects; it only works *because* the pin failed.
+- **G2. `sh docker-shell.sh` fails on Linux** (`README.md:77`, `docker-shell.sh:13`). On Debian/Ubuntu `sh` is `dash`, which has no `<<<`: captured `head.sh: 13: Syntax error: redirection unexpected`, exit 2. On macOS `sh` is bash and it works. Fix: `bash docker-shell.sh`. (The shebang is `#!/bin/bash`, `:1`, but `sh file` ignores shebangs.)
+- **G3. The unchanged toolbox build failed here at the Helm repository** (`Dockerfile:33-34`): `curl https://baltocdn.com/helm/signing.asc` → `SSL certificate problem: unable to get local issuer certificate`, then `gpg: no valid OpenPGP data found`, exit 2. In this sandbox `baltocdn.com` is not intercepted by the proxy; it presents a Let's Encrypt certificate issued by intermediate `YR1` (valid 2026-09-16 to 2026-12-15) that the sandbox's CA bundle cannot chain. Whether a student's machine hits the same error was not determined (open question). Helm is not used by any playbook in this repo, so the capture build drops those two lines and says so in ASSETS.md.
+- **G4. The README's CSV path and the script's disagree** (`README.md:76` three `../`, `docker-shell.sh:10` four). With the README's folder layout (`:56-59`), three is right. The README tells you to edit this line; it does not tell you that `SECRETS_DIR` (`docker-shell.sh:26`) has the same four `../` and also needs editing, or `/secrets` in the toolbox will be empty.
+- **G5. The account id is hard-coded** (`docker-shell.sh:17`). Leave it and the ECR login and every image name point at someone else's registry (`AccessDenied`/`not authorized` on push). Not mentioned in the README. Fix: your own id (`aws sts get-caller-identity --query Account --output text`).
+- **G6. Three names for one key pair.** README `cheese-app-ac215-key-pair` (`:64`), inventory `aws_keypair_name: "ac215_2024"` (`inventory.yml:16`), key file `ac215_2024.pem` (`inventory.yml:4`, `:7`, `ci_cd_aws.yml:81-90`, `:126`). `key_name` must match the key pair's name in EC2, and the file path must match where the `.pem` is. Easiest: name the key pair `ac215_2024` or change all of them.
+- **G7. SSH refuses a world-readable key** *(standard OpenSSH behaviour, not run here)*: "UNPROTECTED PRIVATE KEY FILE!" if the `.pem` is not `chmod 400`/`600`. The CI step does this for its copy (`ci_cd_aws.yml:84-85`, `:124-127`); on a laptop you do it yourself.
+- **G8. The local/CI key line is a manual toggle** (`README.md:107-111`, `inventory.yml:4`/`:7`). The committed file is set for GitHub Actions; a laptop run with it fails to find `/root/.ssh/ac215_2024.pem`. Remember to switch it back before pushing, or CI will look in `/secrets`.
+- **G9. Teardown does not tear anything down** (`README.md:147`). With `cluster_state=absent` the security-group and EBS tasks are skipped, so `security_group.group_id` is undefined when the un-gated "Create EC2 instance" task (`deploy-create-instance.yml:40-61`) renders its arguments. Captured: `fatal: … 'dict object' has no attribute 'group_id'`, before any AWS call. Even past that, `Remove EBS volume` needs `ebs_volume.volume_id`, which is only registered on `present`, and no task terminates the instance *(reasoned, not run)*. Delete by hand (§4 step 27).
+- **G10. `chromadb/chroma:latest` on the server vs `chromadb==0.5.18` in the clients** (`deploy-setup-containers.yml:151`; `src/vector-db/Pipfile.lock`, `src/api-service/Pipfile.lock`; the local compose file pins `chromadb/chroma:0.5.18`, `src/vector-db/docker-compose.yml:25`). Captured on 2026-11-08: today's `latest` reports version `1.0.0` and answers `/api/v1/heartbeat` with HTTP 410 `{"error":"Unimplemented","message":"The v1 API is deprecated. Please use /v2 apis"}`; the 0.5.x client speaks `/api/v1`. So a deploy today should fail at "Load Vector DB", and the API (which connects at import time, `llm_rag_utils.py:73-77`) should fail to start *(the last two: reasoned, not run)*. Fix: pin the server to `chromadb/chroma:0.5.18`, as the compose file does.
+- **G11. The downloaded embeddings do not match the AWS embedding model.** `cli.py --download` fetches `cheese-books-embeddings.zip` (v4.0 release, `src/vector-db/cli.py:470-487`): inspected, its `outputs/embeddings-recursive-split-*.jsonl` rows carry 256-number vectors (the GCP pipeline's size; `cli.py:41` keeps the GCP comment `# EMBEDDING_DIMENSION = 256`). The API embeds each question with Titan `amazon.titan-embed-text-v1` (`llm_rag_utils.py:21`, `:79-86`), which `cli.py:36` itself says is 1536-dimensional. A 1536-number query against a 256-dimension collection is rejected by Chroma *(reasoned, not run)*. The RAG chat route cannot work as committed; the plain LLM chat (`/llm`) does not use Chroma.
+- **G12. `llm_rag_utils.py` uses `json` without importing it** (`:81`, `:86`, `:124`, `:137`; the imports are `:1-13`). Every RAG chat request raises `NameError`, caught and returned as HTTP 500 (`:145-151`) *(read, not run)*. Same file: `generation_config["max_tokens"]` (`:127`) is not a key of `generation_config` (`:34-38` has `max_output_tokens`). App bugs, not deployment bugs: one sentence in the video, if any.
+- **G13. `docker run -it` inside an Ansible `shell` task** (`deploy-setup-containers.yml:165`). Docker refuses `-t` when stdin is not a terminal (captured locally with Docker 29: `cannot attach stdin to a TTY-enabled container because stdin is not a terminal`, exit 1; older Docker prints `the input device is not a TTY`). Whether Ansible's SSH session gives this task a terminal (its SSH plugin requests one with `-tt` by default) was not tested. If the task fails, drop `-it`: the loader needs no terminal.
+- **G14. `docker system prune -a` at the end of the build playbook** (`deploy-docker-images.yml:59-60`, named "Remove all unused containers"). Without `-f` it asks for confirmation; with no input it answers no and exits 0 (captured in the toolbox image's Docker CLI with stdin at EOF: prompt, then `[exit 0]`). If it ever did run, it would prune **your laptop's** images (the socket is the host's), not the toolbox's.
+- **G15. The 50 GB volume and the instance's own second disk both want `/dev/sdf`** *(reasoned, not run)*. `ec2_instance` already maps a 100 GB gp2 volume at `/dev/sdf` (`deploy-create-instance.yml:53-57`), then "Attach EBS volume" asks for `/dev/sdf` again (`:85-92`). Expect the attach to fail ("already in use"), leaving the 50 GB volume detached and billed; the provision playbook then formats and mounts the instance's own `/dev/xvdf` (on Xen-based `t2`, `sdf` appears as `xvdf`), which is deleted with the instance. The EBS volume is also pinned to `us-east-1a` (`:30`) while the instance may launch in any zone of the default VPC.
+- **G16. "Wait for SSH" waits on the instance's public IP from inside the toolbox** (`:76-82`, repeated `:102-104`). If your laptop's network blocks outbound 22, the play times out after 120 s even though the instance is fine *(reasoned)*.
+- **G17. A `/run-` commit without `deploy-app` still pushes images.** The job condition is `/run-` (`ci_cd_aws.yml:9`); only the last step needs `/run-deploy-app` (`:100`). Every such push adds three images to ECR (storage cost) and leaves the VM on the old tag.
+- **G18. CI deploys to whatever IP is committed.** The runner uses `inventory.yml` from the commit: if the instance was recreated (new public IP) and the file was not updated, `deploy-setup-containers.yml` fails with an SSH timeout *(reasoned)*. Public IPs change when an instance is stopped and started.
+- **G19. Ports 3000, 8000, 9000 are published on the VM** (`deploy-setup-containers.yml:139-140`, `:154-155`, `:181-182`) but closed by the security group (`deploy-create-instance.yml:12-21` opens only 80, 443, 22). Good: everything goes through nginx. Port 443 is open and nginx publishes it, but `nginx.conf` has only a `listen 80` server: there is no HTTPS (`nginx.conf:25-27`).
+- **G20. SSH open to the world** (`deploy-create-instance.yml:19-21`: port 22 from `0.0.0.0/0`). Fine for a class demo; in practice restrict to your IP.
+- **G21. Secrets in the repo.** A `NEXTAUTH_SECRET` is committed twice (`inventory.yml:24`, `.env.production:3`) and an account id once (`docker-shell.sh:17`). Generate your own (`openssl rand -base64 32`) and never commit access keys: the `secrets/` folder sits *outside* the clone for this reason (`README.md:56-59`). In CI, `src/deployment/secrets/` is created on the runner only (`ci_cd_aws.yml:88-90`) and never committed.
 
 ## 7. Where this sits in the course
 
-### What the previous lectures gave you, and what v4 adds
-- **L20 (Pulumi, cheese-app-v3):** the `deployment` toolbox container, Pulumi with a GCS state bucket, the `deploy_images` stack with timestamp tags, and a single-VM deployment.
-- **L21 (GitHub Actions CI, cheese-app-ci-cd):** workflow anatomy, runners, secrets, and test jobs on every push or PR (`cheese-app-ci-cd/.github/workflows/ci.yml`).
-- **L22 (GKE, cheese-app-v3):** the `deploy_k8s` stack: network, cluster, Deployments, Services, PVCs, loader Job, NGINX ingress and Workload Identity, all run by hand from your laptop.
-- **L15 (Vertex AI ML workflow, ml-workflow):** data-collector and data-processor containers, the trainer package, KFP pipelines, and Vertex endpoints.
-- **L23 adds** the glue: a push-triggered runner that executes the L20/L22 toolbox non-interactively (app lane), and the L15 pipeline CLI (ML lane), with image tags flowing through Pulumi state.
-- **Next:** there is no later tutorial. Next come MS5 (due 12/11) and the 12/10 showcase (`milestone5.md`). MS5 asks for more than v4 shows (`milestone5.md:41-56`):
-  - unit tests across every container, and integration tests of the API on every PR;
-  - deploy **on merge to main**, not on a keyword;
-  - ≥70% coverage;
-  - automated retraining triggered by new data;
-  - validation thresholds before deploying a model.
+### What the lecture's GCP version does, and how this repo differs (slides 17–20)
+The slides present `dlops-io/cheese-app-v4` (`033f187`): two workflows, `app-ci-cd-gcp.yml` (job gated by `/deploy-app`, `cheese-app-v4/.github/workflows/app-ci-cd-gcp.yml:9`) and `ml-ci-cd-gcp.yml` (job gated by `/run-`, step-level `/run-data-collector`, `/run-data-processor`, `/run-ml-pipeline`, `ml-ci-cd-gcp.yml:9`, `:37`, `:57`, `:77`). GitHub authenticates to GCP with a service-account key stored as secret `GOOGLE_APPLICATION_CREDENTIALS` (`cheese-app-v4/README.md:133-145`; `app-ci-cd-gcp.yml:18-21`), builds the deployment container and runs `pulumi up` twice (`deploy-k8s-update.sh:4`, `:9`) to push images and roll the GKE Deployments. `cheese-app-v4/README.md:157`: "The CI part is not implemented in this tutorial."
 
-  v4 is the skeleton; L21's `ci.yml` is the missing CI half.
+The AWS repo keeps the pattern — commit keyword → runner → same toolbox container → deploy with the new timestamp tag — and swaps every component (table in C8). Two differences the video should say out loud, kindly:
+1. **No Kubernetes and no Pulumi:** one VM with Docker containers managed by Ansible. The slides' "deploy to the K8s cluster" becomes "recreate the containers on the VM".
+2. **No ML lane:** nothing in this repo runs a training pipeline; the slides' Vertex AI arc (slides 17–19) has no AWS counterpart here. L15's `ml-workflow-aws` (SageMaker Pipelines) is the AWS ML pipeline of this series.
 
-### Whole-course recap map (which lecture built which box)
-```
- L1 venv/uv, VM ──> L2-L4 containers, compose, networks ──> L10 cloud auth, buckets, SA keys (secrets/)
-        │                                 │
-        ▼                                 ▼
- L5 RAG / ChromaDB ─────────► src/vector-db (loader Job) ─────────┐
- L6-L7 agents, harness ─────► api routers llm_agent / newsletter ─┤
- L8 finetuning (Gemini) ────► api llm_chat (base gemini-2.0-flash-001, not a tuned model) ┤
- L13 training (W&B, Vertex) ► trainer package ──┐                 │
- L15 ML workflow (KFP) ─────► src/workflow, data-collector/processor ──► VERTEX PIPELINES ──► endpoint (unused by app)
- L18 APIs + frontend ───────► src/api-service + src/frontend-react ┤
- L9/L21 tests + CI ─────────► (not wired into v4 — add for MS5)    │
- L20 Pulumi toolbox ────────► src/deployment, deploy_images ───────┤
- L19/L22 Kubernetes ────────► deploy_k8s (GKE, ingress, PVC, WI) ──┤
- L23 CD (this) ─────────────► .github/workflows: git push ──► runner ──► Pulumi ──► GKE  (+ /run-* ──► Vertex)
- Not in v4: L11 DVC/labeling, L14 Cloud Run/Functions (alternative serving), L16-L17 tradeoffs & monitoring
-```
-The arrows into `src/...` folders are based on the course map (`tutorials_demo.md`) and on v4's folder names. I diffed only `src/workflow/` against its L15 origin, so treat the other arrows as provenance by topic, not a file-level diff. One check: the API's chat, RAG and agent utils all call the base `gemini-2.0-flash-001` (`src/api-service/api/utils/llm_utils.py:22`, `llm_rag_utils.py:23`, `llm_agent_utils.py:21`), so the L8 fine-tuned model is not wired in.
-
-### v3 → v4 diff (main vs main)
-`git diff --no-index --stat` over `git archive HEAD` of both repos (abridged). Total: **66 files changed, 5498 insertions(+), 1011 deletions(-)**.
-```
- /dev/null => v4/.github/workflows/app-ci-cd-gcp.yml              |   56 +
- /dev/null => v4/.github/workflows/ml-ci-cd-gcp.yml               |   96 +
- {v3 => v4}/README.md                                             |  689 +--   (rewritten)
- /dev/null => v4/images/ci-cd.png                                 |  Bin
- v3/src/api-service/_test.py => /dev/null                         |  379 -
- {v3 => v4}/src/api-service/api/service.py                        |    2 +-    ("3.0" -> "1.0.1")
- /dev/null => v4/src/data-collector/* (9 files)                   |  new
- /dev/null => v4/src/data-processor/* (10 files)                  |  new
- /dev/null => v4/src/workflow/* (14 files)                        |  new
- {v3 => v4}/src/deployment/Dockerfile                             |    2 +     (ADD . /app)
- {v3 => v4}/src/deployment/docker-entrypoint.sh                   |   12 +-    (run "$@" as a script)
- {v3 => v4}/src/deployment/docker-shell.sh                        |   10 +-    (ML env vars, 2 new mounts)
- /dev/null => v4/src/deployment/deploy-k8s-update.sh              |    9 +
- /dev/null => v4/src/deployment/deploy-ml-images.sh               |    3 +
- /dev/null => v4/src/deployment/deploy_images_ml/* (3 files)      |  new
- {v3 => v4}/src/deployment/deploy_k8s/Pulumi.dev.yaml             |    2 +-    (setupSSL false -> true)
- {v3 => v4}/src/deployment/deploy_k8s/__main__.py                 |   14 +-    (setupSSL/domain from config)
- {v3 => v4}/src/deployment/deploy_k8s/setup_containers.py         |   31 ++-    (BackendConfig + NEG annotations)
- {v3 => v4}/src/deployment/deploy_k8s/setup_loadbalancer.py       |    7 +-    (domain option)
- {v3 => v4}/src/deployment/deploy_k8s/setup_loadbalancer_ssl.py   |   17 +-    (gce class annotation, v1beta1, domain)
- v3/src/deployment/{.docker-tag,.python-version,README.md,deploy-k8s-tic-tac-toe.yml} => /dev/null
- /dev/null => v4/src/deployment/*/__pycache__/*.pyc (6 files)     |  Bin       (accidentally committed)
- {v3 => v4}/src/frontend-react/src/components/layout/Header.jsx   |    2 +-    (bg-black/90 -> bg-sky-800)
-```
-The meaningful changes:
-1. **CD workflows** (new).
-2. **Toolbox made CI-runnable:** code baked in (`Dockerfile:72`), entrypoint runs a script (`docker-entrypoint.sh:32-40`), one-shot deploy script.
-3. **ML lane:** `deploy_images_ml` plus `src/workflow`. The workflow is L15's code plus the Pulumi-state lookup in `cli.py:28-57`.
-4. **Load balancer switched to Google HTTPS by config**, with a BackendConfig health check for the `/api-service` root path.
-5. Demo edits to the version string and header colour.
-
-In-class history worth showing: the 2025-12-02 commits `42d360c` → `033f187` show the instructor discovering that the ML workflow still called `sh run-ml-pipeline.sh` and `sh run-data-processor.sh`, scripts that no longer existed after the Pulumi refactor. The final commit replaced them with `python cli.py --pipeline` and `--data_processor` (`git show 033f187`).
-
----
+### What earlier lectures gave you
+- Containers and `docker-shell.sh` pattern (L02 onward); the cheese app's frontend/API/vector-db services (the app lectures); RAG with Chroma (the LLM lectures); the deployment container and Ansible on a single VM appear in the course's earlier deployment tutorials; Pulumi (L20) and Kubernetes (L22) are the GCP path this AWS variant does *not* use; GitHub Actions basics (L21, `cheese-app-ci-cd`). Lecture numbers for the review slides 21–37 are in `SLIDES.md` (they print another year's numbers).
 
 ## 8. Video plan (suggestion)
 
-**Working title:** *The Eleven-Character Deploy Button: CI/CD for the Cheese App, and the Whole Course on One Map*
+Two parts, 25–35 minutes, ~4,000 words. Part 1 = the README by hand (concepts C3, C4, C6, C7); Part 2 = the push button (C1, C2, C5) and the review.
 
-**Hook question:** "On December 2, 2025, at 13:48, the instructor committed `e8f6d3c`. It changed one word in one CSS class. Pushed to `main`, a commit like that makes a brand-new Linux machine rebuild three containers and push them to Google's registry, and makes a Kubernetes cluster swap its pods. The trigger is eleven characters in the commit message: `/deploy-app`. The README tells you to type something slightly different, `/run-deploy-app`. What happens if you do?"
+**Part 1 — Deploy by hand with Ansible**
+1. Hook (1.5 min): `git commit -m "/run-deploy-app"` and a server changes — how? Then the honest hook: the README's own delete command fails (show the captured error at the end of Part 2 as the payoff).
+2. The final picture (2 min): slide 19's map, redrawn for AWS (C8 table as a transform from GCP labels to AWS labels).
+3. Identity (3 min, V: key journey C6): policy, user, access key CSV, key pair; mask everything; G6 name mismatch.
+4. The toolbox (3 min, V: sibling containers C3): `docker-shell.sh` excerpt, G2 (`sh` vs `bash`, captured), G4/G5 edits, G1 redirect (captured `/=9.0.0`), in-container versions.
+5. Ansible in one picture (2.5 min, V: inventory → play → task → module C4), `ansible-inventory --graph`, `--syntax-check`.
+6. Build and push (2.5 min, V: timestamp C5 first half): ECR repos (illustration), `deploy-docker-images.yml` up to its captured first error.
+7. Create and provision (3 min): `deploy-create-instance.yml` (captured AuthFailure), IP into inventory, provision task list; G15 as a short "watch out".
+8. Containers and nginx (3.5 min, V: one VM, five containers C7): setup-containers, the `/api/` prefix strip (local nginx demo `extra`), G10 Chroma `latest` (captured 410).
+**Part 2 — Let GitHub press the button**
+9. CI vs CD (2 min, slides 7–12): loop with the test gates greyed out.
+10. Two sieves (2.5 min, V: C2): trigger excerpt; ponder.
+11. Secrets and the runner (2.5 min): four secrets (illustration), the SSH-key step, Excerpt 4.
+12. Follow one tag (2.5 min, V: C5 complete): runner → ECR → VM → recreated containers; not a rolling update (contrast v4).
+13. Teardown and cost (2.5 min): captured G9 error, manual checklist, GOLD tag.
+14. Review and recap (2 min): slides 21–37 as the course map; what to do next (instance roles, OIDC, tests in CI).
 
-**Target length:** about 25 minutes (about 3,900 spoken words at 155 wpm).
-
-**Chapters**
-
-1. **The deploy button is a sentence** (1.5 min)
-   - *Idea:* in v4, a commit message is a command.
-   - *Visual:* a terminal types `git commit -m "… /deploy-app"`. The characters `/deploy-app` glow and detach, fly to a big red button, and the button presses itself.
-   - *On screen:* `git log --oneline` around `e8f6d3c`, and `README.md:186-194`.
-
-2. **The whole course on one map** (3 min)
-   - *Idea:* every earlier lecture is a box in v4; v4 adds the wires (C7).
-   - *Visual:* `images/ci-cd.png` redrawn as a single conveyor loop. Each box gets a lecture badge (L5 on vector-db, L15 on the pipeline, L18 on API and frontend, L20/L22 on deployment). Then the loop splits into the app gear and the ML gear, and the Model Deploy → API arrow turns dashed ("TODO for MS5").
-   - *On screen:* the recap map from §7, and `llm_cnn_utils.py:124` (the fixed model URL).
-
-3. **Bootstrap once, by hand** (3 min)
-   - *Idea:* CD assumes a cluster, a registry repo, state stacks and a secret already exist.
-   - *Visual:* a checklist fills in: SA key → `secrets/`, registry repo, `deploy-images/dev`, `deploy-images-ml/dev`, `deploy-k8s/dev`, Actions secret. Missing items flash red and show their error strings (`no stack named 'dev' found`, `Repository … not found`).
-   - *On screen:* `docker-shell.sh:32-56`, the B1 banner, and the `pulumi up` outputs from B2, B2½ and B3.
-
-4. **Two sieves for one string** (2.5 min)
-   - *Idea:* `on: push` plus a job-level `contains(head_commit.message, …)`; substring, case-insensitive, last commit only (C2).
-   - *Visual:* a message falls into two sieves; matches highlight.
-   - *On screen:* `app-ci-cd-gcp.yml:1-9`, `ml-ci-cd-gcp.yml:9,37,57,77`.
-   - **Pause & ponder #1:** "Your message is `bump versions /run-deploy-app`. Which workflow's job runs, which steps run, and is the app redeployed?" *Answer:* The app job is skipped, because `/deploy-app` is not a substring: the character before `deploy` is `-`. The ML job runs because of `/run-`, builds `cheese-app-workflow`, and then skips all three steps, since none of `/run-data-collector`, `/run-data-processor`, `/run-ml-pipeline` matches. Nothing is deployed, and the run is green.
-
-5. **One crate, two operators** (3 min)
-   - *Idea:* the toolbox container runs the same locally and in CI: socket, baked code, entrypoint arguments, identity hand-off (C3, C6).
-   - *Visual:* the laptop and runner split screen. Then the key's journey: vault → runner file → bind mount → `gcloud auth activate-service-account` badge.
-   - *On screen:* `app-ci-cd-gcp.yml:16-26,36-56`, `Dockerfile:63-75`, `docker-entrypoint.sh:10-13,29-40`.
-
-6. **Follow the timestamp** (3.5 min)
-   - *Idea:* timestamp tag → registry → state → StackReference → pod template → rolling update (C4, C5).
-   - *Visual:* the string `20251202134824` travels through each box, and the pods swap one by one.
-   - *On screen:* `deploy_images/__main__.py:13,23-35`, `setup_containers.py:8-14,273-285`, `deploy-k8s-update.sh`, and `kubectl get deploy -o wide` before and after.
-   - **Pause & ponder #2:** "You push `/deploy-app` with *no code changes at all*. Do the pods restart?" *Answer:* Yes. `deploy_images` makes a new timestamp tag, so it builds and pushes new images. The StackReference gives `deploy_k8s` a new image string, which changes the pod template, which triggers a rolling update of the api and frontend (and, by the same logic, a re-created loader Job; reasoned, not run). An identical-code redeploy is still a redeploy. A content-based tag such as the git SHA would make it a no-op.
-
-7. **The front door changed** (2 min)
-   - *Idea:* v4 switches from an NGINX ingress to a Google HTTPS LB. Health checks need a BackendConfig, and certificates take time (C8).
-   - *Visual:* an NGINX doorman inside the cluster is replaced by a Google front desk outside it, which phones `/api-service/` every 10 s. The certificate badge goes from "Provisioning" to "Active".
-   - *On screen:* `Pulumi.dev.yaml:7`, `__main__.py:37-46`, `setup_loadbalancer_ssl.py:50-61`, `setup_containers.py:333-343`, and README:107 vs the actual outputs.
-
-8. **The ML lane** (3 min)
-   - *Idea:* `/run-*` submits Vertex pipelines using image tags read from Pulumi state; CI does not rebuild the ML images.
-   - *Visual:* the runner sends a compiled YAML card to Vertex. Four nodes light up in sequence. A new endpoint appears with a ticking meter ($/h).
-   - *On screen:* `ml-ci-cd-gcp.yml:36-55`, `cli.py:28-57,263-299`, `model.py:95-103`.
-   - **Pause & ponder #3:** "You change the search query in `src/data-collector/cli.py` and push with `/run-data-collector`. Does Vertex run your new code?" *Answer:* No. The ML workflow builds only `src/workflow`. The collector image is whatever `deploy-images-ml/dev.json` last recorded, written by a manual `deploy-ml-images.sh`. Run that script first, or add a build step to the workflow.
-
-9. **Do it, break it, clean it up** (3.5 min)
-   - *Idea:* the README's literal steps, its four mismatches with the code, and the shutdown list.
-   - *Visual:* a split view: the README on the left, your editor on the right, with mismatches highlighted (line 29 vs 36, line 69 vs 41, `/run-deploy-app`, `nginx_ingress_ip`). Then a "bill meter" winds down as each resource is deleted.
-   - *On screen:* §4 Part D commands, the Actions run log, the footer showing `2.2` / `2.0`, and the `pulumi destroy` and endpoint-deletion steps.
-
-**Recap questions (end card)**
-1. Which exact field does each workflow inspect, and why does a keyword in the *first* of three pushed commits do nothing?
-2. Name the two changes that let the v3 toolbox container run unattended on a GitHub runner.
-3. Trace one image tag from its creation to a running pod. Which file creates it, where is it stored, which line reads it back, and what does Kubernetes do when it changes?
-4. Which identity pushes images, which one pulls them on the nodes, which one does the API use to call Gemini, and which one runs Vertex pipeline steps?
-5. Why can a CD run be green even though the image build failed, and what one-line fix prevents it?
-6. What is still missing between v4 and the MS5 requirements?
-
----
+**Ponders (4, quiz-style, timer):**
+- After C3: "The toolbox runs `docker build`. Whose disk do the images land on: the toolbox's or your laptop's?" (Laptop: the socket is the host's.)
+- After C2: "You push with message `fix typo /run-tests`. What happens: nothing, build-and-push only, or full deploy?" (Build and push only.)
+- After C5: "CI sets `DOCKER_TAG` and also copies `.docker-tag`. If both exist and differ, which tag does the VM run?" (The environment variable: `:101-104`; and the extra-var wins anyway.)
+- Before G9: "`cluster_state=absent`: which tasks run?" (Instance creation is not gated — and fails on an undefined variable.)
 
 ## 9. Exercises
-
-**E1 (hands-on, predict then run).** Set `APP_VERSION = 2.3` in `Common.js:3` and change `service.py:36` to `{"version": "2.1"}`. Commit with the message `Release /Deploy-App` (capital letters). Before pushing, predict: does the app redeploy, and what will the footer show?
-
-*Worked answer:*
-- Yes. GitHub's `contains()` is case-insensitive, so `/Deploy-App` matches `'/deploy-app'` (`app-ci-cd-gcp.yml:9`).
-- After the run, all three images get a new timestamp tag and the Deployments roll. The footer then shows `Frontend version: 2.3` (a JS number, from the rebuilt bundle) and `API version: 2.1`, fetched from `/api-service/status` (`Footer.jsx:18-21`, `DataService.js:64`).
-- If the frontend still shows the old number, hard-refresh. The browser may cache the old JS chunk.
-
-**E2 (debugging).** A teammate's push of `fix 5" phone layout /deploy-app` produced a red run that failed in the very first step with `unexpected EOF while looking for matching `"'`. Nothing was deployed. Why, and how do you make the workflow immune?
-
-*Worked answer:*
-- `${{ … }}` expressions are substituted into the `run:` text before bash parses it. The step `echo "Comment ${{ github.event.head_commit.message }}"` (`app-ci-cd-gcp.yml:12`) becomes `echo "Comment fix 5" phone layout /deploy-app"`, which has an unbalanced quote. Bash exits with code 2, and the job stops.
-- I reproduced this exact failure with a local bash snippet. A message with `` `cmd` `` would even execute `cmd`.
-- Fix: map the expression into an environment variable and reference that:
-  ```yaml
-  - env:
-      MSG: ${{ github.event.head_commit.message }}
-    run: echo "Comment $MSG"
-  ```
-
-**E3 (debugging).** You pushed two commits together: `header colour /deploy-app`, then `typo in README`. Nothing deployed. Explain, and give two fixes.
-
-*Worked answer:*
-- `github.event.head_commit` is the **last** commit of the push, `typo in README`, which lacks the keyword.
-- Fix 1: `git commit --allow-empty -m "redeploy /deploy-app" && git push`.
-- Fix 2: amend the last commit's message before pushing (`git commit --amend`).
-- Long-term fix: stop relying on messages. Trigger on push to `main` with `paths:` filters, or add `workflow_dispatch` for a manual "Run workflow" button.
-
-**E4 (conceptual + hands-on).** Make the ML lane actually use new collector code. Write the extra step you would add to `ml-ci-cd-gcp.yml` before "Run Data Collector".
-
-*Worked answer:*
-- The workflow container reads the newest tag from `deploy-images-ml/dev.json` (`src/workflow/cli.py:29,67-69`). So the step must update that stack first, by reusing the deployment toolbox exactly like the app workflow does.
-- Copy "Build Deployment Container" (`app-ci-cd-gcp.yml:32-35`) and the `docker run` block (`:37-56`), with two changes: guard it with `if: contains(github.event.head_commit.message, '/run-')`, and replace the final `deploy-k8s-update.sh` with `deploy-ml-images.sh`.
-- The mounts `/data-collector` and `/data-processor` (`:46-47`) already match `deploy_images_ml/__main__.py:20,40`'s `../../data-collector` and `../../data-processor`, resolved from `/app/deploy_images_ml`.
-- Expected effect: a new `:<timestamp>` for both ML images in the state file, then the collector step compiles a pipeline pointing at that tag. You can confirm it by grepping the compiled `data_collector.yaml` for `image:`.
-
-**E5 (debugging, reasoned).** A `/deploy-app` run is green, but the site did not change. The "Run Deploy App" log shows an error from the `deploy_images` update, then `deploy_k8s` reporting no changes. Why green?
-
-*Worked answer:*
-- `deploy-k8s-update.sh` has no `set -e` (`:1-9`). Bash keeps going after the failed `pulumi up`, and the script's status is that of the last command, the K8s update.
-- The K8s update had nothing to do: the images stack did not export new tags, so the StackReference returned the old ones. It therefore exits 0.
-- `docker-entrypoint.sh:39` runs the script as its last command, so 0 becomes the container's and the step's exit code.
-- Fix: add `set -e` (or `set -euo pipefail`) at the top of `deploy-k8s-update.sh`.
-
-**E6 (conceptual).** Why did v4 have to add `ADD --chown=app:app . /app` to the deployment Dockerfile, when v3 worked fine without it?
-
-*Worked answer:*
-- Locally, `docker-shell.sh:37` bind-mounts your working tree onto `/app`, so the Pulumi programs are visible in the container.
-- The CI `docker run` (`app-ci-cd-gcp.yml:38-56`) mounts the app folders and `/workspace`, but nothing at `/app`. Without baking the code in, `/app` would contain only `pyproject.toml` and `uv.lock` (from the `COPY` at `Dockerfile:67`). Even the entrypoint would be missing: `ENTRYPOINT ["/bin/bash","docker-entrypoint.sh"]` (`Dockerfile:75`) is a path relative to `WORKDIR /app`, and v3 only had that file through the mount. So the container would fail before reaching `deploy-k8s-update.sh`, which would not exist either.
-- An alternative design would mount `-v $GITHUB_WORKSPACE/src/deployment:/app` in CI. Baking the code makes the image self-contained.
-
-**E7 (design, MS5).** Turn v4 into what MS5 asks for: tests on every PR, and deploy on merge to `main`. Sketch the workflow structure.
-
-*Worked answer:*
-- One workflow with `on: pull_request: branches: [main]` runs L21's build, lint and test jobs (`cheese-app-ci-cd/.github/workflows/ci.yml`) per container, with coverage ≥70%.
-- Branch protection on `main` requires those checks.
-- A second workflow with `on: push: branches: [main]`, and no message filter, has a `test` job and a `deploy` job with `needs: test`. The deploy job runs the toolbox with `deploy-k8s-update.sh`, plus `set -e`.
-- Add `concurrency: { group: deploy-main, cancel-in-progress: false }` to serialize Pulumi updates.
-- Optionally add `paths:` filters, so that ML-only changes trigger the ML lane instead.
-- Replace the JSON key with Workload Identity Federation.
-
-**E8 (hands-on, trace).** After one successful deploy, find the *same* image tag in three places and show they agree.
-
-*Worked answer, inside the deployment container (my commands):*
-1. In `/app/deploy_images`, run `pulumi stack output cheese-app-api-service-tags --stack dev`. It prints a list with `…/cheese-app-api-service:<ts>`.
-2. In the Actions log of the "Run Deploy App" step, the `Outputs:` of the images update show the same `<ts>`.
-3. After `gcloud container clusters get-credentials cheese-app-cluster --region us-central1 --project <proj>`, run `kubectl get deploy api -n cheese-app-namespace -o jsonpath='{.spec.template.spec.containers[0].image}'`.
-
-All three show the same string because of the StackReference (`setup_containers.py:10-12`) and `.apply(lambda tags: tags[0])` (`:276-278`). If (3) shows an older tag, the K8s update failed or is still rolling. Check with `kubectl rollout status deployment/api -n cheese-app-namespace`.
-
----
+1. **Predict, then run (local):** `sh docker-shell.sh` vs `bash docker-shell.sh` on a Linux machine with a placeholder CSV. Explain the error from the line number.
+2. **Find the pin (local):** build the toolbox (drop the Helm lines if needed), then `ls /` and `ansible --version`. Where did `>=9.0.0` go? Rewrite the line so the pin works, and say why it still would not install ansible 9 on this base image.
+3. **Trigger table (paper):** for each message — `update readme`, `/run-deploy-app`, `/RUN-DEPLOY-APP`, `test /run-x` — say whether the job runs, whether images are pushed, whether the VM changes.
+4. **Routing (local, `extra`):** run `nginx:stable` with the repo's `nginx.conf` on a network with two stand-in containers named `api-service` (port 9000) and `frontend` (port 3000) that echo the request path; `curl localhost/api/newsletters` and `curl localhost/`. Which path does `api-service` see? Remove the trailing `/` from `proxy_pass` and repeat.
+5. **Fix the teardown (paper or local `--syntax-check`):** add `when: cluster_state == "present"` to the instance task, add a task that terminates instances tagged `Name: cheese-app-demo` with `state: absent`, and look the volume up by name instead of by a registered id. Run `ansible-playbook … cluster_state=absent` with dummy keys: which task fails now, and with what error?
+6. **Think:** list every place the access key ends up (laptop file, env, VM files, container env, GitHub). Which would an EC2 instance role remove? Which would GitHub OIDC remove?
+7. **Debug:** the site loads but chat answers with HTTP 500. Using G10–G12, list three checks on the VM (`sudo docker container logs api-service`, the Chroma version endpoint, the collection's dimension) and what each would show.
 
 ## 10. Errata and open questions
 
-### Errata (with evidence)
-1. **Wrong trigger keyword in prose.** `README.md:162` says the action runs when the commit has `/run-deploy-app`. The workflow requires `/deploy-app` (`app-ci-cd-gcp.yml:9`). `README.md:188,192` are correct.
-2. **Wrong file location and content for the API version.** `README.md:165-171` says "line 29" and shows `@app.get("/status")` returning `"version": "2.0"`. The real code is `@api_app.get("/status")` at `src/api-service/api/service.py:34`, returning `{"version": "1.0.1"}` at `:36`.
-3. **Wrong line for the header colour.** `README.md:181` says line 69. The `className` is at `Header.jsx:41` (line 69 is `aria-label="Toggle menu"`), and its current value is `bg-sky-800`, not the README's snippet value.
-4. **Non-existent output name.** `README.md:107,116,126` tell you to copy `nginx_ingress_ip`. v4 exports `ip_address` and `app_url` (`deploy_k8s/__main__.py:54-55`). Since `setupSSL` is `"true"` (`Pulumi.dev.yaml:7`), there is no NGINX controller at all, and `http://<ip>.sslip.io` (`README.md:127`) redirects to HTTPS. The name was already stale in v3: `cheese-app-v3/README.md:505` shows `nginx_ingress_ip`, while v3's code exports `ip_address` (`cheese-app-v3/src/deployment/deploy_k8s/__main__.py:48`).
-5. **Missing setup steps.** The README omits:
-   - `pulumi stack init dev` (compare `cheese-app-v3/README.md:420,440`);
-   - creating the Artifact Registry repository (no code does it);
-   - creating `gcp-service` and `ml-workflow` SAs, the ML buckets and the trainer tarball;
-   - running `deploy-ml-images.sh` (required by `src/workflow/cli.py:29`);
-   - editing the hard-coded project, bucket and SA values in both workflow YAMLs and in the `Pulumi.dev.yaml` files;
-   - for the "If you have a domain" path (`README.md:105-123`), setting `deploy-k8s:domain` so the Ingress host and managed certificate use the domain (`deploy_k8s/__main__.py:19`, `setup_loadbalancer_ssl.py:18-21`);
-   - any cleanup.
-6. **Role list.** `README.md:47` replaces v3's Artifact Registry Administrator (`cheese-app-v3/README.md:243`) with "Container Registry Service Agent", a service-agent role. Pushing to and pulling from `us-docker.pkg.dev` likely needs an Artifact Registry role (see open question 2).
-7. **"CI/CD" naming.** Both workflows are named "Continuous Integration and Continuous Deployment" (`:1`), and the section is "CI/CD", but `README.md:157` concedes no CI is implemented. No tests run.
-8. **`images/ci-cd.png` overstates the integration.** It draws Model Deploy → Backend API. The API loads a fixed model from `github.com/dlops-io/models` (`llm_cnn_utils.py:124`), and the trainer uses a fixed dataset (`ml-workflow/src/model-training/package/trainer/task.py:103-104`), not the processor's output.
-9. **Leftover test text.** `README.md:208` reads `AJ TESTING !!! AGAIN` (commits `42d360c`, `e0ef89c`, `82f5d57`). `.gitignore:1` reads `# misc added some comment` (commit `1020f0e`).
-10. **Mis-named ignore file.** `src/deployment/dockerignore` lacks the leading dot and has no effect.
-11. **Committed bytecode.** `src/deployment/deploy_images/__pycache__/__main__.cpython-313.pyc` and five `deploy_single_vm/__pycache__/*.pyc` files are tracked, despite `*.pyc` in `src/deployment/.gitignore:3`.
-12. **Bugs and stale comments:**
-    - `src/workflow/cli.py:199` calls the wrong `model_deploy` (§6 #16).
-    - `src/data-processor/cli.py:19` comments out `import tfrecords`, yet `:93` uses it, so `--prepare` would raise `NameError` (not used by the pipeline, which runs only `--clean`). So `README.md:6`'s "converts images to TF Records" does not happen in v4's pipeline.
-    - `deploy_images/__main__.py:62,73-74` reuses the variable `frontend_image` for the vector-db image (harmless).
-    - `deploy_images_ml/__main__.py:17,37` comments say "API Service" and "Frontend".
-    - `setup_containers.py:206` says "Retry up to 4 times" for `backoff_limit=3`.
-    - `setup_containers.py:269` calls the PersistentVolumeClaim "Temporary storage (lost on restart)", and `:289` calls its mount "Temporary file storage"; a PVC survives pod restarts.
-13. **Compiled pipeline YAMLs are stale artefacts.** `src/workflow/data_processor.yaml:14` still points at `dlops/cheese-app-data-processor`, while `data_collector.yaml:16` and `pipeline.yaml:62,74` pin the instructor's images `us-docker.pkg.dev/ac215-project/cheese-app-repository/…:20251128233532`. They are overwritten on every run (`cli.py:94,141,302`), so they are only misleading to read.
-14. **Course-site numbering.** `tutorials_demo.md:288` calls this "Lecture 23", while the schedule (`_modules/week-14.md`) lists "Final Deployment and Review" as "Lecture 22" on Dec 1.
+### Errata (README vs code; state kindly, with the fix)
+- **E1.** Headings "Create Compute Instance (VM) Server in GCP" (`README.md:92`) and "Provision Compute Instance in GCP" (`:99`): the playbooks create and provision an **EC2** instance on AWS. Carried over from the GCP README.
+- **E2.** "You can SSH into the server from the GCP console" (`:120`): on AWS, `ssh -i <key>.pem ubuntu@<EXTERNAL_IP>` or EC2 Instance Connect in the EC2 console.
+- **E3.** CSV path (`:76` vs `docker-shell.sh:10`), plus `SECRETS_DIR` (`:26`) and the hard-coded account id (`:17`) the README does not mention (G4, G5).
+- **E4.** The README never mentions the GitHub Actions workflow or its four secrets; the commit keyword `/run-deploy-app` appears only in the workflow and the commit history.
+- **E5.** Key-pair name: README `cheese-app-ac215-key-pair` vs code `ac215_2024` (G6).
+- **E6.** `sh docker-shell.sh` needs bash (G2).
+- **E7.** "Delete the Compute Instance / Persistent disk" (`:145-148`) fails and deletes nothing (G9).
+- **E8.** "API's to enable in AWS" (`:7-13`) is empty because its list is commented out; AWS needs no API enablement, but Bedrock model access may be needed (open question).
+- **E9.** `Dockerfile:37` pin is a redirect (G1); `Dockerfile:33-34` Helm repo failed to build here (G3).
+- **E10.** Chroma server `latest` vs client 0.5.18 (G10); embeddings 256-d vs Titan 1536-d (G11); `json` not imported in `llm_rag_utils.py` (G12).
+- **E11.** `/dev/sdf` used twice; EBS volume in a fixed zone (G15) *(reasoned)*.
+- **E12.** The workflow is named "Continuous Integration and Continuous Deployment" (`ci_cd_aws.yml:1`) but has no integration tests (C1).
 
-### Open questions (could not determine from the sources)
-1. What Ed lesson 166048 adds beyond the README (slides, demo recording). I could not access Ed.
-2. Whether "Container Registry Service Agent" alone lets the `deployment` SA push to Artifact Registry and lets nodes pull, since `Storage Admin` does not cover `*.pkg.dev`. I did not test IAM.
-3. Whether Pulumi replaces the `vector-db-loader` Job cleanly on each deploy. Its pod template changes because the image tag changes, and Kubernetes Job templates are immutable. The instructor's consecutive `/deploy-app` commits on 2025-11-29 and 2025-12-02 suggest it works, but I could not see the run logs.
-4. How long a CD run takes on a GitHub-hosted runner, and whether the runner's disk is enough for the TensorFlow-based API image plus the toolbox image. Not measured.
-5. Whether a Google-managed certificate for an `<ip>.sslip.io` hostname becomes Active in practice. The instructor removed the custom domain in commit `a533054` while keeping SSL on, but I have no evidence of the resulting certificate status.
-6. Whether `google-github-actions/auth@v1` and `setup-gcloud@v1` still run cleanly on today's runner images.
-7. The AWS variant (`dlops-io/cheese-app-aws`, linked at `tutorials_demo.md:294`) was not available locally.
+### Open questions (could not determine here)
+- Whether `baltocdn.com` (Helm's Debian repo) still serves valid packages to a normal machine today, i.e. whether the unchanged `docker build` and the CI step `ci_cd_aws.yml:41-44` fail for students too.
+- Which Ubuntu release `ami-0e86e20dae9224db8` is and whether it is still available in `us-east-1` (needs AWS credentials). The provision playbook falls back to Docker's `focal` repository for any release not in its list (`deploy-provision-instance.yml:18-28`), which would include 24.04 `noble`.
+- Whether Bedrock in `us-east-1` still serves `anthropic.claude-3-sonnet-20240229-v1:0` and `anthropic.claude-3-5-sonnet-20240620-v1:0` on 2026-11-08, and whether model access must be requested first; both are older models that may be retired.
+- Whether "Load Vector DB" (`docker run -it` under Ansible over SSH) gets a terminal (G13).
+- Whether the `/dev/sdf` attach and the `us-east-1a` zone actually fail (G15).
+- The course-site file that lists this repo for L23 (`tutorials_demo.md`) is not in this sandbox; the "AWS variant, No K8s" label is taken from the coordinator's lecture entry.

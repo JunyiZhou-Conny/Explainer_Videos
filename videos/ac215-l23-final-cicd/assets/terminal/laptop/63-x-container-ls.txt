@@ -1,0 +1,6 @@
+$ docker container ls --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'
+NAMES         IMAGE                       PORTS
+nginx         nginx:stable                0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
+frontend      python:3.12-slim-bookworm   
+api-service   python:3.12-slim-bookworm   
+[exit 0]

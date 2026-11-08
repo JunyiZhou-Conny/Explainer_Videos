@@ -1,0 +1,4 @@
+$ git ls-remote https://github.com/dlops-io/cheese-app-aws.git
+5950118b0ed97c12c799920846d3eb70b1a47385	HEAD
+5950118b0ed97c12c799920846d3eb70b1a47385	refs/heads/main
+[exit 0]

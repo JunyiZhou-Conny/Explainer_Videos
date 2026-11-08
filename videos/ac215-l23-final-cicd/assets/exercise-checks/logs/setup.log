@@ -1,0 +1,19 @@
+$ docker build -q --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY --build-arg https_proxy=$HTTPS_PROXY -t l23ex-ansible:check /tmp/tmp.WnKAC8crt8 >/dev/null; echo "build exit status: $?"
+build exit status: 0
+[exit 0]
+
+$ docker run --rm --network none l23ex-ansible:check sh -c "python --version; ansible --version | head -1; pip list 2>/dev/null | grep -iE \"^(ansible|ansible-core|boto3|botocore) \"; ansible-galaxy collection list 2>/dev/null | grep -E \"amazon.aws|community.aws|community.docker\"; ssh -V"
+Python 3.8.20
+/usr/local/lib/python3.8/site-packages/ansible/parsing/vault/__init__.py:42: CryptographyDeprecationWarning: Python 3.8 is no longer supported by the Python core team and support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.8.
+  from cryptography.exceptions import InvalidSignature
+ansible [core 2.13.13]
+ansible           6.7.0
+ansible-core      2.13.13
+boto3             1.37.38
+botocore          1.37.38
+amazon.aws                    3.5.0  
+community.aws                 3.6.0  
+community.docker              2.7.3  
+OpenSSH_9.2p1 Debian-2+deb12u10, OpenSSL 3.0.22 25 Aug 2026
+[exit 0]
+
