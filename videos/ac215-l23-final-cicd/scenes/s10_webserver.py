@@ -40,8 +40,10 @@ Beats (script.md "## S10"; one voiceover block each):
    door 80 GREEN; door 443 ORANGE "open" and nginx's ":443" flash, a GREY dashed chip "nginx
    serves nothing here · no HTTPS".
 7. V7 leaves; the browser shrinks to its address row (URL still 20 pt); GREY caption "Part 1 · about a
-   dozen commands · five playbooks · by hand"; a PINK ribbon `/run-deploy-app` drifts in from the
-   right edge and stops; it flashes on "Next, a commit message". Fade; empty frame.
+   dozen commands · five playbooks · by hand"; on "If you stop here" two GOLD cost tags
+   ("stopping here? EC2 console: terminate the instance" / "and delete its 50 GB volume today"),
+   then a GREY chip "README's delete step fails · part 2"; on "Next, a commit message" they leave
+   and a PINK ribbon `/run-deploy-app` drifts in from the right edge, stops and flashes. Fade; empty frame.
 
 Deviations from SHOW: V7 is shifted down 0.8 for the whole scene so line 37 can stand above it in
 block 2. In V7 the API branch runs as an arc under nginx and api-service (their slots are 0.2
@@ -450,6 +452,14 @@ class FrontDoor(VoiceScene):
         part.move_to([0, 0.2, 0])
         rib = ribbon(KEYWORD)
         rib.move_to([7.4 + rib.width / 2, -1.2, 0])
+        # stopping after part 1 leaves a billed server: clean up by hand (the README's delete step
+        # fails before any AWS call, S15), so no command is shown here
+        stop = VGroup(cost_tag("stopping here? EC2 console: terminate the instance"),
+                      cost_tag("and delete its 50 GB volume today")).arrange(DOWN, buff=0.15)
+        stop.move_to([0, -1.05, 0])
+        fails = grey_chip("README's delete step fails · part 2")
+        fails.next_to(stop, DOWN, buff=0.3)
+        assert fails.get_bottom()[1] > -3.5 and stop.width < 13.0, (fails.get_bottom(), stop.width)
         with self.voiceover(SAY[7]) as vo:
             drop_all(self, v, none, hint, turn6, run_time=0.4)
             others = [m for m in bw if m not in small]
@@ -459,8 +469,19 @@ class FrontDoor(VoiceScene):
             self.remove(*others, page, page_t)
             self.play(Transform(small, small_target), run_time=0.8)
             self.play(FadeIn(part, shift=UP * 0.1), run_time=0.5)
-            self.play(rib.animate.move_to([0, -1.2, 0]), run_time=3.0, rate_func=rate_functions.ease_out_cubic)
+            vo.wait_until("If you stop here")
+            self.play(FadeIn(stop[0], shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(stop[0], color=COST, scale_factor=1.05), run_time=0.6)
+            vo.wait_until("and delete its 50 gigabyte volume")
+            self.play(FadeIn(stop[1], shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(stop[1], color=COST, scale_factor=1.05), run_time=0.6)
+            vo.wait_until("the README's delete step fails")
+            self.play(FadeIn(fails, shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(fails.text, color=INK, scale_factor=1.05), run_time=0.6)
             vo.wait_until("Next, a commit message")
+            self.play(FadeOut(stop), FadeOut(fails), run_time=0.4)
+            self.remove(stop, fails, *stop.get_family(), *fails.get_family())
+            self.play(rib.animate.move_to([0, -1.2, 0]), run_time=1.4, rate_func=rate_functions.ease_out_cubic)
             self.play(Indicate(rib.text, color=ROUTE, scale_factor=1.08), run_time=0.6)
         self.wait(0.6)
 
