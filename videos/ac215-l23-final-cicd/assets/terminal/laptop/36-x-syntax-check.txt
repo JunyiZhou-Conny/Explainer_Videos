@@ -1,0 +1,62 @@
+$ bash docker-shell.sh
+
+[+] Building 0.2s (20/20) FINISHED                                                                                                               docker:default
+ => [internal] load build definition from Dockerfile                                                                                                       0.0s
+ => => transferring dockerfile: 2.30kB                                                                                                                     0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                                                                            0.0s
+ => [internal] load .dockerignore                                                                                                                          0.0s
+ => => transferring context: 2B                                                                                                                            0.0s
+ => [ 1/15] FROM docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                    0.0s
+ => => resolve docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                      0.0s
+ => [internal] load build context                                                                                                                          0.0s
+ => => transferring context: 708B                                                                                                                          0.0s
+ => CACHED [ 2/15] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client unzip            0.0s
+ => CACHED [ 3/15] RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" &&     unzip awscliv2.zip &&     ./aws/inst  0.0s
+ => CACHED [ 4/15] RUN install -m 0755 -d /etc/apt/keyrings                                                                                                0.0s
+ => CACHED [ 5/15] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg                             0.0s
+ => CACHED [ 6/15] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                                                                              0.0s
+ => CACHED [ 7/15] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu     0.0s
+ => CACHED [ 8/15] RUN apt-get update &&     apt-get install -y jq docker-ce                                                                               0.0s
+ => CACHED [ 9/15] RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg  0.0s
+ => CACHED [10/15] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" &&     usermod -aG docker app &&     mkdir -p /a  0.0s
+ => CACHED [11/15] WORKDIR /app                                                                                                                            0.0s
+ => CACHED [12/15] ADD --chown=app:app Pipfile Pipfile.lock /app/                                                                                          0.0s
+ => CACHED [13/15] RUN pipenv sync                                                                                                                         0.0s
+ => CACHED [14/15] ADD --chown=app:app . /app                                                                                                              0.0s
+ => CACHED [15/15] RUN set -ex;     ansible-galaxy collection install community.general community.kubernetes                                               0.0s
+ => exporting to image                                                                                                                                     0.1s
+ => => exporting layers                                                                                                                                    0.0s
+ => => exporting manifest sha256:552a7751f3d245052257089a1e6f3bdb028446c26ea8a28e85d553c0a05bdc81                                                          0.0s
+ => => exporting config sha256:d3079c5d0b5542a34ef1dbeb285ff3d70c2f7505fb05d6589096903af0d3f7e6                                                            0.0s
+ => => exporting attestation manifest sha256:ff4536a45b04de77127e204e1f6e4c792ca055f6c8120d19cfe0bf96c0a5b184                                              0.0s
+ => => exporting manifest list sha256:4f655adf9d9717209f79595a3b4ca3615c2c5939b4bae52c8da557517a26fa75                                                     0.0s
+ => => naming to docker.io/library/cheese-app-deployment:latest                                                                                            0.0s
+ => => unpacking to docker.io/library/cheese-app-deployment:latest                                                                                         0.0s
+root@0a24a7e52ced:/app# for f in deploy-*.yml; do ansible-playbook $f -i inventory.yml --syntax-check; done
+/usr/local/lib/python3.8/dist-packages/ansible/parsing/vault/__init__.py:42: CryptographyDeprecationWarning: Python 3.8 is no longer supported by the Python core team and support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.8.
+  from cryptography.exceptions import InvalidSignature
+
+playbook: deploy-create-instance.yml
+/usr/local/lib/python3.8/dist-packages/ansible/parsing/vault/__init__.py:42: CryptographyDeprecationWarning: Python 3.8 is no longer supported by the Python core team and support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.8.
+  from cryptography.exceptions import InvalidSignature
+[WARNING]: Collection community.general does not support Ansible version 2.13.13
+[DEPRECATION WARNING]: community.general.docker_image has been deprecated. The redirection of community.general.docker_image to community.docker.docker_image
+will be removed in community.general 18.0.0. Please update your roles/playbooks. This feature will be removed from community.general in version 18.0.0.
+Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+
+playbook: deploy-docker-images.yml
+/usr/local/lib/python3.8/dist-packages/ansible/parsing/vault/__init__.py:42: CryptographyDeprecationWarning: Python 3.8 is no longer supported by the Python core team and support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.8.
+  from cryptography.exceptions import InvalidSignature
+
+playbook: deploy-provision-instance.yml
+/usr/local/lib/python3.8/dist-packages/ansible/parsing/vault/__init__.py:42: CryptographyDeprecationWarning: Python 3.8 is no longer supported by the Python core team and support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.8.
+  from cryptography.exceptions import InvalidSignature
+
+playbook: deploy-setup-containers.yml
+/usr/local/lib/python3.8/dist-packages/ansible/parsing/vault/__init__.py:42: CryptographyDeprecationWarning: Python 3.8 is no longer supported by the Python core team and support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.8.
+  from cryptography.exceptions import InvalidSignature
+
+playbook: deploy-setup-webserver.yml
+root@0a24a7e52ced:/app# exit
+exit
+[exit 0]

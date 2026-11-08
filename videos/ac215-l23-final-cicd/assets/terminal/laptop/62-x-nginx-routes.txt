@@ -1,0 +1,39 @@
+$ docker run -d --name nginx --network appnetwork -p 80:80 -p 443:443 -v /home/student/cheese-app-aws/src/deployment/nginx-conf/nginx/nginx.conf:/etc/nginx/nginx.conf nginx:stable >/dev/null && sleep 3
+curl -s localhost/api/newsletters
+curl -s localhost/api/chat/llm
+curl -s localhost/
+curl -s localhost/chat
+curl -s -w 'HTTP %{http_code}\n' -o /dev/null localhost/api
+Unable to find image 'nginx:stable' locally
+stable: Pulling from library/nginx
+2fc2bc44a8d3: Pulling fs layer
+f7214361b33f: Pulling fs layer
+37fb86c2a767: Pulling fs layer
+b532f9701850: Pulling fs layer
+9c0452afd4ee: Pulling fs layer
+cbbdc282ecf5: Pulling fs layer
+89e2dd8a6236: Pulling fs layer
+89e2dd8a6236: Download complete
+f7214361b33f: Download complete
+2fc2bc44a8d3: Download complete
+9c0452afd4ee: Download complete
+cbbdc282ecf5: Download complete
+37fb86c2a767: Download complete
+1e24db3ea44b: Download complete
+47835a5e6782: Download complete
+b532f9701850: Download complete
+37fb86c2a767: Pull complete
+f7214361b33f: Pull complete
+cbbdc282ecf5: Pull complete
+b532f9701850: Pull complete
+89e2dd8a6236: Pull complete
+2fc2bc44a8d3: Pull complete
+9c0452afd4ee: Pull complete
+Digest: sha256:42c68eab6f7e22611786a9fe1d1c019e275c50185bd54b8f75dc2b9184322703
+Status: Downloaded newer image for nginx:stable
+api-service received /newsletters
+api-service received /chat/llm
+frontend received /
+frontend received /chat
+HTTP 301
+[exit 0]

@@ -1,0 +1,4 @@
+$ ls -l /bin/sh; head -1 docker-shell.sh
+lrwxrwxrwx 1 root root 4 Mar 31  2024 /bin/sh -> dash
+#!/bin/bash
+[exit 0]

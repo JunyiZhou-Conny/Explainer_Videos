@@ -1,0 +1,34 @@
+$ docker run --rm --entrypoint nginx $NG -v
+nginx version: nginx/1.30.6
+[exit 0]
+
+$ sed -n "35,37p" $CONF | tr -d "\t"; docker run -d --name l23ex-nginx --network l23ex-net -v $CONF:/etc/nginx/nginx.conf:ro $NG >/dev/null && sleep 2
+location ^~ /api/ {
+# Remove the rewrite since we want to preserve the full path after /api/
+proxy_pass http://api-service:9000/;
+[exit 0]
+
+$ docker run --rm --network l23ex-net $NG sh -c "curl -s l23ex-nginx/api/newsletters; curl -s l23ex-nginx/; curl -s -o /dev/null -w \"HTTP %{http_code} -> %{redirect_url}\n\" l23ex-nginx/api"
+api-service received /newsletters
+frontend received /
+HTTP 301 -> http://l23ex-nginx/api/
+[exit 0]
+
+$ diff $CONF $NOSLASH | tr -d "\t"
+37c37
+< proxy_pass http://api-service:9000/;
+---
+> proxy_pass http://api-service:9000;
+[exit 0]
+
+$ docker run -d --name l23ex-nginx --network l23ex-net -v $NOSLASH:/etc/nginx/nginx.conf:ro $NG >/dev/null && sleep 2 && docker run --rm --network l23ex-net $NG sh -c "curl -s l23ex-nginx/api/newsletters; curl -s l23ex-nginx/api/chat/llm"
+api-service received /api/newsletters
+api-service received /api/chat/llm
+[exit 0]
+
+$ docker run --name l23ex-nginx --network l23ex-net -v $CONF:/etc/nginx/nginx.conf:ro $NG 2>&1 | grep -E "emerg"; echo "exit status: $(docker inspect -f "{{.State.ExitCode}}" l23ex-nginx)"
+2026/11/08 02:36:56 [emerg] 1#1: host not found in upstream "api-service" in /etc/nginx/nginx.conf:37
+nginx: [emerg] host not found in upstream "api-service" in /etc/nginx/nginx.conf:37
+exit status: 1
+[exit 0]
+

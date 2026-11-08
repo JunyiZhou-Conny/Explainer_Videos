@@ -1,0 +1,3 @@
+$ bash docker-shell.sh
+Error: AWS credentials file not found at ../../../../secrets/deployment-ac215-user_accessKeys.csv
+[exit 1]

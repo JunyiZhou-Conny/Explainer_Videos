@@ -1,0 +1,42 @@
+$ docker run -d --name vector-db -p 8000:8000 chromadb/chroma:0.5.18 >/dev/null && for i in $(seq 60); do curl -s localhost:8000/api/v1/heartbeat >/dev/null && break; sleep 1; done
+curl -s localhost:8000/api/v1/version; echo
+curl -s -w ' HTTP %{http_code}\n' localhost:8000/api/v1/heartbeat
+docker rm -f vector-db >/dev/null
+Unable to find image 'chromadb/chroma:0.5.18' locally
+0.5.18: Pulling from chromadb/chroma
+0d4ec94a7a8e: Pulling fs layer
+a480a496ba95: Pulling fs layer
+5b66209513fe: Pulling fs layer
+a5072a025aa2: Pulling fs layer
+5cfa0738ac2f: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+11e521417cec: Pulling fs layer
+ddfdbee9a065: Pulling fs layer
+90447856f0f5: Pulling fs layer
+2f779fda9095: Pulling fs layer
+4f4fb700ef54: Already exists
+2f779fda9095: Download complete
+0d4ec94a7a8e: Download complete
+5b66209513fe: Download complete
+a480a496ba95: Download complete
+a5072a025aa2: Download complete
+11e521417cec: Download complete
+5cfa0738ac2f: Download complete
+ddfdbee9a065: Download complete
+8a49fada87d7: Download complete
+a480a496ba95: Pull complete
+a5072a025aa2: Pull complete
+4f4fb700ef54: Pull complete
+2f779fda9095: Pull complete
+5b66209513fe: Pull complete
+5cfa0738ac2f: Pull complete
+11e521417cec: Pull complete
+ddfdbee9a065: Pull complete
+90447856f0f5: Download complete
+90447856f0f5: Pull complete
+0d4ec94a7a8e: Pull complete
+Digest: sha256:d8819dafd306890dd4fe816c7aa5e4adcfa7350977f7d0c95ce5f0046b63293b
+Status: Downloaded newer image for chromadb/chroma:0.5.18
+"0.5.18"
+{"nanosecond heartbeat":1794100777298707466} HTTP 200
+[exit 0]

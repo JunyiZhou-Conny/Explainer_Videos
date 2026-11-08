@@ -1,0 +1,5 @@
+$ ssh-keygen -q -t rsa -b 2048 -m PEM -N '' -C '' -f ~/secrets/cheese-app-ac215-key-pair.pem && rm ~/secrets/cheese-app-ac215-key-pair.pem.pub && ls -l ~/secrets
+total 8
+-rw------- 1 student student 1675 Nov  8 01:14 cheese-app-ac215-key-pair.pem
+-rw-r--r-- 1 student student  115 Nov  8 01:14 deployment-ac215-user_accessKeys.csv
+[exit 0]

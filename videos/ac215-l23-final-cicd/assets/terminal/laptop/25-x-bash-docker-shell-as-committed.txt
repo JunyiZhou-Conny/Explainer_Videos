@@ -1,0 +1,53 @@
+$ bash docker-shell.sh
+
+[+] Building 53.5s (13/19)                                                                     docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.50kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                          0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/15] FROM docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db  0.0s
+ => => resolve docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d  0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 39.54kB                                                                     0.0s
+ => [ 2/15] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnup  16.7s
+ => [ 3/15] RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip"   8.0s
+ => [ 4/15] RUN install -m 0755 -d /etc/apt/keyrings                                                     0.2s
+ => [ 5/15] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/key  0.3s
+ => [ 6/15] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                                   0.2s
+ => [ 7/15] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg]   0.2s
+ => [ 8/15] RUN apt-get update &&     apt-get install -y jq docker-ce                                   26.3s
+ => ERROR [ 9/15] RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmo  1.4s
+------
+ > [ 9/15] RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg &&     echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list  &&     curl https://baltocdn.com/helm/signing.asc | apt-key add -&&     echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list &&     apt-get update &&     apt-get install -y --no-install-recommends kubectl helm python3.9 python3-pip &&     pip install ansible>=9.0.0 openshift docker apache-libcloud boto3 botocore pipenv:
+1.051 deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /
+1.058   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+1.058                                  Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0Warning: apt-key output should not be parsed (stdout is not a terminal)
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+1.415 curl: (60) SSL certificate problem: unable to get local issuer certificate
+1.415 More details here: https://curl.haxx.se/docs/sslcerts.html
+1.415
+1.415 curl failed to verify the legitimacy of the server and therefore could not
+1.415 establish a secure connection to it. To learn more about this situation and
+1.415 how to fix it, please visit the web page mentioned above.
+1.417 gpg: no valid OpenPGP data found.
+------
+Dockerfile:31
+--------------------
+  30 |     # Kubernetes & Ansible
+  31 | >>> RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && \
+  32 | >>>     echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list  && \
+  33 | >>>     curl https://baltocdn.com/helm/signing.asc | apt-key add -&& \
+  34 | >>>     echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+  35 | >>>     apt-get update && \
+  36 | >>>     apt-get install -y --no-install-recommends kubectl helm python3.9 python3-pip && \
+  37 | >>>     pip install ansible>=9.0.0 openshift docker apache-libcloud boto3 botocore pipenv
+  38 |
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg &&     echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list  &&     curl https://baltocdn.com/helm/signing.asc | apt-key add -&&     echo \"deb https://baltocdn.com/helm/stable/debian/ all main\" | tee /etc/apt/sources.list.d/helm-stable-debian.list &&     apt-get update &&     apt-get install -y --no-install-recommends kubectl helm python3.9 python3-pip &&     pip install ansible>=9.0.0 openshift docker apache-libcloud boto3 botocore pipenv" did not complete successfully: exit code: 2
+Unable to find image 'cheese-app-deployment:latest' locally
+docker: Error response from daemon: failed to resolve reference "docker.io/library/cheese-app-deployment:latest": docker.io/library/cheese-app-deployment:latest: not found
+
+Run 'docker run --help' for more information
+[exit 125]

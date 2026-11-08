@@ -1,0 +1,10 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; uname -sm; . /etc/os-release; echo $PRETTY_NAME; docker version --format 'Docker client {{.Client.Version}}, engine {{.Server.Version}}'; docker buildx version; git --version; bash --version | head -1; ls -l /bin/sh
+2026-11-08 01:14 UTC
+Linux x86_64
+Ubuntu 24.04.5 LTS
+Docker client 29.9.3, engine 29.9.3
+github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5
+git version 2.43.0
+GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)
+lrwxrwxrwx 1 root root 4 Mar 31  2024 /bin/sh -> dash
+[exit 0]

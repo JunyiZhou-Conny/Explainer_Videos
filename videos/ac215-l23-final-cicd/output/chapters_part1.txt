@@ -1,0 +1,10 @@
+00:00 Thirty-three commits, one backslash
+01:19 The final map, in AWS words
+02:52 A policy, a user and two keys
+04:49 Ansible in one picture
+06:25 Starting the toolbox: three surprises
+08:45 Inside the toolbox: whose Docker?
+10:39 Three images, one timestamp
+12:14 Create a server, then provision it
+14:16 Five containers on one network
+16:18 One front door: nginx

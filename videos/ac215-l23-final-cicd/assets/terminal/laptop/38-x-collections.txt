@@ -1,0 +1,73 @@
+$ bash docker-shell.sh
+
+[+] Building 0.2s (20/20) FINISHED                                                                                                               docker:default
+ => [internal] load build definition from Dockerfile                                                                                                       0.0s
+ => => transferring dockerfile: 2.30kB                                                                                                                     0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                                                                            0.0s
+ => [internal] load .dockerignore                                                                                                                          0.0s
+ => => transferring context: 2B                                                                                                                            0.0s
+ => [ 1/15] FROM docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                    0.0s
+ => => resolve docker.io/library/ubuntu:20.04@sha256:880f4a93b0bd9f08f0290b54de42fb674e6c62aad58d89db5d1339a9dc69a8e8                                      0.0s
+ => [internal] load build context                                                                                                                          0.0s
+ => => transferring context: 708B                                                                                                                          0.0s
+ => CACHED [ 2/15] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client unzip            0.0s
+ => CACHED [ 3/15] RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" &&     unzip awscliv2.zip &&     ./aws/inst  0.0s
+ => CACHED [ 4/15] RUN install -m 0755 -d /etc/apt/keyrings                                                                                                0.0s
+ => CACHED [ 5/15] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg                             0.0s
+ => CACHED [ 6/15] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                                                                              0.0s
+ => CACHED [ 7/15] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu     0.0s
+ => CACHED [ 8/15] RUN apt-get update &&     apt-get install -y jq docker-ce                                                                               0.0s
+ => CACHED [ 9/15] RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg  0.0s
+ => CACHED [10/15] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" &&     usermod -aG docker app &&     mkdir -p /a  0.0s
+ => CACHED [11/15] WORKDIR /app                                                                                                                            0.0s
+ => CACHED [12/15] ADD --chown=app:app Pipfile Pipfile.lock /app/                                                                                          0.0s
+ => CACHED [13/15] RUN pipenv sync                                                                                                                         0.0s
+ => CACHED [14/15] ADD --chown=app:app . /app                                                                                                              0.0s
+ => CACHED [15/15] RUN set -ex;     ansible-galaxy collection install community.general community.kubernetes                                               0.0s
+ => exporting to image                                                                                                                                     0.1s
+ => => exporting layers                                                                                                                                    0.0s
+ => => exporting manifest sha256:552a7751f3d245052257089a1e6f3bdb028446c26ea8a28e85d553c0a05bdc81                                                          0.0s
+ => => exporting config sha256:d3079c5d0b5542a34ef1dbeb285ff3d70c2f7505fb05d6589096903af0d3f7e6                                                            0.0s
+ => => exporting attestation manifest sha256:5745fc0ec6c78b0b1c23e1fdd173c072ee5829ce3f52a279fcc94c93c1d51631                                              0.0s
+ => => exporting manifest list sha256:d9a98223cc2552b3401c972936be817ad196f97bbdc8a8375342eb3b74879db0                                                     0.0s
+ => => naming to docker.io/library/cheese-app-deployment:latest                                                                                            0.0s
+ => => unpacking to docker.io/library/cheese-app-deployment:latest                                                                                         0.0s
+root@f1e3ff2241a2:/app# ansible-galaxy collection list 2>/dev/null | grep "^# \|amazon\|community"
+# /root/.ansible/collections/ansible_collections
+community.general                        14.0.0
+community.kubernetes                     2.0.1
+community.library_inventory_filtering_v1 1.1.5
+# /usr/local/lib/python3.8/dist-packages/ansible_collections
+amazon.aws                    3.5.0
+community.aws                 3.6.0
+community.azure               1.1.0
+community.ciscosmb            1.0.5
+community.crypto              2.9.0
+community.digitalocean        1.22.0
+community.dns                 2.4.2
+community.docker              2.7.3
+community.fortios             1.0.0
+community.general             5.8.3
+community.google              1.0.0
+community.grafana             1.5.3
+community.hashi_vault         3.4.0
+community.hrobot              1.6.0
+community.libvirt             1.2.0
+community.mongodb             1.4.2
+community.mysql               3.5.1
+community.network             4.0.2
+community.okd                 2.2.0
+community.postgresql          2.3.1
+community.proxysql            1.4.0
+community.rabbitmq            1.2.3
+community.routeros            2.5.0
+community.sap                 1.0.0
+community.sap_libs            1.4.0
+community.skydive             1.0.0
+community.sops                1.5.0
+community.vmware              2.10.2
+community.windows             1.11.1
+community.zabbix              1.9.0
+root@f1e3ff2241a2:/app# exit
+exit
+[exit 0]

@@ -1,0 +1,5 @@
+$ chmod 400 ~/secrets/cheese-app-ac215-key-pair.pem && ls -l ~/secrets
+total 8
+-r-------- 1 student student 1675 Nov  8 01:14 cheese-app-ac215-key-pair.pem
+-rw-r--r-- 1 student student  115 Nov  8 01:14 deployment-ac215-user_accessKeys.csv
+[exit 0]
