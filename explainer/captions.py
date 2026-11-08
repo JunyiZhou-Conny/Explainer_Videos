@@ -292,7 +292,9 @@ def _ass_time(t: float) -> str:
 
 
 def _ass_escape(s: str) -> str:
-    return s.replace("\\", "\\\\").replace("{", "(").replace("}", ")")
+    # as subtitles._ass_escape: a lone backslash is literal in libass; a word joiner keeps \N,
+    # \n and \h literal (doubling it drew two backslashes)
+    return s.replace("\\", "\\\u2060").replace("{", "(").replace("}", ")")
 
 
 def line_text(c: Caption, st: LineStyle) -> str:

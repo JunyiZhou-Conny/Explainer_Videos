@@ -880,3 +880,18 @@ def test_placeholder_chinese_cue_never_breaks_inside():
             assert not _split_placeholder(S.split_balanced(t, n, hang=True)), (t, n)
             assert not _split_placeholder(S._wrapped(t, n)), (t, n)
             assert not _split_placeholder(S.split_balanced(t, 2 * n, hang=True, line=n)), (t, n)
+
+
+def test_ass_keeps_a_backslash_single(tmp_path):
+    """libass draws a lone backslash as itself: the .ass must not double it (L23's quiz line
+    "\\run-deploy-app" burned as "\\\\run-deploy-app"), and "\\n" in a path must not become a line
+    break."""
+    p = tmp_path / "b.ass"
+    S.write_ass(p, [(0.0, 2.0, "还有 \\run-deploy-app", "and \\run-deploy-app, C:\\new\\hat")])
+    ev = [line for line in p.read_text(encoding="utf-8").splitlines() if line.startswith("Dialogue")]
+    assert len(ev) == 1
+    text = ev[0].split(",,", 1)[1]
+    assert "\\\\" not in text
+    assert "\\\u2060run-deploy-app" in text
+    assert "\\\u2060new" in text and "\\\u2060hat" in text
+    assert text.count("\\N") == 1                 # only the zh/en break the writer adds
