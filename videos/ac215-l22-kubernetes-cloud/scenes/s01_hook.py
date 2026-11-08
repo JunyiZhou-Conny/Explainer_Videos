@@ -98,10 +98,57 @@ def go_dark(v, k: float = 0.3):
     return out
 
 
+class Fleet(FleetMorph):
+    """FleetMorph with slide 9's three VMs given room (QA 00:33): each VM 4.1 wide (0.2 apart), API box
+    1.25 and its dashed backup 2.2 (label 1.84 wide: 0.18 inner padding), 0.2 between them and 0.22
+    to each VM border. Otherwise identical to FleetMorph.three_vms."""
+
+    VM_W, API_W, BK_W, GAP = 4.1, 1.25, 2.2, 0.2
+
+    def three_vms(self, scene, run_time: float = 1.2):
+        p = self.p
+        vms = []
+        spec = [("Frontend", None), ("API 1", "API 1 · backup"), ("API 2", "API 2 · backup")]
+        left = -(self.API_W + self.GAP + self.BK_W) / 2          # content row centred in the VM
+        for i, (main, backup) in enumerate(spec):
+            cx = -4.3 + 4.3 * i
+            fr = frame_box(self.VM_W, 2.8, CLOUD, k=0.08).move_to(p(cx, -0.9))
+            t = label(f"VM {i + 1}", 20, CLOUD).move_to(fr).align_to(fr, UL).shift(np.array([0.15, -0.08, 0]))
+            g = VGroup(fr, t)
+            g.frame = fr
+            if backup is None:
+                b = boxed(main, CONTAINER, box_w=2.0, box_h=0.62).move_to(p(cx, -1.15))
+                d = door("HTTP 80").move_to(fr.get_top())
+                g.add(b, d)
+                g.main, g.backup = b, None
+            else:
+                ng = boxed("nginx", CONTAINER, box_w=1.6, box_h=0.5, mono_font=True).move_to(p(cx, -0.05))
+                b = boxed(main, CONTAINER, box_w=self.API_W, box_h=0.55).move_to(
+                    p(cx + left + self.API_W / 2, -1.35))
+                bk = boxed(backup, CONTAINER, box_w=self.BK_W, box_h=0.55, dashed=True).move_to(
+                    p(cx + left + self.API_W + self.GAP + self.BK_W / 2, -1.35))
+                g.add(ng, b, bk)
+                g.main, g.backup = b, bk
+            vms.append(g)
+        say = card(["put it on several servers"], S.GREY, size=22).move_to(p(0, 1.35))
+        old = [m for m in (self.vm, *self.boxes.values(), getattr(self, "links", None), getattr(self, "door", None))
+               if m is not None]
+        for m in old:
+            self._detach(m)
+        src = VGroup(*old)
+        scene.add(src)
+        scene.play(FadeTransform(src, VGroup(*vms)), run_time=run_time)
+        scene.remove(src, *vms)
+        self.vms = vms
+        self.add(*vms)
+        self.say = say
+        self.show(scene, say, run_time=0.4)
+
+
 class Hook(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S01"] == 8, len(SAY)
-        fm = FleetMorph()
+        fm = Fleet()
 
         # ========================================================== 0. one VM, a small app
         with self.voiceover(SAY[0]) as vo:

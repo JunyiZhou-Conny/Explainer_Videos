@@ -128,6 +128,44 @@ def suffix_of(pg):
     return txt[len(f"web-{RS_HASH}-"):]
 
 
+class RoomyLoop(ControllerLoop):
+    """V4 with room around its right column (whole-video QA, 11:15): the 'node: worker' lane ends at
+    x 3.0 (not 3.3), so 'observe → compare → act' (x 3.36 ..) clears it by 0.35; the ring's radius is
+    0.8 (not 0.85), so its top (y ~1.36) clears the small AsksChecklist (y 1.555) by ~0.2; the words
+    sit at y -0.5 and the counter + dial at y -0.88, so the dial clears the 4-row strip (top y -1.18)."""
+
+    WORDS_Y, COUNT_DY, RING_R = -0.5, 0.07, 0.8
+
+    def __init__(self):
+        super().__init__()
+        old = self.lanes[1]
+        new = node_box("node: worker", 4.4, 2.3).move_to(self.p(0.8, 0.3))
+        self.lanes.submobjects[1] = new
+        assert abs(old.frame.get_left()[0] - new.frame.get_left()[0]) < 1e-3, (old.frame.get_left(), new.frame.get_left())
+
+    def _counter(self, desired, actual):
+        return super()._counter(desired, actual).shift(UP * self.COUNT_DY)
+
+    def loop(self, scene):
+        r = ring_arrows(self.RING_R).move_to(self.ctl)
+        words = label("observe → compare → act", 20, TURN).move_to(self.p(4.95, self.WORDS_Y))
+        self.ring = r
+        self.words = words
+        self.counter = self._counter(self.desired, self.actual)
+        dial = VGroup(Arc(radius=0.2, start_angle=0, angle=PI, color=S.GREY, stroke_width=3),
+                      Line(ORIGIN, UP * 0.17, color=TURN, stroke_width=3)).next_to(self.counter, RIGHT, buff=0.15)
+        dial.align_to(self.counter, DOWN)
+        self.dial = dial
+        lane = self.lanes[1].frame
+        ac_bottom = 1.555
+        assert words.get_left()[0] > lane.get_right()[0] + 0.15, (words.get_left(), lane.get_right())
+        assert r.get_top()[1] < ac_bottom - 0.15 and r.get_bottom()[1] > words.get_top()[1] + 0.1, (r.get_top(), r.get_bottom(), words.get_top())
+        assert words.get_bottom()[1] > self.counter.get_top()[1] + 0.08
+        assert dial.get_right()[0] < 6.6 and dial.get_bottom()[1] > BOTTOM + 4 * 0.367125 + 0.85 + 0.12
+        self.show(scene, r, words, anims=[Create(r), FadeIn(words)], run_time=0.8)
+        self.show(scene, self.counter, dial, run_time=0.4)
+
+
 class SelfHealing(VoiceScene):
     def construct(self):
         trk = tracker_w(10, True)
@@ -145,7 +183,7 @@ class SelfHealing(VoiceScene):
         ssh = DashedLine([-4.3, -0.55, 0], [api.get_left()[0], -0.55, 0], color=S.GREY, stroke_width=3,
                          dash_length=0.12)
         ssh_t = label("SSH · restart by hand", 20, S.GREY).next_to(ssh, DOWN, buff=0.12)
-        cl = ControllerLoop()
+        cl = RoomyLoop()
         ctl0 = cl.ctl.copy().move_to([-1.0, 0.1, 0])
         park = np.array([1.6, 2.2, 0])
         t = term(toolbox_prompt(), 11, T_TB_STANDIN, size=20)

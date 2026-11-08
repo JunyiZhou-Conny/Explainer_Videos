@@ -79,12 +79,12 @@ AUDIT = ("gcloud container clusters list", "gcloud compute forwarding-rules list
          "gcloud compute disks list", "gcloud compute firewall-rules list")
 EMPTY_ORDER = ("ingress", "app", "storage", "identity", "provider", "cluster", "network")
 
-# Slide 43's five payoffs, each tied to a scene: (key word, rest, scene chip, thumbnail kind)
-PAYOFFS = (("Self-service", "one pulumi up", "S12", "tree"),
-           ("Lower cost", "packing by requests", "S15", "shelf"),
-           ("Automatic adjustment", "node autoscaler", "S15", "nodes"),
-           ("Smooth running", "self-healing", "S07", "ring"),
-           ("Simpler development", "L20's images", "S10", "crates"))
+# Slide 43's five payoffs, each tied to where it was shown: (key word, rest, chip, thumbnail kind)
+PAYOFFS = (("Self-service", "one pulumi up", "pulumi up", "tree"),
+           ("Lower cost", "packing by requests", "scaling", "shelf"),
+           ("Automatic adjustment", "node autoscaler", "scaling", "nodes"),
+           ("Smooth running", "self-healing", "part 1", "ring"),
+           ("Simpler development", "L20's images", "lecture 20", "crates"))
 
 # Test-yourself cards: one row per clause; (s, 'm') = mono
 QUESTIONS = (

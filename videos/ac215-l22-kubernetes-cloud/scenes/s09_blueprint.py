@@ -278,13 +278,13 @@ class Blueprint(VoiceScene):
             cb.namespace(self)
             vo.wait_until("behind one load balancer")
             cb.lb(self)
-            cb.chip(self, "ingress", "Ingress → S13")
+            cb.chip(self, "ingress", "Ingress → later")
             # PVC and Workload Identity sit on the left: their chips go left of the VPC, with short
             # horizontal lines (a chip in the right column would draw its line across the cluster)
             pvc = cb.parts["pvc1"][0]
-            cb.side_chip(self, "pvc1", "PVC", "→ S15", pvc.get_y() + 0.12, pvc.get_left()[0])
+            cb.side_chip(self, "pvc1", "PVC", "→ later", pvc.get_y() + 0.12, pvc.get_left()[0])
             wi = cb.parts["wi"]
-            cb.side_chip(self, "wi", "Workload Identity", "→ S12", wi.get_y() - 0.05, wi.get_left()[0])
+            cb.side_chip(self, "wi", "Workload Identity", "→ later", wi.get_y() - 0.05, wi.get_left()[0])
             assert cb.extras["chip_pvc1"][1].get_bottom()[1] > cb.extras["chip_wi"][1].get_top()[1] + 0.08
         self.wait(0.8)                 # the three scene chips land on the last words: let them be read
         self.play(FadeOut(cb), run_time=0.5)
@@ -365,7 +365,7 @@ class Blueprint(VoiceScene):
         total = cost_tag("≈ $5–8 a day, roughly · our estimate").next_to(cc, DOWN, buff=0.35)
         calc = label("check the pricing calculator · destroy it the same day", 22, S.GREY)
         calc.next_to(total, DOWN, buff=0.25)
-        reg = grey_chip("registry images outlive destroy (S16)").next_to(calc, DOWN, buff=0.3)
+        reg = grey_chip("registry images outlive destroy · see the end").next_to(calc, DOWN, buff=0.3)
         allg = VGroup(cc, dial, total, calc, reg)
         assert allg.get_top()[1] < 3.5 and allg.get_bottom()[1] > -3.5 and allg.get_left()[0] > -6.5, \
             (allg.get_top(), allg.get_bottom(), allg.get_left())
@@ -380,11 +380,11 @@ class Blueprint(VoiceScene):
             self.play(FadeIn(total, shift=UP * 0.15), run_time=0.5)
             dial.run(self, 0.2, 0.9)
             vo.wait_until("check the pricing calculator")
-            self.play(FadeIn(calc), run_time=0.5)
+            self.play(FadeIn(calc), FadeIn(reg, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("and destroy it the same day")
-            self.play(FadeIn(reg, shift=UP * 0.15), run_time=0.5)
             dial.run(self, 0.15, 0.8)
         dial.freeze()
+        self.wait(1.2)  # let the calculator line and the registry chip be read before the fade
         self.play(FadeOut(VGroup(shell, *lines, dial, total, calc, reg)), run_time=0.6)
         self.remove(*self.mobjects)
         self.wait(0.3)

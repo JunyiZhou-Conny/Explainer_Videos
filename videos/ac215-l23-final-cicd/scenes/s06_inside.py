@@ -9,7 +9,8 @@ Beats (script.md "## S06"; one voiceover block each):
    line + /var/run/docker.sock), 37–38 (/app, /secrets), 39–40 (/api-service), 41–42
    (/frontend-react, /vector-db), then 43–44 and 45–46: the badge flies from the secrets folder
    into the crate (V3) as the four -e lines are read.
-1. The strip leaves; V5 stays. A PURPLE "docker build" spark hovers inside the crate.
+1. The strip leaves; V5 stays. A PURPLE "docker build" spark (words stacked) hovers in the crate's
+   free right-hand corner.
    PONDER 8 s (the card covers the picture while the timer runs).
 2. The card leaves. The spark runs down the PINK socket into the laptop's engine; a TEAL cube lands
    on the shelf beside the toolbox, GREEN chip "sibling". Then a RED "docker system prune -a" runs
@@ -22,8 +23,9 @@ Beats (script.md "## S06"; one voiceover block each):
    "pip install ansible" slides left (PURPLE), `>` becomes a PINK arrow carrying "=9.0.0" into a
    file inside a GREY "/" box. A 5-row toolbox strip types laptop/33's two commands and prints 36–37
    (wrapped, '=9.0.0' RED) and 39–40, 42 (cut after ansible-core-2.13.13, wrapped); the file and the
-   strip's RED name pulse together; ansible-6.7.0 is underlined. The two-line erratum card appears
-   on "Quoting fixes it" / "but leave it for now".
+   strip's RED name pulse together; ansible-6.7.0 is underlined. On "Quoting fixes it" the split
+   picture leaves and the two-line erratum card (erratum tag at its left) takes its row; its second
+   line comes on "but leave it for now".
 5. A 20 pt toolbox terminal, alone: heading row "every ansible-playbook run starts with:", then
    laptop/40: 36–37 (the cryptography pair, GREY, line 36 cut after "no longer supported") and
    38–41 (wrapped). Each group flashes on its phrase; then all fold into the GREY chip
@@ -31,8 +33,9 @@ Beats (script.md "## S06"; one voiceover block each):
 6. A 5-row toolbox strip types `aws sts get-caller-identity` (extra) and prints laptop/34: 37 RED
    (wrapped). Above it the WHITE badge with a GREY chip "placeholder", then a GREY dashed chip
    "with your key: your account ID and your user".
-7. Same strip (cleared): `ansible-inventory -i inventory.yml --graph` prints laptop/35: 38–41;
-   the first three rows morph (from a copy) into V4's GREEN InventoryTree above. Then the tree
+7. Same strip (cleared), in a silent typing beat before the block: `ansible-inventory -i
+   inventory.yml --graph` prints laptop/35: 38–41; then the first three rows flash GREEN and V4's
+   InventoryTree builds above (top right) from them, one node per phrase. Then the tree
    leaves, the strip grows to 7 rows, the loop of laptop/36: 35 is typed (folded) and 39, 47, 51,
    55, 59 print GREEN. Fade; empty frame.
 
@@ -40,7 +43,9 @@ Deviations from SHOW: V5 (9.0 x 5.2) and CODE(docker-shell.sh: 35–42) (8.9 x 3
 by side at 20 pt, so the code stands under V5 as a two-row strip (all of lines 35–46, two at a time,
 header kept in the strip's left column) and steps along with the narration. Block 4's strip has 5
 rows, not 3, so the ls listing and the head/tail output stay readable together. Block 5's line 36
-is cut after "no longer supported" (a 285-character line). Block 6 adds the placeholder-badge chips
+is cut after "no longer supported" (a 285-character line). Block 4's ls rows are squeezed
+(squeeze_spaces) before wrapping, so the listing reads as a list. Block 7's rows do not morph into
+the tree (the Transform showed a shrunken box mid-way): the tree's nodes fly in from the rows. Block 6 adds the placeholder-badge chips
 (no output is invented: "with your key" is GREY dashed, the future).
 """
 
@@ -126,6 +131,8 @@ class InsideToolbox(VoiceScene):
         tr = tracker_b(3, True)
         v5 = SiblingContainers()
         v5.shift(UP * V5_SHIFT)
+        # the 'sibling' chip of build() would touch the socket's path label: lift the label a little
+        v5.socket_label.shift(UP * 0.35)
         st = src_strip(35, 36, hot=(36,))
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(v5, shift=UP * 0.15), run_time=0.8)
@@ -157,8 +164,14 @@ class InsideToolbox(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             fade_all(self, st, run_time=0.4)
             vo.wait_until("Inside the toolbox")
-            v5.hover_spark(self, run_time=0.6)
-            self.play(Indicate(v5.spark[1], color=TOOL, scale_factor=1.1), run_time=0.7)
+            # hover_spark() would sit on the badge and /vector-db: the spark waits in the crate's free
+            # right-hand corner instead, its words stacked
+            sp = VGroup(spark(TOOL, 0.3), VGroup(label("docker", 20, TOOL), label("build", 20, TOOL))
+                        .arrange(DOWN, buff=0.06))
+            sp[1].next_to(sp[0], DOWN, buff=0.1)
+            sp.move_to([3.25, 1.3, 0])
+            self.play(FadeIn(sp, scale=0.6), run_time=0.6)
+            self.play(Indicate(sp[1], color=TOOL, scale_factor=1.1), run_time=0.7)
             vo.wait_until("Whose disk")
             self.play(Indicate(v5.crate.text, color=IMAGE, scale_factor=1.08),
                       Indicate(v5.title, color=INK, scale_factor=1.1), run_time=0.9)
@@ -173,7 +186,7 @@ class InsideToolbox(VoiceScene):
             vo.wait_until("No Docker engine runs")
             self.play(Circumscribe(v5.crate.frame, color=IMAGE, buff=0.06), run_time=0.9)
             vo.wait_until("talks through the socket")
-            cube, sib = v5.build(self, run_time=2.0)
+            cube, sib = v5.build(self, sp, run_time=2.0)
             vo.wait_until("So the image lands beside")
             self.play(Indicate(sib.text, color=OWN, scale_factor=1.15),
                       Indicate(v5.images[0][1], color=IMAGE, scale_factor=1.06), run_time=0.9)
@@ -188,7 +201,7 @@ class InsideToolbox(VoiceScene):
         chips = VGroup(tool_chip("aws-cli 2.39.6"), tool_chip("Docker CLI 28.1.1"),
                        tool_chip("kubectl v1.28.15"), tool_chip("ansible 6.7.0"))
         chips.arrange(RIGHT, buff=0.35).move_to([0, 2.3, 0])
-        bad = err_chip("ansible 6.7.0").move_to(chips[3])
+        bad = err_chip("ansible 6.7.0", mono_font=True).move_to(chips[3])
         with self.voiceover(SAY[3]) as vo:
             fade_all(self, v5, run_time=0.5)
             self.play(FadeIn(t), run_time=0.4)
@@ -230,8 +243,8 @@ class InsideToolbox(VoiceScene):
                           "leave it for this lecture: deploy-provision-instance.yml:57 (warn:) "
                           "needs this old Ansible"], S.GREY, size=20)
         err1.text[1].set_opacity(0)
-        err1.move_to([0, -0.2, 0])
-        etag = erratum_tag().next_to(err1.frame, UP, buff=0.06).align_to(err1.frame, LEFT)
+        etag = erratum_tag()
+        VGroup(etag, err1).arrange(RIGHT, buff=0.2).move_to([0, row_y, 0])
         with self.voiceover(SAY[4]) as vo:
             fade_all(self, t, chips, rec, run_time=0.5)
             self.play(FadeIn(dfp, shift=DOWN * 0.15), run_time=0.5)
@@ -250,7 +263,8 @@ class InsideToolbox(VoiceScene):
             vo.wait_until("So the root folder")
             self.play(FadeIn(st4, shift=UP * 0.15), run_time=0.4)
             type_cmd(self, st4, x33.cmds[0][1], type_time=0.4)
-            out(self, st4, x33.at((36, 37)), wrap=True, run_time=0.6)
+            # the ls columns are padded for a 120-cell terminal: squeezed, then wrapped at spaces
+            out(self, st4, [squeeze_spaces(s) for s in x33.at((36, 37))], wrap=True, run_time=0.6)
             red = substring(lines_of(st4, "'=9.0.0'")[0], "'=9.0.0'")
             self.play(red.animate.set_color(ERR), run_time=0.3)
             self.play(Indicate(red, color=ERR, scale_factor=1.25),
@@ -265,6 +279,8 @@ class InsideToolbox(VoiceScene):
             u67 = under(a67, ERR)
             self.play(a67.animate.set_color(ERR), Create(u67), run_time=0.6)
             vo.wait_until("Quoting fixes it")
+            self.play(FadeOut(VGroup(left, arr, root, root_t, fg, fname), shift=UP * 0.15), run_time=0.4)
+            self.remove(left, arr, root, root_t, fg, fname)
             self.play(FadeIn(err1.frame), FadeIn(err1.text[0]), FadeIn(etag), run_time=0.6)
             vo.wait_until("but leave it for now")
             self.play(err1.text[1].animate.set_opacity(1), run_time=0.6)
@@ -276,7 +292,7 @@ class InsideToolbox(VoiceScene):
         t5 = term(x40.prompt, rows=14, title=T_TOOLBOX, size=20)
         hide = grey_chip("warnings · hidden from here on", size=22).move_to([0, 0.3, 0])
         with self.voiceover(SAY[5]) as vo:
-            fade_all(self, dfp, left, arr, root, root_t, fg, fname, st4, u67, err1, etag, run_time=0.5)
+            fade_all(self, dfp, st4, u67, err1, etag, run_time=0.5)
             self.play(FadeIn(t5), run_time=0.4)
             put_heading(self, t5, "every ansible-playbook run starts with:")
             g_crypto = out(self, t5, w_rows, wrap=True, run_time=0.5)
@@ -298,10 +314,11 @@ class InsideToolbox(VoiceScene):
 
         # ========================================================== 6. aws sts (extra)
         x34 = toolbox_capture("34")
-        t6 = toolbox_term("34", rows=5)
-        badge = badge_glyph(0.6).move_to([-1.6, 0.9, 0])
+        t6 = toolbox_term("34", rows=6)
+        t6.shift(DOWN * 0.05)          # room for the inventory tree above it (beat 7)
+        badge = badge_glyph(0.6).move_to([-1.6, 1.6, 0])
         ph = grey_chip("placeholder").next_to(badge, RIGHT, buff=0.3)
-        yours = dashed_chip("with your key: your account ID and your user").move_to([0, -0.05, 0])
+        yours = dashed_chip("with your key: your account ID and your user").move_to([0, 0.75, 0])
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(hide), FadeIn(t6), run_time=0.5)
             self.remove(hide)
@@ -318,25 +335,32 @@ class InsideToolbox(VoiceScene):
 
         # ========================================================== 7. inventory graph, syntax check
         x35, x36 = toolbox_capture("35"), toolbox_capture("36")
-        tree = InventoryTree().move_to([0, 1.15, 0])
+        tree = InventoryTree().move_to([3.6, 1.3, 0])
+        # the graph is typed before the block (a silent typing beat): its output is what the first
+        # sentence talks about
+        fade_all(self, badge, ph, yours, run_time=0.4)
+        t6.clear(self, run_time=0.3)
+        t6.set_prompt(x35.prompt)
+        type_cmd(self, t6, x35.cmd, type_time=0.8)
+        g = out(self, t6, x35.at((36, 41)), run_time=0.5)
         with self.voiceover(SAY[7]) as vo:
-            fade_all(self, badge, ph, yours, run_time=0.4)
-            t6.clear(self)
-            t6.set_prompt(x35.prompt)
-            type_cmd(self, t6, x35.cmd, type_time=0.7)
-            g = out(self, t6, x35.at((36, 41)), run_time=0.5)
-            vo.wait_until("The inventory graph shows all")
-            self.play(ReplacementTransform(g[0].copy(), tree.all), Create(tree.edges[0]), run_time=0.7)
+            self.play(Indicate(g[0], color=OWN, scale_factor=1.05), FadeIn(tree.all, target_position=g[0]),
+                      run_time=0.7)
             vo.wait_until("then appserver")
-            self.play(ReplacementTransform(g[1].copy(), tree.group), Create(tree.edges[1]), run_time=0.6)
+            self.play(Indicate(g[1], color=OWN, scale_factor=1.05), Create(tree.edges[0]),
+                      FadeIn(tree.group, target_position=g[1]), run_time=0.7)
             vo.wait_until("then one host")
-            self.play(ReplacementTransform(g[2].copy(), tree.leaf), run_time=0.6)
+            self.play(Indicate(g[2], color=OWN, scale_factor=1.05), Create(tree.edges[1]),
+                      FadeIn(tree.leaf, target_position=g[2]), run_time=0.7)
             self.remove(tree.all, tree.group, tree.leaf, tree.edges)
             self.add(tree)
+            self.play(Circumscribe(tree.leaf, color=OWN, buff=0.06), run_time=0.8)
             vo.wait_until("And all five playbooks")
-            self.play(FadeOut(tree), run_time=0.3)
-            self.remove(tree, *tree.get_family())
-            t6.clear(self, run_time=0.2)
+            gone = VGroup(*t6.lines)
+            for ln in list(t6.lines):
+                t6.lines.remove(ln)
+            self.play(FadeOut(tree), FadeOut(gone), run_time=0.3)
+            self.remove(tree, gone, *tree.get_family(), *gone.get_family())
             resize(self, t6, 7, run_time=0.4)
             t6.set_prompt(x36.prompt)
             type_cmd(self, t6, x36.cmd, type_time=1.0)

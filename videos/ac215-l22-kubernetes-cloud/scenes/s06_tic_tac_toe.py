@@ -278,6 +278,9 @@ class TicTacToe(VoiceScene):
             vo.wait_until("kubectl apply, dash f")
             type_capture(self, t, K10, type_time=1.0)
             g10 = out(self, t, [(s, OWN) for s in K10.at(2, 3)], run_time=0.5)
+            yt10 = turn_row()  # the command row is too long to hold it: beside its first output row
+            pin(self, g10[0], beside(yt10, g10[0]))
+            flash_tag(self, yt10, TURN)
             vo.wait_until("Apply only hands a wish")
             self.play(FadeIn(ref), each(list(g10), OWN, 1.05), run_time=0.6)
             self.add(t)
@@ -294,7 +297,7 @@ class TicTacToe(VoiceScene):
 
         # ========================================================== 4. rollout status (extra)
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(md), track(trk, 8, True), run_time=0.5)
+            unpin(self, g10[0], yt10, FadeOut(md), track(trk, 8, True), run_time=0.5)
             self.remove(md)
             resize(self, t, 12, extra=[bar_follow(t, sr, 12)], run_time=0.6)
             vo.wait_until("An extra check, rollout status")
@@ -307,14 +310,15 @@ class TicTacToe(VoiceScene):
             out(self, t, K12.at(3), wrap=True, run_time=0.4)
             vo.wait_until("then rolled out")
             out(self, t, [(K12.line(4), OWN)], run_time=0.4)
-            vo.wait_until("on two different workers")
             g67 = out(self, t, K12.at(6, 7), wrap=True, run_time=0.5)
             nodes = [substring(r, "test-cluster-worker2" if "worker2" in r.text else "test-cluster-worker")
                      for r in g67 if "test-cluster-worker" in r.text]
             assert len(nodes) == 2, [r.text for r in g67]
+            vo.wait_until("on two different workers")
             self.play(*[n.animate.set_color(TURN) for n in nodes], run_time=0.4)
             self.play(each(nodes, TURN, 1.1), run_time=0.8)
             self.add(t)
+        self.wait(1.5)  # the two YELLOW worker names stay on screen before beat 5 clears the terminal
 
         # ========================================================== 5. get services: 80 → 31366 → 8080
         ref = lref("38")
@@ -322,8 +326,10 @@ class TicTacToe(VoiceScene):
             unpin(self, r12, ex, track(trk, 9), FadeIn(ref))
             resize(self, t, 12, keep=[], run_time=0.4)
             vo.wait_until("Next, kubectl get services")
-            type_capture(self, t, K11, type_time=0.5)
+            r11 = type_capture(self, t, K11, type_time=0.5)[0]
             g11 = out(self, t, K11.at(2, 3, 4), run_time=0.5)
+            yt11 = turn_row()
+            pin(self, r11, beside(yt11, r11))
             row = g11[2]
             lb, pend, prt = substring(row, "LoadBalancer"), substring(row, "<pending>"), substring(row, "80:31366/TCP")
             vo.wait_until("The web Service is a load balancer")
@@ -357,8 +363,12 @@ class TicTacToe(VoiceScene):
 
         # ========================================================== 6. 43 s later: still pending (ponder)
         md = MasterDiagram(standin=True, built=("laptop", "cluster", "plane", "parts"))
+        for node in (0, 1):  # the game is still deployed: beat 3's two Pods, one per worker
+            pg = pod_glyph(r=0.2).move_to(md._slot_point(node, len(md.pod_slots[node])))
+            md.pod_slots[node].append(pg)
+            md.add(pg)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(*labs)), run_time=0.3)
+            unpin(self, r11, yt11, FadeOut(VGroup(*labs)), run_time=0.3)
             self.remove(*labs)
             vo.wait_until("43 seconds later")
             type_capture(self, t, K13, type_time=0.4)

@@ -7,21 +7,21 @@ Beats (script.md "## S08", one voiceover block each):
    cropped after the IP column, the IPs YELLOW (never read). V3 (LabelLink) builds under them: the
    Deployment, two Pods, their PINK 'run: web' stickers, the Service and its PINK lasso. A 1-row
    toolbox terminal 'laptop · toolbox · stand-in' ('extra', 'stand-in: kind, not GKE' on its bar)
-   prints TERM(k50: 19) PINK with the GREY chip 'recorded before the delete in S07'; its endpoints
+   prints TERM(k50: 19) PINK with the GREY chip 'recorded before the Pod delete'; its endpoints
    become V3's endpoints list; then (tag 'illustration') Pod 0 is replaced and 10.244.1.2 becomes
    10.244.1.7 in the list, while the new IP in the second strip flashes.
 1. The strips and V3 fade; the terminal grows to 8 rows. Line 1 of k52 (extra; soft-wrapped at the row
    edge, since its quoted shell argument cannot fold with ' \\') -> TERM(k52: 4–5, 11). The name and the
    address turn PINK and form the PINK DNS card above; a small inset (k11:2, 4 cropped after
-   CLUSTER-IP, 'the Service's CLUSTER-IP · S06') ties 10.96.52.79 to the Service with a GREY line;
+   CLUSTER-IP, 'the Service's IP · from get services') ties 10.96.52.79 to the Service with a GREY line;
    'http://web' and the game's <title> light up; the DNS name flashes on "The name stays".
 2. The inset goes; a GREY-dashed V5 chip under the DNS card: TEAL 'api' → PINK 'vector-db:8000',
    '(part 2)'; the arrow grows on "by the Service name".
 3. DNS card and chip fade. `kubectl exec --stdin --tty deployment/web -- /bin/sh` (k51:1, folds) at the
    toolbox prompt, then `hostname; ls; exit` at the Pod's '$' (k51:2) -> TERM(k51: 3–4); line 3 TEAL,
-   with the GREY row tag 'recorded before the delete in S07'; above, a TEAL Pod whose three-colour name
+   with the GREY row tag 'recorded before the Pod delete'; above, a TEAL Pod whose three-colour name
    flies out of line 3; the file list's index.html YELLOW; the GREY chip 'README: the same exec, into
-   the API → S14'.
+   the API · part 2'.
 4. LECTURE 22 · 35. Line 1 of k63 (extra; folds) -> TERM(k63: 2–7, 8–10). Above, one folder per
    namespace flies out of its row (default and kube-system ORANGE, the others GREY); 'default' rings
    YELLOW on "looks only in default"; a GREEN folder 'cheese-app-namespace' appears with line 8, a GREY
@@ -31,7 +31,7 @@ Beats (script.md "## S08", one voiceover block each):
 6. TRACKER [W] 11 · extra. The terminal returns. Line 1 of k80 typed crop "deploy-k8s-tic-tac-toe.yml"
    -> TERM(k80: 2–3). Above the terminal: the GREY chip 'on GKE: releases the load balancer while the
    cluster still exists' and a YELLOW '▶ your turn'.
-7. TRACKER [W] 11. LECTURE 22 · 40. The stand-in tags leave the bar, the title becomes 'laptop ·
+7. TRACKER [W] 11. LECTURE 22 · 40. The stand-in tags and the kind rows leave, the title becomes 'laptop ·
    toolbox'. `gcloud container clusters delete test-cluster --zone us-east1-c` -> TERM(b51: 2 wrap) RED
    ('active account' flashes). GREY chip 'yours: Do you want to continue (Y/n)? → Y'.
 8. TRACKER [W] 11 · extra. A laptop terminal 'laptop · stand-in' at student@laptop:~$ (tags 'extra',
@@ -40,7 +40,8 @@ Beats (script.md "## S08", one voiceover block each):
    fade one by one, then its outline.
 9. TRACKER [W] 11. LECTURE 22 · 44. The GOLD 'Don't forget to delete' card centre, a YELLOW
    '▶ your turn' beside it; the GOLD cost tag from S05 slides in under it with a running cost dial,
-   which stops on "check that your test cluster is gone". Fade; empty frame (end of Part 1).
+   which stops on "check that your test cluster is gone"; a row (tag 'extra · our spelling') shows the check:
+   `gcloud container clusters list` → 'expect: no test-cluster' (no output: the list is empty). Fade; empty frame (end of Part 1).
 
 Deviations from SHOW:
 - Beat 0: the strips are cropped after the IP column (k50:10 is 140 characters; the IP is the point).
@@ -154,7 +155,7 @@ class StableNames(VoiceScene):
         t = term(toolbox_prompt(), 1, T_TB_STANDIN, size=20)
         er, sr = bar_tags(t)
         t.add(er, sr)
-        rec = grey_chip("recorded before the delete in S07")
+        rec = grey_chip("recorded before the Pod delete")
         under_term(t, rec)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(ref), run_time=0.5)
@@ -206,7 +207,7 @@ class StableNames(VoiceScene):
         inset = VGroup(ins_f, ins_l)
         inset.move_to([0, 1.2, 0]).align_to(dns, RIGHT)
         ins_ip = substring(ins_l[1], SVC_IP)
-        ins_note = note("the Service's CLUSTER-IP · S06").next_to(inset, RIGHT, buff=0.3)
+        ins_note = note("the Service's IP · from get services").next_to(inset, RIGHT, buff=0.3)
         # the tie stops at the inset's top edge, above the CLUSTER-IP column (never through its header)
         tie = Line(dns.ip.get_bottom() + DOWN * 0.05, [ins_ip.get_x(), ins_f.get_top()[1], 0], color=S.GREY,
                    stroke_width=3)
@@ -269,7 +270,7 @@ class StableNames(VoiceScene):
         # ========================================================== 3. kubectl exec into the Deployment (k51)
         pg = pod_glyph(r=0.42).move_to([-3.8, 1.85, 0])
         pnm = pod_name(POD_A).next_to(pg, DOWN, buff=0.14)
-        api_chip = scene_chip("README: the same exec, into the API → S14").move_to([2.6, 1.6, 0])
+        api_chip = scene_chip("README: the same exec, into the API · part 2").move_to([2.6, 1.6, 0])
         assert api_chip.get_right()[0] < 6.5 and pnm.get_bottom()[1] > t.box.get_top()[1] + 0.1
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(dns, chip5, v5_ar)), run_time=0.4)
@@ -283,7 +284,7 @@ class StableNames(VoiceScene):
             self.play(ReplacementTransform(substring(g3[0], POD_A).copy(), pnm), run_time=0.8)
             self.remove(pnm)
             self.add(t, pnm)
-            rt = row_tag("recorded before the delete in S07")
+            rt = row_tag("recorded before the Pod delete")
             pin(self, g3[0], beside(rt, g3[0]))
             vo.wait_until("and the game's files are inside")
             ix = substring(g3[1], "index.html")
@@ -387,9 +388,12 @@ class StableNames(VoiceScene):
         under_term(t, yours, buff=0.15)
         with self.voiceover(SAY[7]) as vo:
             t.remove(er, sr)
-            self.play(FadeOut(VGroup(gke, yt6, er, sr)), retitle(t, T_TOOLBOX), track(trk, 11, False), FadeIn(ref),
-                      run_time=0.5)
-            self.remove(gke, yt6, er, sr)
+            old = list(t.lines)                 # the kind rows leave with the stand-in tags (never untagged)
+            for m in old:
+                t.lines.remove(m)
+            self.play(FadeOut(VGroup(gke, yt6, er, sr, *old)), retitle(t, T_TOOLBOX), track(trk, 11, False),
+                      FadeIn(ref), run_time=0.5)
+            self.remove(gke, yt6, er, sr, *old)
             self.add(t)
             vo.wait_until("gcloud container clusters delete")
             type_capture(self, t, B51, type_time=1.6)
@@ -434,6 +438,14 @@ class StableNames(VoiceScene):
         dial = CostDial(radius=0.42, caption=None)
         meter = VGroup(dial, cost).arrange(RIGHT, buff=0.35).move_to([0, -1.3, 0])
         assert yt9.get_right()[0] < 6.5 and meter.get_right()[0] < 6.5
+        # the check the narration asks for (S16's audit line; an empty list has no output to show)
+        chk_x = extra_tag("our spelling")
+        chk_c = grey_chip("gcloud container clusters list", mono_font=True, color=INK)
+        chk_n = note("expect: no test-cluster")
+        chk = VGroup(chk_x, chk_c, chk_n).arrange(RIGHT, buff=0.25).move_to([0, -0.3, 0])
+        assert chk.get_left()[0] > -6.5 and chk.get_right()[0] < 6.5, (chk.get_left(), chk.get_right())
+        assert chk.get_top()[1] < dfc.get_bottom()[1] - 0.12 and chk.get_bottom()[1] > meter.get_top()[1] + 0.12, \
+            (chk.get_top(), dfc.get_bottom(), chk.get_bottom(), meter.get_top())
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(lt), track(trk, 11, False), FadeIn(ref), run_time=0.5)
             self.remove(lt)
@@ -447,12 +459,13 @@ class StableNames(VoiceScene):
             self.play(FadeIn(yt9, shift=LEFT * 0.2), dial.tracker.animate(rate_func=linear).increment_value(0.15),
                       run_time=0.5)
             dial.freeze()
+            self.play(FadeIn(chk, shift=UP * 0.15), run_time=0.5)
             flash_tag(self, yt9, TURN)
             vo.wait_until("and part 1 is done")
             back = (dial.tracker.get_value() % 1.0) * TAU          # the needle returns to zero and stays
             self.play(Rotate(dial.needle, back, about_point=dial.face.get_center()), run_time=0.6)
             self.play(Indicate(cost.text, color=COST, scale_factor=1.06), run_time=0.6)
 
-        self.play(FadeOut(VGroup(trk, ref, dfc, yt9, meter)), run_time=0.6)
-        self.remove(trk, ref, dfc, yt9, meter)
+        self.play(FadeOut(VGroup(trk, ref, dfc, yt9, meter, chk)), run_time=0.6)
+        self.remove(trk, ref, dfc, yt9, meter, chk)
         self.wait(0.4)

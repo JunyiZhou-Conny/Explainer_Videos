@@ -314,7 +314,7 @@ class OneClick(VoiceScene):
 
         # ========================================================== 7. the API reaches Chroma by name
         dc = bl(dns_card(), -3.3)
-        s08 = grey_chip("as in S08 · a Service name → its IP").next_to(dc, UP, buff=0.15).align_to(dc, LEFT)
+        s08 = grey_chip("as in part 1 · a Service name → its IP").next_to(dc, UP, buff=0.15).align_to(dc, LEFT)
         assert s08.get_top()[1] < rj.hops["browser"].get_bottom()[1] - 0.1
         assert dc.get_right()[0] < rj.hops["job"].get_left()[0] - 0.1, dc.get_right()
         with self.voiceover(SAY[7]) as vo:

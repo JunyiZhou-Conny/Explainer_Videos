@@ -459,7 +459,7 @@ class PulumiUp(VoiceScene):
         api = boxed(["API server"], CLOUD, size=22).move_to([5.2, 1.2, 0])
         a1 = arrow(chips.get_right() + RIGHT * 0.05, kcard.get_left() + LEFT * 0.05, TOOL, buff=0)
         a2 = arrow(kcard.get_right() + RIGHT * 0.05, api.get_left() + LEFT * 0.05, TOOL, buff=0)
-        fix = scene_chip("fix 2 from S04").next_to(kcard, DOWN, buff=0.15).align_to(kcard, RIGHT)
+        fix = scene_chip("fix 2 · the toolbox, part 1").next_to(kcard, DOWN, buff=0.15).align_to(kcard, RIGHT)
         st_rows = [ind(s.rstrip(), S.GREY) for s in K65_LINES]
         scard = card(st_rows, S.GREY, size=SIZE, dashed=True, head="the stand-in's kubeconfig · k65", buff=0.1)
         scard.move_to([-0.6, -1.65, 0])
@@ -539,7 +539,7 @@ class PulumiUp(VoiceScene):
         kfile = file_card("kubeconfig")
         tbx = VGroup(box_, kfile).arrange(DOWN, buff=0.2).move_to([4.9, 1.3, 0])
         box_dash = crate("toolbox", 2.4, 0.7, dashed=True).move_to(box_)
-        nxt = two_row_chip("next session:", "no kubeconfig (S14)", S.GREY).next_to(tbx, DOWN, buff=0.35)
+        nxt = two_row_chip("next session:", "no kubeconfig · fixed later", S.GREY).next_to(tbx, DOWN, buff=0.35)
         assert tbx.get_left()[0] > gp.get_right()[0] + 0.2, (tbx.get_left(), gp.get_right())
         assert once.get_bottom()[1] > -3.5
         with self.voiceover(SAY[9]) as vo:
@@ -559,7 +559,7 @@ class PulumiUp(VoiceScene):
         self.remove(gp, bg, once, box_dash, nxt)
 
         stops = self._stops_card()
-        ok = ok_chip("success: Outputs with app_url (S14)").next_to(stops, DOWN, buff=0.3)
+        ok = ok_chip("success: Outputs with app_url").next_to(stops, DOWN, buff=0.3)
         assert ok.get_bottom()[1] > -3.5 and stops.get_top()[1] < TRACK_BOTTOM - 0.05
         self.play(FadeIn(stops, shift=UP * 0.15), run_time=0.6)
         for item in stops.items:
@@ -607,8 +607,8 @@ class PulumiUp(VoiceScene):
             return VGroup(*[mono(s, SIZE, INK) if m else label(s, SIZE, INK) for s, m in parts]).arrange(RIGHT, buff=0.1)
 
         items = [
-            VGroup(row(("403 at", False), ("api-gsa-wi-user", True), ("→ Service Account Admin (S10)", False))),
-            VGroup(row(("stuck at", False), ("vector-db-loader", True), ("→ logs (S15), then", False)),
+            VGroup(row(("403 at", False), ("api-gsa-wi-user", True), ("→ Service Account Admin (setup)", False))),
+            VGroup(row(("stuck at", False), ("vector-db-loader", True), ("→ its logs (shown later), then", False)),
                    row(("kubectl delete job vector-db-loader -n cheese-app-namespace", True)),
                    row(("and up again", False))).arrange(DOWN, aligned_edge=LEFT, buff=0.08),
             VGroup(row(("ImagePullBackOff →", False), ("kubectl describe pod … -n cheese-app-namespace", True)),

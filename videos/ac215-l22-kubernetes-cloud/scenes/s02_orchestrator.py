@@ -164,7 +164,7 @@ class Orchestrator(VoiceScene):
             fm.deployment_note(self)
             vo.wait_until("not the Deployment object")
             caps = [fm.host_cap, fm.cluster_cap]
-            uls = VGroup(*[under(substring_label(c, "deployment"), TURN) for c in caps])
+            uls = VGroup(*[under(word_box(c, "deployment"), TURN, y=c.get_bottom()[1] - 0.06) for c in caps])
             self.play(Create(uls), run_time=0.6)
             self.play(Indicate(fm.note_g[1][2], color=OWN, scale_factor=1.12), run_time=0.7)
             fm.heal(self)
@@ -350,6 +350,14 @@ class Orchestrator(VoiceScene):
                                     for c in cards2], lag_ratio=0.2), run_time=0.8)
         self.play(FadeOut(card1), FadeOut(card2), run_time=0.6)
         self.wait(0.3)
+
+
+def word_box(cap, word: str, size: float = 22):
+    """The x-range of the trailing `word` of a label() caption, by geometry: a separately rendered
+    label(word) right-aligned to the caption (glyph indices of a Text do not map to characters)."""
+    if not cap.text.rstrip().endswith("".join(word.split())) and not cap.text.rstrip().endswith(word):
+        raise ValueError(f"{word!r} does not end {cap.text!r}")
+    return label(word, size, INK).align_to(cap, RIGHT).align_to(cap, DOWN)
 
 
 def substring_label(cap, word: str) -> VGroup:

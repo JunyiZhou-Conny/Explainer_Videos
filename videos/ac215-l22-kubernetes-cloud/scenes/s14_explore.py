@@ -237,8 +237,8 @@ class ExploreApp(VoiceScene):
         assert yours.width < 13.0, yours.width
         yours.move_to([0, 1.2, 0])
         assert yours.get_top()[1] < TRACK_BOTTOM - 0.05, yours.get_top()
-        th3 = thumb(K03, (2, 3), "CLUSTER-IP", "S05 · kubectl get all")
-        th7 = thumb(K07, (2, 3, 4, 5), "ROLES", "S05 · kubectl get nodes")
+        th3 = thumb(K03, (2, 3), "CLUSTER-IP", "part 1 · kubectl get all")
+        th7 = thumb(K07, (2, 3, 4, 5), "ROLES", "part 1 · kubectl get nodes")
         thumbs = VGroup(th3, th7).arrange(RIGHT, buff=0.5, aligned_edge=UP)
         thumbs.next_to(yours, DOWN, buff=0.45)
         assert thumbs.get_bottom()[1] > -3.55 and thumbs.width < 13.0, (thumbs.get_bottom(), thumbs.width)
@@ -294,7 +294,7 @@ class ExploreApp(VoiceScene):
 
         # ========================================================== 4. inside the API Pod: env | grep ROOT_PATH
         rec_rows = [mrow("$ " + K51.cmd_lines[0]), mrow("$ " + K51.cmd_lines[1]), mrow(K51.line(3), POD)]
-        rec = card(rec_rows, S.GREY, size=SIZE, head="S08 · inside the game's Pod", buff=0.1)
+        rec = card(rec_rows, S.GREY, size=SIZE, head="part 1 · inside the game's Pod", buff=0.1)
         rec.move_to([-6.45 + rec.width / 2, 1.6, 0])
         rec_tag = edge_tag(rec, standin_tag())
         assert rec_tag.get_top()[1] < TRACK_BOTTOM - 0.02, rec_tag.get_top()

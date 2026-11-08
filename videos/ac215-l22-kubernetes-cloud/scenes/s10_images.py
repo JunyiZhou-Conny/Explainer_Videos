@@ -461,7 +461,9 @@ class ImagesStack(VoiceScene):
                 drop_bar_tag(self, t, e6, track(trk, 6))
             else:
                 self.play(track(trk, 6), run_time=0.3)
-            type_capture(self, t, B22, type_time=0.35)
+            resize(self, t, 14, keep=0, run_time=0.4)      # a clean screen: b22 ran before login --local
+            r22 = type_capture(self, t, B22, type_time=0.35)[0]
+            pin(self, r22, beside(row_tag("README backend · before login --local"), r22), run_time=0.3)
             out(self, t, [(B22.line(2), ERR)], wrap=True, run_time=0.3)
             self.play(track(trk, 6, True), run_time=0.3)
             r03 = type_capture(self, t, C03, type_time=0.35)[0]
@@ -517,7 +519,7 @@ class ImagesStack(VoiceScene):
         # ========================================================== 9. pulumi up: build and push
         apple = grey_chip("Apple Silicon: a long build is normal")
         l20c = dashed_chip("L20 · the real build, up to the push · the API image ≈ 5 GB")
-        cond = scene_chip("the condition → S11")
+        cond = scene_chip("the condition · next")
         yt = your_turn()
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(sp), track(trk, 7), run_time=0.5)

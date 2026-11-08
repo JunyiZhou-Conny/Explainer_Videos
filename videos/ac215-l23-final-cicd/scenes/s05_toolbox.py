@@ -145,14 +145,35 @@ def type_folded(scene, t: Terminal, cmd: str, type_time: float = 0.5) -> VGroup:
     return g
 
 
-def bar_tags(scene, t: Terminal, *tags):
-    """PLAYS: row tags on t's title bar, right to left from its right end. Returns them."""
-    x = t.box.get_right()[0] - 0.15
-    for tg in tags:
-        tg.move_to([x - tg.width / 2, t.box.get_top()[1] - t.bar_h / 2, 0])
-        x -= tg.width + 0.15
+def bar_tags(scene, t: Terminal, *tags, left: bool = False):
+    """PLAYS: row tags on t's title bar, right to left from its right end (left=True: left to right
+    after the window dots). They become members of t (drawn over its box). Returns them."""
+    y = t.box.get_top()[1] - t.bar_h / 2
+    if left:
+        x = t.dots.get_right()[0] + 0.3
+        for tg in tags:
+            tg.move_to([x + tg.width / 2, y, 0])
+            x += tg.width + 0.15
+    else:
+        x = t.box.get_right()[0] - 0.15
+        for tg in tags:
+            tg.move_to([x - tg.width / 2, y, 0])
+            x -= tg.width + 0.15
     scene.play(*[FadeIn(tg, shift=LEFT * 0.1) for tg in tags], run_time=0.4)
+    for tg in tags:
+        scene.remove(tg)
+        t.add(tg)
+    scene.add(t)
     return list(tags)
+
+
+def drop_tags(scene, t: Terminal, tags, *extra, run_time: float = 0.3):
+    """PLAYS: title-bar tags (and anything in `extra`, animations) leave; they stop being t's members."""
+    for tg in tags:
+        if tg in t.submobjects:
+            t.remove(tg)
+    scene.play(*[FadeOut(tg) for tg in tags], *extra, run_time=run_time)
+    scene.remove(*tags)
 
 
 def drop_all(scene, *mobs, run_time: float = 0.3):
@@ -209,8 +230,7 @@ class StartToolbox(VoiceScene):
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(t, shift=UP * 0.2), run_time=0.6)
             self.play(FadeIn(own, shift=DOWN * 0.1), run_time=0.4)
             ln = type_cmd(self, t, CD, type_time=0.7)
-            turn = beside(turn_row(), ln)
-            pin(self, ln, turn)
+            pin(self, ln, beside(turn_row(), ln))
             cd_prompt(self, t, P_LAPTOP)
             type_capture(self, t, C20, type_time=0.5)
             rows = out(self, t, C20.at(2, 8, (12, 16), (19, 21)), run_time=0.7)
@@ -229,7 +249,7 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 1. open the script
         p1 = code(DS, 10, 21, font_size=T20, trim=70)
-        p1.move_to([0, (PIC_TOP - 3.4) / 2 - 0.05, 0])
+        p1.move_to([0, (PIC_TOP - 3.4) / 2 + 0.1, 0])
         b10 = line_bar(p1.code, 0, TURN, 0.22)
         b13 = line_bar(p1.code, 3, ROUTE, 0.25)
         b17 = line_bar(p1.code, 7, SHARED, 0.25)
@@ -257,20 +277,21 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 2. run it as cloned: one level too far
         t = term(P_LAPTOP, rows=4)
-        ladder_names = ["deployment", "src", "cheese-app-aws", "student", "/home/secrets ✗"]
-        chips = [grey_chip(n, mono_font=True) for n in ladder_names[:4]] + [err_chip(ladder_names[4], mono_font=True)]
-        for i, c in enumerate(chips):
-            c.move_to([1.6 - 0.75 * i, -0.65 + 0.8 * i, 0])
+        names = ["deployment", "src", "cheese-app-aws", "student", "/home/secrets ✗"]
+        chips = [grey_chip(n, size=22, mono_font=True) for n in names[:4]] + [err_chip(names[4], size=22, mono_font=True)]
+        for c, (x, y) in zip(chips, [(4.9, -0.75), (2.6, 0.1), (0.3, 0.95), (-2.1, 1.8), (-4.5, 2.5)]):
+            c.move_to([x, y, 0])
         steps = []
         for i in range(4):
-            a = arrow(chips[i].get_top(), chips[i + 1].get_bottom(), S.GREY, buff=0.06)
-            lb = mono("../", 20, S.GREY).next_to(a, RIGHT, buff=0.15)
+            a = arrow(chips[i].get_corner(UL) + RIGHT * 0.25, chips[i + 1].get_corner(DR) + LEFT * 0.25,
+                      S.GREY, buff=0.08)
+            lb = mono("../", 20, S.GREY).next_to(a.get_center(), UR, buff=0.08)
             steps.append(VGroup(a, lb))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(p1), FadeOut(masked), track(tr, 2, True), run_time=0.5)
             self.remove(p1, masked)
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)
-            run = type_folded(self, t, C21.cmd, type_time=0.5)
+            type_folded(self, t, C21.cmd, type_time=0.5)
             ex = bar_tags(self, t, extra_row())
             vo.wait_until("and it stops")
             err = out(self, t, [(s, ERR) for s in soft(C21.at(2), t.max_chars)], run_time=0.5)
@@ -278,51 +299,47 @@ class StartToolbox(VoiceScene):
             path_row = find_row(err, "../../../../")
             self.play(FadeIn(chips[0], shift=UP * 0.1), run_time=0.4)
             for i in range(4):
-                dd = substring(path_row, "../", i)
-                col = ERR if i == 3 else ROUTE
-                self.play(*recolor(dd, col), GrowArrow(steps[i][0]), FadeIn(steps[i][1]), run_time=0.4)
+                u = under(substring(path_row, "../", i), ERR if i == 3 else ROUTE, stroke=4)
+                self.play(Create(u), GrowArrow(steps[i][0]), FadeIn(steps[i][1]), run_time=0.4)
+                attach(self, path_row, u)
                 self.play(FadeIn(chips[i + 1], shift=UP * 0.1), run_time=0.35)
-            self.add(t)
             vo.wait_until("one level too far")
             self.play(Indicate(chips[4].text, color=ERR, scale_factor=1.12), run_time=0.8)
-        ladder = VGroup(*chips, *steps)
 
         # ========================================================== 3. step 2: three levels up
         rd = readme_panel(76, 76, size=T20)
         rd.move_to([-6.5 + rd.width / 2, 2.8 - rd.height / 2, 0])
-        found = green_secrets = ok_chip("~/secrets ✓", mono_font=True).move_to(chips[3])
+        found = ok_chip("~/secrets ✓", mono_font=True).move_to(chips[3])
         ck_w = max(Checklist("your edits", [r if r else row_bash()], color=OWN, tag_text=None).frame.width
                    for r in ROWS)
         ck = Checklist("your edits", [ROWS[0]], color=OWN, tag_text=None, card_w=ck_w)
         place_ck(ck)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(chips[4], steps[3])), track(tr, 2), FadeOut(ex[0]), run_time=0.4)
-            self.remove(chips[4], steps[3], ex[0])
-            self.play(FadeTransform(chips[3], green_secrets), run_time=0.5)
+            drop_tags(self, t, ex, FadeOut(VGroup(chips[4], steps[3])), track(tr, 2), run_time=0.4)
+            self.remove(chips[4], steps[3])
+            self.play(FadeTransform(chips[3], found), run_time=0.5)
             vo.wait_until("with sed or your editor")
             self.play(FadeOut(VGroup(*chips[:3], *steps[:3], found)), run_time=0.4)
             self.remove(*chips[:3], *steps[:3], found)
             clear_term(self, t)
             resize(self, t, 9, extra=[FadeIn(rd, shift=DOWN * 0.15)], run_time=0.6)
             tt = bar_tags(self, t, turn_row())
-            sed = type_folded(self, t, C22.cmd, type_time=0.45)
+            tt += bar_tags(self, t, row_tag("sed is our editor · use yours"), left=True)
+            type_folded(self, t, C22.cmd, type_time=0.4)
             res = out(self, t, [(s, OUTPUT) for s in soft(C22.at(3, 5), t.max_chars)], run_time=0.5)
-            edit = under_term(t, grey_chip("sed is our editor · use yours"))
-            self.play(FadeIn(edit, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("Now the file is found")
             line3 = find_row(res, "CSV_FILE=")
             self.play(*recolor(line3.glyphs, OWN), run_time=0.4)
             self.play(Indicate(line3.glyphs, color=OWN, scale_factor=1.05), run_time=0.6)
             self.add(t)
-            self.play(FadeOut(rd, target_position=tr.caption.get_center()), FadeOut(edit), run_time=0.6)
-            self.remove(rd, edit)
+            self.play(FadeOut(rd, target_position=tr.caption.get_center()), run_time=0.6)
+            self.remove(rd)
             self.play(FadeIn(ck, shift=LEFT * 0.2), run_time=0.5)
             ck.tick(self, 0)
 
         # ========================================================== 4. step 3: sh, as written
         with self.voiceover(SAY[4]) as vo:
-            self.play(track(tr, 3), FadeOut(tt[0]), run_time=0.5)
-            self.remove(tt[0])
+            drop_tags(self, t, tt, track(tr, 3), run_time=0.5)
             clear_term(self, t)
             type_folded(self, t, C23.cmd, type_time=0.6)
             vo.wait_until("Surprise 1")
@@ -337,10 +354,11 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 5. extra: sh is dash
         inset = code(DS, 13, 13, font_size=T20, trim=70)
-        inset.move_to([0, -0.2, 0])
+        inset.move_to([0, 0.0, 0])
         here = code_span(inset.code, 0, "<<<")
         here_ring = ring(here, ERR, buff=0.08)
-        here_lb = label("here-string", 20, ERR).next_to(here_ring, DOWN, buff=0.12)
+        here_lb = label("here-string", 20, ERR)
+        here_lb.move_to([here_ring.get_center()[0], inset.get_bottom()[1] - 0.08 - here_lb.height / 2, 0])
         with self.voiceover(SAY[5]) as vo:
             self.play(track(tr, 3, True), run_time=0.4)
             ln24 = type_folded(self, t, C24.cmd, type_time=0.6)
@@ -352,8 +370,7 @@ class StartToolbox(VoiceScene):
             self.play(Indicate(dash, color=ERR, scale_factor=1.2), run_time=0.6)
             self.add(t)
             vo.wait_until("which has no here string")
-            self.play(FadeOut(ex[0]), run_time=0.2)
-            self.remove(ex[0])
+            drop_tags(self, t, ex, run_time=0.2)
             resize(self, t, 3, keep=[ln24.rows[-1], *o24], run_time=0.5)
             ex = bar_tags(self, t, extra_row())
             self.play(FadeIn(inset, shift=UP * 0.15), run_time=0.4)
@@ -368,8 +385,8 @@ class StartToolbox(VoiceScene):
         # ========================================================== 6. surprise 2: the Helm key
         b_lines = [squeeze_spaces(C25.at(3)[0].rstrip()), "…", cut(C25.line(20), "pkgs.k8s.io")]
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(inset, here_ring, here_lb)), FadeOut(ex[0]), run_time=0.4)
-            self.remove(inset, here_ring, here_lb, ex[0])
+            drop_tags(self, t, ex, FadeOut(VGroup(inset, here_ring, here_lb)), run_time=0.4)
+            self.remove(inset, here_ring, here_lb)
             clear_term(self, t, run_time=0.2)
             resize(self, t, 8, run_time=0.5)
             type_folded(self, t, C25.cmd, type_time=0.5)
@@ -382,7 +399,7 @@ class StartToolbox(VoiceScene):
             self.play(Indicate(substring(e20, "ERROR [ 9/15]"), color=ERR, scale_factor=1.1), run_time=0.6)
             self.add(t)
             vo.wait_until("Curl can't verify")
-            o28 = out(self, t, [(s, ERR) for s in soft([C25.line(28)], t.max_chars)], run_time=0.4)
+            out(self, t, [(s, ERR) for s in soft([C25.line(28)], t.max_chars)], run_time=0.4)
             vo.wait_until("so no signing key arrives")
             o34 = out(self, t, [(C25.line(34), ERR)], run_time=0.4)[0]
             self.play(Indicate(substring(o34, "gpg: no valid OpenPGP data found."), color=ERR, scale_factor=1.06),
@@ -391,17 +408,16 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 7. set -e is commented out
         p3 = code(DS, 3, 4)
-        p3.move_to([0, (STRIP_TOP + 0.83) / 2 + 0.05, 0])
+        p3.move_to([0, (STRIP_TOP + 0.78) / 2 + 0.05, 0])
         setx = code_span(p3.code, 1, "#set -e")
-        cmt = grey_chip("commented out")
+        cmt = row_tag("commented out")
         cmt.move_to([setx.get_right()[0] + 0.4 + cmt.width / 2, setx.get_center()[1], 0])
         with self.voiceover(SAY[7]) as vo:
             o49 = out(self, t, ["…", (C25.line(49), ERR)], run_time=0.5)[-1]
             self.play(Indicate(o49.glyphs, color=ERR, scale_factor=1.05), run_time=0.6)
             self.add(t)
             vo.wait_until("set dash e is commented out")
-            self.play(*[FadeOut(x) for x in ex], run_time=0.2)
-            self.remove(*ex)
+            drop_tags(self, t, ex, run_time=0.2)
             resize(self, t, 3, keep=[e20, o34, o49], run_time=0.5)
             ex = bar_tags(self, t, extra_row())
             self.play(FadeIn(p3, shift=UP * 0.15), run_time=0.4)
@@ -423,8 +439,8 @@ class StartToolbox(VoiceScene):
                 (cut(C27.line(13), "kubectl helm"), ERR), (cut(C27.line(14), "kubectl python3.9"), OWN)]
         built = [(squeeze_spaces(C28.line(3).rstrip()), OUTPUT), (squeeze_spaces(C28.line(33).rstrip()), OUTPUT)]
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(p3, cmt)), FadeOut(t), FadeOut(ex[0]), run_time=0.5)
-            self.remove(p3, cmt, t, ex[0])
+            drop_tags(self, t, ex, FadeOut(VGroup(p3, cmt)), FadeOut(t), run_time=0.5)
+            self.remove(p3, cmt, t)
             self.play(FadeIn(p8, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("Your laptop may")
             self.play(Indicate(code_span(p8.code, 2, "baltocdn.com"), color=ERR, scale_factor=1.1), run_time=0.7)
@@ -441,7 +457,7 @@ class StartToolbox(VoiceScene):
             ck.add_row(self, ROWS[2])
             t = term(P_LAPTOP, rows=9, size=T20)
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)
-            type_folded(self, t, C27.cmd, type_time=0.4)
+            type_folded(self, t, C27.cmd, type_time=0.35)
             ex = bar_tags(self, t, extra_row())
             out(self, t, diff, run_time=0.5)
             type_folded(self, t, C28.cmd, type_time=0.5)
@@ -452,13 +468,12 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 9. surprise 3: /secrets is empty
         p26 = code(DS, 26, 26)
-        p26.move_to([-6.5 + p26.width / 2, (STRIP_TOP + 0.83) / 2 + 0.05, 0])
+        p26.move_to([-6.5 + p26.width / 2, (STRIP_TOP + 0.78) / 2 - 0.1, 0])
         dots26 = [code_span(p26.code, 0, "../", i) for i in range(4)]
         e_chip = erratum_tag("erratum · README: not mentioned")
         e_chip.next_to(p26, UP, buff=0.12).align_to(p26, LEFT)
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(ex[0]), run_time=0.2)
-            self.remove(ex[0])
+            drop_tags(self, t, ex, run_time=0.2)
             set_toolbox(self, t, X28.prompt)
             run9 = type_cmd(self, t, X28.cmd, type_time=0.6)
             e9 = out(self, t, X28.at((36, 38)), run_time=0.4)
@@ -473,6 +488,8 @@ class StartToolbox(VoiceScene):
             r9 = ring(VGroup(e9[1].glyphs, e9[2].glyphs), ERR, buff=0.06)
             emp = row_tag("empty", ERR).next_to(r9, RIGHT, buff=0.25)
             self.play(FadeIn(p26, shift=RIGHT * 0.2), Create(r9), FadeIn(emp), run_time=0.5)
+            attach(self, e9[2], r9)
+            attach(self, e9[2], emp)
             self.play(LaggedStart(*[AnimationGroup(*recolor(d, ERR)) for d in dots26], lag_ratio=0.3),
                       run_time=0.9)
             vo.wait_until("so Docker mounted an empty folder")
@@ -480,35 +497,35 @@ class StartToolbox(VoiceScene):
             vo.wait_until("The prompt ID changes")
             pid = substring(run9, X28.prompt.split("@")[1].split(":")[0])
             idl = under(pid, S.GREY, stroke=3)
-            idc = row_tag("changes every start")
-            idc.move_to([-3.2, t.box.get_top()[1] - t.bar_h / 2, 0])
-            self.play(Create(idl), FadeIn(idc, shift=DOWN * 0.1), run_time=0.5)
+            self.play(Create(idl), run_time=0.3)
+            attach(self, run9, idl)
+            idc = bar_tags(self, t, row_tag("changes every start"), left=True)
             self.play(Indicate(pid, color=INK, scale_factor=1.1), run_time=0.6)
             self.add(t)
 
         # ========================================================== 10. fix 26 and 17, back on the laptop
-        exit_n = 42
-        assert X28.raw[exit_n - 1] == f"{X28.prompt} exit" and X28.line(43) == "exit"
+        assert X28.raw[42 - 1] == f"{X28.prompt} exit" and X28.line(43) == "exit"
         sts = grey_chip("your account ID: aws sts get-caller-identity")
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(p26, e_chip, idl, idc, r9, emp)), run_time=0.4)
-            self.remove(p26, e_chip, idl, idc, r9, emp)
-            xl = type_cmd(self, t, "exit", type_time=0.3)
-            xc = beside(row_tag("exit the toolbox"), xl, buff=0.4)
-            pin(self, xl, xc)
-            out(self, t, X28.at(43), run_time=0.3)
+            e9[2].remove(r9, emp)
+            run9.remove(idl)
+            drop_tags(self, t, idc, FadeOut(VGroup(p26, e_chip, r9, emp, idl)), run_time=0.3)
+            self.remove(p26, e_chip, r9, emp, idl)
+            xl = type_cmd(self, t, "exit", type_time=0.25)
+            pin(self, xl, beside(row_tag("exit the toolbox"), xl, buff=0.4), run_time=0.3)
+            out(self, t, X28.at(43), run_time=0.25)
             t.set_prompt(P_LAPTOP)
-            retitle(self, t, T_LAPTOP)
-            resize(self, t, 9, run_time=0.5)
-            ck_scroll(self, ck)
-            ck.add_row(self, ROWS[3])
+            retitle(self, t, T_LAPTOP, run_time=0.35)
+            resize(self, t, 9, run_time=0.45)
+            ck_scroll(self, ck, run_time=0.4)
+            ck.add_row(self, ROWS[3], run_time=0.4)
             vo.wait_until("and put your own account ID")
-            ck_scroll(self, ck)
-            ck.add_row(self, ROWS[4])
-            type_folded(self, t, C30.cmd, type_time=0.4)
+            ck_scroll(self, ck, run_time=0.4)
+            ck.add_row(self, ROWS[4], run_time=0.4)
+            type_folded(self, t, C30.cmd, type_time=0.25)
             ex = bar_tags(self, t, extra_row())
-            o30 = out(self, t, C30.at(2, 3, 4), run_time=0.5)
-            self.play(*recolor(substring(o30[1], ACCOUNT), SHARED), *recolor(o30[2].glyphs, OWN), run_time=0.5)
+            o30 = out(self, t, C30.at(2, 3, 4), run_time=0.4)
+            self.play(*recolor(substring(o30[1], ACCOUNT), SHARED), *recolor(o30[2].glyphs, OWN), run_time=0.4)
             ck.tick(self, 0)
             vo.wait_until("AWS S T S get caller identity")
             sts.next_to(t.box, UP, buff=0.12).align_to(t.box, LEFT)
@@ -518,12 +535,14 @@ class StartToolbox(VoiceScene):
 
         # ========================================================== 11. run it again: the toolbox works
         t11 = term(P_LAPTOP, rows=12, size=T20)
-        aws = [s for s in X31.at((41, 45))]
+        aws = X31.at((41, 45))
         assert aws == ["AWS_ACCESS_KEY_ID", "AWS_ACCOUNT_ID", "AWS_DEFAULT_REGION", "AWS_SECRET_ACCESS_KEY"], aws
         box_c = crate(T_TOOLBOX)
+        box_c = crate(T_TOOLBOX, box_w=box_c.frame.width + 0.9)
+        box_c.text.shift(RIGHT * 0.4)
         with self.voiceover(SAY[11]) as vo:
-            self.play(FadeOut(t), FadeOut(ck), FadeOut(sts), FadeOut(ex[0]), track(tr, 3), run_time=0.6)
-            self.remove(t, ck, sts, ex[0])
+            drop_tags(self, t, ex, FadeOut(t), FadeOut(ck), FadeOut(sts), track(tr, 3), run_time=0.6)
+            self.remove(t, ck, sts)
             self.play(FadeIn(t11, shift=UP * 0.2), run_time=0.4)
             type_folded(self, t11, C31.cmd, type_time=0.5)
             turn = bar_tags(self, t11, turn_row())[0]
@@ -531,7 +550,7 @@ class StartToolbox(VoiceScene):
             set_toolbox(self, t11, X31.prompt)
             type_folded(self, t11, X31.cmd, type_time=0.5)
             files = out(self, t11, soft(X31.at(36, 39, 40), t11.max_chars), run_time=0.5)
-            names = out(self, t11, aws, run_time=0.5)
+            env = out(self, t11, aws, run_time=0.5)
             vo.wait_until("both files are there")
             pem = find_row(files, PEM_README)
             csv = find_row(files, CSV_NAME)
@@ -539,16 +558,20 @@ class StartToolbox(VoiceScene):
             vo.wait_until("yours named")
             pem_g = substring(pem, PEM_README)
             pr = ring(pem_g, S.GREY, buff=0.06)
-            yours = under_term(t11, grey_chip(f"yours: {PEM_CODE}", mono_font=True))
-            self.play(Create(pr), FadeIn(yours, shift=DOWN * 0.1), run_time=0.5)
+            under_pem = find_row(files, "-rw-r--r--")
+            yours = row_tag(f"yours: {PEM_CODE}")
+            yours.move_to([min(pr.get_center()[0], t11.box.get_right()[0] - 0.15 - yours.width / 2),
+                           under_pem.strut.get_center()[1], 0])
+            self.play(Create(pr), FadeIn(yours, shift=UP * 0.1), run_time=0.5)
             attach(self, pem, pr)
+            attach(self, under_pem, yours)
             vo.wait_until("and four AWS variables")
-            self.play(each([n.glyphs for n in names], TOOL, scale=1.08, lag=0.2), run_time=1.0)
+            self.play(each([n.glyphs for n in env], IMAGE, scale=1.08, lag=0.2), run_time=1.0)
             self.add(t11)
-            box_c.move_to([3.6, names[1].get_bottom()[1] - 0.05, 0])
+            box_c.move_to([3.4, env[1].get_bottom()[1] - 0.05, 0])
             badge = badge_glyph(0.42).next_to(substring(csv, CSV_NAME), RIGHT, buff=0.3)
             self.play(FadeIn(box_c, shift=LEFT * 0.15), FadeIn(badge, scale=0.6), run_time=0.5)
-            self.play(badge.animate.move_to(box_c.frame.get_left() + RIGHT * 0.45), run_time=0.9)
+            self.play(badge.animate.move_to(box_c.frame.get_left() + RIGHT * 0.5), run_time=0.9)
             vo.wait_until("Pause, and get to this prompt")
             flash_tag(self, turn)
         self.wait(1.0)

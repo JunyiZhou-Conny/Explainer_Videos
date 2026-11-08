@@ -456,7 +456,7 @@ class LogsAndScaling(VoiceScene):
         mile = grey_chip("Milestone 5 · show scaling")
         mile.move_to([6.5 - mile.width / 2, -1.75, 0])     # clear of the Pending column (x 1.3 .. 3.0)
         assert scard.get_bottom()[1] > bp.nodes[0].get_top()[1] + 0.05, (scard.get_bottom(), bp.nodes[0].get_top())
-        k55c = card([mrow(K55.line(2), OUTPUT)], S.GREY, size=SIZE, head="S07 · the same command on the game", buff=0.1)
+        k55c = card([mrow(K55.line(2), OUTPUT)], S.GREY, size=SIZE, head="part 1 · the same command on the game", buff=0.1)
         k55c.move_to([6.5 - k55c.width / 2, -2.75, 0])
         k55t = tag("stand-in", S.GREY).next_to(k55c, LEFT, buff=0.15).align_to(k55c, UP)
         lmp = lamp("off", r=0.2)

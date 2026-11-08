@@ -323,6 +323,11 @@ class ClusterAnatomy(VoiceScene):
             hl = code_span(panel.code, 0, '"cos_containerd"')
             self.play(hl.animate.set_color(TURN), run_time=0.5)
             self.add(panel)
+            # the panel's '· line 52' tag, then the strip's 'containerd' it proves (no 5 s still)
+            vo.wait_until("line 52 of create cluster dot py")
+            self.play(Indicate(panel.header[1], color=TURN, scale_factor=1.15), run_time=0.8)
+            self.play(Indicate(cd_word, color=TURN, scale_factor=1.12), run_time=0.8)
+            md.heal(self)
             vo.wait_until("You still build images with Docker")
             self.play(*stroke_flash([md.chips["docker"].box]),
                       md.chips["docker"].text.animate(rate_func=there_and_back).set_color(TURN), run_time=0.8)

@@ -53,7 +53,10 @@ Deviations from SHOW:
   rest of the URL elided (one row each, as L20 did; the proxy column is cropped as the script says).
 - Beat 4: b02a's command is soft-wrapped at the row edge like a real terminal (no ' \'): its quoted sed
   expression is longer than a row, and folding with ' \' would put a backslash inside the quotes
-  (the rows join back to the exact command). b01 folds with ' \' as the script says.
+  (the rows join back to the exact command). b01 folds with ' \' as the script says. Once the diff's
+  sdk → cli pair is printed, a GREY two-row chip above the terminal gives the same fix by hand ('line 4:
+  bullseye → bookworm' / 'line 30: google-cloud-sdk → google-cloud-cli (twice)'; QA 05:39), so nobody
+  has to retype the wrapped sed; it fades as beat 5 begins.
 - Beat 5: the default_tag sits just above the terminal (the folded command row has no room beside it)
   with a GREY ring on 'ac215-project' in the typed command.
 - Beat 6: b03:3 is cropped after 'FINISHED' (the right-aligned 'docker:default' column); b03:70 is
@@ -110,6 +113,7 @@ assert B12.cmd == "kubectl version --client" and B12.line(2) == "Client Version:
 assert B13.cmd == "gcloud auth list" and B13.line(3) == "No credentialed accounts."
 assert excerpt(DOCKERFILE, 4, 4) == "FROM python:3.13-slim-bullseye"
 assert excerpt(DOCKERFILE, 33, 33) == "ARG K8S_MINOR=1.34"
+assert excerpt(DOCKERFILE, 30, 30).startswith("    apt-get install -y google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin")
 assert readme(392) == "## Deployment with Scaling using Kubernetes"
 assert readme(436) == "## Create & Deploy Cluster"
 assert readme(517).rstrip() == "## Create Simple Kubernetes Cluster Tutorial"
@@ -308,6 +312,8 @@ class Toolbox(VoiceScene):
             self.add(bat, er3)                 # re-seat the card, its tag on top
 
         # ========================================================== 4. the two one-line fixes (b02a)
+        by_hand = two_row_chip("or edit by hand · line 4: bullseye → bookworm",
+                               "line 30: google-cloud-sdk → google-cloud-cli (twice)", S.GREY)
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(df4, gone_chip, bat, er3)), run_time=0.4)
             self.remove(df4, gone_chip, bat, er3)
@@ -327,6 +333,11 @@ class Toolbox(VoiceScene):
             self.play(Indicate(substring(r19, "google-cloud-sdk"), color=ERR, scale_factor=1.12),
                       Indicate(substring(r20, "google-cloud-cli"), color=OWN, scale_factor=1.12), run_time=0.7)
             self.add(t)
+            # the same fix by hand, read off the diff (the soft-wrapped sed is hard to copy)
+            under_term(t, by_hand)
+            assert by_hand.get_left()[0] > -6.55 and by_hand.get_top()[1] < TRACK_BOTTOM - 0.05, \
+                (by_hand.get_left(), by_hand.get_top())
+            self.play(FadeIn(by_hand, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("with its GKE auth plugin")
             plug_row = [r for r in d2 if "google-cloud-cli-gke-gcloud-auth-plugin" in r.text][0]
             plug = substring(plug_row, "google-cloud-cli-gke-gcloud-auth-plugin")
@@ -339,8 +350,9 @@ class Toolbox(VoiceScene):
 
         # ========================================================== 5. your project on line 13 (b01)
         with self.voiceover(SAY[5]) as vo:
+            self.play(FadeOut(by_hand), *([FadeOut(ea)] if ea is not None else []), run_time=0.3)
+            self.remove(by_hand)
             if ea is not None:
-                self.play(FadeOut(ea), run_time=0.3)
                 self.remove(ea)
             r1 = type_capture(self, t, B01, type_time=1.2)[0]
             e1 = mark_extra(self, t, r1, extra_row())
