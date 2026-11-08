@@ -350,7 +350,7 @@ class CourseReview(VoiceScene):
         push = route(lap.toolbox.get_right() + RIGHT * 0.05, gh.runner[0].get_left() + LEFT * 0.05, stroke=4)
         now = route_chip("now the runner's job", mono_font=False)
         now.next_to(ecr.frame, RIGHT, buff=0.25).set_y(gh.runner.get_y())
-        to_ecr = route(gh.runner.get_right() + RIGHT * 0.05, ecr.cubes.get_left() + LEFT * 0.05, arc=-0.6, stroke=3)
+        to_ecr = route(gh.runner.get_right() + RIGHT * 0.05, ecr.cubes.get_left() + LEFT * 0.05, arc=0.95, stroke=3)   # dips under the vault
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(b1, shift=DOWN * 0.1), run_time=0.5)
             self.play(LaggedStart(*[Indicate(C[k], color=IMAGE, scale_factor=1.06)
@@ -376,12 +376,12 @@ class CourseReview(VoiceScene):
         st_ecr = SurroundingRectangle(ecr.frame, color=TURN, buff=0.06, stroke_width=2, corner_radius=0.1)
         st_t1 = label("state", 20, TURN).next_to(st_disk, RIGHT, buff=0.12)
         st_t2 = label("state", 20, TURN).next_to(st_ecr, RIGHT, buff=0.12)
-        rag = badge("L05 · RAG").move_to(C["loader"].get_top() + RIGHT * 0.45)
+        rag = badge("L05 · RAG").move_to([C["loader"].get_x() - 0.05, (C["loader"].get_top()[1] + v.frame.get_top()[1]) / 2 + 0.02, 0])
         chat = route_chip("/llm-rag").next_to(C["vectordb"], DOWN, buff=0.1)
-        agents = badge("L06–L07 · agents").move_to(C["api"].get_top() + UP * 0.24)
+        agents = badge("L06–L07 · agents").move_to(C["api"].get_top() + UP * 0.24 + RIGHT * 0.2)   # clear of "appnetwork"
         lab = offboard(["labeling"], "L11").move_to([LEFT_X, 0.45, 0])
         ft = offboard(["fine-tuning,", "LoRA, distillation"], "L08").move_to([LEFT_X, -1.0, 0])
-        bed = label_box(["Bedrock", "ready-made models"], CLOUD).move_to([LEFT_X, -2.75, 0])
+        bed = label_box(["Bedrock", "ready-made models"], CLOUD).move_to([LEFT_X, -2.5, 0])    # the call runs between the rows and the disk
         ft_arr = arrow(ft.frame.get_bottom(), bed.get_top(), color=S.GREY, buff=0.08)
         call = route(C["api"].get_bottom() + LEFT * 0.55, bed.get_right(), stroke=3)
         keras = VGroup(file_glyph(0.36, IMAGE), label("cheese classifier · .keras", 20, IMAGE)).arrange(RIGHT, buff=0.12)
@@ -414,11 +414,12 @@ class CourseReview(VoiceScene):
         g2 = [rag, chat, agents, lab, ft, bed, ft_arr, call, keras, drop]
         sm = offboard(["training jobs,", "model deployment,", "pipelines", "on AWS: L15's", "SageMaker pipeline"],
                       "L13, L15").move_to([LEFT_X, -0.9, 0])
-        l18 = badge("L18 · API + frontend containers").move_to([1.25, v.net.line.get_y(), 0])
+        l18 = badge("L18 · API + frontend containers").move_to([1.6, v.net.line.get_y(), 0])   # clear of "appnetwork"
         ci = badge("L09, L21 · the CI loop with release").move_to([gh.runner.get_x() + 1.2, LANE_Y, 0])
         ng = C["nginx"]
-        rt = badge("L20, L22 · routing to services").move_to(ng.get_bottom() + DOWN * 0.3 + RIGHT * 0.2)
-        r1 = route(ng.get_top() + UP * 0.03, fa.get_left() + LEFT * 0.03, arc=-0.4, stroke=3)
+        rt = badge("L20, L22 · routing to services")
+        rt.move_to([ng.get_left()[0] + rt.width / 2 - 0.02, (ng.get_bottom()[1] + v.disk_box.get_top()[1]) / 2, 0])   # inside the server, under nginx
+        r1 = route(ng.get_corner(UR) + np.array([-0.04, 0.02, 0]), fa.get_corner(DL) + np.array([0.12, -0.02, 0]), stroke=3)   # up the column gap, clear of "appnetwork"
         with self.voiceover(SAY[3]) as vo:
             gone(self, *g2, run_time=0.5)
             self.play(FadeIn(sm, shift=RIGHT * 0.15), run_time=0.7)
@@ -650,10 +651,12 @@ class CourseReview(VoiceScene):
             self.play(FadeIn(cards[4], shift=UP * 0.1), Transform(num, label("5 of 5", 22, S.GREY).move_to(num)),
                       FadeIn(s1), FadeIn(s2), run_time=0.6)
             vo.wait_until("Update readme")
-            self.play(LaggedStart(*[FadeIn(rb[t], shift=DOWN * 0.3) for t in Q5_RIBBONS], lag_ratio=0.45),
-                      run_time=3.0)
+            self.play(FadeIn(rb[Q5_RIBBONS[0]], shift=DOWN * 0.3), run_time=0.6)        # each ribbon on its words
+            for t, cue in zip(Q5_RIBBONS[1:], ("fix typo", "slash run deploy app in capitals", "and backslash")):
+                vo.wait_until(cue)
+                self.play(FadeIn(rb[t], shift=DOWN * 0.3), run_time=0.6)
             home = up.get_center()
-            self.play(up.animate.next_to(s1.rim, UP, buff=0.02), run_time=0.4)
+            self.play(up.animate.set_y(s1.rim.get_y() + up.height / 2 + 0.03), run_time=0.4)   # straight down: no neighbour hit
             self.play(up.animate.move_to(home), Indicate(s1.rim, color=ERR, scale_factor=1.03), run_time=0.6)
             self.play(Indicate(up, color=ERR, scale_factor=1.05), run_time=0.5)
             vo.wait_until("And is this pipeline")

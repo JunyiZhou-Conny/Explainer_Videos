@@ -225,12 +225,13 @@ class FollowTheTag(VoiceScene):
         bc.move_to([0, 0, 0]).shift(UP * ((p1.get_bottom()[1] - 0.15) - bc.get_top()[1]))
         bc.beads[4].text.set_color(TURN)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(*bars.values(), env_bars)), ReplacementTransform(p0, p1), run_time=0.9)
+            self.play(FadeOut(VGroup(*bars.values(), env_bars)), ReplacementTransform(p0, p1),
+                      FadeIn(short, shift=LEFT * 0.1), run_time=0.8)
             self.remove(*bars.values(), env_bars)
-            self.play(FadeIn(short, shift=LEFT * 0.1), run_time=0.4)
-            self.play(LaggedStart(*[TransformFromCopy(VGroup(*[p1.code.code_lines[k] for k in ks]), bc.beads[i])
-                                    for i, ks in enumerate(BEAD_LINES)], lag_ratio=0.15),
-                      FadeIn(bc.links), run_time=1.4)
+            srcs = [VGroup(*[p1.code.code_lines[k] for k in ks]).copy() for ks in BEAD_LINES]
+            self.play(LaggedStart(*[FadeTransform(sc, bc.beads[i]) for i, sc in enumerate(srcs)], lag_ratio=0.15),
+                      FadeIn(bc.links), run_time=1.2)
+            self.remove(*srcs)
             bc._reseat(self)
             vo.wait_until("fix permissions")
             self.play(bc.light(1, TURN), run_time=0.6)
@@ -388,8 +389,8 @@ class FollowTheTag(VoiceScene):
             vo.wait_until("Commit four things")
             self.play(Circumscribe(old_ck.frame, color=OWN, buff=0.05), run_time=0.6)
             others = [old_ck.rows[i] for i in (0, 1, 3, 4)]
-            self.play(ReplacementTransform(old_ck.frame, ck.frame), ReplacementTransform(old_ck.head, ck.head),
-                      ReplacementTransform(old_ck.rows[2], ck.rows[2]), *[FadeOut(r) for r in others],
+            self.play(ReplacementTransform(old_ck.frame, ck.frame), FadeTransform(old_ck.head, ck.head),
+                      FadeTransform(old_ck.rows[2], ck.rows[2]), *[FadeOut(r) for r in others],
                       *[FadeIn(ck.rows[i]) for i in (0, 1, 3)], run_time=1.0)
             self.remove(old_ck, *old_ck.get_family(), ck.frame, ck.head, *ck.rows)
             self.add(ck)

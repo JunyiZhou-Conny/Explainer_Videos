@@ -1,7 +1,7 @@
 # L23 lecture slides — Final Deployment and Review
 
 Source: one deck, `L23_final_deployment_and_review` (38 slides), titled "Lecture 23: Final
-Deployment and Review" (AC215/E115, Pavlos Protopapas, SEAS/Harvard). These are the instructor's
+Deployment and Review" (AC215/E115, the course staff, SEAS/Harvard). These are the instructor's
 lecture slides (PDF), provided by the student for study; the PDFs are not in this repository;
 slide numbers are PDF page numbers. Several slides were pasted in from other decks and print a
 different footer number (slide 10 prints "6", slide 12 prints "7", slide 29 prints "67", the
@@ -21,7 +21,7 @@ with one recap slide per earlier lecture. The lecture numbers printed on the rev
 
 - Slide 1 · title slide
 - Slides 2–3 · outline (2) and "Motivation" divider (3)
-- Slide 4 · **Motivation**: a joke web app, "Pavlos + Olivera Thanksgiving Lunch", whose
+- Slide 4 · **Motivation**: a joke web app, "‹instructor› + ‹staff› Thanksgiving Lunch", whose
   "Turkey Cooking Time Predictor" forecasts when the turkey will be done
 - Slides 5–20 · **Automation** (no divider slide of its own)
   - 5–6 · "Automation": the five operations to automate (5 as a list, 6 as illustrated cards)
@@ -323,7 +323,7 @@ with one recap slide per earlier lecture. The lecture numbers printed on the rev
   Differences from the tutorial: v3/v4 route `/api-service` (not `/api/`) and use ClusterIP
   services, and v4 replaces the NGINX ingress with a Google HTTPS load balancer (digest C8).
 - **Not mechanism diagrams, but carrying content:**
-  - Slide 4 · the turkey predictor: an orange header "Pavlos + Olivera Thanksgiving Lunch"
+  - Slide 4 · the turkey predictor: an orange header "‹instructor› + ‹staff› Thanksgiving Lunch"
     ("When to come !!! We take the agony out with technology"); a card "Turkey Cooking Time
     Predictor" ("The turkey is currently half baked…", the model estimates the remaining time); a
     plot "Turkey Temperature Curve" of internal temperature (°F) against time (minutes): a rising
