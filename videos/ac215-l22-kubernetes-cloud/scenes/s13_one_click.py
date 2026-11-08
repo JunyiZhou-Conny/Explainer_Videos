@@ -27,7 +27,7 @@ Beats (script.md "## S13", one voiceover block each):
    the api answers a PINK bubble '{"version": "3.0"}' back to the browser.
 6. A packet '/' reaches frontend and becomes a GREY page that returns to the browser and spawns a new packet
    '/api-service/…' from the browser to api. CODE(.env.production: 2) inset, the value YELLOW.
-7. A PINK packet 'vector-db:8000' rides api → vdb; S08's DNS card flashes bottom-left ('as in S08').
+7. A PINK packet 'vector-db:8000' rides api → vdb; S08's DNS card flashes bottom-left ('as in part 1 · a Service name → its IP').
 8. A packet 'http://<IP>/' (no .sslip.io) rides to nginx; a YELLOW 'What answers?' card. PONDER 4 (8 s).
 9. The ponder card leaves. The card's header flashes RED; the packet bounces back as a RED '404'; on "The
    rule matches" a GREY chip 'Host: <IP>' left of the routing card with a RED '≠', the header flashes again. GREEN chip 'app_url · http://<IP>.sslip.io'.
@@ -44,7 +44,7 @@ Deviations from SHOW:
 - Beat 5: the two one-line service.py insets appear one after the other in the same spot (two stacked
   would cover the '/api-service' path label).
 - Beat 7: S08's DNS card is the tic-tac-toe one (web.default.svc…, the only lookup captured); a GREY
-  chip 'as in S08 · name → Service IP' says it is the same mechanism, not the cheese app's address.
+  chip 'as in part 1 · a Service name → its IP' says it is the same mechanism, not the cheese app's address.
 - Beat 8: the packet's label is 'http://<IP>/'; the YELLOW 'What answers?' card sits bottom-left, and
   the opaque ponder card covers the lower right lanes (and half of the nginx box) while the timer runs.
 - The AsksChecklist starts with S07's state (Failover ticked, its S07 note on the grown card).

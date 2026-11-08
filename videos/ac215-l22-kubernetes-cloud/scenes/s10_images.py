@@ -57,7 +57,7 @@ Beats (script.md "## S10", one voiceover block each):
    TERM(b23: 2 wrap) RED. Above the terminal, stacked: the GREY chip 'Apple Silicon: a long build is
    normal' (on "builds and pushes three images"), the GREY-dashed chip 'L20 · the real build, up to the
    push · the API image ≈ 5 GB' (on "Skip it if you did it in lecture 20"), the GREY scene chip 'the
-   condition → S11' (on "with one condition we meet next") and the YELLOW '▶ your turn' (on "pause and
+   condition · next' (on "with one condition we meet next") and the YELLOW '▶ your turn' (on "pause and
    run it"). Fade; empty frame.
 
 Deviations from SHOW:
@@ -77,7 +77,7 @@ Deviations from SHOW:
 - Beat 7: c03:51 (106 characters, one long token) is broken at the 72-character edge, like a
   terminal, over two rows; the default tag stands beside line 50 (line 51 fills its rows).
 - Beat 9: the '▶ your turn' sits above the terminal with the chips (the command row has no room for
-  it), and a GREY scene chip 'the condition → S11' marks "one condition we meet next".
+  it), and a GREY scene chip 'the condition · next' marks "one condition we meet next".
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)

@@ -36,7 +36,7 @@ Beats (script.md "## S12", one voiceover block each):
    '<IP>' comes back to the cluster's edge and '<IP>.sslip.io' writes PINK; cheese-app-ingress fills
    last; the ingress group fills. Everything but the tracker fades.
 7. Identity 1: PURPLE chips 'pulumi' / 'kubectl' → a GREY kubeconfig card (create_cluster.py:107–110 as
-   YAML; 'command: gke-gcloud-auth-plugin' PURPLE, chip 'fix 2 from S04') → BLUE 'API server'; a
+   YAML; 'command: gke-gcloud-auth-plugin' PURPLE, chip 'fix 2 · the toolbox, part 1') → BLUE 'API server'; a
    YELLOW dot rides the path. Below, a GREY-dashed stand-in card from TERM(k65: 4, 6–7) with the tag
    'stand-in: kind, not GKE'; on "no cluster password" its certificate line flashes.
 8. Identity 2: inside a BLUE dashed 'cheese-app-cluster' outline, the TEAL API Pod with a GREEN
@@ -45,9 +45,9 @@ Beats (script.md "## S12", one voiceover block each):
    inside the cluster'.
 9. CODE(create_cluster.py: 192–198), lines 195–197 YELLOW; GREY chip 'runs once, at create, inside
    this toolbox · docker-shell.sh runs it with --rm'; the TEAL toolbox with its kubeconfig fades
-   (dashed) and 'next session: no kubeconfig (S14)' appears. After the narration: the GREY 'if yours
+   (dashed) and 'next session: no kubeconfig yet' appears. After the narration: the GREY 'if yours
    stops' card with a YELLOW '▶ your turn' above it, its four lines flashing in turn, and the GREEN
-   chip 'success: Outputs with app_url (S14)'. Fade; empty frame.
+   chip 'success: Outputs with app_url'. Fade; empty frame.
 
 Deviations from SHOW:
 - The terminal is 20 pt (72 characters a row), as in S11; c21:165 wraps to 4 rows, :166 to 2. The
@@ -556,15 +556,16 @@ class PulumiUp(VoiceScene):
             vo.wait_until("The next session starts unconnected")
             self.play(FadeIn(nxt, shift=UP * 0.1), run_time=0.4)
             flash_tag(self, nxt, INK, 1.04)
-        self.play(FadeOut(VGroup(gp, bg, once, box_dash, nxt)), run_time=0.5)
-        self.remove(gp, bg, once, box_dash, nxt)
-
-        stops = self._stops_card()
-        ok = ok_chip("success: Outputs with app_url").next_to(stops, DOWN, buff=0.3)
-        yt9 = your_turn().next_to(stops, UP, buff=0.15).align_to(stops, RIGHT)
-        assert ok.get_bottom()[1] > -3.5 and yt9.get_top()[1] < TRACK_BOTTOM - 0.05
-        self.play(FadeIn(stops, shift=UP * 0.15), FadeIn(yt9, shift=RIGHT * 0.15), run_time=0.6)
-        flash_tag(self, yt9, TURN)
+            stops = self._stops_card()
+            ok = ok_chip("success: Outputs with app_url").next_to(stops, DOWN, buff=0.3)
+            yt9 = your_turn().next_to(stops, UP, buff=0.15).align_to(stops, RIGHT)
+            assert ok.get_bottom()[1] > -3.5 and yt9.get_top()[1] < TRACK_BOTTOM - 0.05
+            vo.wait_until("If yours stops")          # the card is now spoken, not silent
+            self.play(FadeOut(VGroup(gp, bg, once, box_dash, nxt)), run_time=0.5)
+            self.remove(gp, bg, once, box_dash, nxt)
+            self.play(FadeIn(stops, shift=UP * 0.15), FadeIn(yt9, shift=RIGHT * 0.15), run_time=0.6)
+            vo.wait_until("pause and match your error")
+            flash_tag(self, yt9, TURN)
         for item in stops.items:
             self.play(Indicate(item, color=TURN, scale_factor=1.04), run_time=0.9)
             self.wait(0.6)

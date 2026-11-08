@@ -207,10 +207,11 @@ S12:
   en_display:
   - "And the API Pod wears its Kubernetes service account, which Workload Identity swaps for gcp-service at the door to Vertex AI."
   - null
-- en: "Keep in mind: Pulumi connects kubectl once, inside this toolbox, which is removed when you exit. The next session starts unconnected."
+- en: "Keep in mind: Pulumi connects kubectl once, inside this toolbox, which is removed when you exit. The next session starts unconnected. If yours stops, the card shows the four usual causes: pause and match your error."
   zh:
   - "记住：Pulumi 只在这个工具箱里给 kubectl 连接一次，你退出时工具箱就被删掉了。"
   - "下次会话开始时没有连接。"
+  - "如果你的运行停下了，卡片列出四个常见原因：暂停一下，对照你的报错。"
 S13:
 - en: "Lecture 20 put one nginx container in front. The game opened its own load balancer, one door per app. The cheese app opens one door, with a receptionist behind it."
   zh:

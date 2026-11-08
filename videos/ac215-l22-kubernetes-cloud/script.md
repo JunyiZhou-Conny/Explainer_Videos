@@ -941,7 +941,7 @@ SHOW: CODE(src/deployment/deploy_k8s/create_cluster.py: 192–198) with lines 19
 describe pod … -n cheese-app-namespace`: repository missing, or images not built"; "quota → delete
 lecture 20's VM, request more"; and a GREEN chip "success: Outputs with app_url (S14)". Fade; empty
 frame.
-SAY: Keep in mind: Pulumi connects kubectl once, inside this toolbox, which is removed when you exit. The next session starts unconnected.
+SAY: Keep in mind: Pulumi connects kubectl once, inside this toolbox, which is removed when you exit. The next session starts unconnected. If yours stops, the card shows the four usual causes: pause and match your error.
 
 ---
 

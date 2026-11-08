@@ -25,8 +25,11 @@ Beats (script.md "## S15", one voiceover block each):
    runs and turns 'Completed' GREY; on "done, one succeeded" 'done' and '1 Succeeded' flash; on
    "Nothing replaces" the finished Pod flashes and a GREY 'not replaced' appears under it.
 4. A GREY note (tag 'erratum'): CODE(setup_containers.py: 150) and, with it, the GREY chip "today's
-   chroma image writes to /data" (flashes on "but today's Chroma image"; both hold 2 s), and under them a GREY line 'so the disk stays empty · after a vector-db
-   restart, run the loader Job again'. Fade.
+   chroma image writes to /data" (flashes on "but today's Chroma image"); under them, on "So the
+   vectors live", a GREY line 'so the vectors live inside the container and vanish when the Pod
+   restarts'; on "Change line 150" a GREEN typed 'line 150: mount_path="/data",' (tag 'extra · our
+   spelling') and, on "or run the loader Job", '· or run the loader Job again after a restart'. All
+   hold 2.5 s after the voice. Fade.
 5. The tracker leaves for the breadcrumb 'extra · scaling (no README step)'. LECTURE 22 · 18. A GREY card 'the lecture: scale by CPU, memory, custom
    metrics'; under it the GREY README heading card (README.md · line 392) 'Deployment with Scaling
    using Kubernetes', 'Scaling' YELLOW, tag 'erratum', and two RED crosses 'no replicas' · 'no Pod
@@ -37,7 +40,7 @@ Beats (script.md "## S15", one voiceover block each):
    frontend (fat), vector-db and nginx (small), 'api ?' dashed (no request).
 7. A GREEN card (tags 'extra · our spelling' and the GREY chip 'Milestone 5 · show scaling') types
    `kubectl scale deployment frontend --replicas=3 -n cheese-app-namespace`; a small GREY recall of
-   k55 ('S07 · the same command on the game', k55:2, tag 'stand-in'). Two fat blocks drop: one fits,
+   k55 ('part 1 · the same command on the game', k55:2, tag 'stand-in'). Two fat blocks drop: one fits,
    the next hovers RED 'Pending' and the inset 'V1 · scheduler' lamp lights RED; node 2 slides in
    (GREY chip 'cluster autoscaler · max 2') and the block lands. On "Ask for many more" four more
    blocks: two land on node 2 (it holds three), two hover 'Pending'; the autoscaler chip flashes RED.
@@ -62,13 +65,13 @@ Deviations from SHOW:
    rows; in the label font every command fits one row (10.9 units) and the card fits above the
    strips. The card's header is its first row; the strips each carry the README line they answer.
 - Beat 3: the Job cousin sits above the terminal (the terminal is full width, house rule).
-- Beat 4: SHOW names only the code line and the chip; the GREY line under them says what the
-  narration asks the chip to explain (the PVC at /chroma/chroma stays empty, so run the loader again).
+- Beat 4: SHOW names only the code line and the chip; the GREY line and the GREEN fix line under
+  them show what the narration says (the vectors vanish on restart; line 150 to /data, or rerun the loader).
 - Beat 6: V8's blocks carry the Deployment names; the request sizes are on the legend card beside them
   (BinPacking's blocks are named only, and 'frontend 250m / 2Gi' inside a 1.6-wide block would be
   under 20 pt).
 - Beat 7: "Ask for many more" has no command on screen (script.md: the SAY says "some stay pending";
-  no --replicas number is shown); the drawing adds five blocks so that some hover (illustration).
+  no --replicas number is shown); the drawing adds four blocks so that some hover (illustration).
   The V1 scheduler lamp is a small inset 'V1 · scheduler' with one lamp (V1 itself is not on screen).
 - Beat 8: the "many more" blocks leave first so that node 2 has room for the thought experiment's
   api block (back to the three frontends of beat 7's command).
@@ -354,10 +357,20 @@ class LogsAndScaling(VoiceScene):
         cp = code(SC, 150, 150, font_size=SIZE, dedent=True, shown="deploy_k8s/setup_containers.py")
         dchip = grey_chip("today's chroma image writes to /data")
         top = VGroup(cp, dchip).arrange(RIGHT, buff=0.4)
-        why = label("so that disk stays empty · after a vector-db restart, run the loader Job again", SIZE, S.GREY)
-        note_g = VGroup(top, why).arrange(DOWN, buff=0.45).move_to([0, 0.4, 0])
+        why = label("so the vectors live inside the container and vanish when the Pod restarts", SIZE, S.GREY)
+        fxl = mrow('mount_path="/data",', OWN)
+        fxt = extra_tag("our spelling")
+        fxo = label("· or run the loader Job again after a restart", SIZE, S.GREY)
+        fix_g = VGroup(VGroup(label("line 150:", SIZE, S.GREY), fxl).arrange(RIGHT, buff=0.25), fxo
+                       ).arrange(RIGHT, buff=0.3)
+        note_g = VGroup(top, why, fix_g).arrange(DOWN, buff=0.45).move_to([0, 0.35, 0])
+        fix_g.shift(DOWN * 0.35)                     # room for its tag between the why line and the fix
+        fxt.next_to(fix_g, UP, buff=0.12).align_to(fix_g, LEFT)
+        fix_all = VGroup(fix_g, fxt)
         assert note_g.width < 13.0, note_g.width
+        assert fxt.get_bottom()[1] > fix_g.get_top()[1] and fxt.get_top()[1] < why.get_bottom()[1] - 0.03
         etag = erratum_tag().next_to(top, UP, buff=0.3).align_to(top, LEFT)
+        assert etag.get_top()[1] < TRACK_BOTTOM - 0.02 and fix_g.get_bottom()[1] > -3.5
         mp = code_span(cp.code, 0, '"/chroma/chroma"')
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeIn(etag, shift=DOWN * 0.1), FadeIn(cp, shift=UP * 0.1), FadeIn(dchip, shift=LEFT * 0.15),
@@ -369,9 +382,15 @@ class LogsAndScaling(VoiceScene):
             self.add(dchip)
             vo.wait_until("So the vectors live")
             self.play(FadeIn(why, shift=UP * 0.1), run_time=0.5)
-        self.wait(2.0)                              # the chip and the why line hold together
-        self.play(FadeOut(VGroup(cp, dchip, why, etag)), run_time=0.4)
-        self.remove(cp, dchip, why, etag)
+            vo.wait_until("Change line 150")
+            self.play(FadeIn(fxt), typing(fxl, 0.5), FadeIn(fix_g[0][0]), run_time=0.6)
+            self.play(Indicate(fxl, color=OWN, scale_factor=1.08), run_time=0.5)
+            self.add(fix_g[0], fxt)
+            vo.wait_until("or run the loader Job")
+            self.play(FadeIn(fxo, shift=LEFT * 0.1), run_time=0.4)
+        self.wait(2.5)                              # chip, why line and fix hold together after the voice
+        self.play(FadeOut(VGroup(cp, dchip, why, fix_all, etag)), run_time=0.4)
+        self.remove(cp, dchip, why, fix_all, etag)
 
         # ========================================================== 5. the promise, the README title, the code
         ref = lref("18")

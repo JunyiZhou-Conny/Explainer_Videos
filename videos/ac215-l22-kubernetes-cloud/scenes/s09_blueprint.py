@@ -19,8 +19,8 @@ Beats (script.md "## S09", one voiceover block each):
 4. The table fades, the picture slides to the centre: BLUE 'cheese-app-vpc · subnet 10.0.0.0/19'
    frame; the pool's 'public IPs' badge peels off ('private nodes'); the BLUE 'Cloud NAT · outbound
    only' funnel at the VPC's right edge; the GREEN dashed 'cheese-app-namespace' frame; the BLUE load
-   balancer at the left edge with a PINK arrow to nginx. GREY scene chips 'Workload Identity → S12',
-   'Ingress → S13', 'PVC → S15', each joined to its part.
+   balancer at the left edge with a PINK arrow to nginx. GREY scene chips 'Workload Identity → later',
+   'Ingress → later', 'PVC → later', each joined to its part.
 5. CODE(src/deployment/deploy_k8s/__main__.py: 19–30): the calls light in turn (YELLOW bar) with a GREY
    chip naming the file beside the comment line above each call (create_network.py, create_cluster.py,
    setup_containers.py); the panel scrolls to (31–40), the three chips line up under it and
@@ -29,7 +29,7 @@ Beats (script.md "## S09", one voiceover block each):
 6. A GOLD cost card, one line per phrase ('regional cluster · management fee', '1–2 × n2d-standard-2
    nodes', 'load balancer', 'Cloud NAT', '2 disks') with the GOLD meter sweeping beside it; the GOLD
    total tag; the GREY line 'check the pricing calculator · destroy it the same day'; the GREY chip
-   'registry images outlive destroy (S16)'. Fade; empty frame.
+   'registry images outlive destroy · see the end'. Fade; empty frame.
 
 Deviations from SHOW:
 - Beat 0: "the two tracker titles" are the two README trackers themselves (tracker_d(), tracker_c(),

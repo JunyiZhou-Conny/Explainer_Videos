@@ -6,8 +6,9 @@ on an empty frame.
 Beats (script.md "## S16", one voiceover block each):
 0. TRACKER [C] 8, LECTURE 22 · 40. An 8-row toolbox terminal at …:/app/deploy_k8s# types `pulumi destroy
    --stack dev --refresh -y` -> TERM(b50: 2) RED. On "Ours has nothing real": TRACKER [C] 8 · extra, the
-   same command again (GREY 'extra' on the title bar) -> TERM(c23: 21–22); '- 1 deleted' flashes. On
-   "yours deletes": the terminal shrinks to a 3-row strip (c23:21–22 kept); above it V6 stands full
+   same command again (GREY 'extra' on the title bar) -> TERM(c23: 20–22); '- 1 deleted' flashes, then
+   the line naming it (pulumi:pulumi:Stack deploy-k8s-dev: the stack's own record). On
+   "yours deletes": the terminal shrinks to a 3-row strip (c23:20–22 kept); above it V6 stands full
    (every group solid, GREY 'illustration' tag in its free slot left of row B) with a GOLD meter under
    that tag. On "from the
    Ingress" V6 empties in reverse (ingress → app → storage → identity → provider → cluster + pool →
@@ -37,7 +38,7 @@ Beats (script.md "## S16", one voiceover block each):
 
 Deviations from SHOW:
 - Beat 0: the two commands and their outputs need 8 rows, so the terminal starts 8 rows tall and
-  shrinks to a 3-row strip (keeping c23:21–22) before V6 appears above it; V6 is drawn already full
+  shrinks to a 3-row strip (keeping c23:20–22) before V6 appears above it; V6 is drawn already full
   (the state S12 left it in) instead of being built again. The meter is the GOLD CostDial (no digits)
   under V6's free slot left of row B, where the GREY 'illustration' tag sits (top centre is taken
   by the tracker's long '· extra · our spelling' caption in beat 1). V6 sits 0.3 higher than in S12
@@ -266,8 +267,11 @@ class Recap(VoiceScene):
             type_capture(self, t, C23, type_time=0.6)
             on_bar(t, xr)
             self.play(FadeIn(xr), run_time=0.3)
-            res = out(self, t, [C23.line(21), C23.line(22)], run_time=0.3)
-            self.play(Indicate(substring(res[1], "- 1 deleted"), color=TURN, scale_factor=1.12), run_time=0.6)
+            # line 20 names the one deleted resource: the stack's own record (QA 28:08)
+            res = out(self, t, [C23.line(20), C23.line(21), C23.line(22)], run_time=0.3)
+            self.play(Indicate(substring(res[2], "- 1 deleted"), color=TURN, scale_factor=1.12), run_time=0.6)
+            self.play(Indicate(substring(res[0], "pulumi:pulumi:Stack deploy-k8s-dev"), color=TURN,
+                               scale_factor=1.06), run_time=0.6)
             self.add(t)
             vo.wait_until("yours deletes what this stack created")
             self.play(FadeOut(xr), run_time=0.2)
