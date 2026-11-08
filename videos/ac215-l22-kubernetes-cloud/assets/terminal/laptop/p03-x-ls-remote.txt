@@ -1,0 +1,7 @@
+$ git ls-remote https://github.com/dlops-io/cheese-app-v3.git | sed 's|refs/heads/work/[a-z]*|refs/heads/work/‹staff›|'
+3ecef56fea879ac480d260c0906cd95baf05179a	HEAD
+e55178c0f66d8636d00e7deea7e744640bb8d595	refs/heads/cluster-updates
+3ecef56fea879ac480d260c0906cd95baf05179a	refs/heads/main
+0012c9a512b1a266f4c87fad09d84a3b52470f5b	refs/heads/pipenv
+d1e860d61bedfcbd2f2be461377ec172614446cb	refs/heads/work/‹staff›
+[exit 0]

@@ -12,6 +12,8 @@
 | `dlops-io/cheese-app-v4` | `main` (default) | `033f18713b9e1e7985a3080e85edab3ff01cefef` | 2025-12-02 14:13:03 -0500 | next lecture (L23); used to show what changes next and to support two errata |
 | `dlops-io/llm-rag` | `main` (default) | `e17a39f35bc07b440f573def480adaf4703f8b91` | 2026-10-07 21:34:23 -0400 | evidence only (ChromaDB mount path, §10) |
 
+- **Pin re-checked 2026-11-07:** `git ls-remote https://github.com/dlops-io/cheese-app-v3` still reports `refs/heads/main` = `3ecef56…`, `cluster-updates` = `e55178c…`, `pipenv` = `0012c9a…`. The remote has one more branch, `work/‹staff›` (unmerged staff work): it is not used here and is never named on screen or in subtitles.
+
 - **README sections covered** (in `cheese-app-v3/README.md`):
   - [`#deployment-with-scaling-using-kubernetes`](https://github.com/dlops-io/cheese-app-v3?tab=readme-ov-file#deployment-with-scaling-using-kubernetes), README lines 392–434. It contains `#apis-to-enable-in-gcp-for-project` (396), `#start-deployment-docker-container` (404) and `#build-and-push-docker-containers-to-gcr` (415).
   - [`#create--deploy-cluster`](https://github.com/dlops-io/cheese-app-v3?tab=readme-ov-file#create--deploy-cluster), README lines 436–512. This is a sibling **H2**, not a subsection, so the course-site link alone does not land on it. It contains `#try-some-kubectl-commands` (476), `#if-you-want-to-shell-into-a-container-in-a-pod` (488), `#view-the-app` (495) and `#delete-cluster` (509).
@@ -19,7 +21,7 @@
   - The K8s half of [`#debugging-containers`](https://github.com/dlops-io/cheese-app-v3?tab=readme-ov-file#debugging-containers), README lines 618–657. It is partly outdated (§10).
   - Reused from L20: service accounts, README lines 236–259.
 - **Colab notebooks:** none for this lecture.
-- **Path convention:** every `path:line` below is relative to the `cheese-app-v3/` repository root at the `main` commit above, unless a prefix names another source: `cluster-updates:` (that branch), `pipenv:` (that branch), `cheese-app-v4:` or `llm-rag:`. `tutorials_demo.md` and `milestone5.md` are files of the course-site source (`2026-AC215`). I checked every reference with `sed -n`/`grep -n`. Code blocks headed `path:start-end` were copied from those exact line ranges and checked mechanically.
+- **Path convention:** every `path:line` below is relative to the `cheese-app-v3/` repository root at the `main` commit above, unless a prefix names another source: `cluster-updates:` (that branch), `pipenv:` (that branch), `cheese-app-v4:` or `llm-rag:`. `tutorials_demo.md` and `milestone5.md` are files of the course-site source (`2026-AC215`). I checked every repository reference with `sed -n`/`grep -n` (re-checked 2026-11-07). The course-site source files were not available in the 2026-11-07 re-check, so their line numbers (`tutorials_demo.md:279-284`, `milestone5.md:39,47`) are carried over unverified. Code blocks headed `path:start-end` were copied from those exact line ranges and checked mechanically.
 - **Your local layout:** if you clone into `~/Desktop/AC215/cheese-app-v3`, the deployment container looks for secrets in **`~/Desktop/AC215/secrets/`**. That folder is three levels up from `src/deployment` (`src/deployment/docker-shell.sh:9`).
 - **What "scaling" means in this code:** the program has **no HorizontalPodAutoscaler and no `replicas` field**. Every Deployment runs one Pod. The only automatic scaling is the **node pool autoscaler** (1–2 nodes, `src/deployment/deploy_k8s/create_cluster.py:63-66`). Manual and Pod-level scaling (`kubectl scale`, HPA) are explained in §3.6 and practised in Step 12 and §9. Milestone 5 asks you to demonstrate manual scaling (`milestone5.md:39`).
 
@@ -96,6 +98,12 @@ The app ends up at `http://<LB-IP>.sslip.io`, a free wildcard DNS name that reso
       └── deployment.json     # needed by L22
                               # (gcp-service.json and ssh-key-deployment* are only used by L20's VM path)
   ```
+
+### The deployment toolbox does not build as committed (found 2026-11-05 in the L20 captures)
+`sh docker-shell.sh` builds `src/deployment/Dockerfile`, the same toolbox as L20. On the L20 recording day (2026-11-05) it failed twice, and L22 inherits both (see `videos/ac215-l20-deployment-pulumi/ASSETS.md`, captures `b02`–`b02d`):
+1. `FROM python:3.13-slim-bullseye` (`Dockerfile:4`): Debian 11's security archive moved to `archive.debian.org`, so `apt-get install … curl …` (`Dockerfile:11-12`) stops with `404 Not Found`. `docker-shell.sh` has no `set -e` (`:4` is commented out), so it then runs `docker run` anyway and fails with `Unable to find image 'cheese-app-deployment:latest' locally` / `pull access denied`. One-line fix: `FROM python:3.13-slim-bookworm`.
+2. Google's apt repository no longer offers the transitional packages `google-cloud-sdk` and `google-cloud-sdk-gke-gcloud-auth-plugin` (`Dockerfile:30`): `E: Package 'google-cloud-sdk' has no installation candidate`. One-line fix: `google-cloud-cli google-cloud-cli-gke-gcloud-auth-plugin`.
+With both edits the toolbox built in 92 s on 2026-11-05. For L22 this matters twice: the gke-gcloud-auth-plugin that every `kubectl` call needs is exactly the package in fix 2.
 
 ### GCP APIs to enable (README lines 396–402)
 Compute Engine, Service Usage, Cloud Resource Manager, Artifact Registry and **Kubernetes Engine API**. Two more are not in this list but the code needs them:
@@ -207,7 +215,7 @@ Concepts marked **[ANIMATE]** are the five that most deserve a 3Blue1Brown-style
 
 ### 3.4 How a request reaches a Pod: LoadBalancer → Ingress controller → Service → Pod **[ANIMATE]**
 - **Explanation:** an **Ingress** is only a *rule object*: host + path → Service:port (`setup_loadbalancer.py:62-117`). It does nothing until an **Ingress controller** implements it. Here that controller is the F5 NGINX Ingress Controller, installed by a Helm chart (`:11-46`). Its own Service has `type: LoadBalancer` (`:22-24`), so GKE creates a GCP **external network load balancer** with a public IP. A request travels:
-  1. Browser asks DNS for `34.9.143.147.sslip.io`, and sslip.io answers `34.9.143.147` (`:60`).
+  1. Browser asks DNS for `<IP>.sslip.io`, and sslip.io answers `<IP>` (`:60`).
   2. TCP :80 hits the GCP load balancer, which forwards to a node, which forwards to the NGINX controller Pod.
   3. NGINX matches the **Host header** (`host=host`, `:79`) and the **path prefix**: `/api-service` → Service `api` port 9000 (`:84-91`); `/` → Service `frontend` port 3000 (`:96-104`).
   4. NGINX proxies to one of the Pods behind that Service.
@@ -216,13 +224,13 @@ Concepts marked **[ANIMATE]** are the five that most deserve a 3Blue1Brown-style
 - **Mental model:** a hotel. The load balancer is the street door, NGINX is the receptionist who reads your booking (host + path), the Service is the corridor sign, and the Pod is the room.
 - **Analogy:** the L20 nginx container on the VM did the same job. On K8s, the config file is *generated* from the Ingress object.
 - **Misconception:** "a ClusterIP Service is reachable from my laptop". It is not. Only the LoadBalancer Service has an external IP. To reach a ClusterIP for debugging, use `kubectl port-forward` (my suggestion). Note that kubectl runs *inside* the deployment container, so the forwarded port opens on the container's localhost, not your laptop's: `docker-shell.sh:34-50` publishes no ports (no `-p`). Run the `curl` in the same container, e.g. `kubectl port-forward svc/api 9000:9000 -n cheese-app-namespace &` then `curl localhost:9000/api-service/status`.
-- **Animation:** a packet glyph travels from a browser icon. A DNS bubble shows `34.9.143.147.sslip.io → 34.9.143.147`. The packet enters a big door labelled "GCP LB :80" and lands on a node, where an NGINX figure checks a two-row routing table. The packet is stamped `/api-service/status` and shunted down the API lane to a Pod, which returns `{"version":"3.0"}`. A second packet `/` goes down the frontend lane, returns HTML, and the HTML *spawns* a new packet from the browser aimed at `/api-service/...`.
+- **Animation:** a packet glyph travels from a browser icon. A DNS bubble shows `<IP>.sslip.io → <IP>` (a placeholder IP, never the README's sample address). The packet enters a big door labelled "GCP LB :80" and lands on a node, where an NGINX figure checks a two-row routing table. The packet is stamped `/api-service/status` and shunted down the API lane to a Pod, which returns `{"version":"3.0"}`. A second packet `/` goes down the frontend lane, returns HTML, and the HTML *spawns* a new packet from the browser aimed at `/api-service/...`.
 
 ### 3.5 Persistent storage: PVC → PV → disk
 - **Explanation:**
   - Container file systems are thrown away when the container restarts.
   - A **PersistentVolumeClaim** asks for storage ("10 Gi, ReadWriteOnce", `setup_containers.py:33-46`). GKE's default **StorageClass** (on current clusters `standard-rwo`, a balanced persistent disk; check with `kubectl get storageclass`) dynamically creates a **PersistentVolume** backed by a GCE persistent disk.
-  - The disk is attached to whichever node runs the Pod that mounts the claim: `/chroma/chroma` (`:147-152`) and `/persistent` (`:286-291`).
+  - The disk is attached to whichever node runs the Pod that mounts the claim: `/chroma/chroma` (`:147-152`) and `/persistent` (`:286-291`). Caveat: today's unpinned `chromadb/chroma` image writes to `/data`, not `/chroma/chroma`, so the Chroma claim is mounted but unused (§6, item 14).
   - **ReadWriteOnce** means one *node* at a time can mount it read-write.
   - `fs_group=1000` (`:262-264`) makes the kubelet give the mounted volume group ownership GID 1000 (group-writable, setgid) and adds GID 1000 to the container processes. A fresh disk is otherwise owned by root. The API image runs as user `app`, uid 1000 (`src/api-service/Dockerfile:30,35`), and must write chat history (`src/api-service/api/utils/chat_utils.py:9`) and the downloaded CNN model (`src/api-service/api/utils/llm_cnn_utils.py:34,114-134`) there.
   - The PVCs replace L20's `/mnt/disk-1/...` host folders.
@@ -254,7 +262,7 @@ Concepts marked **[ANIMATE]** are the five that most deserve a 3Blue1Brown-style
 - **Mental model:** a badge-swap desk. Inside the building (cluster) you wear a K8s badge (`api-ksa`). At the door to Google's services, the desk swaps it for a Google badge (`gcp-service`), but only because IAM has a rule saying that swap is allowed.
 - **Analogy:** a hotel key card that also opens the gym because the front desk linked the two.
 - **Misconception:** "the Pod uses the node's service account". Not with Workload Identity: Pods see only their KSA's mapped GSA. Without the annotation or binding, Vertex AI calls fail with 403.
-- **Before/after:** the older Ansible version uploaded `gcp-service.json` as a K8s Secret and mounted it (`pipenv:src/deployment/deploy-k8s-cluster.yml:134-138,235,247-249`). Workload Identity removes that long-lived key.
+- **Before/after:** the older Ansible version uploaded `gcp-service.json` as a K8s Secret and mounted it (`pipenv:src/deployment/deploy-k8s-cluster.yml:134-138,233-235,246-250`). Workload Identity removes that long-lived key.
 - **Animation:** a Pod circle wearing a blue `api-ksa` badge walks to a gate labelled "GKE metadata server". An IAM rulebook page flips open to `workloadIdentityUser`, the badge morphs into a green `gcp-service@` badge, and the Pod passes through to a Vertex AI cloud. A second Pod without the badge bounces off with "403".
 
 ### 3.8 Driving Kubernetes from Pulumi: providers, Helm releases, awaits and stack references
@@ -284,8 +292,8 @@ cd deployment
 sh docker-shell.sh
 ```
 - Under the hood: builds `cheese-app-deployment` for `linux/amd64` (`src/deployment/docker-shell.sh:31`) and runs it with your code at `/app` and secrets at `/secrets` (`:34-50`). The entrypoint activates the `deployment` SA, configures Docker for Artifact Registry and runs `pulumi login gs://…` (`docker-entrypoint.sh:10-23`).
-- Checkpoint: the entrypoint prints `Container is running!!!`, then the Pulumi bucket messages, then a root prompt in `/app`.
-- If it fails: `docker-shell.bat` (README 529) does not exist in the repo; on Windows use WSL. A `gcloud auth` error means `secrets/deployment.json` is not at `../../../secrets/` relative to `src/deployment`.
+- Checkpoint: the entrypoint prints `Container is running!!!`, the architecture, Python and uv versions (`docker-entrypoint.sh:3-7`), then the gcloud activation, the Pulumi bucket messages, the stack list, and a root prompt in `/app`.
+- If it fails: the image build stops at `apt-get` or at `google-cloud-sdk` → the two one-line Dockerfile fixes in §2 (the committed toolbox does not build as of 2026-11-05). `docker-shell.bat` (README 529) does not exist in the repo; on Windows use WSL. A `gcloud auth` error means `secrets/deployment.json` is not at `../../../secrets/` relative to `src/deployment`.
 
 **0.2 Create a cluster.** README 541.
 ```
@@ -339,7 +347,7 @@ kubectl version
 kubectl version --client
 gcloud auth list
 ```
-- Under the hood: same as 0.1. If the container is already running in another terminal, `docker-shell.sh` *execs* into it instead of starting a new one (`docker-shell.sh:23-25`).
+- Under the hood: same as 0.1, including the two Dockerfile fixes from §2 if the build fails. If the container is already running in another terminal, `docker-shell.sh` *execs* into it instead of starting a new one (`docker-shell.sh:23-25`).
 - Checkpoint: Google Cloud SDK version lines. `kubectl version --client` prints `Client Version: v1.34.x` (pinned by `Dockerfile:33`). `gcloud auth list` shows `deployment@<project>.iam.gserviceaccount.com` as active.
 - Expected failure: plain `kubectl version` (README 409) also tries to reach a server. Before any cluster exists you get `The connection to the server localhost:8080 was refused`. This is harmless.
 
@@ -354,8 +362,8 @@ pulumi preview --stack dev
 pulumi up --stack dev -y
 ```
 (replace `ac215-project`)
-- Under the hood: three `docker_build.Image` resources build `../../api-service`, `../../frontend-react` and `../../vector-db` for `linux/amd64` (`deploy_images/__main__.py:23-32,43-52,62-71`), tag them `us-docker.pkg.dev/<proj>/cheese-app-repository/<name>:<YYYYmmddHHMMSS>` (`:13-15,25`) and push them. The stack outputs `cheese-app-…-tags` (`:35,54,74`) are what `deploy_k8s` will read.
-- Checkpoint: `Outputs:` lists `cheese-app-api-service-tags`, `cheese-app-frontend-react-tags` and `cheese-app-vector-db-cli-tags`. The images appear in Artifact Registry.
+- Under the hood: three `docker_build.Image` resources build `../../api-service`, `../../frontend-react` and `../../vector-db` for `linux/amd64` (`deploy_images/__main__.py:23-32,43-52,62-71`), tag them `us-docker.pkg.dev/<proj>/cheese-app-repository/<name>:<YYYYmmddHHMMSS>` (`:13-15,25`) and push them. The stack outputs `cheese-app-…-tags` (`:35,54,74`) are what `deploy_k8s` will read (the `…-ref` outputs, `:34,53,73`, are unused).
+- Checkpoint: `Outputs:` lists six keys, a `…-ref` and a `…-tags` for each image (`cheese-app-api-service-*`, `cheese-app-frontend-react-*`, `cheese-app-vector-db-cli-*`, `deploy_images/__main__.py:34-35,53-54,73-74`); `deploy_k8s` reads only the `-tags` ones. The images appear in Artifact Registry.
 - If it fails: `Repository "cheese-app-repository" not found` → create it (§2). Very slow builds on Apple Silicon → expected: the builds run in your laptop's Docker engine (the container talks to it through the mounted socket, `docker-shell.sh:35`) and are forced to `linux/amd64` (`deploy_images/__main__.py:28`), so they are emulated; the API image also installs `tensorflow==2.19.0` (`src/api-service/pyproject.toml:13`).
 
 ### Part C: the cluster and the app
@@ -385,11 +393,11 @@ pulumi up --stack dev --refresh -y
 - Under the hood, in dependency order (`src/deployment/deploy_k8s/__main__.py:19-40`):
   1. VPC `cheese-app-vpc` (custom subnets, `create_network.py:7-13`), subnet `10.0.0.0/19` with Private Google Access (`:16-25`), Cloud Router (`:28-34`), Cloud NAT (`:37-48`).
   2. GKE cluster (`create_cluster.py:20-41`). This is the slow part: GKE first creates a temporary default pool and then removes it (`:28-29`). Then the node pool (`:44-72`).
-  3. The kubeconfig string (`:77-131`) → `k8s.Provider` (`:134-138`) → namespace (`:141-145`), KSA (`:151-162`), IAM binding (`:184-189`) and a local `gcloud container clusters get-credentials` (`:192-199`), so `kubectl` works in this container.
+  3. The kubeconfig string (`:77-131`) → `k8s.Provider` (`:134-138`, waits for the node pool) → namespace (`:141-145`) → KSA (`:151-162`) and, through the namespace name, the IAM binding (`:184-189`). Independently, as soon as the cluster exists (it does not wait for the node pool), a local `gcloud container clusters get-credentials` (`:192-199`) writes the kubeconfig, so `kubectl` works in this container.
   4. PVCs (`setup_containers.py:17-46`). The frontend Deployment and Service (`:51-111`) and the vector-db Deployment and Service (`:114-196`) are created in parallel.
   5. The loader Job (`:199-243`). Pulumi waits until it **completes**: download from GitHub (`src/vector-db/cli.py:479-495`) and load into Chroma (`:271-311`). Only then does it create the API Deployment and Service (`setup_containers.py:246-343`).
   6. In parallel with 4–5: the Helm release of the F5 NGINX controller (`setup_loadbalancer.py:11-46`). Pulumi waits until its LoadBalancer Service has an IP, reads that IP (`:49-59`) and builds the `sslip.io` host (`:60`). The Ingress (`:62-117`) comes **last**: besides its explicit `depends_on=[nginx_helm]` (`:115`), it uses `api_service.metadata["name"]` and `frontend_service.metadata["name"]` (`:88`, `:101`), which are outputs, so Pulumi also waits for both Services, and therefore for the loader Job and the API Deployment. Pulumi then waits until the Ingress has endpoints and a load-balancer address (3.8).
-- Checkpoint: a total run time of roughly 15–25 minutes (my estimate), then outputs. The README (498–506) shows an **older** output set. With the current code you should see:
+- Checkpoint: a total run time of roughly 15–25 minutes (my estimate), then outputs. The README (498–506) shows an **older** output set, with the course's own sample IP addresses (shown in the video only as `<IP>` placeholders). With the current code you should see:
   ```
   Outputs:
       app_url         : "http://<IP>.sslip.io"
@@ -820,8 +828,8 @@ app.mount(ROOT_PATH, api_app)
     - Fix: wait a minute. Long-term, add a readinessProbe on `/api-service/status` (my suggestion).
 
 14. **RAG answers stop working after the vector-db Pod restarts.**
-    - Possible cause: the Deployment uses the unpinned `chromadb/chroma` image (`setup_containers.py:132`) with data at `/chroma/chroma` (`:150`). Chroma 1.x images appear to store data under `/data`; the course's own `llm-rag` mounts `/data` (`llm-rag:docker-compose.yml:24`). If so, the PVC isn't actually used, the collection lives in the container's writable layer, and the one-time Job won't reload it. `IS_PERSISTENT=TRUE` (`setup_containers.py:140-142`) also appears to be a 0.x-only server setting. Because the image has no tag, Kubernetes defaults its `imagePullPolicy` to `Always`, so a restarted Pod may also come up on a newer Chroma release than before.
-    - Fix: rerun the Job (item 9). Check where the data lives with `kubectl exec deploy/vector-db -n cheese-app-namespace -- ls /data /chroma/chroma` (my suggestion). Pin an image and mount the path that version uses.
+    - Cause (checked 2026-11-07 against Docker Hub): the Deployment uses the unpinned `chromadb/chroma` image (`setup_containers.py:132`) with the PVC at `/chroma/chroma` (`:150`). The image Docker Hub serves as `latest` today (linux/amd64 config created 2026-05-05) is the Rust 1.x server: `ENTRYPOINT ["dumb-init","--","chroma"]`, `CMD ["run","/config.yaml"]`, and its `/config.yaml` is the single line `persist_path: "/data"`. So the PVC is mounted where nothing writes, the collection lives in the container's writable layer at `/data`, and the one-time Job won't reload it after a restart. The course's own `llm-rag` mounts `/data` (`llm-rag:docker-compose.yml:19,24`). `IS_PERSISTENT=TRUE` (`setup_containers.py:140-142`) is a 0.x server setting; the 1.x server reads its config file instead (an inference from the image's CMD). Because the image has no tag, Kubernetes defaults its `imagePullPolicy` to `Always`, so a restarted Pod may also come up on a newer Chroma release than before.
+    - Fix: rerun the Job (item 9). Check where the data lives with `kubectl exec deploy/vector-db -n cheese-app-namespace -- ls /data /chroma/chroma` (my suggestion; the Rust image may not ship `ls`, in which case `kubectl get pvc` and the disk's usage in the console tell the same story). Lasting fix: change `mount_path` to `/data` (or pin `chromadb/chroma:0.5.6` as `cluster-updates` does).
 
 15. **Quota errors** (`N2D_CPUS`, `SSD_TOTAL_GB`, `IN_USE_ADDRESSES`).
     - Cause: new or free-trial projects have small regional quotas. GKE's temporary default pool for a regional cluster may briefly add nodes in several zones before it is removed (`create_cluster.py:28-29`). L20's VM may still be running.
@@ -837,12 +845,17 @@ app.mount(ROOT_PATH, api_app)
 
 18. **Secrets hygiene.**
     - `deployment.json` lives outside the repo (`docker-shell.sh:9`). Keep it there.
-    - Committed and harmless but worth noticing: the instructor's project ID and SA emails (`deploy_k8s/Pulumi.dev.yaml:3-6`), and `NEXTAUTH_SECRET` in `src/frontend-react/.env.production:3`.
+    - Committed and worth noticing: the instructor's project ID, a numeric OS Login user name and the SA emails (`deploy_k8s/Pulumi.dev.yaml:3-6`), and a real-looking `NEXTAUTH_SECRET` value in `src/frontend-react/.env.production:3`. Never show these values on screen; use placeholders.
     - Pulumi marks `kubeconfig` as `[secret]` in outputs (README 503). It contains no credentials anyway, only the exec-plugin instructions.
 
 19. **Version skew.**
     - kubectl is pinned to 1.34 (`Dockerfile:33`), while GKE auto-upgrades the cluster (`create_cluster.py:69`). kubectl supports ±1 minor version; beyond that, expect warnings.
     - `kubectl get componentstatuses` (README 484) is deprecated.
+
+20. **`sh docker-shell.sh` fails to build the toolbox.**
+    - Symptom: `404 Not Found` from `deb.debian.org … bullseye-security` during `apt-get install`, then `Unable to find image 'cheese-app-deployment:latest' locally`; or, after fixing that, `E: Package 'google-cloud-sdk' has no installation candidate`.
+    - Cause: `Dockerfile:4` (Debian 11 base) and `Dockerfile:30` (renamed Google packages); reproduced 2026-11-05 in the L20 captures.
+    - Fix: the two one-line edits in §2.
 
 ---
 
@@ -906,7 +919,7 @@ Meaningful differences from `main`:
 3. **ChromaDB pinned to `chromadb/chroma:0.5.6`** (`:328`), still mounted at `/chroma/chroma` (`:346`). Main un-pinned it in `c4f4a92` ("updated k8s deployment using pulumi", which replaced `chromadb/chroma:0.5.6` with the wrong image name `chromadb/latest` (a repository called `latest`, not a tag)); `a236118` ("chroma fix") then corrected that to the untagged `chromadb/chroma`.
 4. **Loader Job uses `command=[ "cli.py", … ]`** (`:426-432`). That overrides the image ENTRYPOINT and would fail to start (§9 E5). It also has `backoff_limit=4` and `fs_group` (`:403,407-409`). Main uses `args=` (`setup_containers.py:227-233`).
 5. The API Deployment depends only on the vector-db Service (`:513-515`), not on the Job, so the API may start before the DB is loaded.
-6. `application_url` is hard-coded to `https://temp.instel.ai` (`:634`). The real app URL is not exported.
+6. `application_url` is hard-coded to an unrelated placeholder HTTPS domain (`:634`; not reproduced here). The real app URL is not exported.
 
 Use `main` for the tutorial. Read `cluster-updates` as a record of how the HTTPS design was explored.
 
@@ -970,7 +983,7 @@ Use `main` for the tutorial. Read `cluster-updates` as a record of how the HTTPS
 5. Why can't the cluster autoscaler fix a Multi-Attach error?
 6. After `pulumi destroy`, name two things that may still cost money and how you would find them.
 
-**Target length:** about 37 minutes, 5,700 spoken words at 155 wpm. If it must be shorter, merge chapters 4 and 7 into 3 and 5, for about 32 minutes. The viewer should keep their clone open at `src/deployment/deploy_k8s/` and pause before each `pulumi up` and at each pause-and-ponder card.
+**Target length:** the series format applies: 25–35 minutes in two parts, about 3,900–4,300 narrated words at the voice's ~174 wpm, and 3–5 timed quiz-style ponders. The ten chapters above add up to about 37 minutes, so merge chapters 4 and 7 into 3 and 5 (≈32 minutes); a natural part break is after chapter 7, before `pulumi up`. The viewer should keep their clone open at `src/deployment/deploy_k8s/` and pause before each `pulumi up` and at each pause-and-ponder card.
 
 ---
 
@@ -989,8 +1002,8 @@ Use `main` for the tutorial. Read `cluster-updates` as a record of how the HTTPS
 **E3 (debugging: README command).** `kubectl logs -n cheese-app-cluster-namespace job/vector-db-loader -c wait-for-chromadb` (README 620) prints `Error from server (NotFound): namespaces "cheese-app-cluster-namespace" not found`. Why? After fixing the namespace, the next error is about the container name. Why?
 *Worked answer:* the README section was written for the pre-refactor single-file program, which named the namespace `{cluster_name}-namespace` and gave the Job an init container `wait-for-chromadb` (visible at `git show 3149e56:src/deployment/deploy_k8s/__main__.py`). The current program names the namespace `cheese-app-namespace` (`create_cluster.py:143`), and the Job has only the container `vector-db-loader` (`setup_containers.py:213`). Use `kubectl logs -n cheese-app-namespace job/vector-db-loader`.
 
-**E4 (debugging: 404 on the raw IP).** `curl http://34.9.143.147/` returns an nginx 404, but `curl http://34.9.143.147.sslip.io/` works. Both go to the same IP. Why?
-*Worked answer:* the TCP path is the same. The difference is the HTTP `Host` header. The Ingress rule has `host=<IP>.sslip.io` (`setup_loadbalancer.py:79`), so NGINX has no rule for `Host: 34.9.143.147` and answers with its default 404. `curl -H "Host: 34.9.143.147.sslip.io" http://34.9.143.147/` would work too.
+**E4 (debugging: 404 on the raw IP).** `curl http://<IP>/` returns an nginx 404, but `curl http://<IP>.sslip.io/` works. Both go to the same IP. Why?
+*Worked answer:* the TCP path is the same. The difference is the HTTP `Host` header. The Ingress rule has `host=<IP>.sslip.io` (`setup_loadbalancer.py:79`), so NGINX has no rule for `Host: <IP>` and answers with its default 404. `curl -H "Host: <IP>.sslip.io" http://<IP>/` would work too.
 
 **E5 (debugging: `command` vs `args`).** On the `cluster-updates` branch the loader is written as `command=["cli.py", "--download", "--load", "--chunk_type", "recursive-split"]` (`cluster-updates:src/deployment/deploy_k8s/__main__.py:426-432`). Main uses `args=[...]` with the same list (`setup_containers.py:227-233`). Predict the loader Pod's status on the branch.
 *Worked answer:* in Kubernetes, `command` replaces the image's ENTRYPOINT and `args` replaces its CMD. The vector-db image's ENTRYPOINT is `/bin/bash docker-entrypoint.sh` (`src/vector-db/Dockerfile:51`), which activates the venv and runs `uv run python $args` (`src/vector-db/docker-entrypoint.sh:12,22`). With `command=`, the runtime tries to exec a binary called `cli.py`, which is not on `$PATH` (and is not an executable file anyway). The Pod fails with a `StartError` / `RunContainerError` (`exec: "cli.py": executable file not found in $PATH`), Job retries until `backoffLimit`, and Pulumi marks the Job failed. With `args=`, the entrypoint receives `cli.py --download …` exactly as `docker run image cli.py …` did in L20.
@@ -1064,7 +1077,7 @@ and the same for `api`. Then run `kubectl get hpa -n cheese-app-namespace`. Pred
 10. **ChromaDB image unpinned, mount path possibly stale.**
     - `image="chromadb/chroma"` (`setup_containers.py:132`) is mounted at `/chroma/chroma` (`:150`). That is the 0.x layout: the `cluster-updates` branch pins `0.5.6` with the same path (`cluster-updates:…/__main__.py:328,346`).
     - The course's newer `llm-rag` mounts `chromadb/chroma:latest` at `/data` (`llm-rag:docker-compose.yml:19,24`).
-    - If current images persist to `/data`, the 10 Gi PVC is unused and the vector DB is lost whenever its Pod restarts. I could not inspect the image to confirm.
+    - Confirmed on 2026-11-07 from the registry (image config and its 22-byte `/config.yaml` layer, no image pulled): today's `chromadb/chroma:latest` persists to `/data`. The 10 Gi PVC is therefore unused and the vector DB is lost whenever its Pod restarts (§6, item 14).
 11. **Control-plane CIDR outside RFC 1918.** `master_ipv4_cidr_block: "172.0.0.0/28"` (`create_cluster.py:33`; same on `cluster-updates:…:90`) is public address space; RFC 1918's 172 block is 172.16.0.0/12. It evidently worked for the course, but `172.16.0.0/28` would be the conventional choice.
 12. **Kubeconfig convenience is ephemeral.**
     - The `connect-k8s-command` (`create_cluster.py:192-199`) runs once, inside a `--rm` container, so later sessions have no kubeconfig and the README never says how to restore it.
@@ -1074,15 +1087,15 @@ and the same for `api`. Then run `kubectl get hpa -n cheese-app-namespace`. Pred
 15. **README 318–322** ("Deployment Setup … inventory.yml") are Ansible-era leftovers in the shared prerequisites. The SSH/OS Login steps before them (282–316) are only needed for L20's `security:ssh_user`; none of this is needed for `deploy_k8s`.
 16. **README Mermaid diagram edge reversed.** `V -.->|one-time load| J` (README 466) draws the arrow from the vector-db Service to the loader Job; the Job writes into the vector DB (`setup_containers.py:199-243`, `src/vector-db/cli.py:271-311`).
 17. **Unused env var in `deploy_images`.** `location = os.environ["GCP_REGION"]` (`deploy_images/__main__.py:10`) is required but never used; the registry host is hard-coded (`:15`). Likewise `artifactregistry` is imported (`:4`) but unused.
+18. **The deployment toolbox does not build as committed** (2026-11-05): `Dockerfile:4` and `Dockerfile:30`, fixes in §2 and §6 item 20.
 
 ### Open questions (could not be determined from the sources)
 
-- **Ed lesson content:** I could not open https://edstem.org/us/courses/97373/lessons/166047/. Slides or announcements there may update any of the above.
+- **Ed lesson content:** I could not open https://edstem.org/us/courses/97373/lessons/166047/. The lecture slides are digested separately in this folder's `SLIDES.md` (binding next to this digest); announcements on Ed may still update any of the above.
 - **`gcloud container clusters get-credentials … --zone us-central1`** (`create_cluster.py:195-197`): I believe gcloud forwards the value as the cluster *location*, so it works for a regional cluster, but I could not run it. `--region us-central1` is the unambiguous form.
-- **ChromaDB persistence path** in the image `chromadb/chroma` pulled today (§6, item 14; erratum 10).
 - **Whether the IAM Service Account Credentials API must be enabled** for Workload Identity in a fresh project.
 - **Whether `deployment` in the instructors' project had extra roles** that hid erratum 4.
-- **Exact Helm release name** that Pulumi generates for `nginx-f5`, and whether chart `nginx-ingress` `2.3.1` from `https://helm.nginx.com/stable` (`setup_loadbalancer.py:13-17`) is still served. The code's lookup relies on both (`:49-58`).
+- **Helm chart and Service name (partly resolved 2026-11-07):** chart `nginx-ingress` `2.3.1` is still listed in `https://helm.nginx.com/stable/index.yaml` (appVersion 5.2.1, `kubeVersion >= 1.25.0-0`), and its `_helpers.tpl` names the controller Service `<fullname>-controller`, where `<fullname>` is `<release>-nginx-ingress` unless the release name already contains `nginx-ingress`. So the lookup `<release>-nginx-ingress-controller` (`setup_loadbalancer.py:49-58`) matches. Still open: the exact random suffix Pulumi appends to the release name `nginx-f5` (visible only in a real run). The chart's controller Service defaults to `externalTrafficPolicy: Local`.
 - **Does `pulumi up --refresh` revert a manual `kubectl scale`?** The program never sets `replicas`, and pulumi-kubernetes 4.x uses server-side apply, so I expect the manual value to survive. Verify with `kubectl get deploy -n cheese-app-namespace` after an update.
 - **GKE version in October 2026 vs kubectl 1.34** in the toolbox: the size of the skew depends on the release channel at the time you create the cluster.
 - **Current prices and free-tier rules** for GKE management fees, NAT and load balancers. The numbers in §2 are approximate, from memory.
@@ -1090,4 +1103,4 @@ and the same for `api`. Then run `kubectl get hpa -n cheese-app-namespace`. Pred
 - **Chroma client at API import:** `chromadb.HttpClient(...)` (`src/api-service/api/utils/llm_rag_utils.py:57`, chromadb 1.3.0 per `src/api-service/uv.lock`) is created at import. I believe it contacts the server (tenant/database check) and raises if Chroma is down, which would crash-loop the API (§6, item 13); not verified by running it.
 - **FrontendConfig annotation key** in SSL mode (erratum 8): whether GKE honours `networking.gke.io/frontend-config` or `networking.gke.io/v1beta1.frontend-config`, or only the documented `networking.gke.io/v1beta1.FrontendConfig`.
 
-_Verified against the repos on 2026-10-13 (adversarial check)._
+_Verified against the repos on 2026-10-13 (adversarial check); re-verified 2026-11-07 (every repository `path:line`, quoted command and commit hash re-checked; pins via `git ls-remote`; Chroma image and NGINX chart checked against their registries)._

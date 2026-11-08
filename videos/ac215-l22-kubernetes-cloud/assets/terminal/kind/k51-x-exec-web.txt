@@ -1,0 +1,5 @@
+$ kubectl exec --stdin --tty deployment/web -- /bin/sh
+$ hostname; ls; exit
+web-5cd9789488-5h48s
+Dockerfile  docker-shell.sh  index.html  script.js  style.css
+[exit 0]

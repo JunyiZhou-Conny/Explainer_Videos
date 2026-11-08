@@ -1,0 +1,5 @@
+$ kubectl get pods -l run=web -o wide
+NAME                   READY   STATUS    RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES
+web-5cd9789488-bmkj5   1/1     Running   0          3m28s   10.244.2.2   test-cluster-worker    <none>           <none>
+web-5cd9789488-lmk52   1/1     Running   0          16s     10.244.1.7   test-cluster-worker2   <none>           <none>
+[exit 0]

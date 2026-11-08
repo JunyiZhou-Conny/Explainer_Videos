@@ -1,0 +1,69 @@
+# The B7 section of k8s.sh (the same script), as run at about 22:40 UTC on 2026-11-07 on the FIRST l22ex
+# cluster, where metrics-server had already been applied once (a first B7 run there and one by-hand apply had
+# shown the metrics API unavailable for minutes, then available). That cluster was deleted and re-created for
+# the full run in k8s.log, where the metrics API stayed unavailable (403 from its discovery check) until the end.
+## B7: a Pod autoscaler needs requests (metrics-server, v0.8.0, kubelet TLS check off for kind)
+$ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.8.0/components.yaml >/dev/null && kubectl -n kube-system patch deployment metrics-server --type=json -p '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]' && kubectl -n kube-system rollout status deployment/metrics-server --timeout=240s
+deployment.apps/metrics-server patched
+deployment "metrics-server" successfully rolled out
+[exit 0]
+
+$ for i in $(seq 36); do kubectl top nodes >/dev/null 2>&1 && break; sleep 5; done; kubectl get apiservice v1beta1.metrics.k8s.io; kubectl top nodes
+NAME                     SERVICE                      AVAILABLE   AGE
+v1beta1.metrics.k8s.io   kube-system/metrics-server   True        64s
+NAME                  CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+l22ex-control-plane   158m         3%       588Mi           3%          
+l22ex-worker          28m          0%       280Mi           1%          
+l22ex-worker2         32m          0%       257Mi           1%          
+[exit 0]
+
+$ kubectl top pods -l run=web; kubectl get deployment web -o jsonpath='requests: {.spec.template.spec.containers[0].resources}{"\n"}'
+NAME                   CPU(cores)   MEMORY(bytes)   
+web-5cd9789488-rl9mg   0m           9Mi             
+web-5cd9789488-zzfsr   0m           9Mi             
+requests: {}
+[exit 0]
+
+$ kubectl autoscale deployment web --cpu-percent=50 --min=2 --max=4; sleep 75; kubectl get hpa web; kubectl describe hpa web | sed -n '/^Conditions:/,$p'
+Flag --cpu-percent has been deprecated, Use --cpu with percentage or resource quantity format (e.g., '70%' for utilization or '500m' for milliCPU).
+horizontalpodautoscaler.autoscaling/web autoscaled
+NAME   REFERENCE        TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
+web    Deployment/web   cpu: <unknown>/50%   2         4         2          75s
+Conditions:
+  Type           Status  Reason                   Message
+  ----           ------  ------                   -------
+  AbleToScale    True    SucceededGetScale        the HPA controller was able to get the target's current scale
+  ScalingActive  False   FailedGetResourceMetric  the HPA was unable to compute the replica count: failed to get cpu utilization: missing request for cpu in container web of Pod web-5cd9789488-rl9mg
+Events:
+  Type     Reason                        Age                From                       Message
+  ----     ------                        ----               ----                       -------
+  Warning  FailedGetResourceMetric       45s (x2 over 60s)  horizontal-pod-autoscaler  failed to get cpu utilization: missing request for cpu in container web of Pod web-5cd9789488-zzfsr
+  Warning  FailedComputeMetricsReplicas  45s (x2 over 60s)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: missing request for cpu in container web of Pod web-5cd9789488-zzfsr
+  Warning  FailedGetResourceMetric       0s (x3 over 30s)   horizontal-pod-autoscaler  failed to get cpu utilization: missing request for cpu in container web of Pod web-5cd9789488-rl9mg
+  Warning  FailedComputeMetricsReplicas  0s (x3 over 30s)   horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: missing request for cpu in container web of Pod web-5cd9789488-rl9mg
+[exit 0]
+
+$ kubectl set resources deployment web --requests=cpu=50m; kubectl rollout status deployment/web --timeout=180s; sleep 90; kubectl get hpa web
+deployment.apps/web resource requirements updated
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+deployment "web" successfully rolled out
+NAME   REFERENCE        TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web    Deployment/web   cpu: 0%/50%   2         4         2          2m47s
+[exit 0]
+
+$ kubectl delete hpa web; kubectl set resources deployment web --requests=cpu=0 >/dev/null; kubectl patch deployment web --type=json -p '[{"op":"remove","path":"/spec/template/spec/containers/0/resources/requests"}]'; kubectl rollout status deployment/web --timeout=180s; kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.8.0/components.yaml >/dev/null && echo metrics-server removed
+horizontalpodautoscaler.autoscaling "web" deleted from default namespace
+deployment.apps/web patched
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+deployment "web" successfully rolled out
+metrics-server removed
+[exit 0]
+

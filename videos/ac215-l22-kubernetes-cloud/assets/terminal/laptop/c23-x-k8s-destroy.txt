@@ -1,0 +1,28 @@
+$ pulumi destroy --stack dev --refresh -y
+Previewing destroy (dev):
+
+ ~  pulumi:pulumi:Stack deploy-k8s-dev refreshing 
+ ~  pulumi:pulumi:Stack deploy-k8s-dev refreshing 
+ ~  pulumi:pulumi:StackReference organization/deploy-images/dev refreshing 
+ ~  pulumi:pulumi:StackReference organization/deploy-images/dev refresh 
+ -  pulumi:pulumi:Stack deploy-k8s-dev delete 
+ -  pulumi:pulumi:Stack deploy-k8s-dev delete 
+Resources:
+    - 1 to delete
+
+Destroying (dev):
+
+ ~  pulumi:pulumi:Stack deploy-k8s-dev refreshing (0s) 
+ ~  pulumi:pulumi:Stack deploy-k8s-dev refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/deploy-images/dev refreshing (0s) 
+ ~  pulumi:pulumi:StackReference organization/deploy-images/dev refresh (0.00s) 
+ -  pulumi:pulumi:Stack deploy-k8s-dev deleting (0s) 
+ -  pulumi:pulumi:Stack deploy-k8s-dev deleted (0.00s) 
+Resources:
+    - 1 deleted
+
+Duration: 1s
+
+The resources in the stack have been deleted, but the history and configuration associated with the stack are still maintained. 
+If you want to remove the stack completely, run `pulumi stack rm dev`.
+[exit 0]

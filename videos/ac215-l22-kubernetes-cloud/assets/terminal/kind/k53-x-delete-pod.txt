@@ -1,0 +1,6 @@
+$ kubectl delete pod web-5cd9789488-5h48s; kubectl get pods -l run=web
+pod "web-5cd9789488-5h48s" deleted from default namespace
+NAME                   READY   STATUS              RESTARTS   AGE
+web-5cd9789488-bmkj5   1/1     Running             0          3m13s
+web-5cd9789488-lmk52   0/1     ContainerCreating   0          1s
+[exit 0]

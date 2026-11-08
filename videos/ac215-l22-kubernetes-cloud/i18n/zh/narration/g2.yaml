@@ -1,0 +1,452 @@
+# zh narration for S09-S16 (part 2, group g2: the blueprint and its cost, setup and the images stack, deploy_k8s's
+# config and the 23-resource plan, pulumi up's order and identity, the journey of one click, kubectl on the app and
+# the outputs, logs and scaling at two levels, destroy, the leftover audit and the recap), sentence-aligned to
+# script.md v2 (2026-11-07): one zh sentence per English sentence (explainer.voice.split_sentences; 75 SAY lines,
+# 164 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (D9).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (A6, B3):
+# deploy_k8s -> deploy k8s; setup_containers.py -> setup containers; ROOT_PATH -> ROOT PATH 变量;
+# ip_address -> ip address; app_url -> app URL; <pod-name> -> pod name 占位符 / 尖括号; + 23 to create -> 要创建 23 个.
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4); null = the SAY text.
+# The instructor rule (A16): the narration of S09-S16 names no instructor (the lecture -> 课上; the README's
+# Pod names -> 作者自己的, never a name).
+S09:
+- en: "Part 2: the cheese app on GKE, as Pulumi code. The course link lands on Deployment with Scaling using Kubernetes; the cluster steps continue under the next heading, Create and Deploy Cluster."
+  zh:
+  - "第 2 部分：把奶酪应用作为 Pulumi 代码部署到 GKE 上。"
+  - "课程链接落在这一节：Deployment with Scaling using Kubernetes；集群的步骤，接在下一个小节 Create & Deploy Cluster 里。"
+  en_display:
+  - null
+  - "The course link lands on Deployment with Scaling using Kubernetes; the cluster steps continue under the next heading, Create & Deploy Cluster."
+- en: "Here is the plan, piece by piece from lecture 20. Each long-running container becomes a Deployment. The one-shot loader becomes a Job: it retries a failed run a few times, and once it succeeds, it stays done."
+  zh:
+  - "这是整个计划，一块一块地从第 20 讲对过来。"
+  - "每个长期运行的 container 变成一个 Deployment。"
+  - "一次性的加载器变成一个 Job：运行失败会重试几次，一旦成功，就保持完成状态。"
+- en: "Container names on a Docker network become Services with DNS names. The folders on the VM disk become two persistent volume claims, each backed by a cloud disk."
+  zh:
+  - "Docker 网络上的 container 名字变成带 DNS 名字的 Service。"
+  - "VM 磁盘上的目录变成两个 PVC，每个背后是一块云磁盘。"
+- en: "The nginx container becomes an Ingress controller with an Ingress rule. The JSON key becomes Workload Identity, with no key file at all. One machine becomes a pool of one or two nodes."
+  zh:
+  - "那个 nginx container 变成一个 Ingress controller，加上一条 Ingress 规则。"
+  - "JSON 密钥变成 Workload Identity，完全没有密钥文件。"
+  - "一台机器变成一个有一到两个节点的节点池。"
+- en: "Around it, a private network. The nodes get no public addresses; a Cloud NAT gateway lets them reach out, for example to pull Chroma from Docker Hub. The app sits in one namespace, behind one load balancer."
+  zh:
+  - "外面围着一个私有网络。"
+  - "节点没有公网地址；一个 Cloud NAT 网关让它们能往外连，比如从 Docker Hub 拉取 Chroma。"
+  - "应用放在一个 namespace 里，前面是一个负载均衡器。"
+- en: "The program in deploy k8s says the same in four calls, one per file: the network, the cluster, the containers, the load balancer. Line 17 keeps the HTTPS variant switched off."
+  zh:
+  - "在 deploy k8s 里，程序用四次调用说了同样的事，一个文件一次：网络、集群、container、负载均衡器。"
+  - "第 17 行让 HTTPS 版本保持关闭。"
+  en_display:
+  - "The program in deploy_k8s says the same in four calls, one per file: the network, the cluster, the containers, the load balancer."
+  - null
+- en: "While it is up, it costs money: the fee of a regional cluster, one or two nodes, a load balancer, one NAT gateway and two disks. By our estimate, roughly five to eight dollars a day: check the pricing calculator, and destroy it the same day."
+  zh:
+  - "它运行期间一直在花钱：区域集群的管理费，一到两个节点、一个负载均衡器、一个 NAT 网关和两块磁盘。"
+  - "按我们的估算，大约每天 5 到 8 美元：去查一下价格计算器，当天就 destroy 掉。"
+S10:
+- en: "This section enables the five APIs again; turn on the Vertex AI API too, which the API Pods call."
+  zh:
+  - "这一节再次启用那五个 API；把 Vertex AI API 也打开，API 的 Pod 要调用它。"
+- en: "You also need the two service accounts from lecture 20. The deployment account does what the toolbox does, and here it is also the nodes' identity. The gcp service account is for the API Pods, with no key file."
+  zh:
+  - "你还需要第 20 讲的两个服务账号。"
+  - "其中 deployment 账号做工具箱要做的事，在这里它还是节点的身份。"
+  - "而 gcp-service 账号是给 API 的 Pod 用的，不需要密钥文件。"
+  en_display:
+  - null
+  - null
+  - "The gcp-service account is for the API Pods, with no key file."
+- en: "Two one-time steps the README leaves out. The deployment account very likely needs Service Account Admin on gcp service; we could not test this. And create the registry repository, cheese app repository, which no code creates."
+  zh:
+  - "README 漏掉了两个一次性的步骤。"
+  - "deployment 账号很可能需要一个角色：gcp-service 上的 Service Account Admin；这一点我们没法测试。"
+  - "还要创建 registry 仓库 cheese-app-repository，没有任何代码会创建它。"
+  en_display:
+  - null
+  - "The deployment account very likely needs Service Account Admin on gcp-service; we could not test this."
+  - "And create the registry repository, cheese-app-repository, which no code creates."
+- en: "The deployment key goes in the secrets folder, beside the repository, as in lecture 20."
+  zh:
+  - "把 deployment 的密钥放进 secrets 目录，和 repo 并排，和第 20 讲一样。"
+- en: "Then the toolbox steps from part 1, the same commands; if the toolbox is still running, the script simply attaches to it."
+  zh:
+  - "然后是第 1 部分的工具箱步骤，命令一样；如果工具箱还在运行，脚本会直接接入它。"
+- en: "Next, the images stack, only if you have not built it before: change into deploy images, pulumi stack init dev, and set G C P project to yours. Ours says Pulumi access token must be set: our bucket login failed, so Pulumi falls back to its cloud service."
+  zh:
+  - "接下来是 images stack，只在你之前没构建过时才做：进到 deploy images，运行 pulumi stack init dev，再把 gcp:project 设成你的。"
+  - "我们的显示 Pulumi access token must be set：我们的 bucket 登录失败了，所以 Pulumi 退回到它自己的云服务。"
+  en_display:
+  - "Next, the images stack, only if you have not built it before: change into deploy_images, pulumi stack init dev, and set gcp:project to yours."
+  - "Ours says PULUMI_ACCESS_TOKEN must be set: our bucket login failed, so Pulumi falls back to its cloud service."
+- en: "To show the rest, we point Pulumi at a local folder, a recording workaround: don't run it. Now the stack is created, as yours is."
+  zh:
+  - "为了展示剩下的部分，我们让 Pulumi 指向一个本地目录，这是录制用的权宜之计：你别跑。"
+  - "现在 stack 创建好了，和你的一样。"
+- en: "Then pulumi preview, stack dev: three image builds, skipped in a preview, and three tags stamped with the time. Plus 4 to create: three images and the stack itself."
+  zh:
+  - "然后是 pulumi preview --stack dev：三个 image 构建，在 preview 里会跳过，还有三个打上时间戳的 tag。"
+  - "要创建 4 个：三个 image，加上 stack 本身。"
+  en_display:
+  - "Then pulumi preview --stack dev: three image builds, skipped in a preview, and three tags stamped with the time."
+  - "+ 4 to create: three images and the stack itself."
+- en: "Those tag outputs matter: deploy k8s looks them up through a stack reference, to know which images to run."
+  zh:
+  - "这些 tag 输出很重要：deploy k8s 通过 stack reference 查到它们，才知道要运行哪些 image。"
+  en_display:
+  - "Those tag outputs matter: deploy_k8s looks them up through a stack reference, to know which images to run."
+- en: "Last, pulumi up, stack dev, dash y: it builds and pushes three images. Skip it if you did it in lecture 20, with one condition we meet next; otherwise, pause and run it."
+  zh:
+  - "最后，pulumi up --stack dev -y：它构建并 push 三个 image。"
+  - "可以跳过，如果你在第 20 讲做过，但有一个条件，我们接下来会讲；否则就暂停一下，跑一遍。"
+  en_display:
+  - "Last, pulumi up --stack dev -y: it builds and pushes three images."
+  - null
+S11:
+- en: "Now Create and Deploy Cluster. From the deployment folder, change into deploy k8s and run pulumi stack init dev: the same token error, and on the local backend, created stack dev."
+  zh:
+  - "现在是 Create & Deploy Cluster。"
+  - "在 deployment 目录里，进到 deploy k8s，运行 pulumi stack init dev：同样的令牌报错，在本地 backend 上则是 Created stack dev。"
+  en_display:
+  - "Now Create & Deploy Cluster."
+  - "From the deployment folder, change into deploy_k8s and run pulumi stack init dev: the same token error, and on the local backend, Created stack 'dev'."
+- en: "Then three config keys: your project, and two service account emails, deployment and gcp service. Replace ac215 project with yours in all three."
+  zh:
+  - "然后是三个 config 键：你的项目，以及两个服务账号的邮箱，deployment 和 gcp-service。"
+  - "三处都把 ac215-project 换成你的。"
+  en_display:
+  - "Then three config keys: your project, and two service account emails, deployment and gcp-service."
+  - "Replace ac215-project with yours in all three."
+- en: "Line 9 takes the deployment email: the nodes run as that account. Line 10 takes the gcp service email, which the API Pods will act as."
+  zh:
+  - "第 9 行填 deployment 的邮箱：节点以这个账号运行。"
+  - "第 10 行填 gcp-service 的邮箱，API 的 Pod 会扮演这个账号。"
+  en_display:
+  - null
+  - "Line 10 takes the gcp-service email, which the API Pods will act as."
+- en: "An extra, pulumi config, lists your three keys and two leftovers from the committed file, setup SSL and an SSH user, which the program never uses. A typo in a key name fails quietly later, so check this list."
+  zh:
+  - "一个额外命令 pulumi config，列出你的三个键，还有提交的文件里留下的两个，setupSSL 和一个 SSH 用户，程序从来没用过。"
+  - "键名打错一个字，后面会悄悄失败，所以检查一下这张列表。"
+  en_display:
+  - "An extra, pulumi config, lists your three keys and two leftovers from the committed file, setupSSL and an SSH user, which the program never uses."
+  - null
+- en: "Then Preview: pulumi preview, stack dev, refresh. On the local backend, a Python error at line 70 of setup containers: none type is not subscriptable. The program asked the images stack for its tags, and got nothing."
+  zh:
+  - "然后是 Preview 这一步：pulumi preview --stack dev --refresh。"
+  - "在本地 backend 上，setup containers 第 70 行报一个 Python 错误：NoneType object is not subscriptable。"
+  - "程序向 images stack 要它的 tag，什么都没拿到。"
+  en_display:
+  - "Then Preview: pulumi preview --stack dev --refresh."
+  - "On the local backend, a Python error at line 70 of setup_containers.py: 'NoneType' object is not subscriptable."
+  - null
+- en: "You see this if the images stack never finished pulumi up in this same state bucket. Skipping it is safe only when it already ran there."
+  zh:
+  - "你会看到这个，如果 images stack 从来没有在同一个 state bucket 里跑完 pulumi up。"
+  - "只有它已经在那里跑过，跳过才安全。"
+- en: "So we gave the program a stand-in images stack with placeholder tags; nothing is built. Now the real plan appears: the network, the cluster, the node pool, the Kubernetes objects, and plus 23 to create."
+  zh:
+  - "所以我们给程序一个带占位 tag 的替身 images stack；什么都没构建。"
+  - "现在真正的计划出现了：网络、集群、节点池、Kubernetes 对象，一共要创建 23 个。"
+  en_display:
+  - null
+  - "Now the real plan appears: the network, the cluster, the node pool, the Kubernetes objects, and + 23 to create."
+- en: "Two more lines are lookups, not counted in the 23: the stack reference and the nginx Service. In the outputs, only the cluster name is known; the address and the URL wait until the cluster exists."
+  zh:
+  - "还有两行是查询，不算在 23 个里：stack reference 和 nginx 的 Service。"
+  - "在输出里，只有集群名字是已知的；地址和 URL 要等集群建好才有。"
+- en: "Pause and run your preview: you should see the same 23, with real image tags."
+  zh:
+  - "暂停一下，跑你的 preview：你应该看到同样的 23 个，只是带着真实的 image tag。"
+S12:
+- en: "Then the big one: pulumi up, stack dev, refresh, dash y. On the local backend the update starts, and the very first resource, the network, fails: invalid grant, account not found."
+  zh:
+  - "然后是重头戏：pulumi up --stack dev --refresh -y。"
+  - "在本地 backend 上，更新开始了，第一个资源，也就是网络，就失败了：Invalid grant: account not found。"
+  en_display:
+  - "Then the big one: pulumi up --stack dev --refresh -y."
+  - "On the local backend the update starts, and the very first resource, the network, fails: invalid_grant: Invalid grant: account not found."
+- en: "The network is the first thing that needs Google, so from here on this is a picture. Pause and start yours; from now on, the meter runs."
+  zh:
+  - "网络是第一个需要 Google 的东西，所以从这里开始是示意图。"
+  - "暂停一下，启动你的；从现在起，计费表就开始走了。"
+- en: "Pulumi follows the dependencies. First the network and its subnet. Then, side by side, the router with its NAT gateway, and the cluster, the long wait: a quarter of an hour or more, by our estimate."
+  zh:
+  - "Pulumi 按依赖关系来。"
+  - "先是网络和它的子网。"
+  - "然后并排进行：带 NAT 网关的路由器，以及集群，要等很久：按我们的估算，一刻钟或更久。"
+- en: "Then the node pool. A Kubernetes provider, built from the cluster outputs, waits for that pool, so no Pod is created before there are nodes."
+  zh:
+  - "然后是节点池。"
+  - "一个用集群输出构建的 Kubernetes provider 会等这个节点池，所以有节点之前不会创建任何 Pod。"
+- en: "Through it come the namespace, the service account of the API and its binding, the two disk claims, the frontend and the vector database."
+  zh:
+  - "通过它创建的有 namespace，API 的 Kubernetes 服务账号和它的绑定，两个磁盘 PVC，还有前端和向量数据库。"
+- en: "Next, the loader Job fills the vector database. Pulumi creates the API only after the Job completes: lines 319 to 321 set that dependency."
+  zh:
+  - "接下来，加载器 Job 填充向量数据库。"
+  - "Pulumi 要等 Job 完成后才创建 API：第 319 到 321 行设定了这个依赖。"
+- en: "In parallel, Helm installs the nginx Ingress controller. Its Service asks for a load balancer, so the controllers ask the cloud for an address: the part 1 lamp, green this time. That address becomes a host name, and the Ingress comes last."
+  zh:
+  - "同时，Helm 安装 nginx Ingress controller。"
+  - "它的 Service 申请一个负载均衡器，于是控制器向云平台要一个地址：第 1 部分的那个指示灯，这次是绿的。"
+  - "这个地址变成一个主机名，Ingress 最后创建。"
+- en: "Identity, in two parts. Pulumi and kubectl reach the API server through the GKE auth plugin, fix two from the toolbox, so there is no cluster password."
+  zh:
+  - "身份，分两部分。"
+  - "Pulumi 和 kubectl 通过 GKE 认证插件连到 API server，也就是工具箱的修复 2，所以没有集群密码。"
+- en: "And the API Pod wears its Kubernetes service account, which Workload Identity swaps for gcp service at the door to Vertex AI. No JSON key sits in the cluster."
+  zh:
+  - "而 API 的 Pod 带着它的 Kubernetes 服务账号，Workload Identity 在 Vertex AI 门口把它换成 gcp-service。"
+  - "集群里没有任何 JSON 密钥。"
+  en_display:
+  - "And the API Pod wears its Kubernetes service account, which Workload Identity swaps for gcp-service at the door to Vertex AI."
+  - null
+- en: "Keep in mind: Pulumi connects kubectl once, inside this toolbox, which is removed when you exit. The next session starts unconnected. If yours stops, the card shows the four usual causes: pause and match your error."
+  zh:
+  - "记住：Pulumi 只在这个工具箱里给 kubectl 连接一次，你退出时工具箱就被删掉了。"
+  - "下次会话开始时没有连接。"
+  - "如果你的运行停下了，卡片列出四个常见原因：暂停一下，对照你的报错。"
+S13:
+- en: "Lecture 20 put one nginx container in front. The game opened its own load balancer, one door per app. The cheese app opens one door, with a receptionist behind it."
+  zh:
+  - "第 20 讲在前面放了一个 nginx container。"
+  - "那个游戏开了自己的负载均衡器，一个应用一扇门。"
+  - "奶酪应用只开一扇门，门后有一位前台。"
+- en: "The README draws the path: browser, load balancer, the nginx Ingress controller, then the frontend on 3000 or the API on 9000, and the vector database on 8000."
+  zh:
+  - "README 画出了这条路径：浏览器、负载均衡器、nginx Ingress controller，然后是 3000 上的前端或 9000 上的 API，以及 8000 上的向量数据库。"
+- en: "A small slip: the README draws the dotted arrow from the vector database to the loader. The data flows the other way, from the Job into the database."
+  zh:
+  - "有一个小疏漏：README 把虚线箭头从向量数据库画到加载器。"
+  - "数据是反方向流的，从 Job 流进数据库。"
+- en: "Follow one click. Your IP dot sslip dot io points back to that same IP, with no setup at all. The packet passes the cloud load balancer and lands on the nginx controller."
+  zh:
+  - "跟着一次点击走。"
+  - "你的 IP.sslip.io 会指回同一个 IP，什么都不用设置。"
+  - "数据包经过云负载均衡器，落到 nginx controller 上。"
+  en_display:
+  - null
+  - "<IP>.sslip.io points back to that same IP, with no setup at all."
+  - null
+- en: "The Ingress rule starts with the host name: for that host, slash api service goes to the API on 9000, every other path to the frontend on 3000. The controller follows that rule, like the nginx dot conf of lecture 20, now generated."
+  zh:
+  - "Ingress 规则从主机名开始：对这个主机，/api-service 去 9000 上的 API，其他路径都去 3000 上的前端。"
+  - "这个 controller 按这条规则走，就像第 20 讲的 nginx.conf，只是现在是自动生成的。"
+  en_display:
+  - "The Ingress rule starts with the host name: for that host, /api-service goes to the API on 9000, every other path to the frontend on 3000."
+  - "The controller follows that rule, like the nginx.conf of lecture 20, now generated."
+- en: "This time the prefix is kept: nothing strips it. The API mounts itself under its root path, slash api service, so slash api service slash status answers version three point zero."
+  zh:
+  - "这次前缀保留了：没有东西去剪掉它。"
+  - "API 把自己挂在它的根路径 /api-service 下面，所以 /api-service/status 返回版本 3.0。"
+  en_display:
+  - null
+  - "The API mounts itself under its root path, /api-service, so /api-service/status answers version 3.0."
+- en: "The page comes from the frontend; then your browser calls the API directly, at slash api service."
+  zh:
+  - "页面来自前端；然后你的浏览器直接调用 API，在 /api-service。"
+  en_display:
+  - "The page comes from the frontend; then your browser calls the API directly, at /api-service."
+- en: "Inside the cluster, the API reaches Chroma by its Service name, vector db, on port 8000."
+  zh:
+  - "在集群内部，API 按 Service 名字找到 Chroma：vector-db，port 8000。"
+  en_display:
+  - "Inside the cluster, the API reaches Chroma by its Service name, vector-db, on port 8000."
+- en: "Now open the bare IP: the same load balancer, without sslip dot io. What answers?"
+  zh:
+  - "现在打开裸 IP：同一个负载均衡器，不带 sslip.io。"
+  - "谁来回答？"
+  en_display:
+  - "Now open the bare IP: the same load balancer, without sslip.io."
+  - null
+- en: "The nginx controller answers 404 Not Found. The rule matches only that host name, so the same door with the wrong name finds no route. Use the app URL from the outputs."
+  zh:
+  - "回答的是 nginx controller：404 Not Found。"
+  - "规则只匹配那个主机名，所以同一扇门、名字不对，就找不到路由。"
+  - "用输出里的 app URL。"
+  en_display:
+  - null
+  - null
+  - "Use the app_url from the outputs."
+- en: "That ticks load balancing: the cloud load balancer at the door, nginx behind it, and each Service spreading requests across its Pods."
+  zh:
+  - "这就勾上了负载均衡：门口是云负载均衡器，后面是 nginx，每个 Service 再把请求分散到它的 Pod 上。"
+S14:
+- en: "Next, try some kubectl commands. With no cluster here, all five say connection refused. You will see exactly this in any new toolbox session: the kubeconfig Pulumi wrote went away with the old container."
+  zh:
+  - "接下来，试几条 kubectl 命令。"
+  - "这里没有集群，五条都显示 connection refused。"
+  - "在任何一个新的工具箱会话里你都会看到一模一样的结果：Pulumi 写的 kubeconfig 跟着旧 container 一起没了。"
+- en: "The fix is the command Pulumi ran, an extra here: gcloud container clusters get credentials, cheese app cluster. The code passes the region to the zone flag; write region, which says what it means."
+  zh:
+  - "修复办法就是 Pulumi 跑过的那条命令，在这里是额外步骤：gcloud container clusters get-credentials，加上 cheese-app-cluster。"
+  - "代码把区域传给了 --zone 参数；写成 --region，才名副其实。"
+  en_display:
+  - "The fix is the command Pulumi ran, an extra here: gcloud container clusters get-credentials cheese-app-cluster."
+  - "The code passes the region to the --zone flag; write --region, which says what it means."
+- en: "Once connected, get all still shows only the kubernetes Service, because the app sits in its own namespace. With dash n, cheese app namespace, yours lists the frontend, database, API and nginx controller Pods, and a loader Pod marked completed. Get nodes shows one node, or two."
+  zh:
+  - "连上以后，get all 还是只显示 kubernetes 这个 Service，因为应用在它自己的 namespace 里。"
+  - "加上 -n cheese-app-namespace，你的会列出前端、数据库、API 和 nginx controller 的 Pod，还有一个标着 Completed 的加载器 Pod。"
+  - "命令 get nodes 显示一个节点，或者两个。"
+  en_display:
+  - null
+  - "With -n cheese-app-namespace, yours lists the frontend, database, API and nginx controller Pods, and a loader Pod marked Completed."
+  - null
+- en: "The next README step shells into a Pod. The Pod name in the README is the author's own; use the name your first command prints."
+  zh:
+  - "README 的下一步是进到一个 Pod 的 shell 里。"
+  - "README 里的 Pod 名字是作者自己的；用你第一条命令打印出来的名字。"
+- en: "Inside, you get a shell in the API container, just as we did in the game. Print its environment and look for ROOT PATH. Pause and try it."
+  zh:
+  - "进去以后，你拿到的是 API container 里的一个 shell，和我们在游戏里做的一样。"
+  - "打印它的环境变量，找 ROOT PATH 这个变量。"
+  - "暂停一下，试一试。"
+  en_display:
+  - null
+  - "Print its environment and look for ROOT_PATH."
+  - null
+- en: "To view the app, the README shows an outputs block a little older than the code. Today the address is called ip address, not nginx ingress ip, and the Ingress is called cheese app ingress."
+  zh:
+  - "为了查看应用，README 给了一段输出，比代码稍旧一点。"
+  - "现在地址叫 ip address，不叫 nginx ingress ip，Ingress 叫 cheese-app-ingress。"
+  en_display:
+  - null
+  - "Today the address is called ip_address, not nginx_ingress_ip, and the Ingress is called cheese-app-ingress."
+- en: "Pause and open your app URL. A footer that says API version three point zero proves the whole path works: it asks slash api service slash status. Then pick the RAG model in the chat; a reply proves Vertex AI and Chroma too."
+  zh:
+  - "暂停一下，打开你的 app URL。"
+  - "页脚显示 API version: 3.0，就证明整条路径都通了：它请求的是 /api-service/status。"
+  - "然后在聊天里选 RAG 模型；有回复，就证明 Vertex AI 和 Chroma 也通了。"
+  en_display:
+  - "Pause and open your app_url."
+  - "A footer that says API version: 3.0 proves the whole path works: it asks /api-service/status."
+  - null
+- en: "Right after deploying you may see 502 or 503: the API is still loading TensorFlow. Wait, and try again."
+  zh:
+  - "刚部署完你可能会看到 502 或 503：API 还在加载 TensorFlow。"
+  - "等一等，再试一次。"
+S15:
+- en: "The README's debugging block has 14 kubectl commands. As typed, they all fail; most say the namespace, cheese app cluster namespace, is not found."
+  zh:
+  - "README 的调试那一块有 14 条 kubectl 命令。"
+  - "照原样敲，全都会失败；大多数都说这个 namespace，cheese-app-cluster-namespace，找不到。"
+  en_display:
+  - null
+  - "As typed, they all fail; most say the namespace, cheese-app-cluster-namespace, is not found."
+- en: "Lines with pod name in angle brackets are shell redirections: replace the whole placeholder, brackets included."
+  zh:
+  - "带尖括号的 pod name 那几行是 shell 重定向：把整个占位符连同尖括号一起替换掉。"
+  en_display:
+  - "Lines with <pod-name> are shell redirections: replace the whole placeholder, brackets included."
+- en: "Two fixes: the namespace is cheese app namespace, and the Job has one container, so drop the wait for chromadb flag. Pause and try them."
+  zh:
+  - "两处修复：namespace 是 cheese-app-namespace，而 Job 只有一个 container，所以去掉 -c wait-for-chromadb 这个参数。"
+  - "暂停一下，试一试。"
+  en_display:
+  - "Two fixes: the namespace is cheese-app-namespace, and the Job has one container, so drop the -c wait-for-chromadb flag."
+  - null
+- en: "On a Job that exists, an extra on the stand-in, the same commands work: done, one succeeded. Nothing replaces a finished Job's Pod."
+  zh:
+  - "在一个确实存在的 Job 上，在替身上做个额外检查，同样的命令都能用：done，1 个 Succeeded。"
+  - "已经完成的 Job，它的 Pod 不会被替换。"
+- en: "A small note: the disk is mounted at slash chroma slash chroma, but today's Chroma image writes to slash data. So the vectors live inside the container and vanish when the Pod restarts. Change line 150 to slash data, or run the loader Job again after a restart."
+  zh:
+  - "说明一点：磁盘挂载在 /chroma/chroma，但如今的 Chroma 镜像写到 /data。"
+  - "所以向量存在 container 里面，Pod 一重启就没了。"
+  - "把第 150 行改成 /data，或者重启以后再跑一次加载器 Job。"
+  say:
+  - "说明一点：磁盘挂载在 /chroma/chroma，但如今的 Chroma 镜像写到另一个目录。"
+  - null
+  - "把第 150 行改成那个目录，或者重启以后再跑一次加载器 Job。"
+  en_display:
+  - "A small note: the disk is mounted at /chroma/chroma, but today's Chroma image writes to /data."
+  - null
+  - "Change line 150 to /data, or run the loader Job again after a restart."
+- en: "Now scaling. The lecture promises scaling on CPU, memory or custom metrics, but the code sets no replicas and no Pod autoscaler. It switches on the node layer: one to two nodes."
+  zh:
+  - "现在讲扩展。"
+  - "课上承诺按 CPU、内存或自定义指标扩展，但代码没有设副本数，也没有 Pod 自动扩缩器。"
+  - "它打开的是节点这一层：一到两个节点。"
+- en: "The scheduler packs Pods onto nodes by their requests. The frontend asks for a quarter CPU and 2 gigabytes. Chroma and nginx ask for little, and the API for nothing, so nobody can plan for it."
+  zh:
+  - "调度器按 requests 把 Pod 装到节点上。"
+  - "前端申请四分之一个 CPU 和 2 GB。"
+  - "Chroma 和 nginx 申请得很少，API 什么都没申请，所以谁也没法为它做规划。"
+- en: "Scale the frontend to 3; Milestone 5 asks you to show scaling. A copy that does not fit waits, pending, until the autoscaler adds a second node. Ask for many more, and some stay pending: the pool stops at two."
+  zh:
+  - "把前端扩到 3 个；Milestone 5 要求你展示扩展。"
+  - "放不下的副本会等着，处于 Pending，直到自动扩缩器加上第二个节点。"
+  - "要得再多一些，有些就会一直 Pending：节点池到两个就停了。"
+- en: "The API's disk attaches to one node at a time. Suppose you scaled the API to 3, and some copies landed on the second node. What happens to them, and can the autoscaler fix it?"
+  zh:
+  - "API 的磁盘一次只能挂到一个节点上。"
+  - "假设你把 API 扩到 3 个，有些副本落在了第二个节点上。"
+  - "它们会怎样，自动扩缩器能解决吗？"
+- en: "They stay stuck creating, with a multi attach error: the disk already sits on node 1. More nodes do not help; the limit is the disk."
+  zh:
+  - "它们一直卡在创建中，报 Multi-Attach 错误：磁盘已经挂在节点 1 上了。"
+  - "加节点没用；限制在磁盘。"
+  en_display:
+  - "They stay stuck creating, with a Multi-Attach error: the disk already sits on node 1."
+  - null
+- en: "That ticks scaling, in two levels: nodes automatically, Pods in your hands; a Pod autoscaler on CPU needs requests, and the API has none. Scale back to 1 when you are done."
+  zh:
+  - "这就勾上了扩展，分两层：节点自动扩缩，Pod 由你手动扩；按 CPU 的 Pod 自动扩缩器需要 requests，而 API 没有。"
+  - "缩回 1 个，等你用完以后。"
+S16:
+- en: "Last, delete the cluster: pulumi destroy, stack dev, refresh, dash y. Ours has nothing real to delete; yours deletes what this stack created, in reverse order, from the Ingress down to the network."
+  zh:
+  - "最后，删除集群：pulumi destroy --stack dev --refresh -y。"
+  - "我们的没有真东西可删；你的会删掉这个 stack 创建的东西，倒着来，从 Ingress 一直删到网络。"
+  en_display:
+  - "Last, delete the cluster: pulumi destroy --stack dev --refresh -y."
+  - null
+- en: "Then check what may survive, our suggestion: list clusters, forwarding rules, disks and firewall rules. Those are deleted in the background and can be left behind; look for disks named pvc."
+  zh:
+  - "然后检查可能残留的东西，这是我们的建议：列出集群、转发规则、磁盘和防火墙规则。"
+  - "这些是在后台删除的，可能会被落下；找名字里带 pvc 的磁盘。"
+- en: "Registry images stay on purpose: delete them in the console. Delete the lecture 20 machine too, if it still runs. Pause and check."
+  zh:
+  - "registry 里的 image 是故意留下的：在控制台里删掉。"
+  - "第 20 讲那台机器也删掉，如果它还在运行。"
+  - "暂停一下，检查一遍。"
+- en: "Back to the three asks. Failover: the ReplicaSet brings Pods back, and node auto repair replaces broken machines. Load balancing: the cloud load balancer, nginx and the Services. Scaling: the node autoscaler, and kubectl scale in your hands."
+  zh:
+  - "回到三个诉求。"
+  - "故障转移：ReplicaSet 把 Pod 带回来，节点自动修复替换坏掉的机器。"
+  - "负载均衡：云负载均衡器、nginx 和 Service。"
+  - "扩展：节点自动扩缩器，还有你手里的 kubectl scale。"
+- en: "The lecture lists five payoffs. Self-service: one pulumi up. Lower cost: Pods packed by their requests. Automatic adjustment: the node autoscaler. Smooth running: self-healing. Simpler development: the same images as lecture 20."
+  zh:
+  - "课上列了五个好处。"
+  - "自助服务：一次 pulumi up。"
+  - "成本更低：Pod 按 requests 紧凑地装。"
+  - "自动调整：节点自动扩缩器。"
+  - "运行平稳：自愈。"
+  - "开发更简单：和第 20 讲一样的 image。"
+- en: "Test yourself. Which control plane part decides where a new Pod runs, and which one notices that a Pod died? Why does get all show only the kubernetes Service, and what flag fixes it?"
+  zh:
+  - "自测一下。"
+  - "控制平面里哪个组件决定新 Pod 跑在哪里，哪个发现 Pod 死了？"
+  - "为什么 get all 只显示 kubernetes 这个 Service，用哪个参数能解决？"
+- en: "How does the web Service know its Pods, and why does the API reach Chroma at vector db? Trace one click from sslip dot io to the API Pod; why does the bare IP answer 404?"
+  zh:
+  - "名叫 web 的 Service 怎么知道它的 Pod，API 为什么在 vector-db 找到 Chroma？"
+  - "从 sslip.io 一路追踪一次点击到 API 的 Pod；为什么裸 IP 返回 404？"
+  en_display:
+  - "How does the web Service know its Pods, and why does the API reach Chroma at vector-db?"
+  - "Trace one click from sslip.io to the API Pod; why does the bare IP answer 404?"
+- en: "Why can the frontend scale to 3 but the API cannot, and what does the autoscaler add? Answers are in the exercises and the study guide."
+  zh:
+  - "为什么前端能扩到 3 个，而 API 不行，自动扩缩器加的又是什么？"
+  - "答案在练习和学习指南里。"
+- en: "Next, in lecture 23, the two Pulumi programs, in version 4 of the app, run from GitHub Actions on every merge."
+  zh:
+  - "下一讲，也就是第 23 讲，这两个 Pulumi 程序，在 app 的版本 4 里，会在每次合并时由 GitHub Actions 运行。"

@@ -1,0 +1,16 @@
+# C7: an image tag that was never pushed (the c20/c21 placeholder tag, in the placeholder project)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-placeholder
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {run: frontend-placeholder}
+  template:
+    metadata:
+      labels: {run: frontend-placeholder}
+    spec:
+      containers:
+      - name: frontend
+        image: us-docker.pkg.dev/your-gcp-project/cheese-app-repository/cheese-app-frontend-react:placeholder

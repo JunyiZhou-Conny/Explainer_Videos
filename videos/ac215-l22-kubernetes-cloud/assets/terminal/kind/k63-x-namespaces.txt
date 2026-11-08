@@ -1,0 +1,11 @@
+$ kubectl get namespaces; kubectl create namespace cheese-app-namespace; kubectl get pods --namespace=cheese-app-namespace; kubectl delete namespace cheese-app-namespace
+NAME                 STATUS   AGE
+default              Active   13m
+kube-node-lease      Active   13m
+kube-public          Active   13m
+kube-system          Active   13m
+local-path-storage   Active   13m
+namespace/cheese-app-namespace created
+No resources found in cheese-app-namespace namespace.
+namespace "cheese-app-namespace" deleted
+[exit 0]

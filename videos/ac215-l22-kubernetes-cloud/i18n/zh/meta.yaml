@@ -1,0 +1,50 @@
+# Chinese (zh-CN) metadata for ac215-l22-kubernetes-cloud (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 虚拟机（VM）, 堆栈（stack）, 命名空间（namespace）,
+# 标签（label）; A4), the English colon structure kept (期望状态：会自己回来的 Pod; deploy_k8s：配置和 23 个资源的计划;
+# pulumi up：建什么，按什么顺序), commands, tools, object kinds and names as they are (Kubernetes, GKE, kubectl, Pulumi,
+# Pod, Deployment, Service, deploy_k8s, pulumi up), the core-concept chapters with their English short name once for
+# search (控制平面（control plane）, 期望状态（desired state）), questions keep their question mark, and S16 in the
+# series' 收尾 pattern. 跟练 = follow-along; Scaling → 扩展.
+# The title agrees in substance with video.yaml's publish.title_zh ("AC215 第22讲跟练 · 扩展：云上的 Kubernetes——先手动
+# 体验一个测试集群，再用 Pulumi 把奶酪 App 部署到 GKE"), in the series pattern of the other meta.yaml titles; the Bilibili
+# upload itself uses publish.title_zh.
+# SERIES RULE (A16): no title, chapter or description names the instructor, and none names the unmerged staff branch.
+# meta.yaml is not read by `explainer.i18n check`, so brackets and underscores are fine here.
+title: "AC215 · 第 22 讲：扩展——云上的 Kubernetes，先手动体验一个测试集群，再用 Pulumi 把奶酪应用部署到 GKE（跟练：cheese-app-v3）"
+
+parts:
+  part1: "AC215 · 第 22 讲（上）：手动体验 Kubernetes——集群、它的组件和一次测试部署"
+  part2: "AC215 · 第 22 讲（下）：用 Pulumi 把奶酪应用部署到 GKE——计划、流量、扩展与清理"
+
+chapters:
+  s01_hook: "凌晨两点，谁来重启它？"
+  s02_orchestrator: "从一台机器到一个集群"
+  s03_anatomy: "集群内部：控制平面（control plane）是大脑，工作节点是双手"
+  s04_toolbox: "部署工具箱，还是要修两处"
+  s05_test_cluster: "一个测试集群，先看一圈"
+  s06_tic_tac_toe: "两个对象：Deployment 和 Service"
+  s07_self_healing: "期望状态（desired state）：会自己回来的 Pod"
+  s08_stable_names: "标签（label）、Service、命名空间（namespace），然后删除"
+  s09_blueprint: "奶酪应用的集群，写成代码"
+  s10_images: "准备工作和镜像堆栈（stack）"
+  s11_plan: "deploy_k8s：配置和 23 个资源的计划"
+  s12_pulumi_up: "pulumi up：建什么，按什么顺序"
+  s13_one_click: "一次点击的旅程"
+  s14_explore: "用 kubectl 查看应用，以及输出"
+  s15_scaling: "先看日志，再看两层扩展"
+  s16_recap: "destroy、清点残留与回顾"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but
+# without the course-credit line's names (A16). Facts: script.md v2 (S01-S16, two parts at the lecture's own seam:
+# slide 40 deletes the test cluster, slide 41 turns to the Pulumi code); README @ 3ecef56 (main, unchanged on the
+# recording day, 2026-11-07); the toolbox's Dockerfile needed the same two one-line fixes as in L20; the kubectl
+# warm-up and the debugging commands ran on a labelled local kind stand-in (not GKE); every Google and Pulumi-backend
+# step stops at its first real error, and the successful outcome is described, never shown as output; five
+# pause-and-ponder cards and a closing test-yourself set. Paste the chapter timestamps from output/chapters.txt under
+# it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 22 讲“扩展：云上的 Kubernetes”的跟练视频，对照课件逐页讲解，并照着 dlops-io/cheese-app-v3 的 README 一步一步做：上半场手动体验 Kubernetes，从“凌晨两点谁来重启容器”讲到故障转移、负载均衡和扩展三个诉求，画清集群的控制平面（API server、etcd、调度器、控制器）和工作节点（kubelet、kube-proxy、containerd、Pod），修好部署工具箱（录制当天 Dockerfile 仍需两处一行修改），用 gcloud 创建测试集群，再部署 tic-tac-toe：Deployment 与 Service、标签（label）与 selector、被删掉又自己回来的 Pod、集群 DNS 和命名空间（namespace），最后删除集群。
+  下半场用 Pulumi 把奶酪应用部署到 GKE：私有网络与 Cloud NAT、一到两个节点的节点池、镜像堆栈与 deploy_k8s、23 个资源的计划和 pulumi up 的创建顺序、Workload Identity；跟着一次点击从 sslip.io 经过负载均衡器和 NGINX Ingress controller 走到 Pod，说明为什么裸 IP 返回 404；用 kubectl 查看应用、进入 Pod、读加载器 Job 的日志（README 调试命令里的命名空间已过时，视频给出改正）；Pod 和节点两层扩展、资源请求（requests）、Pending 与自动扩缩器，以及为什么挂着磁盘的 API 不能随便扩；最后 pulumi destroy 并清点残留资源。
+  英文旁白，配中文和中英双语字幕；录制环境没有 Google 账号，每个云端步骤都展示到它真实的第一个报错为止，并说明你自己的输出应该是什么，kubectl 命令在一个明确标注的本地替身集群（kind，不是 GKE）上真实运行；测试集群和 GKE 集群都按小时计费（视频用金色标签标出），每个部分结尾都有删除步骤。

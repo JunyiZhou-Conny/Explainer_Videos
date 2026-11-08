@@ -1,0 +1,403 @@
+# zh narration for S01-S08 (part 1, group g1: the 2 a.m. hook and the three asks, the orchestrator and the
+# cluster, the cluster's parts and kubectl's grammar, the toolbox fixed twice, the test cluster and the kind
+# stand-in, tic-tac-toe's Deployment and Service, Pods that come back, labels, Services, DNS, namespaces and
+# the delete), sentence-aligned to script.md v2 (2026-11-07): one zh sentence per English sentence
+# (explainer.voice.split_sentences; 76 SAY lines, 169 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (D9).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (A6, B3):
+# create_cluster.py -> create cluster; --replicas=4 -> replicas 设成 4; EXTERNAL-IP <pending> -> 外部 IP 显示 pending.
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4); null = the SAY text.
+# The instructor rule (A16): the narration of S01-S08 names no instructor (the lecture -> 课上, the slides -> 课件).
+S01:
+- en: "Here is a small app on one virtual machine: a web server in front, a frontend and two APIs behind it. If one of them crashes in the night, who restarts it?"
+  zh:
+  - "这是一台虚拟机上的一个小应用：前面一台 Web 服务器，后面是一个前端和两个 API。"
+  - "如果其中一个半夜崩了，谁来重启它？"
+- en: "At two in the morning, one API container crashes. The app owner finds out when users complain, and the operator logs in over SSH and restarts it by hand."
+  zh:
+  - "凌晨两点，一个 API container 崩了。"
+  - "应用负责人要等用户投诉才知道，运维通过 SSH 登录进去，手动重启它。"
+- en: "In lecture 20, Docker could restart a crashed container, but only on that one machine: if the machine itself failed, the whole site waited for you."
+  zh:
+  - "在第 20 讲里，Docker 能重启崩掉的 container，但只限那一台机器：如果机器本身挂了，整个网站就只能等你来救。"
+- en: "So the app owner asks for several servers. The operator answers with three machines, and a backup copy beside each API."
+  zh:
+  - "于是应用负责人要多台服务器。"
+  - "运维给了三台机器，每个 API 旁边再放一个备份。"
+- en: "Each backup sits on the same machine as its original. Name one failure that still takes that API down, and say who switches to the backup."
+  zh:
+  - "每个备份都和它的原件在同一台机器上。"
+  - "说出一个仍然会让这个 API 挂掉的故障，再说说是谁切换到备份。"
+- en: "The machine itself: one failed disk or network takes both copies at once. And even when a backup survives, a person still has to switch over by hand."
+  zh:
+  - "是机器本身：一块坏掉的磁盘或一次网络故障，会同时带走两份。"
+  - "而且就算备份活下来了，还是得有人手动切换。"
+- en: "The lecture wants three jobs done with nobody awake. Failover: a working copy takes over. Load balancing: requests spread across copies. Scaling: more copies when traffic grows."
+  zh:
+  - "课上要的是，没人醒着也能把三件事做好。"
+  - "故障转移：一个正常的副本接手。"
+  - "负载均衡：请求分散到各个副本上。"
+  - "扩展：流量变大时就多开副本。"
+- en: "This card comes back each time we see what does one of these jobs, and we tick it then. The tool for all three is Kubernetes."
+  zh:
+  - "这张卡片会在每次我们看到是谁在做其中一件事时回来，那时我们就勾上它。"
+  - "三件事用的工具都是 Kubernetes。"
+S02:
+- en: "Kubernetes is an orchestrator: it runs containers across a cluster of machines and keeps them the way you declared. The name is Greek for helmsman, and Helm, a tool in part 2, borrows it."
+  zh:
+  - "Kubernetes 是一个编排工具：它在一个由多台机器组成的集群上运行 container，并让它们保持你声明的样子。"
+  - "这个名字在希腊语里是舵手的意思，而第 2 部分用到的工具 Helm，也借了这个词。"
+- en: "On the left, one machine runs every container on one Docker engine. On the right, many machines, called nodes, share the containers, and one control plane coordinates them."
+  zh:
+  - "左边，一台机器在一个 Docker 引擎上跑所有 container。"
+  - "右边，很多台机器，叫作节点，分担这些 container，由一个控制平面来协调。"
+- en: "A word of warning: here, deployment means a way of deploying, not the Deployment object we meet later."
+  zh:
+  - "提醒一句：这里的“部署”指一种部署方式，不是我们后面要见到的 Deployment 对象。"
+- en: "In lecture 20 the cheese app ran on one machine. Now the same app goes to a cluster, and the tools gain kubectl. Our toolbox already has it, plus Helm and the GKE auth plugin, which the slides do not list."
+  zh:
+  - "在第 20 讲里，奶酪应用跑在一台机器上。"
+  - "现在同一个应用搬到集群上，工具里多了 kubectl。"
+  - "我们的工具箱里已经有它了，还有 Helm 和 GKE 认证插件，这两个课件上没列。"
+- en: "To follow along: cheese app version 3 with your secrets folder beside it, Docker, and a Google Cloud project with billing. A cluster costs money by the hour, so each part ends by deleting it."
+  zh:
+  - "跟着做需要：cheese-app-v3，旁边放着你的 secrets 目录，再加上 Docker，以及一个开通了结算的 Google Cloud 项目。"
+  - "集群按小时收费，所以每个部分最后都会把它删掉。"
+  en_display:
+  - "To follow along: cheese-app-v3 with your secrets folder beside it, Docker, and a Google Cloud project with billing."
+  - null
+- en: "The tracker names the README step, code panels name their file and lines, and your turn means pause and run it. A grey tag in the corner names the lecture slides."
+  zh:
+  - "进度条标出 README 的哪一步，代码面板标出文件和行号，your turn 表示暂停一下，自己跑一遍。"
+  - "角落里的灰色标签标出课件的页码。"
+- en: "One honest note: our recording machine has no Google account. What runs on a machine you own is real; every Google step stops at its first honest error, and we say what yours prints."
+  zh:
+  - "如实说一句：我们录制用的机器没有 Google 账号。"
+  - "在你自己的机器上能跑的都是真的；每个 Google 步骤都停在它第一个真实的报错处，我们会告诉你，你那边会输出什么。"
+- en: "We follow main, the branch the course site links, at this November 2025 commit. Git log tells you which one you have."
+  zh:
+  - "我们跟的是 main，也就是课程网站链接的分支，用的是 2025 年 11 月的这个 commit。"
+  - "看一下 Git 的提交日志，就知道你手上是哪一个。"
+- en: "Part 1 does the lecture's warm-up by hand. Part 2 deploys the cheese app as code."
+  zh:
+  - "第 1 部分手动做课上的热身。"
+  - "第 2 部分把奶酪应用写成代码来部署。"
+S03:
+- en: "Let's open the cluster. The lecture draws it in three steps. First: one control plane, with arrows to several worker nodes, each an ordinary virtual machine."
+  zh:
+  - "我们把集群打开看看。"
+  - "课上分三步画它。"
+  - "第一步：一个控制平面，箭头指向几个工作节点，每个节点都是一台普通的虚拟机。"
+- en: "Second, the two planes get names. The control plane is the brain. On GKE, Google runs it, and you never see its machines. The workers carry your containers: for the cheese app, a pool of one or two nodes."
+  zh:
+  - "第二步，两个平面有了名字。"
+  - "控制平面是大脑。"
+  - "在 GKE 上，它由 Google 运行，你永远看不到它的机器。"
+  - "工作节点承载你的 container：对奶酪应用来说，是一个有一到两个节点的节点池。"
+- en: "Third, the parts. The API server is the single entry point; every other part talks only to it. Etcd is the memory of the cluster: its state and configuration."
+  zh:
+  - "第三步，各个组件。"
+  - "API server 是唯一的入口；其他组件都只和它通信。"
+  - "其中 etcd 是集群的记忆：存着集群的状态和配置。"
+- en: "The scheduler picks a node for each new Pod. The controllers keep watching and fix any difference between what you asked for and what runs; some of them ask the cloud for nodes and addresses."
+  zh:
+  - "调度器给每个新 Pod 挑一个节点。"
+  - "控制器一直在盯着，把你要求的和实际运行的之间的任何差异修正过来；其中一些会向云平台要节点和地址。"
+- en: "On every worker, the kubelet is the hands of the API server: it starts and stops the containers. Kube proxy routes traffic for Services, and a container runtime runs the containers, grouped in Pods."
+  zh:
+  - "每个工作节点上，kubelet 是 API server 的双手：它负责启动和停止 container。"
+  - "节点上还有 kube-proxy，为 Service 转发流量，container 运行时负责运行 container，这些 container 按 Pod 分组。"
+  en_display:
+  - null
+  - "kube-proxy routes traffic for Services, and a container runtime runs the containers, grouped in Pods."
+- en: "A small note: the slide names Docker as the runtime. On GKE it is containerd, line 52 of create cluster dot py. You still build images with Docker, and they run unchanged."
+  zh:
+  - "说明一点：课件上写的运行时是 Docker。"
+  - "在 GKE 上是 containerd，见 create cluster 那个文件的第 52 行。"
+  - "你照样用 Docker 构建 image，它们原样运行。"
+  en_display:
+  - null
+  - "On GKE it is containerd, line 52 of create_cluster.py."
+  - null
+- en: "Now follow the arrows. Every kubectl command goes to one place, the API server, which stores your wish in etcd. The scheduler and the kubelets pick up their work from it."
+  zh:
+  - "现在顺着箭头走。"
+  - "每条 kubectl 命令都只去一个地方，就是 API server，它把你的愿望存进 etcd。"
+  - "调度器和 kubelet 都从它那里领活。"
+- en: "The lecture gives kubectl one grammar: a command, a type, an optional name, and flags. Get nodes. Get pods. Get pods, with a flag for every namespace."
+  zh:
+  - "课上给 kubectl 定了一套语法：命令、类型、可选的名字，再加参数。"
+  - "命令 get nodes。"
+  - "命令 get pods。"
+  - "还有 get pods，加一个参数看所有 namespace。"
+- en: "When something is stuck, ask which of these parts is waiting. Four lamps on this picture will light up later, each with a symptom you will meet."
+  zh:
+  - "遇到卡住的时候，就问问是哪个组件在等。"
+  - "这张图上有四个指示灯，之后会一个个亮起来，每个都对应一个你会碰到的症状。"
+S04:
+- en: "The README keeps this warm-up after the cheese app's deployment. The lecture does it first, and so do we: it is the gentlest first contact with kubectl."
+  zh:
+  - "README 把这段热身放在奶酪应用的部署之后。"
+  - "课上先做它，我们也一样：这是和 kubectl 最温和的第一次接触。"
+- en: "First, enable five APIs in the console. A small slip: Google Container Registry has been shut down. Enable Artifact Registry instead."
+  zh:
+  - "首先，在控制台里启用五个 API。"
+  - "有一个小疏漏：Google Container Registry 已经关停了。"
+  - "改为启用 Artifact Registry。"
+- en: "Then start the toolbox: from the S R C folder, change into deployment and run docker-shell.sh. As committed, it fails: 404 Not Found from Debian, then pull access denied."
+  zh:
+  - "然后启动工具箱：在 src 目录里，进到 deployment 再运行 docker-shell.sh。"
+  - "按提交的原样，它会失败：先是 Debian 的 404 Not Found，然后是 pull access denied。"
+  en_display:
+  - "Then start the toolbox: from the src folder, change into deployment and run docker-shell.sh."
+  - null
+- en: "If you did lecture 20, you have seen this: the base image is Debian bullseye, whose security packages are gone. On Windows there is no docker-shell.bat. Use WSL."
+  zh:
+  - "如果你做过第 20 讲，就见过这个：基础 image 是 Debian bullseye，它的安全更新包已经没了。"
+  - "Windows 上没有 docker-shell.bat。"
+  - "用 WSL。"
+- en: "The fix is the same two one-line edits, an extra here. Bullseye becomes bookworm, and google cloud SDK becomes google cloud CLI, with its GKE auth plugin. Every kubectl call to GKE goes through that plugin."
+  zh:
+  - "修复还是那两处一行的修改，在这里是额外步骤。"
+  - "把 bullseye 换成 bookworm，把 google-cloud-sdk 换成 google-cloud-cli，再加上它的 GKE 认证插件。"
+  - "每次 kubectl 调用 GKE 都要经过这个插件。"
+  en_display:
+  - null
+  - "Bullseye becomes bookworm, and google-cloud-sdk becomes google-cloud-cli, with its GKE auth plugin."
+  - null
+- en: "As in lecture 20, also put your project on line 13 of docker-shell.sh."
+  zh:
+  - "和第 20 讲一样，也把你的项目填到 docker-shell.sh 的第 13 行。"
+- en: "Run it again: it builds in about 92 seconds and starts. The login then fails, because our key belongs to no account; with yours, these lines say activated and logged in."
+  zh:
+  - "再跑一次：大约 92 秒构建完，然后启动。"
+  - "接着登录失败，因为我们的密钥不属于任何账号；换成你的，这几行会显示 activated 和 logged in。"
+- en: "Pause here and start your toolbox; the rest of this part runs at its prompt."
+  zh:
+  - "在这里暂停一下，启动你的工具箱；这一部分剩下的步骤都在它的提示符下运行。"
+- en: "Next, check the tools. The gcloud tool and its auth plugin are there. Plain kubectl version prints the client, then connection refused: there is no cluster yet, so the server half has nobody to ask."
+  zh:
+  - "接下来，检查工具。"
+  - "工具 gcloud 和它的认证插件都在。"
+  - "只敲 kubectl version，会先打印客户端版本，然后是 connection refused：还没有集群，所以服务端那一半没有人可问。"
+- en: "A small surprise: the Dockerfile pins one kubectl version, but Google's own package wins: a dispatcher that matches each cluster."
+  zh:
+  - "有个小意外：Dockerfile pin 了一个 kubectl 版本，但 Google 自己的包胜出了：一个按集群匹配版本的 dispatcher。"
+- en: "Last, check that you are authenticated: gcloud auth list. Ours says no credentialed accounts; yours lists the deployment service account as active."
+  zh:
+  - "最后，检查你是否已经认证：gcloud auth list。"
+  - "我们的显示 No credentialed accounts；你的会把 deployment 服务账号列为 active。"
+  en_display:
+  - null
+  - "Ours says No credentialed accounts; yours lists the deployment service account as active."
+S05:
+- en: "Now Create Cluster: gcloud container clusters create test cluster, two nodes, zone us east 1 c. Ours stops at once: no active account. Pause and run yours; it costs money every hour it exists."
+  zh:
+  - "现在做 Create Cluster 这一步：gcloud container clusters create test-cluster，两个节点，可用区 us-east1-c。"
+  - "我们的马上就停了：no active account。"
+  - "暂停一下，跑你的；它存在的每个小时都在花钱。"
+  en_display:
+  - "Now Create Cluster: gcloud container clusters create test-cluster --num-nodes 2 --zone us-east1-c."
+  - null
+  - null
+- en: "Yours takes a short wait, prints a table, and adds an entry to your kubeconfig so kubectl knows where to go. The slide makes one node; the README two, so two copies can land on different machines."
+  zh:
+  - "你的要等一会儿；打印一张表，并在你的 kubeconfig 里加一条记录，让 kubectl 知道该连哪里。"
+  - "课件上只建一个节点；README 建两个，这样两个副本可以落在不同的机器上。"
+- en: "To keep going, we start a small real cluster on the laptop with a tool called kind: one control plane, two workers. Same API server, same kubectl, same YAML, but no Google. It is not in the README; don't run it."
+  zh:
+  - "为了继续往下做，我们起一个小小的真集群，在笔记本上用一个叫 kind 的工具：一个控制平面，两个工作节点。"
+  - "一样的 API server，一样的 kubectl，一样的 YAML，只是没有 Google。"
+  - "它不在 README 里；你别跑。"
+- en: "Here even the control plane is a container we can see; on GKE, Google hides it."
+  zh:
+  - "在这里，连控制平面都是一个我们看得见的 container；在 GKE 上，Google 把它藏起来了。"
+- en: "Next, look around the console: Kubernetes Engine, your cluster, its nodes, and the Pods on each node. In Compute Engine, your nodes are ordinary virtual machines."
+  zh:
+  - "接下来，在控制台里看一圈：Kubernetes Engine、你的集群、它的节点，还有每个节点上的 Pod。"
+  - "在 Compute Engine 里，你的节点就是普通的虚拟机。"
+- en: "Then try some kubectl commands. First an extra, kubectl version: the dispatcher picked a client that matches the server's version."
+  zh:
+  - "然后试几条 kubectl 命令。"
+  - "先来一个额外的，kubectl version：dispatcher 挑了一个和服务端版本匹配的客户端。"
+- en: "The first README command, get all, shows only a service named kubernetes, the door to the API server itself. We are looking in the namespace called default; more on that later."
+  zh:
+  - "README 的第一条命令 get all，只显示一个叫 kubernetes 的 Service，它就是通往 API server 本身的门。"
+  - "我们看的是叫 default 的 namespace；这个后面再说。"
+- en: "With all namespaces, kube system appears, and here you can spot the control plane by name: etcd, the API server, the controller manager, the scheduler. On GKE those stay hidden."
+  zh:
+  - "加上所有 namespace，kube-system 就出现了，在这里能按名字认出控制平面：etcd、API server、controller manager 和调度器。"
+  - "在 GKE 上这些都是隐藏的。"
+  en_display:
+  - "With all namespaces, kube-system appears, and here you can spot the control plane by name: etcd, the API server, the controller manager, the scheduler."
+  - null
+- en: "Component statuses prints a deprecation warning, which is expected, then three healthy lines. Get nodes is the better check: three nodes ready here; yours shows two workers and no control plane. Pause and try all five."
+  zh:
+  - "命令 get componentstatuses 会打印一条弃用警告，这是预期的，然后是三行 healthy。"
+  - "用 get nodes 检查更好：这里三个节点都是 Ready；你的会显示两个工作节点，没有控制平面。"
+  - "暂停一下，五条都试一试。"
+  en_display:
+  - "componentstatuses prints a deprecation warning, which is expected, then three healthy lines."
+  - null
+  - null
+S06:
+- en: "The warm-up deploys a small game, tic-tac-toe, from one file with two objects. The Deployment says what runs in a Pod, how many copies, and to keep them running. The Service says how traffic reaches them, and lets Pods die."
+  zh:
+  - "热身部署一个小游戏，tic-tac-toe，用的是一个文件里的两个对象。"
+  - "Deployment 说明 Pod 里跑什么，跑几个副本，并保持它们一直运行。"
+  - "Service 说明流量怎么到达它们，Pod 死了也没关系。"
+- en: "The slide trims the lines that glue them together. The template gives every Pod a label, run web, and both objects find their Pods by that label, not by name."
+  zh:
+  - "课件省略了把它们粘在一起的那几行。"
+  - "模板给每个 Pod 打上一个 label，run: web，两个对象都按这个 label 找到自己的 Pod，而不是按名字。"
+  en_display:
+  - null
+  - "The template gives every Pod a label, run: web; both objects find their Pods by that label, not by name."
+- en: "Each Pod runs the image dlops tic-tac-toe, listening on port 8080. The Service listens on port 80 and forwards to 8080."
+  zh:
+  - "每个 Pod 运行 dlops/tic-tac-toe 这个 image，监听 port 8080。"
+  - "Service 监听 port 80，转发到 8080。"
+  en_display:
+  - "Each Pod runs the image dlops/tic-tac-toe, listening on port 8080."
+  - null
+- en: "Deploy the app: kubectl apply, dash f, and the file. Apply only hands a wish to the API server; the scheduler picks two nodes, and their kubelets start the containers."
+  zh:
+  - "部署应用：kubectl apply -f，加上这个文件。"
+  - "命令 apply 只是把一个愿望交给 API server；调度器挑两个节点，它们的 kubelet 启动 container。"
+  en_display:
+  - "Deploy the app: kubectl apply -f, and the file."
+  - null
+- en: "An extra check, rollout status, watches it happen: zero, then one of two available, then rolled out, on two different workers."
+  zh:
+  - "一个额外检查，rollout status，看着它发生：先是 0，然后 2 个里 1 个可用，最后 rolled out，分别在两个不同的工作节点上。"
+- en: "Next, kubectl get services. The web Service is a load balancer: port 80, mapped to 31366 on every node, and on to 8080 in the Pod. Its external IP says pending."
+  zh:
+  - "接下来，kubectl get services。"
+  - "名叫 web 的 Service 是一个负载均衡器：port 80，映射到每个节点上的 31366，再到 Pod 里的 8080。"
+  - "它的外部 IP 显示 pending。"
+- en: "43 seconds later it still says pending. Which part of the cluster picture is waiting, and on what?"
+  zh:
+  - "43 秒以后还是 pending。"
+  - "集群图上是哪个组件在等，在等什么？"
+- en: "The controllers, waiting on the cloud provider. On GKE they ask Google for a load balancer and an address, which arrives after a short wait. The kind cluster has no cloud to ask."
+  zh:
+  - "是控制器，在等云平台。"
+  - "在 GKE 上，它们向 Google 要一个负载均衡器和一个地址，等一会儿就来了。"
+  - "这个 kind 集群没有云平台可问。"
+- en: "Pause: on GKE, wait for the external IP, copy it into your browser, and the game appears."
+  zh:
+  - "暂停一下：在 GKE 上，等外部 IP 出来，把它复制到浏览器里，游戏就出现了。"
+- en: "On the stand-in, an extra: port forward to the Service, then curl: 200 OK. The lecture suggests it for your browser, but from the toolbox the port opens inside the container: test it there."
+  zh:
+  - "在替身上，一个额外步骤：对这个 Service 做 port-forward，再 curl：200 OK。"
+  - "课上建议在你的浏览器里打开；但在工具箱里，这个 port 是在 container 里面打开的：就在那里测。"
+  en_display:
+  - "On the stand-in, an extra: port-forward to the Service, then curl: 200 OK."
+  - null
+S07:
+- en: "Back to the night-time problem: who restarts the container? In Kubernetes, a controller does. Let's watch one work."
+  zh:
+  - "回到半夜那个问题：谁来重启 container？"
+  - "在 Kubernetes 里，是控制器。"
+  - "我们来看一个控制器干活。"
+- en: "An extra listing shows the chain. The Deployment named web owns a ReplicaSet, whose name adds a hash of the Pod template. The ReplicaSet owns two Pods, each with that hash and a short random suffix."
+  zh:
+  - "一个额外的列表把这条链显示出来。"
+  - "名叫 web 的 Deployment 拥有一个 ReplicaSet，它的名字加上了 Pod 模板的哈希值。"
+  - "这个 ReplicaSet 拥有两个 Pod，每个都带着这个哈希值和一个随机的短后缀。"
+- en: "The labels confirm it: every Pod carries the template hash and the run web label."
+  zh:
+  - "看 label 就能确认：每个 Pod 都带着模板哈希和 run: web 这个 label。"
+  en_display:
+  - "The labels confirm it: every Pod carries the template hash and the run: web label."
+- en: "The ReplicaSet controller runs a loop: observe the Pods, compare with the number you declared, act on the difference. You set the number; the controller keeps it true, like a thermostat."
+  zh:
+  - "ReplicaSet 控制器跑一个循环：观察 Pod，和你声明的数量比较，针对差异采取行动。"
+  - "数量由你设；控制器让它一直成立，就像恒温器。"
+- en: "First, one more extra: kubectl scale, replicas 4. Two more Pods appear, spread over both workers, and the Service already lists them. Scale back to 2, and remember this command: your project's Milestone 5 asks for it."
+  zh:
+  - "先再来一个额外的：kubectl scale，replicas 设成 4。"
+  - "又出现两个 Pod，分布在两个工作节点上，Service 已经把它们列进去了。"
+  - "缩回 2 个，记住这条命令：你们项目的 Milestone 5 会要求它。"
+  en_display:
+  - "First, one more extra: kubectl scale --replicas=4."
+  - null
+  - null
+- en: "Now delete one of the two web Pods. A second later, how many web Pods are there, and which part of the new name stays the same?"
+  zh:
+  - "现在删掉两个 web Pod 中的一个。"
+  - "一秒钟后，有几个 web Pod，新名字里哪一部分保持不变？"
+- en: "Two. The delete returns, and a new Pod is already being created. Its name keeps the ReplicaSet hash, with a new suffix."
+  zh:
+  - "两个。"
+  - "命令 delete 一返回，新 Pod 就已经在创建了。"
+  - "它的名字保留了 ReplicaSet 的哈希值，后缀是新的。"
+- en: "15 seconds later, both run. Nobody logged in: the loop noticed, and acted."
+  zh:
+  - "15 秒后，两个都在运行。"
+  - "没有人登录：循环发现了差异，就动手了。"
+- en: "That ticks failover, with an honest footnote: it is a restart, not a hot standby. With one replica there is a short gap, which is why the game's file asks for two replicas."
+  zh:
+  - "这就勾上了故障转移，再加一个如实的补充：这是重启，不是热备。"
+  - "只有一个副本时会有一段短暂的空档，所以游戏的文件要求两个副本。"
+- en: "In lecture 20, Docker restarted a container on the same machine. A ReplicaSet places a new Pod wherever there is room. Declare the result, don't script the steps."
+  zh:
+  - "在第 20 讲里，Docker 在同一台机器上重启 container。"
+  - "ReplicaSet 会把新 Pod 放到任何有空间的地方。"
+  - "声明结果，别去写步骤的脚本。"
+S08:
+- en: "Pods are mortal: the new Pod got a new address. So how does traffic find it? The Service keeps a list of every Pod wearing its label, and that list follows the Pods."
+  zh:
+  - "Pod 是会死的：新 Pod 拿到了一个新地址。"
+  - "那流量怎么找到它？"
+  - "Service 维护一张列表，记着每个贴着它 label 的 Pod，而这张列表会跟着 Pod 一起变。"
+- en: "An extra from a throwaway Pod: the name web dot default dot svc dot cluster dot local points to the Service, and fetching just web returns the game page. The name stays while the Pods change."
+  zh:
+  - "从一个用完即弃的 Pod 里做个额外检查：web.default.svc.cluster.local 这个名字指向这个 Service，只取 web 就能拿到游戏页面。"
+  - "Pod 在变，名字不变。"
+  en_display:
+  - "An extra from a throwaway Pod: the name web.default.svc.cluster.local points to the Service, and fetching just web returns the game page."
+  - null
+- en: "This is how the cheese app's API will find its database: by the Service name, vector db."
+  zh:
+  - "奶酪应用的 API 之后也会这样找到它的数据库：按 Service 名字，vector-db。"
+  en_display:
+  - "This is how the cheese app's API will find its database: by the Service name, vector-db."
+- en: "Another extra: kubectl exec into the web Deployment. Hostname prints the name of one Pod, and the game's files are inside. The README shells into the API the same way."
+  zh:
+  - "再一个额外的：kubectl exec 进到 web 这个 Deployment。"
+  - "命令 hostname 打印出一个 Pod 的名字，游戏的文件就在这个 Pod 里面。"
+  - "README 也是这样进到 API 的 shell 里。"
+- en: "Why did get all look empty? Namespaces: folders for objects. Without a flag, kubectl looks only in default; this extra lists them, then creates and deletes the cheese app namespace."
+  zh:
+  - "为什么 get all 看起来是空的？"
+  - "因为 namespace：装对象的目录。"
+  - "不加参数时，kubectl 只看 default；这个额外步骤先把它们列出来，再创建并删除 cheese-app-namespace。"
+  en_display:
+  - null
+  - null
+  - "Without a flag, kubectl looks only in default; this extra lists them, then creates and deletes the cheese-app-namespace."
+- en: "So in part 2, every command about the app gets dash n, cheese app namespace, in the flags slot."
+  zh:
+  - "所以在第 2 部分，每条和应用有关的命令都要在参数的位置加上 -n cheese-app-namespace。"
+  en_display:
+  - "So in part 2, every command about the app gets -n cheese-app-namespace, in the flags slot."
+- en: "Before deleting the cluster, an extra tip: kubectl delete with the same file. On GKE, this releases the load balancer while the cluster still exists."
+  zh:
+  - "删除集群之前，一个额外提示：用同一个文件做 kubectl delete。"
+  - "在 GKE 上，这样能在集群还在的时候把负载均衡器释放掉。"
+- en: "Then delete the cluster: gcloud container clusters delete test cluster, zone us east 1 c. Yours asks whether to continue; answer yes."
+  zh:
+  - "然后把这个集群删掉：gcloud container clusters delete test-cluster，可用区 us-east1-c。"
+  - "你的会问要不要继续；回答 yes。"
+  en_display:
+  - "Then delete the cluster: gcloud container clusters delete test-cluster --zone us-east1-c."
+  - null
+- en: "We delete the stand-in too."
+  zh:
+  - "替身我们也删掉。"
+- en: "The lecture's last word fits here: don't forget to delete. Pause, check that your test cluster is gone, and part 1 is done."
+  zh:
+  - "课上最后一句话用在这里正合适：别忘了删除。"
+  - "暂停一下，确认你的测试集群已经没了，第 1 部分就完成了。"

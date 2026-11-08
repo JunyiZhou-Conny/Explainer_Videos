@@ -1,0 +1,16 @@
+# C4: the loader's container list given as `args` (main: args, setup_containers.py:227-233;
+# cluster-updates: command, deploy_k8s/__main__.py:426-432)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: loader-args
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: loader
+        image: l22ex/entrypoint:1
+        imagePullPolicy: IfNotPresent
+        args: ["cli.py", "--download", "--load", "--chunk_type", "recursive-split"]

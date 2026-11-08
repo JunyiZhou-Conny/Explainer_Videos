@@ -1,0 +1,171 @@
+$ sh docker-shell.sh
+Container 'cheese-app-deployment' is not running. Building and starting new container...
+[+] Building 5.1s (6/20)                                                             docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 2.77kB                                                         0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bullseye                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => [ 1/16] FROM docker.io/library/python:3.13-slim-bullseye                                   0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 84.46kB                                                           0.0s
+ => ERROR [ 2/16] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-ce  5.0s
+------
+ > [ 2/16] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client:
+0.338 Get:1 https://deb.debian.org/debian bullseye InRelease [75.1 kB]
+0.411 Get:2 https://deb.debian.org/debian-security bullseye-security InRelease [27.1 kB]
+0.447 Get:3 https://deb.debian.org/debian bullseye-updates InRelease [44.0 kB]
+0.515 Get:4 https://deb.debian.org/debian bullseye/main amd64 Packages [8066 kB]
+0.903 Get:5 https://deb.debian.org/debian-security bullseye-security/main amd64 Packages [475 kB]
+0.906 Get:6 https://deb.debian.org/debian bullseye-updates/main amd64 Packages [18.8 kB]
+1.797 Fetched 8706 kB in 2s (5399 kB/s)
+1.797 Reading package lists...
+2.310 Reading package lists...
+2.788 Building dependency tree...
+2.886 Reading state information...
+3.000 The following additional packages will be installed:
+3.000   dirmngr distro-info-data gnupg-l10n gnupg-utils gpg gpg-agent gpg-wks-client
+3.000   gpg-wks-server gpgconf gpgsm gpgv libassuan0 libbrotli1 libbsd0 libcbor0
+3.000   libcurl4 libedit2 libexpat1 libfido2-1 libksba8 libldap-2.4-2 libldap-common
+3.000   libmd0 libmpdec3 libnghttp2-14 libnpth0 libpsl5 libpython3-stdlib
+3.000   libpython3.9-minimal libpython3.9-stdlib librtmp1 libsasl2-2
+3.000   libsasl2-modules libsasl2-modules-db libssh2-1 libx11-6 libx11-data libxau6
+3.000   libxcb1 libxdmcp6 libxext6 libxmuu1 media-types pinentry-curses publicsuffix
+3.000   python3 python3-minimal python3.9 python3.9-minimal xauth
+3.001 Suggested packages:
+3.002   dbus-user-session libpam-systemd pinentry-gnome3 tor parcimonie xloadimage
+3.002   scdaemon libsasl2-modules-gssapi-mit | libsasl2-modules-gssapi-heimdal
+3.002   libsasl2-modules-ldap libsasl2-modules-otp libsasl2-modules-sql keychain
+3.002   libpam-ssh monkeysphere ssh-askpass pinentry-doc python3-doc python3-tk
+3.002   python3-venv python3.9-venv python3.9-doc binutils binfmt-support
+3.166 The following NEW packages will be installed:
+3.166   apt-transport-https curl dirmngr distro-info-data gnupg gnupg-l10n
+3.166   gnupg-utils gpg gpg-agent gpg-wks-client gpg-wks-server gpgconf gpgsm
+3.166   libassuan0 libbrotli1 libbsd0 libcbor0 libcurl4 libedit2 libexpat1
+3.166   libfido2-1 libksba8 libldap-2.4-2 libldap-common libmd0 libmpdec3
+3.166   libnghttp2-14 libnpth0 libpsl5 libpython3-stdlib libpython3.9-minimal
+3.166   libpython3.9-stdlib librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db
+3.166   libssh2-1 libx11-6 libx11-data libxau6 libxcb1 libxdmcp6 libxext6 libxmuu1
+3.166   lsb-release media-types openssh-client pinentry-curses publicsuffix python3
+3.166   python3-minimal python3.9 python3.9-minimal xauth
+3.166 The following packages will be upgraded:
+3.166   ca-certificates gpgv
+3.508 2 upgraded, 54 newly installed, 0 to remove and 19 not upgraded.
+3.508 Need to get 18.5 MB of archives.
+3.508 After this operation, 49.9 MB of additional disk space will be used.
+3.508 Err:1 https://deb.debian.org/debian-security bullseye-security/main amd64 libpython3.9-minimal amd64 3.9.2-1+deb11u7
+3.508   404  Not Found [IP: 172.17.0.1 38722]
+3.629 Err:2 https://deb.debian.org/debian-security bullseye-security/main amd64 libexpat1 amd64 2.2.10-2+deb11u7
+3.629   404  Not Found [IP: 172.17.0.1 38722]
+3.631 Err:3 https://deb.debian.org/debian-security bullseye-security/main amd64 python3.9-minimal amd64 3.9.2-1+deb11u7
+3.631   404  Not Found [IP: 172.17.0.1 38722]
+3.632 Get:4 https://deb.debian.org/debian bullseye/main amd64 python3-minimal amd64 3.9.2-3 [38.2 kB]
+3.667 Get:5 https://deb.debian.org/debian bullseye/main amd64 media-types all 4.0.0 [30.3 kB]
+3.668 Get:6 https://deb.debian.org/debian bullseye/main amd64 libmpdec3 amd64 2.5.1-1 [87.7 kB]
+3.688 Err:7 https://deb.debian.org/debian-security bullseye-security/main amd64 libpython3.9-stdlib amd64 3.9.2-1+deb11u7
+3.688   404  Not Found [IP: 172.17.0.1 38722]
+3.688 Err:8 https://deb.debian.org/debian-security bullseye-security/main amd64 python3.9 amd64 3.9.2-1+deb11u7
+3.688   404  Not Found [IP: 172.17.0.1 38722]
+3.688 Get:9 https://deb.debian.org/debian bullseye/main amd64 libpython3-stdlib amd64 3.9.2-3 [21.4 kB]
+3.689 Get:10 https://deb.debian.org/debian bullseye/main amd64 python3 amd64 3.9.2-3 [37.9 kB]
+3.705 Err:11 https://deb.debian.org/debian-security bullseye-security/main amd64 gpgv amd64 2.2.27-2+deb11u3
+3.705   404  Not Found [IP: 172.17.0.1 38722]
+3.705 Err:12 https://deb.debian.org/debian-security bullseye-security/main amd64 ca-certificates all 20250419~deb12u1~deb11u1
+3.705   404  Not Found [IP: 172.17.0.1 38722]
+3.705 Get:13 https://deb.debian.org/debian bullseye/main amd64 libmd0 amd64 1.0.3-3 [28.0 kB]
+3.705 Get:14 https://deb.debian.org/debian bullseye/main amd64 libbsd0 amd64 0.11.3-1+deb11u1 [108 kB]
+3.723 Get:15 https://deb.debian.org/debian bullseye/main amd64 libedit2 amd64 3.1-20191231-2+b1 [96.7 kB]
+3.731 Get:16 https://deb.debian.org/debian bullseye/main amd64 libcbor0 amd64 0.5.0+dfsg-2 [24.0 kB]
+3.732 Get:17 https://deb.debian.org/debian bullseye/main amd64 libfido2-1 amd64 1.6.0-2 [53.3 kB]
+3.732 Err:18 https://deb.debian.org/debian-security bullseye-security/main amd64 openssh-client amd64 1:8.4p1-5+deb11u7
+3.732   404  Not Found [IP: 172.17.0.1 38722]
+3.737 Get:19 https://deb.debian.org/debian bullseye/main amd64 apt-transport-https all 2.2.4 [160 kB]
+3.744 Get:20 https://deb.debian.org/debian bullseye/main amd64 libbrotli1 amd64 1.0.9-2+b2 [279 kB]
+3.749 Get:21 https://deb.debian.org/debian bullseye/main amd64 libsasl2-modules-db amd64 2.1.27+dfsg-2.1+deb11u1 [69.1 kB]
+3.754 Get:22 https://deb.debian.org/debian bullseye/main amd64 libsasl2-2 amd64 2.1.27+dfsg-2.1+deb11u1 [106 kB]
+3.757 Get:23 https://deb.debian.org/debian bullseye/main amd64 libldap-2.4-2 amd64 2.4.57+dfsg-3+deb11u1 [232 kB]
+3.759 Err:24 https://deb.debian.org/debian-security bullseye-security/main amd64 libnghttp2-14 amd64 1.43.0-1+deb11u3
+3.759   404  Not Found [IP: 172.17.0.1 38722]
+3.770 Get:25 https://deb.debian.org/debian bullseye/main amd64 libpsl5 amd64 0.21.0-1.2 [57.3 kB]
+3.770 Get:26 https://deb.debian.org/debian bullseye/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2+b2 [60.8 kB]
+3.772 Get:27 https://deb.debian.org/debian bullseye/main amd64 libssh2-1 amd64 1.9.0-2+deb11u1 [156 kB]
+3.773 Err:28 https://deb.debian.org/debian-security bullseye-security/main amd64 libcurl4 amd64 7.74.0-1.3+deb11u16
+3.773   404  Not Found [IP: 172.17.0.1 38722]
+3.781 Err:29 https://deb.debian.org/debian-security bullseye-security/main amd64 curl amd64 7.74.0-1.3+deb11u16
+3.781   404  Not Found [IP: 172.17.0.1 38722]
+3.790 Get:30 https://deb.debian.org/debian bullseye/main amd64 libassuan0 amd64 2.5.3-7.1 [50.5 kB]
+3.885 Err:31 https://deb.debian.org/debian-security bullseye-security/main amd64 gpgconf amd64 2.2.27-2+deb11u3
+3.885   404  Not Found [IP: 172.17.0.1 38722]
+3.899 Get:32 https://deb.debian.org/debian bullseye/main amd64 libksba8 amd64 1.5.0-3+deb11u2 [123 kB]
+3.900 Get:33 https://deb.debian.org/debian bullseye/main amd64 libnpth0 amd64 1.6-3 [19.0 kB]
+4.004 Err:34 https://deb.debian.org/debian-security bullseye-security/main amd64 dirmngr amd64 2.2.27-2+deb11u3
+4.004   404  Not Found [IP: 172.17.0.1 38722]
+4.093 Err:35 https://deb.debian.org/debian-security bullseye-security/main amd64 distro-info-data all 0.51+deb11u11
+4.093   404  Not Found [IP: 172.17.0.1 38722]
+4.183 Err:36 https://deb.debian.org/debian-security bullseye-security/main amd64 gnupg-l10n all 2.2.27-2+deb11u3
+4.183   404  Not Found [IP: 172.17.0.1 38722]
+4.299 Err:37 https://deb.debian.org/debian-security bullseye-security/main amd64 gnupg-utils amd64 2.2.27-2+deb11u3
+4.299   404  Not Found [IP: 172.17.0.1 38722]
+4.386 Err:38 https://deb.debian.org/debian-security bullseye-security/main amd64 gpg amd64 2.2.27-2+deb11u3
+4.386   404  Not Found [IP: 172.17.0.1 38722]
+4.386 Get:39 https://deb.debian.org/debian bullseye/main amd64 pinentry-curses amd64 1.1.0-4 [64.9 kB]
+4.630 Err:40 https://deb.debian.org/debian-security bullseye-security/main amd64 gpg-agent amd64 2.2.27-2+deb11u3
+4.630   404  Not Found [IP: 172.17.0.1 38722]
+4.632 Err:41 https://deb.debian.org/debian-security bullseye-security/main amd64 gpg-wks-client amd64 2.2.27-2+deb11u3
+4.632   404  Not Found [IP: 172.17.0.1 38722]
+4.721 Err:42 https://deb.debian.org/debian-security bullseye-security/main amd64 gpg-wks-server amd64 2.2.27-2+deb11u3
+4.721   404  Not Found [IP: 172.17.0.1 38722]
+4.814 Err:43 https://deb.debian.org/debian-security bullseye-security/main amd64 gpgsm amd64 2.2.27-2+deb11u3
+4.814   404  Not Found [IP: 172.17.0.1 38722]
+4.904 Err:44 https://deb.debian.org/debian-security bullseye-security/main amd64 gnupg all 2.2.27-2+deb11u3
+4.904   404  Not Found [IP: 172.17.0.1 38722]
+4.905 Get:45 https://deb.debian.org/debian bullseye/main amd64 libldap-common all 2.4.57+dfsg-3+deb11u1 [95.8 kB]
+4.908 Get:46 https://deb.debian.org/debian bullseye/main amd64 libsasl2-modules amd64 2.1.27+dfsg-2.1+deb11u1 [104 kB]
+4.908 Get:47 https://deb.debian.org/debian bullseye/main amd64 libxau6 amd64 1:1.0.9-1 [19.7 kB]
+4.908 Get:48 https://deb.debian.org/debian bullseye/main amd64 libxdmcp6 amd64 1:1.1.2-3 [26.3 kB]
+4.910 Get:49 https://deb.debian.org/debian bullseye/main amd64 libxcb1 amd64 1.14-3 [140 kB]
+4.911 Get:50 https://deb.debian.org/debian bullseye/main amd64 libx11-data all 2:1.7.2-1+deb11u2 [311 kB]
+4.928 Get:51 https://deb.debian.org/debian bullseye/main amd64 libx11-6 amd64 2:1.7.2-1+deb11u2 [772 kB]
+4.946 Get:52 https://deb.debian.org/debian bullseye/main amd64 libxext6 amd64 2:1.3.3-1.1 [52.7 kB]
+4.947 Get:53 https://deb.debian.org/debian bullseye/main amd64 libxmuu1 amd64 2:1.1.2-2+b3 [23.9 kB]
+4.947 Get:54 https://deb.debian.org/debian bullseye/main amd64 lsb-release all 11.1.0 [27.9 kB]
+4.947 Get:55 https://deb.debian.org/debian bullseye/main amd64 publicsuffix all 20220811.1734-0+deb11u1 [127 kB]
+4.948 Get:56 https://deb.debian.org/debian bullseye/main amd64 xauth amd64 1:1.1-1 [40.5 kB]
+4.955 Fetched 3642 kB in 2s (2048 kB/s)
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/p/python3.9/libpython3.9-minimal_3.9.2-1%2bdeb11u7_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/e/expat/libexpat1_2.2.10-2%2bdeb11u7_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/p/python3.9/python3.9-minimal_3.9.2-1%2bdeb11u7_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/p/python3.9/libpython3.9-stdlib_3.9.2-1%2bdeb11u7_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/p/python3.9/python3.9_3.9.2-1%2bdeb11u7_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gpgv_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/c/ca-certificates/ca-certificates_20250419%7edeb12u1%7edeb11u1_all.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/o/openssh/openssh-client_8.4p1-5%2bdeb11u7_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/n/nghttp2/libnghttp2-14_1.43.0-1%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/c/curl/libcurl4_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/c/curl/curl_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gpgconf_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/dirmngr_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/d/distro-info-data/distro-info-data_0.51%2bdeb11u11_all.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gnupg-l10n_2.2.27-2%2bdeb11u3_all.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gnupg-utils_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gpg_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gpg-agent_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gpg-wks-client_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gpg-wks-server_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gpgsm_2.2.27-2%2bdeb11u3_amd64.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Failed to fetch https://deb.debian.org/debian-security/pool/updates/main/g/gnupg2/gnupg_2.2.27-2%2bdeb11u3_all.deb  404  Not Found [IP: 172.17.0.1 38722]
+4.957 E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?
+------
+Dockerfile:11
+--------------------
+  10 |     # Install required dependencies
+  11 | >>> RUN apt-get update && \
+  12 | >>>     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client
+  13 |
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client" did not complete successfully: exit code: 100
+Unable to find image 'cheese-app-deployment:latest' locally
+docker: Error response from daemon: pull access denied for cheese-app-deployment, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
+
+Run 'docker run --help' for more information
+[exit 125]

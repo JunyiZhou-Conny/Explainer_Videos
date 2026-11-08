@@ -1,0 +1,1192 @@
+1
+00:00:00,000 --> 00:00:03,435
+Part 2: the cheese app on GKE,
+as Pulumi code.
+
+2
+00:00:03,755 --> 00:00:08,150
+The course link lands on Deployment
+with Scaling using Kubernetes;
+
+3
+00:00:08,150 --> 00:00:11,479
+the cluster steps continue
+under the next heading,
+
+4
+00:00:11,479 --> 00:00:13,077
+Create & Deploy Cluster.
+
+5
+00:00:13,817 --> 00:00:17,124
+Here is the plan,
+piece by piece from lecture 20.
+
+6
+00:00:17,444 --> 00:00:20,302
+Each long-running container
+becomes a Deployment.
+
+7
+00:00:20,622 --> 00:00:22,913
+The one-shot loader becomes a Job:
+
+8
+00:00:22,913 --> 00:00:27,833
+it retries a failed run a few times,
+and once it succeeds, it stays done.
+
+9
+00:00:28,367 --> 00:00:33,039
+Container names on a Docker network
+become Services with DNS names.
+
+10
+00:00:33,359 --> 00:00:37,613
+The folders on the VM disk
+become two persistent volume claims,
+
+11
+00:00:37,613 --> 00:00:39,503
+each backed by a cloud disk.
+
+12
+00:00:39,750 --> 00:00:44,358
+The nginx container becomes
+an Ingress controller with an Ingress rule.
+
+13
+00:00:44,678 --> 00:00:49,158
+The JSON key becomes Workload Identity,
+with no key file at all.
+
+14
+00:00:49,478 --> 00:00:52,379
+One machine becomes
+a pool of one or two nodes.
+
+15
+00:00:52,617 --> 00:00:54,537
+Around it, a private network.
+
+16
+00:00:54,857 --> 00:00:57,125
+The nodes get no public addresses;
+
+17
+00:00:57,125 --> 00:01:02,729
+a Cloud NAT gateway lets them reach out,
+for example to pull Chroma from Docker Hub.
+
+18
+00:01:03,049 --> 00:01:06,846
+The app sits in one namespace,
+behind one load balancer.
+
+19
+00:01:08,450 --> 00:01:13,074
+The program in deploy_k8s says the same
+in four calls, one per file:
+
+20
+00:01:13,074 --> 00:01:17,154
+the network, the cluster,
+the containers, the load balancer.
+
+21
+00:01:17,474 --> 00:01:21,463
+Line 17 keeps the HTTPS
+variant switched off.
+
+22
+00:01:22,200 --> 00:01:26,272
+While it is up, it costs money:
+the fee of a regional cluster,
+
+23
+00:01:26,272 --> 00:01:30,541
+one or two nodes, a load balancer,
+one NAT gateway and two disks.
+
+24
+00:01:30,861 --> 00:01:34,172
+By our estimate,
+roughly five to eight dollars a day:
+
+25
+00:01:34,172 --> 00:01:37,795
+check the pricing calculator,
+and destroy it the same day.
+
+26
+00:01:40,133 --> 00:01:43,586
+This section enables the five APIs again;
+
+27
+00:01:43,586 --> 00:01:48,218
+turn on the Vertex AI API too,
+which the API Pods call.
+
+28
+00:01:48,966 --> 00:01:52,315
+You also need the two service accounts
+from lecture 20.
+
+29
+00:01:52,635 --> 00:01:55,622
+The deployment account
+does what the toolbox does,
+
+30
+00:01:55,622 --> 00:01:58,011
+and here it is also the nodes' identity.
+
+31
+00:01:58,331 --> 00:02:03,196
+The gcp-service account is for the API Pods,
+with no key file.
+
+32
+00:02:03,933 --> 00:02:06,408
+Two one-time steps the README leaves out.
+
+33
+00:02:06,728 --> 00:02:12,049
+The deployment account very likely needs
+Service Account Admin on gcp-service;
+
+34
+00:02:12,049 --> 00:02:13,618
+we could not test this.
+
+35
+00:02:13,938 --> 00:02:16,384
+And create the registry repository,
+
+36
+00:02:16,384 --> 00:02:19,528
+cheese-app-repository,
+which no code creates.
+
+37
+00:02:20,266 --> 00:02:23,518
+The deployment key goes
+in the secrets folder,
+
+38
+00:02:23,518 --> 00:02:26,346
+beside the repository, as in lecture 20.
+
+39
+00:02:27,083 --> 00:02:30,559
+Then the toolbox steps from part 1,
+the same commands;
+
+40
+00:02:30,559 --> 00:02:34,806
+if the toolbox is still running,
+the script simply attaches to it.
+
+41
+00:02:35,050 --> 00:02:39,689
+Next, the images stack,
+only if you have not built it before:
+
+42
+00:02:39,689 --> 00:02:41,691
+change into deploy_images,
+
+43
+00:02:41,691 --> 00:02:45,695
+pulumi stack init dev,
+and set gcp:project to yours.
+
+44
+00:02:46,015 --> 00:02:48,975
+Ours says PULUMI_ACCESS_TOKEN must be set:
+
+45
+00:02:48,975 --> 00:02:53,695
+our bucket login failed,
+so Pulumi falls back to its cloud service.
+
+46
+00:02:53,933 --> 00:02:57,324
+To show the rest,
+we point Pulumi at a local folder,
+
+47
+00:02:57,324 --> 00:02:59,736
+a recording workaround: don't run it.
+
+48
+00:03:00,056 --> 00:03:02,552
+Now the stack is created, as yours is.
+
+49
+00:03:02,800 --> 00:03:05,909
+Then pulumi preview --stack dev:
+three image builds,
+
+50
+00:03:05,909 --> 00:03:09,435
+skipped in a preview,
+and three tags stamped with the time.
+
+51
+00:03:09,755 --> 00:03:13,168
++ 4 to create:
+three images and the stack itself.
+
+52
+00:03:13,416 --> 00:03:15,057
+Those tag outputs matter:
+
+53
+00:03:15,057 --> 00:03:18,446
+deploy_k8s looks them up
+through a stack reference,
+
+54
+00:03:18,446 --> 00:03:20,307
+to know which images to run.
+
+55
+00:03:20,550 --> 00:03:25,606
+Last, pulumi up --stack dev -y:
+it builds and pushes three images.
+
+56
+00:03:25,926 --> 00:03:30,615
+Skip it if you did it in lecture 20,
+with one condition we meet next;
+
+57
+00:03:30,615 --> 00:03:32,518
+otherwise, pause and run it.
+
+58
+00:03:33,767 --> 00:03:35,730
+Now Create & Deploy Cluster.
+
+59
+00:03:36,050 --> 00:03:37,960
+From the deployment folder,
+
+60
+00:03:37,960 --> 00:03:41,762
+change into deploy_k8s
+and run pulumi stack init dev:
+
+61
+00:03:41,762 --> 00:03:43,268
+the same token error,
+
+62
+00:03:43,268 --> 00:03:46,524
+and on the local backend,
+Created stack 'dev'.
+
+63
+00:03:47,167 --> 00:03:49,880
+Then three config keys: your project,
+
+64
+00:03:49,880 --> 00:03:54,207
+and two service account emails,
+deployment and gcp-service.
+
+65
+00:03:54,527 --> 00:03:58,282
+Replace ac215-project
+with yours in all three.
+
+66
+00:03:59,784 --> 00:04:04,179
+Line 9 takes the deployment email:
+the nodes run as that account.
+
+67
+00:04:04,499 --> 00:04:10,109
+Line 10 takes the gcp-service email,
+which the API Pods will act as.
+
+68
+00:04:10,350 --> 00:04:13,788
+An extra,
+pulumi config, lists your three keys
+
+69
+00:04:13,788 --> 00:04:17,600
+and two leftovers from the committed file,
+setupSSL
+
+70
+00:04:17,600 --> 00:04:21,038
+and an SSH user,
+which the program never uses.
+
+71
+00:04:21,358 --> 00:04:25,177
+A typo in a key name fails quietly later,
+so check this list.
+
+72
+00:04:25,417 --> 00:04:28,745
+Then Preview:
+pulumi preview --stack dev --refresh.
+
+73
+00:04:29,065 --> 00:04:33,678
+On the local backend, a Python error
+at line 70 of setup_containers.py:
+
+74
+00:04:33,678 --> 00:04:36,212
+'NoneType' object is not subscriptable.
+
+75
+00:04:36,532 --> 00:04:40,478
+The program asked the images stack
+for its tags, and got nothing.
+
+76
+00:04:40,717 --> 00:04:44,159
+You see this
+if the images stack never finished pulumi up
+
+77
+00:04:44,159 --> 00:04:45,730
+in this same state bucket.
+
+78
+00:04:46,050 --> 00:04:48,909
+Skipping it is safe
+only when it already ran there.
+
+79
+00:04:49,150 --> 00:04:53,514
+So we gave the program a stand-in images
+stack with placeholder tags;
+
+80
+00:04:53,514 --> 00:04:54,590
+nothing is built.
+
+81
+00:04:54,910 --> 00:04:56,846
+Now the real plan appears:
+
+82
+00:04:56,846 --> 00:05:01,670
+the network, the cluster,
+the node pool, the Kubernetes objects,
+
+83
+00:05:01,670 --> 00:05:03,102
+and + 23 to create.
+
+84
+00:05:03,350 --> 00:05:06,851
+Two more lines are lookups,
+not counted in the 23:
+
+85
+00:05:06,851 --> 00:05:09,793
+the stack reference and the nginx Service.
+
+86
+00:05:10,113 --> 00:05:13,290
+In the outputs,
+only the cluster name is known;
+
+87
+00:05:13,290 --> 00:05:16,940
+the address and the URL wait
+until the cluster exists.
+
+88
+00:05:17,184 --> 00:05:19,063
+Pause and run your preview:
+
+89
+00:05:19,063 --> 00:05:22,474
+you should see the same 23,
+with real image tags.
+
+90
+00:05:23,617 --> 00:05:27,500
+Then the big one:
+pulumi up --stack dev --refresh -y.
+
+91
+00:05:27,820 --> 00:05:31,745
+On the local backend the update starts,
+and the very first resource,
+
+92
+00:05:31,745 --> 00:05:35,670
+the network, fails: invalid_grant:
+Invalid grant: account not found.
+
+93
+00:05:35,917 --> 00:05:38,625
+The network is the first thing
+that needs Google,
+
+94
+00:05:38,625 --> 00:05:40,504
+so from here on this is a picture.
+
+95
+00:05:40,824 --> 00:05:44,024
+Pause and start yours;
+from now on, the meter runs.
+
+96
+00:05:46,267 --> 00:05:48,400
+Pulumi follows the dependencies.
+
+97
+00:05:48,720 --> 00:05:50,662
+First the network and its subnet.
+
+98
+00:05:50,982 --> 00:05:52,219
+Then, side by side,
+
+99
+00:05:52,219 --> 00:05:55,409
+the router with its NAT gateway,
+and the cluster,
+
+100
+00:05:55,409 --> 00:05:59,323
+the long wait: a quarter of an hour or more,
+by our estimate.
+
+101
+00:05:59,867 --> 00:06:01,147
+Then the node pool.
+
+102
+00:06:01,467 --> 00:06:04,952
+A Kubernetes provider,
+built from the cluster outputs,
+
+103
+00:06:04,952 --> 00:06:09,147
+waits for that pool,
+so no Pod is created before there are nodes.
+
+104
+00:06:09,384 --> 00:06:13,220
+Through it come the namespace,
+the service account of the API
+
+105
+00:06:13,220 --> 00:06:17,938
+and its binding, the two disk claims,
+the frontend and the vector database.
+
+106
+00:06:18,184 --> 00:06:21,256
+Next, the loader Job
+fills the vector database.
+
+107
+00:06:21,576 --> 00:06:26,923
+Pulumi creates the API
+only after the Job completes:
+
+108
+00:06:26,923 --> 00:06:30,728
+lines 319 to 321 set that dependency.
+
+109
+00:06:30,967 --> 00:06:34,743
+In parallel,
+Helm installs the nginx Ingress controller.
+
+110
+00:06:35,063 --> 00:06:37,477
+Its Service asks for a load balancer,
+
+111
+00:06:37,477 --> 00:06:40,610
+so the controllers ask the cloud
+for an address:
+
+112
+00:06:40,610 --> 00:06:42,764
+the part 1 lamp, green this time.
+
+113
+00:06:43,084 --> 00:06:46,604
+That address becomes a host name,
+and the Ingress comes last.
+
+114
+00:06:47,584 --> 00:06:49,376
+Identity, in two parts.
+
+115
+00:06:49,696 --> 00:06:54,669
+Pulumi and kubectl reach the API server
+through the GKE auth plugin,
+
+116
+00:06:54,669 --> 00:06:58,912
+fix two from the toolbox,
+so there is no cluster password.
+
+117
+00:06:59,650 --> 00:07:03,762
+And the API Pod wears
+its Kubernetes service account,
+
+118
+00:07:03,762 --> 00:07:09,271
+which Workload Identity swaps
+for gcp-service at the door to Vertex AI.
+
+119
+00:07:09,591 --> 00:07:11,874
+No JSON key sits in the cluster.
+
+120
+00:07:12,617 --> 00:07:15,687
+Keep in mind: Pulumi connects kubectl once,
+
+121
+00:07:15,687 --> 00:07:19,401
+inside this toolbox,
+which is removed when you exit.
+
+122
+00:07:19,721 --> 00:07:21,748
+The next session starts unconnected.
+
+123
+00:07:22,068 --> 00:07:25,487
+If yours stops,
+the card shows the four usual causes:
+
+124
+00:07:25,487 --> 00:07:27,230
+pause and match your error.
+
+125
+00:07:37,767 --> 00:07:41,308
+Lecture 20 put one nginx container in front.
+
+126
+00:07:41,628 --> 00:07:45,148
+The game opened its own load balancer,
+one door per app.
+
+127
+00:07:45,468 --> 00:07:49,372
+The cheese app opens one door,
+with a receptionist behind it.
+
+128
+00:07:49,917 --> 00:07:52,131
+The README draws the path:
+
+129
+00:07:52,131 --> 00:07:56,646
+browser, load balancer,
+the nginx Ingress controller,
+
+130
+00:07:56,646 --> 00:08:00,481
+then the frontend
+on 3000 or the API on 9000,
+
+131
+00:08:00,481 --> 00:08:03,208
+and the vector database on 8000.
+
+132
+00:08:03,450 --> 00:08:06,341
+A small slip:
+the README draws the dotted arrow
+
+133
+00:08:06,341 --> 00:08:08,741
+from the vector database to the loader.
+
+134
+00:08:09,061 --> 00:08:12,858
+The data flows the other way,
+from the Job into the database.
+
+135
+00:08:13,100 --> 00:08:14,337
+Follow one click.
+
+136
+00:08:14,657 --> 00:08:20,460
+<IP>.sslip.io points back to that same IP,
+with no setup at all.
+
+137
+00:08:20,780 --> 00:08:25,815
+The packet passes the cloud load balancer
+and lands on the nginx controller.
+
+138
+00:08:26,450 --> 00:08:31,182
+The Ingress rule starts with the host name:
+for that host,
+
+139
+00:08:31,182 --> 00:08:37,629
+/api-service goes to the API on 9000,
+every other path to the frontend on 3000.
+
+140
+00:08:37,949 --> 00:08:40,524
+The controller follows that rule,
+
+141
+00:08:40,524 --> 00:08:44,349
+like the nginx.conf of lecture 20,
+now generated.
+
+142
+00:08:44,884 --> 00:08:47,913
+This time the prefix is kept:
+nothing strips it.
+
+143
+00:08:48,233 --> 00:08:53,772
+The API mounts itself under its root path,
+/api-service,
+
+144
+00:08:53,772 --> 00:08:58,025
+so /api-service/status answers version 3.0.
+
+145
+00:08:58,967 --> 00:09:01,566
+The page comes from the frontend;
+
+146
+00:09:01,566 --> 00:09:06,135
+then your browser calls the API directly,
+at /api-service.
+
+147
+00:09:06,934 --> 00:09:12,124
+Inside the cluster,
+the API reaches Chroma by its Service name,
+
+148
+00:09:12,124 --> 00:09:14,102
+vector-db, on port 8000.
+
+149
+00:09:14,900 --> 00:09:19,999
+Now open the bare IP:
+the same load balancer, without sslip.io.
+
+150
+00:09:20,319 --> 00:09:21,343
+What answers?
+
+151
+00:09:30,484 --> 00:09:34,111
+The nginx controller answers 404 Not Found.
+
+152
+00:09:34,431 --> 00:09:36,692
+The rule matches only that host name,
+
+153
+00:09:36,692 --> 00:09:39,871
+so the same door
+with the wrong name finds no route.
+
+154
+00:09:40,191 --> 00:09:42,409
+Use the app_url from the outputs.
+
+155
+00:09:42,950 --> 00:09:47,348
+That ticks load balancing:
+the cloud load balancer at the door,
+
+156
+00:09:47,348 --> 00:09:48,482
+nginx behind it,
+
+157
+00:09:48,482 --> 00:09:52,166
+and each Service spreading
+requests across its Pods.
+
+158
+00:09:53,400 --> 00:09:55,811
+Next, try some kubectl commands.
+
+159
+00:09:56,131 --> 00:09:59,629
+With no cluster here,
+all five say connection refused.
+
+160
+00:09:59,949 --> 00:10:03,401
+You will see exactly this
+in any new toolbox session:
+
+161
+00:10:03,401 --> 00:10:07,373
+the kubeconfig Pulumi wrote went away
+with the old container.
+
+162
+00:10:07,617 --> 00:10:11,161
+The fix is the command Pulumi ran,
+an extra here:
+
+163
+00:10:11,161 --> 00:10:15,574
+gcloud container clusters
+get-credentials cheese-app-cluster.
+
+164
+00:10:15,894 --> 00:10:18,692
+The code passes the region
+to the --zone flag;
+
+165
+00:10:18,692 --> 00:10:21,185
+write --region, which says what it means.
+
+166
+00:10:21,933 --> 00:10:25,939
+Once connected, get all still shows
+only the kubernetes Service,
+
+167
+00:10:25,939 --> 00:10:28,568
+because the app sits in its own namespace.
+
+168
+00:10:28,888 --> 00:10:33,202
+With -n cheese-app-namespace,
+yours lists the frontend,
+
+169
+00:10:33,202 --> 00:10:39,085
+database, API and nginx controller Pods,
+and a loader Pod marked Completed.
+
+170
+00:10:39,405 --> 00:10:41,432
+Get nodes shows one node, or two.
+
+171
+00:10:42,167 --> 00:10:44,535
+The next README step shells into a Pod.
+
+172
+00:10:44,855 --> 00:10:47,711
+The Pod name in the README
+is the author's own;
+
+173
+00:10:47,711 --> 00:10:50,081
+use the name your first command prints.
+
+174
+00:10:50,717 --> 00:10:53,797
+Inside,
+you get a shell in the API container,
+
+175
+00:10:53,797 --> 00:10:55,645
+just as we did in the game.
+
+176
+00:10:55,965 --> 00:10:58,504
+Print its environment
+and look for ROOT_PATH.
+
+177
+00:10:58,824 --> 00:11:00,018
+Pause and try it.
+
+178
+00:11:00,917 --> 00:11:05,760
+To view the app, the README shows an outputs
+block a little older than the code.
+
+179
+00:11:06,080 --> 00:11:10,499
+Today the address is called ip_address,
+not nginx_ingress_ip,
+
+180
+00:11:10,499 --> 00:11:13,759
+and the Ingress
+is called cheese-app-ingress.
+
+181
+00:11:14,500 --> 00:11:16,505
+Pause and open your app_url.
+
+182
+00:11:16,825 --> 00:11:19,686
+A footer that says API version:
+
+183
+00:11:19,686 --> 00:11:25,316
+3.0 proves the whole path works:
+it asks /api-service/status.
+
+184
+00:11:25,636 --> 00:11:31,055
+Then pick the RAG model in the chat;
+a reply proves Vertex AI and Chroma too.
+
+185
+00:11:31,300 --> 00:11:34,927
+Right after deploying
+you may see 502 or 503:
+
+186
+00:11:34,927 --> 00:11:37,828
+the API is still loading TensorFlow.
+
+187
+00:11:38,148 --> 00:11:39,641
+Wait, and try again.
+
+188
+00:11:40,883 --> 00:11:44,808
+The README's debugging block
+has 14 kubectl commands.
+
+189
+00:11:45,128 --> 00:11:46,647
+As typed, they all fail;
+
+190
+00:11:46,647 --> 00:11:50,888
+most say the namespace,
+cheese-app-cluster-namespace, is not found.
+
+191
+00:11:51,133 --> 00:11:54,657
+Lines with <pod-name>
+are shell redirections:
+
+192
+00:11:54,657 --> 00:11:58,493
+replace the whole placeholder,
+brackets included.
+
+193
+00:11:59,233 --> 00:12:02,644
+Two fixes:
+the namespace is cheese-app-namespace,
+
+194
+00:12:02,644 --> 00:12:07,446
+and the Job has one container,
+so drop the -c wait-for-chromadb flag.
+
+195
+00:12:07,766 --> 00:12:09,025
+Pause and try them.
+
+196
+00:12:09,766 --> 00:12:12,907
+On a Job that exists,
+an extra on the stand-in,
+
+197
+00:12:12,907 --> 00:12:15,846
+the same commands work: done, one succeeded.
+
+198
+00:12:16,166 --> 00:12:18,556
+Nothing replaces a finished Job's Pod.
+
+199
+00:12:19,300 --> 00:12:23,416
+A small note:
+the disk is mounted at /chroma/chroma,
+
+200
+00:12:23,416 --> 00:12:26,660
+but today's Chroma image writes to /data.
+
+201
+00:12:26,980 --> 00:12:31,439
+So the vectors live inside the container
+and vanish when the Pod restarts.
+
+202
+00:12:31,759 --> 00:12:37,902
+Change line 150 to /data,
+or run the loader Job again after a restart.
+
+203
+00:12:41,050 --> 00:12:42,117
+Now scaling.
+
+204
+00:12:42,437 --> 00:12:47,287
+The lecture promises scaling
+on CPU, memory or custom metrics,
+
+205
+00:12:47,287 --> 00:12:51,354
+but the code sets no replicas
+and no Pod autoscaler.
+
+206
+00:12:51,674 --> 00:12:54,554
+It switches on the node layer:
+one to two nodes.
+
+207
+00:12:55,300 --> 00:12:58,628
+The scheduler packs Pods
+onto nodes by their requests.
+
+208
+00:12:58,948 --> 00:13:02,596
+The frontend asks for a quarter CPU
+and 2 gigabytes.
+
+209
+00:13:02,916 --> 00:13:05,195
+Chroma and nginx ask for little,
+
+210
+00:13:05,195 --> 00:13:08,825
+and the API for nothing,
+so nobody can plan for it.
+
+211
+00:13:09,466 --> 00:13:13,903
+Scale the frontend to 3;
+Milestone 5 asks you to show scaling.
+
+212
+00:13:14,223 --> 00:13:19,557
+A copy that does not fit waits, pending,
+until the autoscaler adds a second node.
+
+213
+00:13:19,877 --> 00:13:23,674
+Ask for many more, and some stay pending:
+the pool stops at two.
+
+214
+00:13:24,316 --> 00:13:27,687
+The API's disk attaches
+to one node at a time.
+
+215
+00:13:28,007 --> 00:13:33,105
+Suppose you scaled the API to 3,
+and some copies landed on the second node.
+
+216
+00:13:33,425 --> 00:13:36,562
+What happens to them,
+and can the autoscaler fix it?
+
+217
+00:13:47,700 --> 00:13:51,160
+They stay stuck creating,
+with a Multi-Attach error:
+
+218
+00:13:51,160 --> 00:13:53,289
+the disk already sits on node 1.
+
+219
+00:13:53,609 --> 00:13:56,510
+More nodes do not help;
+the limit is the disk.
+
+220
+00:13:56,750 --> 00:14:02,374
+That ticks scaling, in two levels:
+nodes automatically, Pods in your hands;
+
+221
+00:14:02,374 --> 00:14:06,947
+a Pod autoscaler on CPU needs requests,
+and the API has none.
+
+222
+00:14:07,267 --> 00:14:09,144
+Scale back to 1 when you are done.
+
+223
+00:14:10,383 --> 00:14:15,311
+Last, delete the cluster:
+pulumi destroy --stack dev --refresh -y.
+
+224
+00:14:15,631 --> 00:14:20,175
+Ours has nothing real to delete;
+yours deletes what this stack created,
+
+225
+00:14:20,175 --> 00:14:23,695
+in reverse order,
+from the Ingress down to the network.
+
+226
+00:14:24,316 --> 00:14:27,169
+Then check what may survive, our suggestion:
+
+227
+00:14:27,169 --> 00:14:30,929
+list clusters,
+forwarding rules, disks and firewall rules.
+
+228
+00:14:31,249 --> 00:14:35,266
+Those are deleted in the background
+and can be left behind;
+
+229
+00:14:35,266 --> 00:14:36,967
+look for disks named pvc.
+
+230
+00:14:37,216 --> 00:14:41,120
+Registry images stay on purpose:
+delete them in the console.
+
+231
+00:14:41,440 --> 00:14:44,704
+Delete the lecture 20 machine too,
+if it still runs.
+
+232
+00:14:45,024 --> 00:14:46,155
+Pause and check.
+
+233
+00:14:46,416 --> 00:14:47,867
+Back to the three asks.
+
+234
+00:14:48,187 --> 00:14:51,170
+Failover: the ReplicaSet brings Pods back,
+
+235
+00:14:51,170 --> 00:14:54,437
+and node auto repair
+replaces broken machines.
+
+236
+00:14:54,757 --> 00:14:59,557
+Load balancing: the cloud load balancer,
+nginx and the Services.
+
+237
+00:14:59,877 --> 00:15:04,059
+Scaling: the node autoscaler,
+and kubectl scale in your hands.
+
+238
+00:15:04,300 --> 00:15:06,199
+The lecture lists five payoffs.
+
+239
+00:15:06,519 --> 00:15:08,609
+Self-service: one pulumi up.
+
+240
+00:15:08,929 --> 00:15:11,660
+Lower cost: Pods packed by their requests.
+
+241
+00:15:11,980 --> 00:15:14,881
+Automatic adjustment: the node autoscaler.
+
+242
+00:15:15,201 --> 00:15:17,185
+Smooth running: self-healing.
+
+243
+00:15:17,505 --> 00:15:21,260
+Simpler development:
+the same images as lecture 20.
+
+244
+00:15:21,500 --> 00:15:22,609
+Test yourself.
+
+245
+00:15:22,929 --> 00:15:26,411
+Which control plane part decides
+where a new Pod runs,
+
+246
+00:15:26,411 --> 00:15:28,860
+and which one notices that a Pod died?
+
+247
+00:15:29,180 --> 00:15:32,249
+Why does get all show only
+the kubernetes Service,
+
+248
+00:15:32,249 --> 00:15:33,660
+and what flag fixes it?
+
+249
+00:15:33,900 --> 00:15:36,532
+How does the web Service know its Pods,
+
+250
+00:15:36,532 --> 00:15:39,703
+and why does the API
+reach Chroma at vector-db?
+
+251
+00:15:40,023 --> 00:15:44,162
+Trace one click
+from sslip.io to the API Pod;
+
+252
+00:15:44,162 --> 00:15:47,105
+why does the bare IP answer 404?
+
+253
+00:15:47,350 --> 00:15:50,874
+Why can the frontend scale to 3
+but the API cannot,
+
+254
+00:15:50,874 --> 00:15:53,153
+and what does the autoscaler add?
+
+255
+00:15:53,473 --> 00:15:56,651
+Answers are in the exercises
+and the study guide.
+
+256
+00:15:56,900 --> 00:16:00,212
+Next, in lecture 23,
+the two Pulumi programs,
+
+257
+00:16:00,212 --> 00:16:04,921
+in version 4 of the app,
+run from GitHub Actions on every merge.
+

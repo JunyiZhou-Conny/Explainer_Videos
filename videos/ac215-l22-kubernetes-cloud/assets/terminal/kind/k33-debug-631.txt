@@ -1,0 +1,3 @@
+$ kubectl get pods -n cheese-app-cluster-namespace | grep vector-db-loader
+No resources found in cheese-app-cluster-namespace namespace.
+[exit 1]
