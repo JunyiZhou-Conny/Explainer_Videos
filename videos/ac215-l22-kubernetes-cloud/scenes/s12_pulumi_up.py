@@ -12,7 +12,7 @@ Beats (script.md "## S12", one voiceover block each):
    above it. A GREY two-row chip "the first resource that needs Google · from here: a picture, not a
    recording" with an arrow to line 58. On "Pause and start yours" a YELLOW '▶ your turn' and the
    GOLD cost tag 'the meter starts' together; on "the meter runs" the cost tag flashes; 1.5 s hold.
-2. LECTURE 22 · 24–25 + the GREY 'illustration' tag (top centre). V6 ResourceTree: the seven empty
+2. The GREY 'illustration' tag (top centre; no lecture tag over the V6 graph alone). V6 ResourceTree: the seven empty
    groups appear in dependency order; the network card opens, cheese-app-vpc and cheese-app-subnet
    fill; "side by side": router and NAT fill while the cluster group pulses; the network group fills;
    the cluster card opens, cheese-app-cluster fills; "the long wait": the GOLD-ringed clock
@@ -29,7 +29,8 @@ Beats (script.md "## S12", one voiceover block each):
    the dashed 'api' card; its Pod runs and turns 'Completed' GREY; the YELLOW hourglass 'Pulumi waits
    for Complete' between them; CODE(setup_containers.py: 319–321) at the bottom, line 320 YELLOW; the
    api card turns solid and the app group fills.
-6. LECTURE (held, shown again). The Job and the panel leave. The ingress card opens, nginx-f5 fills.
+6. LECTURE 22 · 24–25 (fades in with the V1 inset). The Job and the panel leave. The ingress card
+   opens, nginx-f5 fills.
    A V1 inset under the tree (this block only): the cluster outline with the nginx Service
    ('type: LoadBalancer', PINK) and the controllers box with its lamp; the lamp lights GREEN, the
    controllers → 'cloud provider API' arrow grows GREEN ('red on the stand-in' under it); a BLUE door
@@ -62,7 +63,7 @@ Deviations from SHOW:
   JobCousin (below) moves the hourglass caption left and up: in common.py it touches the api card.
 - Beat 6: the 'small V1 inset' is drawn here with V1's names (cluster outline, Service, controllers
   lamp, cloud provider API) at full text size: MasterDiagram is 12.9 units wide and text may never be
-  scaled down. The lecture tag is shown again for this block (script: 'LECTURE (held)').
+  scaled down. The lecture tag shows only in this block, from the V1 inset on (tag rule).
 - Beat 7: the GKE kubeconfig is a card of create_cluster.py:107–110 (the dict that yaml.dump writes),
   with its source in the header.
 - Tree12 (below): the app card opens below its box, the network card hugs the left edge, and the GOLD
@@ -292,11 +293,11 @@ class PulumiUp(VoiceScene):
 
         # ========================================================== 2. network, then router/NAT and the cluster
         rt = Tree12()
-        ref = lref("24–25")
-        ill = illustration_tag().move_to([0.65, 3.2, 0])
+        ref = lref("24–25")                               # not shown here: only the V6 graph is up (the
+        ill = illustration_tag().move_to([0.65, 3.2, 0])   # tag waits for block 6's V1 inset); kept for
         assert ill.get_left()[0] > trk.get_right()[0] + 0.2 and ill.get_right()[0] < ref.get_left()[0] - 0.2
-        with self.voiceover(SAY[2]) as vo:
-            self.play(FadeIn(ref), FadeIn(ill), run_time=0.4)
+        with self.voiceover(SAY[2]) as vo:                 # the illustration tag's layout check
+            self.play(FadeIn(ill), run_time=0.4)
             for k in GROUP_ORDER:
                 rt.group(self, k, run_time=0.22)
             vo.wait_until("First the network")
@@ -323,8 +324,7 @@ class PulumiUp(VoiceScene):
             self.play(Rotate(hand, -TAU, about_point=rt.clock_g[1][0].get_center()),
                       Indicate(rt.clock_g[2], color=COST, scale_factor=1.06), run_time=1.2)
             rt.heal(self)
-        self.play(FadeOut(ref), run_time=0.3)
-        self.remove(ref)
+        self.wait(0.3)                                     # was the tag's fade-out: the timing stays
 
         # ========================================================== 3. node pool; the provider waits for it
         cp = code(CC, 134, 138, font_size=SIZE, dedent=True,
@@ -420,7 +420,7 @@ class PulumiUp(VoiceScene):
         ref = lref("24–25")
         inset, parts = self._inset()
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(sp, b320)), FadeOut(job), FadeIn(ref), run_time=0.4)
+            self.play(FadeOut(VGroup(sp, b320)), FadeOut(job), run_time=0.4)
             self.remove(sp, b320, job)
             vo.wait_until("In parallel, Helm installs")
             rt.expand(self, "ingress", run_time=0.35)
@@ -428,7 +428,7 @@ class PulumiUp(VoiceScene):
             vo.wait_until("Its Service asks for a load balancer")
             rt.collapse(self)
             self.play(FadeIn(parts["outline"]), FadeIn(parts["svc"], shift=UP * 0.1),
-                      FadeIn(parts["ctl"], shift=UP * 0.1), run_time=0.6)
+                      FadeIn(parts["ctl"], shift=UP * 0.1), FadeIn(ref), run_time=0.6)   # with the V1 inset
             self.play(GrowArrow(parts["ask"]), run_time=0.4)
             vo.wait_until("so the controllers ask the cloud")
             self.play(FadeIn(parts["api"], shift=LEFT * 0.15), run_time=0.4)

@@ -186,7 +186,7 @@ S12:
   - "一个用集群输出构建的 Kubernetes provider 会等这个节点池，所以有节点之前不会创建任何 Pod。"
 - en: "Through it come the namespace, the service account of the API and its binding, the two disk claims, the frontend and the vector database."
   zh:
-  - "通过它创建的有：namespace、API 的 Kubernetes 服务账号和它的绑定，两个磁盘 PVC、前端和向量数据库。"
+  - "通过它创建的有 namespace，API 的 Kubernetes 服务账号和它的绑定，两个磁盘 PVC，还有前端和向量数据库。"
 - en: "Next, the loader Job fills the vector database. Pulumi creates the API only after the Job completes: lines 319 to 321 set that dependency."
   zh:
   - "接下来，加载器 Job 填充向量数据库。"
@@ -285,7 +285,7 @@ S14:
   - "在任何一个新的工具箱会话里你都会看到一模一样的结果：Pulumi 写的 kubeconfig 跟着旧 container 一起没了。"
 - en: "The fix is the command Pulumi ran, an extra here: gcloud container clusters get credentials, cheese app cluster. The code passes the region to the zone flag; write region, which says what it means."
   zh:
-  - "修复办法就是 Pulumi 跑过的那条命令，在这里是额外步骤：gcloud container clusters get-credentials cheese-app-cluster。"
+  - "修复办法就是 Pulumi 跑过的那条命令，在这里是额外步骤：gcloud container clusters get-credentials，加上 cheese-app-cluster。"
   - "代码把区域传给了 --zone 参数；写成 --region，才名副其实。"
   en_display:
   - "The fix is the command Pulumi ran, an extra here: gcloud container clusters get-credentials cheese-app-cluster."
@@ -336,7 +336,7 @@ S15:
 - en: "The README's debugging block has 14 kubectl commands. As typed, they all fail; most say the namespace, cheese app cluster namespace, is not found."
   zh:
   - "README 的调试那一块有 14 条 kubectl 命令。"
-  - "照原样敲，全都会失败；大多数都说找不到 cheese-app-cluster-namespace 这个 namespace。"
+  - "照原样敲，全都会失败；大多数都说这个 namespace，cheese-app-cluster-namespace，找不到。"
   en_display:
   - null
   - "As typed, they all fail; most say the namespace, cheese-app-cluster-namespace, is not found."

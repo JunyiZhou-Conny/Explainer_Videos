@@ -41,7 +41,7 @@ S01:
   - "扩展：流量变大时就多开副本。"
 - en: "This card comes back each time we see what does one of these jobs, and we tick it then. The tool for all three is Kubernetes."
   zh:
-  - "每当我们看到是谁在做其中一件事，这张卡片就会回来，那时我们就勾上它。"
+  - "这张卡片会在每次我们看到是谁在做其中一件事时回来，那时我们就勾上它。"
   - "三件事用的工具都是 Kubernetes。"
 S02:
 - en: "Kubernetes is an orchestrator: it runs containers across a cluster of machines and keeps them the way you declared. The name is Greek for helmsman, and Helm, a tool in part 2, borrows it."
@@ -147,7 +147,7 @@ S04:
   - "改为启用 Artifact Registry。"
 - en: "Then start the toolbox: from the S R C folder, change into deployment and run docker-shell.sh. As committed, it fails: 404 Not Found from Debian, then pull access denied."
   zh:
-  - "然后启动工具箱：在 src 目录里，进到 deployment，运行 docker-shell.sh。"
+  - "然后启动工具箱：在 src 目录里，进到 deployment 再运行 docker-shell.sh。"
   - "按提交的原样，它会失败：先是 Debian 的 404 Not Found，然后是 pull access denied。"
   en_display:
   - "Then start the toolbox: from the src folder, change into deployment and run docker-shell.sh."
@@ -194,13 +194,9 @@ S04:
 S05:
 - en: "Now Create Cluster: gcloud container clusters create test cluster, two nodes, zone us east 1 c. Ours stops at once: no active account. Pause and run yours; it costs money every hour it exists."
   zh:
-  - "现在做 Create Cluster 这一步：gcloud container clusters create test-cluster --num-nodes 2 --zone us-east1-c。"
+  - "现在做 Create Cluster 这一步：gcloud container clusters create test-cluster，两个节点，可用区 us-east1-c。"
   - "我们的马上就停了：no active account。"
   - "暂停一下，跑你的；它存在的每个小时都在花钱。"
-  say:
-  - "现在做 Create Cluster 这一步：gcloud container clusters create test-cluster，两个节点，可用区 us-east1-c。"
-  - null
-  - null
   en_display:
   - "Now Create Cluster: gcloud container clusters create test-cluster --num-nodes 2 --zone us-east1-c."
   - null
@@ -355,7 +351,7 @@ S08:
   zh:
   - "Pod 是会死的：新 Pod 拿到了一个新地址。"
   - "那流量怎么找到它？"
-  - "Service 维护一张列表，记着每个贴着它 label 的 Pod，这张列表跟着 Pod 变。"
+  - "Service 维护一张列表，记着每个贴着它 label 的 Pod，而这张列表会跟着 Pod 一起变。"
 - en: "An extra from a throwaway Pod: the name web dot default dot svc dot cluster dot local points to the Service, and fetching just web returns the game page. The name stays while the Pods change."
   zh:
   - "从一个用完即弃的 Pod 里做个额外检查：web.default.svc.cluster.local 这个名字指向这个 Service，只取 web 就能拿到游戏页面。"
@@ -371,7 +367,7 @@ S08:
 - en: "Another extra: kubectl exec into the web Deployment. Hostname prints the name of one Pod, and the game's files are inside. The README shells into the API the same way."
   zh:
   - "再一个额外的：kubectl exec 进到 web 这个 Deployment。"
-  - "命令 hostname 打印出其中一个 Pod 的名字，游戏的文件就在里面。"
+  - "命令 hostname 打印出一个 Pod 的名字，游戏的文件就在这个 Pod 里面。"
   - "README 也是这样进到 API 的 shell 里。"
 - en: "Why did get all look empty? Namespaces: folders for objects. Without a flag, kubectl looks only in default; this extra lists them, then creates and deletes the cheese app namespace."
   zh:
@@ -393,7 +389,7 @@ S08:
   - "在 GKE 上，这样能在集群还在的时候把负载均衡器释放掉。"
 - en: "Then delete the cluster: gcloud container clusters delete test cluster, zone us east 1 c. Yours asks whether to continue; answer yes."
   zh:
-  - "然后删除集群：gcloud container clusters delete test-cluster --zone us-east1-c。"
+  - "然后把这个集群删掉：gcloud container clusters delete test-cluster，可用区 us-east1-c。"
   - "你的会问要不要继续；回答 yes。"
   en_display:
   - "Then delete the cluster: gcloud container clusters delete test-cluster --zone us-east1-c."
