@@ -520,18 +520,18 @@ so no Pod is created before there are nodes.
 
 105
 00:06:09,384 --> 00:06:11,285
-通过它创建的有
+通过它创建的有 namespace
 Through it come the namespace,
 
 106
-00:06:11,285 --> 00:06:15,593
-namespace、API 的 Kubernetes 服务账号和它的绑定
-the service account of the API and its binding, the two disk claims,
+00:06:11,285 --> 00:06:14,263
+API 的 Kubernetes 服务账号和它的绑定
+the service account of the API and its binding,
 
 107
-00:06:15,593 --> 00:06:17,938
-两个磁盘 PVC、前端和向量数据库
-the frontend and the vector database.
+00:06:14,263 --> 00:06:17,938
+两个磁盘 PVC，还有前端和向量数据库
+the two disk claims, the frontend and the vector database.
 
 108
 00:06:18,184 --> 00:06:21,256
@@ -799,19 +799,19 @@ Pulumi 写的 kubeconfig 跟着旧 container 一起没了
 the kubeconfig Pulumi wrote went away with the old container.
 
 161
-00:10:07,617 --> 00:10:10,099
-修复办法就是 Pulumi 跑过的那条命令
-The fix is the command Pulumi ran,
+00:10:07,617 --> 00:10:11,194
+修复办法就是 Pulumi 跑过的那条命令，在这里是额外步骤
+The fix is the command Pulumi ran, an extra here:
 
 162
-00:10:10,099 --> 00:10:13,019
-在这里是额外步骤：gcloud container clusters
-an extra here: gcloud container clusters
+00:10:11,194 --> 00:10:14,074
+gcloud container clusters get-credentials
+gcloud container clusters get-credentials
 
 163
-00:10:13,019 --> 00:10:15,574
-get-credentials cheese-app-cluster
-get-credentials cheese-app-cluster.
+00:10:14,074 --> 00:10:15,674
+加上 cheese-app-cluster
+cheese-app-cluster.
 
 164
 00:10:15,894 --> 00:10:21,185
@@ -940,12 +940,12 @@ The README's debugging block has 14 kubectl commands.
 
 189
 00:11:45,128 --> 00:11:48,167
-照原样敲，全都会失败；大多数都说找不到
+照原样敲，全都会失败；大多数都说这个 namespace
 As typed, they all fail; most say the namespace,
 
 190
 00:11:48,167 --> 00:11:50,888
-cheese-app-cluster-namespace 这个 namespace
+cheese-app-cluster-namespace，找不到
 cheese-app-cluster-namespace, is not found.
 
 191

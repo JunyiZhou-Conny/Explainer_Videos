@@ -116,9 +116,9 @@ Dialogue: 0,0:05:55.41,0:05:59.32,Bilingual,,0,0,0,,要等很久：按我们的�
 Dialogue: 0,0:05:59.87,0:06:01.42,Bilingual,,0,0,0,,然后是节点池\N{\fs33\c&H00C8C0B8&\bord1.4}Then the node pool.
 Dialogue: 0,0:06:01.47,0:06:06.31,Bilingual,,0,0,0,,一个用集群输出构建的 Kubernetes provider 会等这个节点池\N{\fs33\c&H00C8C0B8&\bord1.4}A Kubernetes provider, built from the cluster outputs, waits for that pool,
 Dialogue: 0,0:06:06.31,0:06:09.15,Bilingual,,0,0,0,,所以有节点之前不会创建任何 Pod\N{\fs33\c&H00C8C0B8&\bord1.4}so no Pod is created before there are nodes.
-Dialogue: 0,0:06:09.38,0:06:11.28,Bilingual,,0,0,0,,通过它创建的有\N{\fs33\c&H00C8C0B8&\bord1.4}Through it come the namespace,
-Dialogue: 0,0:06:11.28,0:06:15.59,Bilingual,,0,0,0,,namespace、API 的 Kubernetes 服务账号和它的绑定\N{\fs33\c&H00C8C0B8&\bord1.4}the service account of the API and its binding, the two disk claims,
-Dialogue: 0,0:06:15.59,0:06:17.94,Bilingual,,0,0,0,,两个磁盘 PVC、前端和向量数据库\N{\fs33\c&H00C8C0B8&\bord1.4}the frontend and the vector database.
+Dialogue: 0,0:06:09.38,0:06:11.28,Bilingual,,0,0,0,,通过它创建的有 namespace\N{\fs33\c&H00C8C0B8&\bord1.4}Through it come the namespace,
+Dialogue: 0,0:06:11.28,0:06:14.26,Bilingual,,0,0,0,,API 的 Kubernetes 服务账号和它的绑定\N{\fs33\c&H00C8C0B8&\bord1.4}the service account of the API and its binding,
+Dialogue: 0,0:06:14.26,0:06:17.94,Bilingual,,0,0,0,,两个磁盘 PVC，还有前端和向量数据库\N{\fs33\c&H00C8C0B8&\bord1.4}the two disk claims, the frontend and the vector database.
 Dialogue: 0,0:06:18.18,0:06:21.26,Bilingual,,0,0,0,,接下来，加载器 Job 填充向量数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the loader Job fills the vector database.
 Dialogue: 0,0:06:21.58,0:06:26.92,Bilingual,,0,0,0,,Pulumi 要等 Job 完成后才创建 API\N{\fs33\c&H00C8C0B8&\bord1.4}Pulumi creates the API only after the Job completes:
 Dialogue: 0,0:06:26.92,0:06:30.73,Bilingual,,0,0,0,,第 319 到 321 行设定了这个依赖\N{\fs33\c&H00C8C0B8&\bord1.4}lines 319 to 321 set that dependency.
@@ -172,9 +172,9 @@ Dialogue: 0,0:09:53.40,0:09:55.81,Bilingual,,0,0,0,,接下来，试几条 kubect
 Dialogue: 0,0:09:56.13,0:09:59.63,Bilingual,,0,0,0,,这里没有集群，五条都显示 connection refused\N{\fs33\c&H00C8C0B8&\bord1.4}With no cluster here, all five say connection refused.
 Dialogue: 0,0:09:59.95,0:10:03.40,Bilingual,,0,0,0,,在任何一个新的工具箱会话里你都会看到一模一样的结果\N{\fs33\c&H00C8C0B8&\bord1.4}You will see exactly this in any new toolbox session:
 Dialogue: 0,0:10:03.40,0:10:07.37,Bilingual,,0,0,0,,Pulumi 写的 kubeconfig 跟着旧 container 一起没了\N{\fs33\c&H00C8C0B8&\bord1.4}the kubeconfig Pulumi wrote went away with the old container.
-Dialogue: 0,0:10:07.62,0:10:10.10,Bilingual,,0,0,0,,修复办法就是 Pulumi 跑过的那条命令\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is the command Pulumi ran,
-Dialogue: 0,0:10:10.10,0:10:13.02,Bilingual,,0,0,0,,在这里是额外步骤：gcloud container clusters\N{\fs33\c&H00C8C0B8&\bord1.4}an extra here: gcloud container clusters
-Dialogue: 0,0:10:13.02,0:10:15.57,Bilingual,,0,0,0,,get-credentials cheese-app-cluster\N{\fs33\c&H00C8C0B8&\bord1.4}get-credentials cheese-app-cluster.
+Dialogue: 0,0:10:07.62,0:10:11.19,Bilingual,,0,0,0,,修复办法就是 Pulumi 跑过的那条命令，在这里是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is the command Pulumi ran, an extra here:
+Dialogue: 0,0:10:11.19,0:10:14.07,Bilingual,,0,0,0,,gcloud container clusters get-credentials\N{\fs33\c&H00C8C0B8&\bord1.4}gcloud container clusters get-credentials
+Dialogue: 0,0:10:14.07,0:10:15.67,Bilingual,,0,0,0,,加上 cheese-app-cluster\N{\fs33\c&H00C8C0B8&\bord1.4}cheese-app-cluster.
 Dialogue: 0,0:10:15.89,0:10:21.18,Bilingual,,0,0,0,,代码把区域传给了 --zone 参数；写成 --region，才名副其实\N{\fs33\c&H00C8C0B8&\bord1.4}The code passes the region to the --zone flag; write --region, which says what it means.
 Dialogue: 0,0:10:21.93,0:10:25.94,Bilingual,,0,0,0,,连上以后，get all 还是只显示 kubernetes 这个 Service\N{\fs33\c&H00C8C0B8&\bord1.4}Once connected, get all still shows only the kubernetes Service,
 Dialogue: 0,0:10:25.94,0:10:28.57,Bilingual,,0,0,0,,因为应用在它自己的 namespace 里\N{\fs33\c&H00C8C0B8&\bord1.4}because the app sits in its own namespace.
@@ -200,8 +200,8 @@ Dialogue: 0,0:11:28.20,0:11:31.05,Bilingual,,0,0,0,,有回复，就证明 Vertex
 Dialogue: 0,0:11:31.30,0:11:37.83,Bilingual,,0,0,0,,刚部署完你可能会看到 502 或 503：API 还在加载 TensorFlow\N{\fs33\c&H00C8C0B8&\bord1.4}Right after deploying you may see 502 or 503: the API is still loading TensorFlow.
 Dialogue: 0,0:11:38.15,0:11:39.75,Bilingual,,0,0,0,,等一等，再试一次\N{\fs33\c&H00C8C0B8&\bord1.4}Wait, and try again.
 Dialogue: 0,0:11:40.88,0:11:44.81,Bilingual,,0,0,0,,README 的调试那一块有 14 条 kubectl 命令\N{\fs33\c&H00C8C0B8&\bord1.4}The README's debugging block has 14 kubectl commands.
-Dialogue: 0,0:11:45.13,0:11:48.17,Bilingual,,0,0,0,,照原样敲，全都会失败；大多数都说找不到\N{\fs33\c&H00C8C0B8&\bord1.4}As typed, they all fail; most say the namespace,
-Dialogue: 0,0:11:48.17,0:11:50.89,Bilingual,,0,0,0,,cheese-app-cluster-namespace 这个 namespace\N{\fs33\c&H00C8C0B8&\bord1.4}cheese-app-cluster-namespace, is not found.
+Dialogue: 0,0:11:45.13,0:11:48.17,Bilingual,,0,0,0,,照原样敲，全都会失败；大多数都说这个 namespace\N{\fs33\c&H00C8C0B8&\bord1.4}As typed, they all fail; most say the namespace,
+Dialogue: 0,0:11:48.17,0:11:50.89,Bilingual,,0,0,0,,cheese-app-cluster-namespace，找不到\N{\fs33\c&H00C8C0B8&\bord1.4}cheese-app-cluster-namespace, is not found.
 Dialogue: 0,0:11:51.13,0:11:54.66,Bilingual,,0,0,0,,带尖括号的 pod name 那几行是 shell 重定向\N{\fs33\c&H00C8C0B8&\bord1.4}Lines with <pod-name> are shell redirections:
 Dialogue: 0,0:11:54.66,0:11:58.49,Bilingual,,0,0,0,,把整个占位符连同尖括号一起替换掉\N{\fs33\c&H00C8C0B8&\bord1.4}replace the whole placeholder, brackets included.
 Dialogue: 0,0:11:59.23,0:12:02.67,Bilingual,,0,0,0,,两处修复：namespace 是 cheese-app-namespace\N{\fs33\c&H00C8C0B8&\bord1.4}Two fixes: the namespace is cheese-app-namespace,
