@@ -1,0 +1,17 @@
+[
+  {"goto": "new.html"},
+  {"expect": "h1", "text": "开一集新视频"},
+  {"dialog": "role=button[name=\"生成 issue →\"]", "text": "三项必填"},
+  {"fill": "#question", "value": "为什么 git 分支几乎零成本？"},
+  {"fill": "#audience", "value": "会 git commit，没开过分支"},
+  {"fill": "#sources", "value": "仓库: JunyiZhou-Conny/Explainer_Videos"},
+  {"check": "input[name=agent][value=manual-other]"},
+  {"popup": "role=button[name=\"生成 issue →\"]", "as": "issue",
+   "params": {"template": "episode-request.yml", "title": "[episode] 为什么 git 分支几乎零成本？",
+              "audience": "没开过分支", "sources": "automatic agents must not claim it"}},
+  {"wait": "#promptText"},
+  {"expect": "#promptText", "text": "Read docs/BOOTSTRAP.md"},
+  {"save": "kickoff-prompt", "of": "#promptText"},
+  {"aria": "composer", "of": "main"},
+  {"shot": "composer"}
+]
